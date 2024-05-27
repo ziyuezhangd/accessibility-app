@@ -3,9 +3,16 @@
 
 ## Features
 
-## Installation and Running
+## Workflow
+
+## Running
+
+## Testing
 
 ## Tech Stack
-- Frontend:
-- Backend:
-- Database:
+- Frontend Team:
+- Backend Team:
+-   Server: (for example) Node.js
+- Data Team:
+-   Database:
+-   Data Analytics: (for example) Python scikit-learn
