@@ -3,7 +3,7 @@
 
 ## Features
 
-## Workflow - check [Notion-Development Lifecycle](https://www.notion.so/Development-Lifecycle-765c3a23d0ac4d3bb95618213883b4a8#3402af43e96740da8fecf70690b5b0d4) for details
+## Workflow - check [Notion-Development Lifecycle](https://www.notion.so/Development-Lifecycle-765c3a23d0ac4d3bb95618213883b4a8) for details
 1. Create your own branch from branch 'dev' and start working on it
 2. Periodically commit changes and push to remote repo on your own branch
 3. Periodically pull changes from remote repo on branch 'dev', and merge 'dev' into your own local branch to keep it up-to-date
