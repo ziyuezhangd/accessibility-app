@@ -15,6 +15,13 @@ Check [Notion-Development Lifecycle](https://www.notion.so/Development-Lifecycle
 If anything unexpected or undesired happens after you make a commit, push to remote, make a pull request or whatever, don't worry and contact the maintenance lead. We will fix it together!
 
 ## Running
+Start frontend application for development, run:
+`npm install
+npm run dev`
+
+Start backend application for development, run:
+`npm install
+npm run dev`
 
 ## Testing
 - Conduct basic unit tests for the feature you develop on your own branch before merge it into 'dev'.
