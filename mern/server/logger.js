@@ -23,13 +23,29 @@ const logFormat = format.combine(
         colors: {error: 'red'}
     }),
     format.timestamp({format: 'YYYY-MM-DD HH:mm:ss'}),
-    format.printf(({level, timestamp, message}) => {
-        return `${timestamp} [${level.toUpperCase()}] ${message}`;
+    format.errors({ stack: true }),
+    format.printf(({level, timestamp, message, stack}) => {
+        const msg = `${timestamp} [${level.toUpperCase()}] ${message}`;
+        return stack? `${msg}\nTraceback:\n${stack}`: msg;
     })
 );
 
 // Define destination
-const transport = [
+const logTransport = [
     new transports.Console(),
-    new transports.File({ filename: 'error.log', level: 'error' })
+    new transports.File({ filename: 'errors.log', level: 'error' })
 ];
+
+// Define logger
+const logger = createLogger({
+    level: level(),  //default level
+    levels,
+    logFormat,
+    logTransport,
+    exceptionHandlers: [
+        new transports.Console(),
+        new transports.File({ filename: 'exceptions.log' })
+    ]
+});
+
+export default logger;
