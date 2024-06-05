@@ -13,15 +13,18 @@ placeInfosRouter.get("/", (req, res) => {
 
   const lat = 40.7831;
   const lon = -73.9712;
-  const acc = 10000;
-  const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&latitude=${lat}&longitude=${lon}&accuracy=${acc}`;
+  const acc = 100;
+  const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&latitude=${lat}&longitude=${lon}&accuracy=${acc}&filter=fully-accessible-by-wheelchair`;
 
   const options = {
     hostname: apiUrl.replace('https://', ''),
     path: `/place-infos.json${queryString}`,
     method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
   };
-
+  
   const request = https.request(options, (response) => {
     let data = '';
   
@@ -41,6 +44,7 @@ placeInfosRouter.get("/", (req, res) => {
       } else {
         console.error('Received non-JSON response:', data);
         res.status(500).send('Received non-JSON response');
+        console.log(data)
       }
     });
   });
