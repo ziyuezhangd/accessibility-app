@@ -37,14 +37,14 @@ export default function Record() {
   }, [params.id, navigate]);
 
   // These methods will update the state properties.
-  function updateForm(value) {
+  function updateForm(value: { name?: string; position?: string; level?: string; }) {
     return setForm((prev) => {
       return { ...prev, ...value };
     });
   }
 
   // This function will handle the submission.
-  async function onSubmit(e) {
+  async function onSubmit(e: { preventDefault: () => void; }) {
     e.preventDefault();
     const person = { ...form };
     try {
