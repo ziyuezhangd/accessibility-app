@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import records from "./routes/record.js";
+import path from "path";
 //import blockRatings from "./routes/blockRating.js"
 //import models from "./routes/modelRoute.js"
 //import reports from "./routes/report.js"
@@ -16,6 +17,13 @@ app.use("/record", records);
 //app.use("/modelRoute", models);
 //app.use("/report", reports);
 //app.use("/pointOfInterest", pointsOfInterst)
+
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, "..", "client", "dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "client", "dist", "index.html"));
+});
 
 // start the Express server
 app.listen(PORT, () => {
