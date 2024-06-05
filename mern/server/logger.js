@@ -22,11 +22,11 @@ const level = () => {
 const logFormat = format.combine(
     format.colorize({
         all: false,
-        colors: {error: 'red'}
+        colors: { error: 'red' }
     }),
-    format.timestamp({format: 'YYYY-MM-DD HH:mm:ss'}),
+    format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     format.errors({ stack: true }),
-    format.printf(({level, timestamp, message, stack}) => {
+    format.printf(({ level, timestamp, message, stack }) => {
         const msg = `${timestamp} [${level.toUpperCase()}] ${message}`;
         return stack ? `${msg}\nTraceback:\n${stack}` : msg;
     })

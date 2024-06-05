@@ -7,6 +7,7 @@ import blockRatings from "./routes/blockRating.js"
 import models from "./routes/modelRoute.js"
 import reports from "./routes/report.js"
 import pointsOfInterst from "./routes/pointOfInterest.js"
+import logger from "./logger.js";
 
 // Load environment variabls
 dotenv.config();
@@ -21,6 +22,14 @@ app.use("/blockRating", blockRatings);
 app.use("/modelRoute", models);
 app.use("/report", reports);
 app.use("/pointOfInterest", pointsOfInterst)
+
+const morganStream = {
+  write: (message) => {
+    // Pass Morgan log messages to Winston
+    logger.http(message.trim());
+  }
+};
+app.use(morgan('dev', { stream: morganStream }));
 
 // start the Express server
 app.listen(PORT, () => {
