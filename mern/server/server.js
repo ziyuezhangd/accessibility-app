@@ -8,6 +8,9 @@ import models from "./routes/modelRoute.js"
 import reports from "./routes/report.js"
 import pointsOfInterst from "./routes/pointOfInterest.js"
 
+// Load environment variabls
+dotenv.config();
+
 const PORT = process.env.PORT || 5050;
 const app = express();
 
