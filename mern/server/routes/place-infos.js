@@ -6,43 +6,46 @@ import dotenv from 'dotenv';
 dotenv.config();
 const ACCESSIBILITY_CLOUD_API_KEY = process.env.ACCESSIBILITY_CLOUD_API_KEY;
 
-const router = express.Router();
-
-router.get("/", (req, res) => {
+const placeInfosRouter = express.Router();
+  
+placeInfosRouter.get("/", (req, res) => {
   const apiUrl = 'https://accessibility-cloud-v2.freetls.fastly.net';
 
   const lat = 40.7831;
   const lon = -73.9712;
-  const radius = 2.3;
-  const queryString = `/place-infos?lat=${lat}&lon=${lon}&radius=${radius}`;
+  const acc = 10000;
+  const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&latitude=${lat}&longitude=${lon}&accuracy=${acc}`;
 
   const options = {
     hostname: apiUrl.replace('https://', ''),
-    path: queryString,
+    path: `/place-infos.json${queryString}`,
     method: 'GET',
-    headers: {
-      Authorization: `Bearer ${ACCESSIBILITY_CLOUD_API_KEY}`,
-    },
   };
 
   const request = https.request(options, (response) => {
     let data = '';
-
+  
     response.on('data', (chunk) => {
       data += chunk;
     });
-
+  
     response.on('end', () => {
-      res.json(JSON.parse(data));
+      // Check if response is JSON or another types
+      if (response.headers['content-type'] && response.headers['content-type'].includes('application/json')) {
+        try {
+          res.json(JSON.parse(data));
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+          res.status(500).send('Error parsing JSON response');
+        }
+      } else {
+        console.error('Received non-JSON response:', data);
+        res.status(500).send('Received non-JSON response');
+      }
     });
   });
-
-  request.on('error', (error) => {
-    console.error(error);
-    res.status(500).send('Error retrieving data from the Accessibility Cloud');
-  });
-
-  request.end();
+  request.end(); 
 });
+  
 
-export default router;
+export default placeInfosRouter;

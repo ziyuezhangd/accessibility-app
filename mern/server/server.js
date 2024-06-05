@@ -18,7 +18,7 @@ app.use('/place-infos', placeInfosRouter);
 //app.use("/blockRating", blockRatings);
 //app.use("/modelRoute", models);
 //app.use("/report", reports);
-//app.use("/pointOfInterest", pointsOfInterst)
+//app.use("/pointOfInterest", pointsOfInterest)
 
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "..", "client", "dist")));
