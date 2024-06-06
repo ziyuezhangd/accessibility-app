@@ -9,7 +9,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 const App = () => {
-  const googleMapConfig: string = import.meta.env.VITE_GOOGLEMAP_KEY;
+  const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY;
 
   return (
     <StrictMode>
