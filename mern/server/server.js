@@ -6,7 +6,7 @@ import placeInfosRouter from './routes/place-infos.js';
 //import blockRatings from "./routes/blockRating.js"
 //import models from "./routes/modelRoute.js"
 //import reports from "./routes/report.js"
-//import pointsOfInterst from "./routes/pointOfInterest.js"
+import accessibilityHighlightPlace from "./routes/accessibilityHighlightPlace.js"
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -18,7 +18,7 @@ app.use('/place-infos', placeInfosRouter);
 //app.use("/blockRating", blockRatings);
 //app.use("/modelRoute", models);
 //app.use("/report", reports);
-//app.use("/pointOfInterest", pointsOfInterest)
+app.use("/accessibilityHighlightPlace", accessibilityHighlightPlace)
 
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "..", "client", "dist")));
