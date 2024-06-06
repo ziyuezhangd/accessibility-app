@@ -11,11 +11,19 @@ const placeInfosRouter = express.Router();
 placeInfosRouter.get("/", (req, res) => {
   const apiUrl = 'https://accessibility-cloud-v2.freetls.fastly.net';
 
-  const lat = 40.7831;
-  const lon = -73.9712;
-  const acc = 100;
-  const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&latitude=${lat}&longitude=${lon}&accuracy=${acc}&filter=fully-accessible-by-wheelchair`;
+  //const lat = 40.7831;
+  //const lon = -73.9712;
+  //const acc = 6500;
+ // const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&latitude=${lat}&longitude=${lon}&accuracy=${acc}&filter=fully-accessible-by-wheelchair&exclude=originalID,infoPageURL,sourceID,sourceImportID,,parentCategoryIds`;
 
+//5000 4.28s 
+//6500 11.43s
+//improved when firelds are removed
+//USING TILES - MUCH QUICKER, CAN WE COMBINE THE TILES?
+const x = 4824
+const y = 6159
+const z = 14
+const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&z=${z}&x=${x}&y=${y}&filter=fully-accessible-by-wheelchair&exclude=originalID,infoPageURL,sourceID,sourceImportID,,parentCategoryIds`;
   const options = {
     hostname: apiUrl.replace('https://', ''),
     path: `/place-infos.json${queryString}`,
