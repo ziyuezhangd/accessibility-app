@@ -13,22 +13,41 @@ const levels = {
 
 // Set current level
 const level = () => {
-    const env = process.env.NODE_ENV || 'development'
-    const isDevelopment = env === 'development'
-    return isDevelopment ? 'debug' : 'warn'
+    const env = process.env.NODE_ENV || 'development';
+    const isDevelopment = env === 'development';
+    return isDevelopment ? 'debug' : 'warn';
 };
 
 // Define format
-const logFormat = format.combine(
-    format.colorize({
-        all: false,
-        colors: { error: 'red' }
-    }),
+const commonFormat = format.combine(
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     format.errors({ stack: true }),
     format.printf(({ level, timestamp, message, stack }) => {
         const msg = `${timestamp} [${level.toUpperCase()}] ${message}`;
         return stack ? `${msg}\nTraceback:\n${stack}` : msg;
+    })
+);
+const consoleFormat = format.combine(
+    commonFormat,
+    format.colorize({
+        all: true,
+        colors: {
+            error: 'red', 
+            warn: 'white', 
+            info: 'white', 
+            http: 'white', 
+            debug: 'white'
+        }
+    })    
+);
+const fileFormat = format.combine(
+    commonFormat,
+    format.uncolorize()    
+);
+const exceptionFormat = format.combine(
+    format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    format.printf(({ level, timestamp, message }) => {
+        return `${timestamp} [${level.toUpperCase()}] ${message}`;
     })
 );
 
@@ -41,19 +60,18 @@ if (!fs.existsSync(logFolderPath)) {
 const errorFilePath = path.join(logFolderPath, 'errors.log');
 const exceptionFilePath = path.join(logFolderPath, 'exceptions.log');
 
-
 // Define destination
 const logTransport = [
-    new transports.Console(),
-    new transports.File({ filename: errorFilePath, level: 'error' })
+    new transports.Console({ format: consoleFormat }),
+    new transports.File({ filename: errorFilePath, level: 'error', format: fileFormat })
 ];
 
 // Define logger
 const logger = createLogger({
     level: level(),  //default level
-    levels,
-    logFormat,
-    logTransport,
+    levels: levels,
+    format: exceptionFormat,
+    transports: logTransport,
     exceptionHandlers: [
         new transports.Console(),
         new transports.File({ filename: exceptionFilePath })

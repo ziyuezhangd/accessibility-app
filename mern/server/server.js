@@ -12,6 +12,7 @@ import logger from "./logger.js";
 
 // Load environment variabls
 dotenv.config();
+
 const PORT = process.env.PORT || 5050;
 const app = express();
 
@@ -26,9 +27,9 @@ app.use("/record", records);
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "..", "client", "dist")));
 
+// Configure logger for HTTP request
 const morganStream = {
   write: (message) => {
-    // Pass Morgan log messages to Winston
     logger.http(message.trim());
   }
 };
@@ -41,5 +42,5 @@ app.get("*", (req, res) => {
 
 // start the Express server
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  logger.info(`Server listening on port ${PORT}`);
 });

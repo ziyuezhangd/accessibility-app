@@ -1,4 +1,11 @@
+import dotenv from "dotenv";
 import { MongoClient, ServerApiVersion } from "mongodb";
+import logger from "../logger.js";
+
+// Load environment variables
+dotenv.config();  
+// Note: somehow this script is executed even before server.js, so I have to load environment variables here
+// When we fix this issue, we can delete this and have environment variables loaded within our entry file server.js
 
 const uri = process.env.ATLAS_URI || "";
 const client = new MongoClient(uri, {
@@ -14,11 +21,11 @@ try {
   await client.connect();
   // Send a ping to confirm a successful connection
   await client.db("admin").command({ ping: 1 });
-  console.log(
+  logger.info(
    "Pinged your deployment. You successfully connected to MongoDB!"
   );
 } catch(err) {
-  console.error(err);
+  logger.error(err);
 }
 
 let db = client.db("employees");
