@@ -1,12 +1,57 @@
 import express from "express";
-
-// This will help us connect to the database//
 import db from "../db/connection.js";
 
-// This help convert the id from string to ObjectId for the _id.//
-import { ObjectId } from "mongodb";
 
-// router is an instance of the express router.
-// We use it to define our routes.
-// The router will be added as a middleware and will take control of requests starting with path /record.
 const router = express.Router();
+
+
+
+router.get("/sound-ratings", async (req, res) => {
+    const { datetime } = req.query;
+    const datetimeObj = new Date(datetime);
+    if (!datetime) {
+        return res.status(400).send({ message: "Datetime parameter is required" });
+      }
+    
+    try{
+        let collection = db.collection("soundModel");
+        let latestModel = await collection.findOne({}, { sort: { date: -1 } });
+
+        //this assumes a method called 'predict'
+        const predictions = latestModel.predict(datetimeObj);
+
+        res.status(200).send(predictions);
+    }
+    catch{
+        res.status(500).send({ message: "An error occurred", error: error.message });
+    }
+})
+router.get("/sound-ratings/location", async (req, res) => {
+    const { datetime, lat, long } = req.query;
+    if (!datetime) {
+        return res.status(400).send({ message: "A datetime parameter is required" });
+      }
+      
+      if (!lat || !long) {
+        return res.status(400).send({ message: "The latitude and longitude parameters are required" });
+      }  
+    const latitude = parseFloat(lat);
+    const longitude = parseFloat(long);  
+    const datetimeObj = new Date(datetime);
+    
+    try{
+        let collection = db.collection("soundModel");
+        let latestModel = await collection.findOne({}, { sort: { date: -1 } });
+
+        //this assumes a method called 'predict'
+        const predictions = latestModel.predict(datetimeObj, latitude, longitude);
+
+        res.status(200).send(predictions);
+    }
+    catch{
+        res.status(500).send({ message: "An error occurred", error: error.message });
+    }
+})
+
+
+export default router;
