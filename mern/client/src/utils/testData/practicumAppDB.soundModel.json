@@ -1,0 +1,32 @@
+[{
+  "_id": {
+    "$oid": "11117bf3819ab9acf6c65fb9"
+  },
+  "model_id": 436,
+  "fileName": "example_model_1",
+  "date": {
+    "$date": "2024-06-07T14:30:00.000Z"
+  },
+  "fileContent": {
+    "$binary": {
+      "base64": "ABECAwQFBgcICQ==",
+      "subType": "00"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "66617bf3919ab9acf6c65fb9"
+  },
+  "model_id": 459,
+  "fileName": "example_model_2",
+  "date": {
+    "$date": "2024-06-07T16:30:00.000Z"
+  },
+  "fileContent": {
+    "$binary": {
+      "base64": "ACECAwQFBgcICQ==",
+      "subType": "00"
+    }
+  }
+}]
