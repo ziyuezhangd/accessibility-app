@@ -5,8 +5,8 @@ const router = express.Router();
 router.post("/", async (req, res) => {
     const { name, email, comment, coordinates } = req.body;
   
-    if (!name || !email || !comment || !coordinates) {
-      return res.status(400).send({ message: "The following fields are required: name, email, comment. Coordinates are not required." });
+    if (!name || !email || !comment) {
+      return res.status(400).send({ message: "The following fields are required: name, email, comment." });
     }
   
     try {
@@ -16,13 +16,16 @@ router.post("/", async (req, res) => {
         name,
         email,
         comment,
-        coordinates,
         date: new Date()
       };
+
+      if (coordinates) {
+        feedback.coordinates = coordinates;
+      }
   
       await collection.insertOne(feedback);
   
-      res.status(201).send({ message: "Feedback submitted successfully" });
+      res.status(201).send({ message: "Thank you for your feedback!" });
     } catch (error) {
       res.status(500).send({ message: "An error occurred", error: error.message });
     }
