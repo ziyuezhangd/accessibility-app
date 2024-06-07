@@ -8,7 +8,6 @@ import MeetTheTeam from '../components/landing/MeetTheTeam';
 export default function Landing() {
   return (
     <>
-      <div>Landing</div>
       <Hero />
       <Features />
       <Blurb />
