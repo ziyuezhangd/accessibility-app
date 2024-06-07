@@ -8,10 +8,9 @@ import busynessRating from "./routes/busynessRating.js"
 import noiseRating from "./routes/noiseRating.js"
 import odourRating from "./routes/odourRating.js"
 import feedback from "./routes/feedback.js"
-//import blockRatings from "./routes/blockRating.js"
-//import models from "./routes/modelRoute.js"
-//import reports from "./routes/report.js"
-//import pointsOfInterst from "./routes/pointOfInterest.js"
+import soundRating from "./routes/soundRating.js"
+
+
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -24,6 +23,9 @@ app.use("/busyness-ratings", busynessRating)
 app.use("/noise-ratings", noiseRating)
 app.use("/odour-ratings", odourRating)
 app.use("/feedback", feedback)
+app.use("/sound-ratings", soundRating)
+
+
 
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "..", "client", "dist")));
