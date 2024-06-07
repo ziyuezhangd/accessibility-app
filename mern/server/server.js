@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import records from "./routes/record.js";
 import path from "path";
+import noiseRating from "./routes/noiseRating.js"
 //import blockRatings from "./routes/blockRating.js"
 //import models from "./routes/modelRoute.js"
 //import reports from "./routes/report.js"
@@ -13,6 +14,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/record", records);
+app.use("/noiseRating", noiseRating)
 //app.use("/blockRating", blockRatings);
 //app.use("/modelRoute", models);
 //app.use("/report", reports);
