@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import records from "./routes/record.js";
-import path from "path";
 import placeInfosRouter from './routes/place-infos.js';
 import busynessRating from "./routes/busynessRating.js"
 import noiseRating from "./routes/noiseRating.js"
@@ -20,12 +19,6 @@ app.use("/noise-ratings", noiseRating)
 app.use("/odour-ratings", odourRating)
 app.use("/accessibility-highlight-place", accessibilityHighlightPlace)
 
-const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, "..", "client", "dist")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "client", "dist", "index.html"));
-});
 
 // start the Express server
 app.listen(PORT, () => {
