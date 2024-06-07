@@ -1,7 +1,13 @@
 import React from 'react';
 import { Button, Container, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function Hero() {
+  const navigate = useNavigate();
+  const handleGetStartedClicked = () => {
+    navigate('/map');
+  };
+
   return (
     <Container
       id='features'
@@ -19,7 +25,9 @@ export default function Hero() {
     >
       <Typography variant='h1'>Discover Accessible Areas in NYC</Typography>
       <Typography variant='h2'>Find the best spots that cater to your needs</Typography>
-      <Button variant='contained'>Get started</Button>
+      <Button variant='contained' onClick={handleGetStartedClicked}>
+        Get started
+      </Button>
       <Button variant='text'>Learn more</Button>
     </Container>
   );
