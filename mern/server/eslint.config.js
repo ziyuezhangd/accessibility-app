@@ -1,8 +1,8 @@
 import pluginJs from "@eslint/js";
 
-
 export default [
   {
+    ignorePatterns: ['logs', 'eslint.config.js'],
     env: {
       node: true,
       es2021: true,
@@ -28,10 +28,10 @@ export default [
 
       // Variables
       "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
-      "indent": ["error", 2],
 
       // Stylistic Issues
-      "quotes": ["error", "double"],  // always use double quotes
+      "indent": ["error", 2],
+      "quotes": ["error", "single"],  // always use single quotes
       "semi": ["error", "always"],  // always use semicolons
       "no-multiple-empty-lines": ["error", { "max": 1 }],  // at most 2 consecutive blank row
       "padding-line-between-statements": [
