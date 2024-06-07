@@ -28,6 +28,6 @@ try {
   logger.error(err);
 }
 
-let db = client.db("employees");
+let db = client.db("practicumAppDB");
 
 export default db;
