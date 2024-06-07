@@ -5,9 +5,10 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import App from "./App";
-import Record from "./components/Record";
-import RecordList from "./components/RecordList";
 import "./index.css";
+import Map from './pages/Map';
+import Landing from './pages/Landing';
+import About from './pages/About';
 
 const router = createBrowserRouter([
   {
@@ -16,27 +17,27 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <RecordList />,
+        element: <Landing />,
       },
     ],
   },
   {
-    path: "/edit/:id",
+    path: "/map",
     element: <App />,
     children: [
       {
-        path: "/edit/:id",
-        element: <Record />,
+        path: "/map",
+        element: <Map />,
       },
     ],
   },
   {
-    path: "/create",
+    path: "/about",
     element: <App />,
     children: [
       {
-        path: "/create",
-        element: <Record />,
+        path: "/about",
+        element: <About />,
       },
     ],
   },
