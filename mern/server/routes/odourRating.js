@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 
-router.get("/noise-ratings", async (req, res) => {
+router.get("/odour-ratings", async (req, res) => {
     const { datetime } = req.query;
     const datetimeObj = new Date(datetime);
     if (!datetime) {
@@ -14,7 +14,7 @@ router.get("/noise-ratings", async (req, res) => {
       }
     
     try{
-        let collection = db.collection("noiseModel");
+        let collection = db.collection("odourModel");
         let latestModel = await collection.findOne({}, { sort: { date: -1 } });
 
         //this assumes a method called 'predict'
@@ -26,7 +26,7 @@ router.get("/noise-ratings", async (req, res) => {
         res.status(500).send({ message: "An error occurred", error: error.message });
     }
 })
-router.get("/noise-ratings/location", async (req, res) => {
+router.get("/odour-ratings/location", async (req, res) => {
     const { datetime, lat, long } = req.query;
     if (!datetime) {
         return res.status(400).send({ message: "A datetime parameter is required" });
@@ -40,7 +40,7 @@ router.get("/noise-ratings/location", async (req, res) => {
     const datetimeObj = new Date(datetime);
     
     try{
-        let collection = db.collection("noiseModel");
+        let collection = db.collection("odourModel");
         let latestModel = await collection.findOne({}, { sort: { date: -1 } });
 
         //this assumes a method called 'predict'
