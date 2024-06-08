@@ -1,12 +1,11 @@
-import js from "@eslint/js";
+import pluginJs from "@eslint/js";
 import globals from "globals";
-import importPlugin from "eslint-plugin-import";
+import pluginImport from "eslint-plugin-import";
 
 export default [
   {
     ignores: ["logs", "eslint.config.js", "node_modules"]
   },
-  js.configs.recommended,
   {
     languageOptions: {
       ecmaVersion: "latest",
@@ -20,7 +19,7 @@ export default [
       },
     },
     plugins: {
-      import: importPlugin,
+      "import": pluginImport,
     },
     rules: {
       // Import
@@ -52,8 +51,8 @@ export default [
       "no-multi-spaces": "error",
       "padding-line-between-statements": [
         "error",
-        { "blankLine": "never", "prev": "import", "next": "import" },  // no blank row for consecutive import statements
         { "blankLine": "always", "prev": "import", "next": "*" },  // 1 blank row after import
+        { "blankLine": "never", "prev": "import", "next": "import" },  // no blank row for consecutive import statements
         { "blankLine": "always", "prev": "*", "next": "export" }   // 1 blank row before export
       ],
 
@@ -65,4 +64,5 @@ export default [
       "arrow-spacing": ["error", { "before": true, "after": true }],
     }
   },
+  pluginJs.configs.recommended,
 ];
