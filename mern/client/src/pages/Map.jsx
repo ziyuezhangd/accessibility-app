@@ -1,7 +1,7 @@
 import React from 'react';
-import { Map as MapComponent } from '../components/Map';
-import { GoogleMapApiLoader } from 'react-google-map-wrapper';
 import { Suspense } from 'react';
+import { GoogleMapApiLoader } from 'react-google-map-wrapper';
+import { Map as MapComponent } from '../components/Map';
 
 export default function Map() {
   const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY;

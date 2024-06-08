@@ -1,5 +1,6 @@
 import { GoogleMap, Marker } from 'react-google-map-wrapper';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG } from '../utils/MapUtils';
+
 // Docs: https://pyjun01.github.io/react-google-map-wrapper/docs/introdution/
 export const Map = () => {
   return (
