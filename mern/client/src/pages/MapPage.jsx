@@ -3,7 +3,7 @@ import { Map as MapComponent } from '../components/map/Map';
 import { GoogleMapApiLoader } from 'react-google-map-wrapper';
 import { Suspense } from 'react';
 
-export default function Map() {
+export default function MapPage() {
   const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY;
 
   return (
