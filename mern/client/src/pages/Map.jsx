@@ -1,5 +1,5 @@
 import React from 'react';
-import { Map as MapComponent } from '../components/Map';
+import { Map as MapComponent } from '../components/map/Map';
 import { GoogleMapApiLoader } from 'react-google-map-wrapper';
 import { Suspense } from 'react';
 
