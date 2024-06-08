@@ -2,7 +2,7 @@ import pluginJs from "@eslint/js";
 
 export default [
   {
-    ignorePatterns: ['logs', 'eslint.config.js'],
+    ignorePatterns: ['logs', 'eslint.config.js', 'node_modules'],
     env: {
       node: true,
       es2021: true,
