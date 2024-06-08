@@ -11,6 +11,7 @@ export default [
     ignores: ['dist', 'eslint.config.js', 'node_modules']
   },
   {
+    files: ["**/*.{js,jsx,ts,tsx}"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
@@ -73,8 +74,8 @@ export default [
       "no-multi-spaces": "error",
       "padding-line-between-statements": [
         "error",
-        { "blankLine": "never", "prev": "import", "next": "import" },  // no blank row for consecutive import statements
         { "blankLine": "always", "prev": "import", "next": "*" },  // 1 blank row after import
+        { "blankLine": "never", "prev": "import", "next": "import" },  // no blank row for consecutive import statements
         { "blankLine": "always", "prev": "*", "next": "export" }   // 1 blank row before export
       ],
 
