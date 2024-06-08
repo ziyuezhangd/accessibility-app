@@ -6,9 +6,9 @@ import {
 } from "react-router-dom";
 import App from "./App";
 import "./index.css";
-import Map from './pages/Map';
-import Landing from './pages/Landing';
-import About from './pages/About';
+import MapPage from './pages/MapPage';
+import LandingPage from './pages/LandingPage';
+import AboutPage from './pages/AboutPage';
 
 const router = createBrowserRouter([
   {
@@ -17,7 +17,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Landing />,
+        element: <LandingPage />,
       },
     ],
   },
@@ -27,7 +27,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/map",
-        element: <Map />,
+        element: <MapPage />,
       },
     ],
   },
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/about",
-        element: <About />,
+        element: <AboutPage />,
       },
     ],
   },

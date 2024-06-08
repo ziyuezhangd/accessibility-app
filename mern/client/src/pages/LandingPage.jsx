@@ -5,7 +5,7 @@ import Blurb from '../components/landing/Blurb';
 import Faq from '../components/landing/Faq';
 import MeetTheTeam from '../components/landing/MeetTheTeam';
 
-export default function Landing() {
+export default function LandingPage() {
   return (
     <>
       <Hero />
