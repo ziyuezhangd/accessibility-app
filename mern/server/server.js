@@ -4,10 +4,10 @@ import records from "./routes/record.js";
 import path from "path";
 import busynessRating from "./routes/busynessRating.js"
 import noiseRating from "./routes/noiseRating.js"
-//import blockRatings from "./routes/blockRating.js"
-//import models from "./routes/modelRoute.js"
+import odourRating from "./routes/odourRating.js"
+import soundRating from "./routes/soundRating.js"
 //import reports from "./routes/report.js"
-//import pointsOfInterst from "./routes/pointOfInterest.js"
+
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -15,12 +15,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/record", records);
-app.use("/busynessRating", busynessRating)
-app.use("/noiseRating", noiseRating)
-//app.use("/blockRating", blockRatings);
-//app.use("/modelRoute", models);
+app.use("/busyness-ratings", busynessRating)
+app.use("/noise-ratings", noiseRating)
+app.use("/odour-ratings", odourRating)
+app.use("/sound-ratings", soundRating)
 //app.use("/report", reports);
-//app.use("/pointOfInterest", pointsOfInterst)
+
 
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "..", "client", "dist")));

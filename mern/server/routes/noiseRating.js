@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 
-router.get("/noiseRating", async (req, res) => {
+router.get("/noise-ratings", async (req, res) => {
     const { datetime } = req.query;
     const datetimeObj = new Date(datetime);
     if (!datetime) {
