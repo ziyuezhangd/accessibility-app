@@ -11,42 +11,54 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
+import { Accessibility, FavoriteBorder } from '@mui/icons-material';
+import { List, ListItem } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages = ['Map', 'About us'];
 
 export const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElFavorites, setAnchorElFavorites] = React.useState(null);
 
+  const navigate = useNavigate();
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
+  const handleOpenFavorites = (event) => {
+    setAnchorElFavorites(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
+  const handleCloseNavMenu = (e) => {
     setAnchorElNav(null);
+    switch (e.target.innerText.toLowerCase()) {
+      case 'map':
+        navigate('/map');
+        break;
+      case 'about us':
+        navigate('/about');
+        break;
+      default:
+        break;
+    }
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  const handleCloseFavorites = () => {
+    setAnchorElFavorites(null);
   };
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
+    <AppBar position='static'>
+      <Container maxWidth='xl'>
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Accessibility sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
-            variant="h6"
+            variant='h6'
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            component='a'
+            href='/'
             sx={{
-              mr: 2,
+              mr: 0,
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
@@ -55,22 +67,32 @@ export const NavBar = () => {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            ACCESS
+          </Typography>
+          <Typography
+            variant='h6'
+            noWrap
+            component='a'
+            href='#app-bar-with-responsive-menu'
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 300,
+              letterSpacing: '0rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            NYC
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
+            <IconButton size='large' aria-label='account of current user' aria-controls='menu-appbar' aria-haspopup='true' onClick={handleOpenNavMenu} color='inherit'>
               <MenuIcon />
             </IconButton>
             <Menu
-              id="menu-appbar"
+              id='menu-appbar'
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: 'bottom',
@@ -89,17 +111,17 @@ export const NavBar = () => {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                  <Typography textAlign='center'>{page}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <Accessibility sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
-            variant="h5"
+            variant='h5'
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            component='a'
+            href='/'
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -111,30 +133,24 @@ export const NavBar = () => {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            ACCESS NYC
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
+              <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
                 {page}
               </Button>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
+            <IconButton onClick={handleOpenFavorites} sx={{ p: 0 }}>
+              <FavoriteBorder alt='Favorites' sx={{ color: 'white' }} />
+            </IconButton>
             <Menu
               sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
+              id='menu-appbar'
+              anchorEl={anchorElFavorites}
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'right',
@@ -144,18 +160,16 @@ export const NavBar = () => {
                 vertical: 'top',
                 horizontal: 'right',
               }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
+              open={Boolean(anchorElFavorites)}
+              onClose={handleCloseFavorites}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                <ListItem alignItems='flex-start'>Favorites go here</ListItem>
+              </List>
             </Menu>
           </Box>
         </Toolbar>
       </Container>
     </AppBar>
   );
-}
+};
