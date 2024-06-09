@@ -12,28 +12,29 @@
 
 Check [Notion-Development Lifecycle](https://www.notion.so/Development-Lifecycle-765c3a23d0ac4d3bb95618213883b4a8) for details
 
-If anything unexpected or undesired happens after you make a commit, push to remote, make a pull request or whatever, don't worry and contact the maintenance lead. We will fix it together!
+If anything unexpected or undesired happens after you make a commit, push to remote, make a pull request or whatever, don't worry and contact maintenance lead. We will fix it together!
 
 ## Running
 Start frontend application for development, run:
-`npm install
-npm run dev`
+```bash
+npm install
+npm run dev
+```
 
 Start backend application for development, run:
-`npm install
-npm run dev`
+```bash
+npm install
+npm run dev
+```
 
 ## Testing
 - Conduct basic unit tests for the feature you develop on your own branch before merge it into 'dev'.
 - Maintenance lead conducts unit tests, integration tests and E2E tests on branch 'dev' for all available features.
 - Load test, security test and performance test will be conducted after sprint 3 when a minimal product is available by maintenance lead.
 
-## Logging
 
 ## Tech Stack
-- Frontend Team:
-- Backend Team:
-  - Server: (for example) Node.js
-- Data Team:
-  - Database: (for example) MongoDB
-  - Data Analytics: (for example) Python scikit-learn
+- Frontend: React
+- Backend: Express + Node.js
+- Database: MongoDB
+- Data Analytics:
