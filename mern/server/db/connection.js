@@ -1,6 +1,6 @@
-import dotenv from "dotenv";
-import { MongoClient, ServerApiVersion } from "mongodb";
-import logger from "../logger.js";
+import dotenv from 'dotenv';
+import { MongoClient, ServerApiVersion } from 'mongodb';
+import logger from '../logger.js';
 
 // Load environment variables
 dotenv.config();  
@@ -20,9 +20,9 @@ try {
   // Connect the client to the server
   await client.connect();
   // Send a ping to confirm a successful connection
-  await client.db("admin").command({ ping: 1 });
+  await client.db('admin').command({ ping: 1 });
   logger.info(
-   "Pinged your deployment. You successfully connected to MongoDB!"
+    'Pinged your deployment. You successfully connected to MongoDB!'
   );
 } catch(err) {
   logger.error(err);

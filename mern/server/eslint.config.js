@@ -6,6 +6,7 @@ export default [
   {
     ignores: ["logs", "eslint.config.js", "node_modules"]
   },
+  pluginJs.configs.recommended,
   {
     languageOptions: {
       ecmaVersion: "latest",
@@ -64,5 +65,4 @@ export default [
       "arrow-spacing": ["error", { "before": true, "after": true }],
     }
   },
-  pluginJs.configs.recommended,
 ];

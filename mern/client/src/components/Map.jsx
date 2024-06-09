@@ -11,13 +11,13 @@ export const Map = () => {
     const lng = latLng.lng();
     if (isPlaceIconClicked) {
       // Do things
-      console.log('Place clicked: ', e.placeId, lat, lng)
+      console.log('Place clicked: ', e.placeId, lat, lng);
     }
     if (isLocationClicked) {
       // Do things
-      console.log('Location clicked: ', lat, lng)
+      console.log('Location clicked: ', lat, lng);
     }
-  }
+  };
   return (
     <GoogleMap className='h-screen' zoom={DEFAULT_ZOOM} center={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }} onClick={handleMapClicked}>
       <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} />

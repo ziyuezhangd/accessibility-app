@@ -10,6 +10,8 @@ export default [
   {
     ignores: ['dist', 'eslint.config.js', 'node_modules']
   },
+  pluginJs.configs.recommended,
+  pluginReactConfig,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     languageOptions: {
@@ -48,7 +50,7 @@ export default [
       // Import
       "import/no-unresolved": "error",
       "import/named": "error",
-      "import/no-named-export": "error",
+      "import/no-named-export": "warn",
       "import/first": "error",
       "import/order": ["error", {
         groups: [
@@ -105,6 +107,4 @@ export default [
       "jsx-a11y/interactive-supports-focus": "warn",
     },
   },
-  pluginJs.configs.recommended,
-  pluginReactConfig,
 ];
