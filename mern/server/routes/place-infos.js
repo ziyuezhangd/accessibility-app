@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 
-const apiUrl = 'https://accessibility-cloud-v2.freetls.fastly.net';
+
 const ACCESSIBILITY_CLOUD_API_KEY = process.env.ACCESSIBILITY_CLOUD_API_KEY;
 const placeInfosRouter = express.Router();
 const tiles = [
@@ -50,7 +50,7 @@ const makeRequest = ({ x, y, z }) => {
     return new Promise((resolve, reject) => {
       const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&z=${z}&x=${x}&y=${y}&filter=fully-accessible-by-wheelchair&exclude=originalId,infoPageUrl,sourceId,sourceImportId,parentCategoryIds`;
       const options = {
-        hostname: apiUrl.replace('https://', ''),
+        hostname: 'accessibility-cloud-v2.freetls.fastly.net',
         path: `/place-infos.json${queryString}`,
         method: 'GET',
         headers: {
