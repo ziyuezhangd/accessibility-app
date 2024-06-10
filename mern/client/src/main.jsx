@@ -3,12 +3,12 @@ import * as ReactDOM from 'react-dom/client';
 import {
   createBrowserRouter,
   RouterProvider,
-} from 'react-router-dom';
-import App from './App';
-import './index.css';
-import About from './pages/About';
-import Landing from './pages/Landing';
-import Map from './pages/Map';
+} from "react-router-dom";
+import App from "./App";
+import "./index.css";
+import MapPage from './pages/MapPage';
+import LandingPage from './pages/LandingPage';
+import AboutPage from './pages/AboutPage';
 
 const router = createBrowserRouter([
   {
@@ -16,8 +16,8 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/',
-        element: <Landing />,
+        path: "/",
+        element: <LandingPage />,
       },
     ],
   },
@@ -26,8 +26,8 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/map',
-        element: <Map />,
+        path: "/map",
+        element: <MapPage />,
       },
     ],
   },
@@ -36,8 +36,8 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/about',
-        element: <About />,
+        path: "/about",
+        element: <AboutPage />,
       },
     ],
   },

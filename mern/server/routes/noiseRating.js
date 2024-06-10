@@ -3,12 +3,14 @@ import db from '../db/connection.js';
 
 const router = express.Router();
 
-router.get('/noise-ratings', async (req, res) => {
-  const { datetime } = req.query;
-  const datetimeObj = new Date(datetime);
-  if (!datetime) {
-    return res.status(400).send({ message: 'Datetime parameter is required' });
-  }
+
+
+router.get("/", async (req, res) => {
+    const { datetime } = req.query;
+    const datetimeObj = new Date(datetime);
+    if (!datetime) {
+        return res.status(400).send({ message: "Datetime parameter is required" });
+      }
     
   try{
     const collection = db.collection('noiseModel');
@@ -17,17 +19,17 @@ router.get('/noise-ratings', async (req, res) => {
     //this assumes a method called 'predict'
     const predictions = latestModel.predict(datetimeObj);
 
-    res.status(200).send(predictions);
-  }
-  catch{
-    res.status(500).send({ message: 'An error occurred', error: error.message });
-  }
-});
-router.get('/noise-ratings/location', async (req, res) => {
-  const { datetime, lat, long } = req.query;
-  if (!datetime) {
-    return res.status(400).send({ message: 'A datetime parameter is required' });
-  }
+        res.status(200).send(predictions);
+    }
+    catch{
+        res.status(500).send({ message: "An error occurred", error: error.message });
+    }
+})
+router.get("/location", async (req, res) => {
+    const { datetime, lat, long } = req.query;
+    if (!datetime) {
+        return res.status(400).send({ message: "A datetime parameter is required" });
+      }
       
   if (!lat || !long) {
     return res.status(400).send({ message: 'The latitude and longitude parameters are required' });
