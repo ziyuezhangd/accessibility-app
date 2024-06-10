@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 
-router.get("/noise-ratings", async (req, res) => {
+router.get("/", async (req, res) => {
     const { datetime } = req.query;
     const datetimeObj = new Date(datetime);
     if (!datetime) {
@@ -26,7 +26,7 @@ router.get("/noise-ratings", async (req, res) => {
         res.status(500).send({ message: "An error occurred", error: error.message });
     }
 })
-router.get("/noise-ratings/location", async (req, res) => {
+router.get("/location", async (req, res) => {
     const { datetime, lat, long } = req.query;
     if (!datetime) {
         return res.status(400).send({ message: "A datetime parameter is required" });
