@@ -48,7 +48,7 @@ const tiles = [
 
 const makeRequest = ({ x, y, z }) => {
     return new Promise((resolve, reject) => {
-      const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&z=${z}&x=${x}&y=${y}&filter=fully-accessible-by-wheelchair&exclude=originalId,infoPageUrl,sourceId,sourceImportId,parentCategoryIds`;
+      const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&z=${z}&x=${x}&y=${y}&filter=fully-accessible-by-wheelchair&exclude=properties.infoPageUrl,properties.parentCategoryIds`;
       const options = {
         hostname: 'accessibility-cloud-v2.freetls.fastly.net',
         path: `/place-infos.json${queryString}`,
