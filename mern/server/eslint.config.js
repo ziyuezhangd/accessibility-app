@@ -15,8 +15,7 @@ export default [
         ...globals.browser,
         ...globals.node,
         ...globals.es2021,
-        process: "writable",
-        __dirname: "writable",  // readonly?
+        process: "readonly",
       },
     },
     plugins: {
