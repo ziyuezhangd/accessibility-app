@@ -4,9 +4,12 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import records from "./routes/record.js";
 import path from "path";
+//npm install body-parser
+import bodyParser from "body-parser";
 import busynessRating from "./routes/busynessRating.js"
 import noiseRating from "./routes/noiseRating.js"
 import odourRating from "./routes/odourRating.js"
+import feedback from "./routes/feedback.js"
 import soundRating from "./routes/soundRating.js"
 //import reports from "./routes/report.js"
 import logger from "./logger.js";
@@ -17,14 +20,16 @@ dotenv.config();
 const PORT = process.env.PORT || 5050;
 const app = express();
 
+app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json());
 app.use("/record", records);
 app.use("/busyness-ratings", busynessRating)
 app.use("/noise-ratings", noiseRating)
 app.use("/odour-ratings", odourRating)
+app.use("/feedback", feedback)
 app.use("/sound-ratings", soundRating)
-//app.use("/report", reports);
+
 
 
 const __dirname = path.resolve();
