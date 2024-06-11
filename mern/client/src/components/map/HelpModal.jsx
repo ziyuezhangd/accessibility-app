@@ -1,5 +1,5 @@
-import React from 'react';
 import { Modal, Typography, Box, Paper, Grid } from '@mui/material';
+import React from 'react';
 
 const style = {
   position: 'absolute',
