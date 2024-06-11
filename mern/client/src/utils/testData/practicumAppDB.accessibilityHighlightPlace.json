@@ -1,0 +1,30 @@
+[{
+  "_id": {
+    "$oid": "665c47a4eb5af44eb6f60c58"
+  },
+  "locationID": 1,
+  "locationName": "Central Park",
+  "hasCoolingPoint": true,
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      -73.9712,
+      40.7831
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "665c4909eb5af44eb6f60c5e"
+  },
+  "locationID": 1,
+  "locationName": "Shop",
+  "hasCoolingPoint": false,
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      -73.978,
+      40.784
+    ]
+  }
+}]
