@@ -8,6 +8,23 @@ on:
   push:
 
 jobs:
+  condition-debug:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Debug push event
+      if: github.event_name == 'push'
+      run: |
+        echo 'Modified files (push event): ${{ toJSON(github.event.commits) }}'
+
+    - name: Debug pull request event
+      if: github.event_name == 'pull_request'
+      run: |
+        echo "Modified files (pull request event): ${{ toJSON(github.event.pull_request) }}"
+
   lint-for-frontend:
     if: |
       (github.event_name == 'pull_request' && contains(github.event.pull_request.changed_files, 'mern/client/')) || 
