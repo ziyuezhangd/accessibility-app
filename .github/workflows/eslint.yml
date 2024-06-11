@@ -13,9 +13,24 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      
     - name: Set up Node.js environment
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
-    - name: Install dependencies
+        
+    - name: Install frontend dependencies
+      working-directory: mern/client
       run: npm install
+      
+    - name: Install backend dependencies
+      working-directory: mern/server
+      run: npm install
+
+    - name: Run frontend ESLint
+      working-directory: mern/client
+      run: npx eslint .
+
+    - name: Run backend ESLint
+      working-directory: mern/server
+      run: npx eslint .
