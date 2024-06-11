@@ -1,6 +1,6 @@
-import React from 'react'
-import { Container } from '@mui/material'
-import { lightBlue } from '@mui/material/colors'
+import { Container } from '@mui/material';
+import { lightBlue } from '@mui/material/colors';
+import React from 'react';
 
 export default function Faq() {
   return (
@@ -21,5 +21,5 @@ export default function Faq() {
     >
         Faq here
     </Container>
-  )
+  );
 }
