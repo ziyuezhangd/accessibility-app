@@ -1,7 +1,7 @@
+import { Help } from '@mui/icons-material';
+import { Button, Icon, IconButton } from '@mui/material';
 import React, { useState } from 'react';
 import { Control } from 'react-google-map-wrapper';
-import { Button, Icon, IconButton } from '@mui/material';
-import { Help } from '@mui/icons-material';
 import HelpModal from './HelpModal';
 
 export default function HelpIcon() {

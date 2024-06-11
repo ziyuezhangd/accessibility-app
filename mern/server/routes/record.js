@@ -1,7 +1,7 @@
-
 ///THIS FILE WILL BE REMOVED, IT IS HERE AS AN EXAMPLE//
 
-import express from 'express';// This will help us connect to the database
+import express from 'express';
+// This will help us connect to the database
 import { ObjectId } from 'mongodb';
 import db from '../db/connection.js';
 

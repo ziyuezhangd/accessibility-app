@@ -1,13 +1,14 @@
-import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import MuiAppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
+import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
+import * as React from 'react';
 import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
 
 const drawerWidth = 400;
+
 export default function PersistentDrawerLeft() {
   const [selectedDrawerContent, setSelectedDrawerContent] = React.useState('history');
   const [location, setLocation] = React.useState(null);
@@ -31,7 +32,7 @@ export default function PersistentDrawerLeft() {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+          ['& .MuiDrawer-paper']: { width: drawerWidth, boxSizing: 'border-box' },
         }}
       >
         <Toolbar />
