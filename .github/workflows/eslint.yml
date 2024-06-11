@@ -29,8 +29,8 @@ jobs:
 
     - name: Run frontend ESLint
       working-directory: mern/client
-      run: npx eslint .
+      run: npx eslint . --fix
 
     - name: Run backend ESLint
       working-directory: mern/server
-      run: npx eslint .
+      run: npx eslint . --fix
