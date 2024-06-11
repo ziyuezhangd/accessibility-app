@@ -98,5 +98,64 @@ placeInfosRouter.get("/", async (req, res) => {
   }
 });
 
+
+placeInfosRouter.get("/googleMapsLocation", async (req, res) => {
+  //const {lat, long } = req.query;
+  const lat = 40.7057752;
+  const long = -74.0028376;
+  const accuracy = 1;
+
+  if (!lat || !long) {
+    return res.status(400).send({ message: "The latitude and longitude parameters are required" });
+  }  
+    //not specifically filtering for 'fully' accessible here
+  const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&latitude=${lat}&longitude=${long}&accuracy=${accuracy}&exclude=properties.infoPageUrl,properties.parentCategoryIds`;;
+  const options = {
+    hostname: 'accessibility-cloud-v2.freetls.fastly.net',
+    path: `/place-infos.json${queryString}`,
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  };
+
+  try {
+    const data = await new Promise((resolve, reject) => {
+      const request = https.request(options, (response) => {
+        let data = '';
+
+        response.on('data', (chunk) => {
+          data += chunk;
+        });
+
+        response.on('end', () => {
+          if (response.headers['content-type'] && response.headers['content-type'].includes('application/json')) {
+            try {
+              resolve(JSON.parse(data));
+            } catch (error) {
+              reject(new Error('Error parsing JSON: ' + error.message));
+            }
+          } else {
+            reject(new Error('Received non-JSON response'));
+          }
+        });
+      });
+
+      request.on('error', (error) => {
+        reject(new Error('Request error: ' + error.message));
+      });
+
+      request.end();
+    });
+
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
+
+
+  
+
 export default placeInfosRouter;
 
