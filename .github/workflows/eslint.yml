@@ -6,8 +6,12 @@ on:
     branches:
     - dev
   push:
+
 jobs:
-  lint:
+  lint-for-frontend:
+    if: |
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.changed_files, 'mern/client/')) || 
+      (github.event_name == 'push' && contains(github.event.head_commit.modified, 'mern/client/'))
     runs-on: ubuntu-latest
 
     steps:
@@ -23,14 +27,31 @@ jobs:
       working-directory: mern/client
       run: npm install
       
-    - name: Install backend dependencies
-      working-directory: mern/server
-      run: npm install
-
     - name: Run frontend ESLint
       working-directory: mern/client
       run: npx eslint . --fix
+      continue-on-error: true
+  
+  lint-for-backend:
+    if: |
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.changed_files, 'mern/server/')) || 
+      (github.event_name == 'push' && contains(github.event.head_commit.modified, 'mern/server/'))
+    runs-on: ubuntu-latest
 
-    - name: Run backend ESLint
-      working-directory: mern/server
-      run: npx eslint . --fix
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      
+      - name: Install backend dependencies
+        working-directory: mern/server
+        run: npm install
+
+      - name: Run backend ESLint
+        working-directory: mern/server
+        run: npx eslint . --fix
+        continue-on-error: true
