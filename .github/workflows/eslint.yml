@@ -28,7 +28,7 @@ jobs:
       uses: tj-actions/changed-files@v44
       with:
         dir_names: "true"
-        files: 
+        dir_names_include_files: 
           mern/client/**
           mern/server/**
 

@@ -66,7 +66,7 @@ export default [
         },
       }],
 
-      // Best Practice - test1
+      // Best Practice - test
       "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
       "eqeqeq": ["error", "always"],
 
