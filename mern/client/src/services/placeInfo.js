@@ -15,6 +15,7 @@ const dummyPlaceInfo = {
     organizationId: 'LPb4y2ri7b6fLxLFa',
   },
 };
+
 export const getPlaceInfos = () => {
   // TODO: actually call the endpoint
   return [dummyPlaceInfo];
