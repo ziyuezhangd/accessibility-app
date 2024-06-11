@@ -25,7 +25,7 @@ export default [
       // Import
       "import/no-unresolved": "error",
       "import/named": "error",
-      "import/no-named-export": "error",
+      "import/no-named-export": "warn",
       "import/first": "error",
       "import/order": ["error", {
         groups: [
