@@ -39,9 +39,10 @@ export default [
         },
       }],
       
-      // Variables
+      // Best Practice
       "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
       "eqeqeq": ["error", "always"],
+      'no-console': 'warn',
 
       // Stylistic Issues
       "indent": ["error", 2],
