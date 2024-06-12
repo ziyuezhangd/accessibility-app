@@ -1,6 +1,6 @@
-import React from 'react';
 import { Grid, Container, Typography, Box, Paper } from '@mui/material';
 import { cyan } from '@mui/material/colors';
+import React from 'react';
 
 export default function Features() {
   const features = [
