@@ -6,6 +6,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { Outlet } from 'react-router-dom';
 import { NavBar } from './components/NavBar';
+import DataTransferComponent from './DataTransferComponent'
 
 const App = () => {
   return (
