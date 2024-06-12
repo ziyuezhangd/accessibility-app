@@ -1,20 +1,27 @@
 import { Box, useTheme } from '@mui/material';
-import { GoogleMap, Marker } from 'react-google-map-wrapper';
+import { GoogleMap, InfoWindow, Marker } from 'react-google-map-wrapper';
 import HelpIcon from './HelpIcon';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG } from '../../utils/MapUtils';
+import MapContent from './MapContent';
+import { useState } from 'react';
 
 // Docs: https://pyjun01.github.io/react-google-map-wrapper/docs/introdution/
 export const Map = () => {
   const theme = useTheme();
+  const [isOpen, setOpen] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+
   const handleMapClicked = (map, e) => {
     const isPlaceIconClicked = e.placeId !== undefined;
     const isLocationClicked = e.placeId === undefined;
+
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
     if (isPlaceIconClicked) {
       // Do things
-      console.log('Place clicked: ', e.placeId, lat, lng);
+      console.log('Place clicked: ', e, lat, lng);
+      setSelectedPlace(e);
     }
     if (isLocationClicked) {
       // Do things
@@ -26,8 +33,17 @@ export const Map = () => {
     // use Tailwind CSS or styled-components or anything to style your container.
     <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
       <GoogleMap style={{ height: '95vh', top: '7vh' }} zoom={DEFAULT_ZOOM} center={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }} onClick={handleMapClicked}>
-        <HelpIcon />
-        <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} />
+        {
+          selectedPlace && 
+          <InfoWindow position={{lat: selectedPlace.latLng.lat(), lng: selectedPlace.latLng.lng()}} ariaLabel='Uluru' content={<MapContent />} onCloseClick={() => setOpen(false)} open={isOpen}>
+            <Marker lat={selectedPlace.latLng.lat()} lng={selectedPlace.latLng.lng()} title='Uluru (Ayers Rock)' onClick={() => setOpen(true)} />
+          </InfoWindow>
+          }
+        {/* <InfoWindow ariaLabel='Uluru' content={<MapContent />} onCloseClick={() => setOpen(false)} open={isOpen}>
+          <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} title='Uluru (Ayers Rock)' onClick={() => setOpen(true)} />
+        </InfoWindow> */}
+        {/* <HelpIcon />
+        <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} /> */}
       </GoogleMap>
     </Box>
   );
