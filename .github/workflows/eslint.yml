@@ -5,17 +5,14 @@ on:
     types: [opened, synchronize, reopened]
     branches:
     - dev
-    # paths:
-    #   - 'mern/client/**'
-    #   - 'mern/server/**'
   push:
-    # paths:
-    #   - 'mern/client/**'
-    #   - 'mern/server/**'
 
 jobs:
-  condition-debug:
+  front-or-back:
     runs-on: ubuntu-latest
+    outputs:
+      check-front: ${{ steps.check-folder.outputs.check-front }}
+      check-back: ${{ steps.check-folder.outputs.check-back }}
 
     steps:
     - name: Checkout
@@ -23,28 +20,37 @@ jobs:
       with:
         fetch-depth: 0
       
-    - name: Get changed files
-      id: changed-files
+    - name: Get changed folders
+      id: changed-folders
       uses: tj-actions/changed-files@v44
       with:
-        dir_names: "true"
+        dir_names: 'true'
         dir_names_include_files: 
           mern/client/**
           mern/server/**
-
     
-    - name: List all changed files
+    - name: Check if frontend or backend folder is changed
+      id: check-folder
       env:
-        ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        ALL_CHANGED_FILES: ${{ steps.changed-folders.outputs.all_changed_files }}
       run: |
+        echo "check-front=false" >> $GITHUB_OUTPUT
+        echo "check-back=false" >> $GITHUB_OUTPUT
         for file in ${ALL_CHANGED_FILES}; do
-          echo "$file was changed"
+          if [[ $file == *"mern/client"* ]]; then
+            echo "check-front=true" >> $GITHUB_OUTPUT
+            echo "files in mern/client/ are changed"
+          fi
+          if [[ $file == *"mern/server"* ]]; then
+            echo "check-back=true" >> $GITHUB_OUTPUT
+            echo "files in mern/server/ are changed"
+          fi
         done
+        
 
   lint-for-frontend:
-    if: |
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.changed_files, 'mern/client/')) || 
-      (github.event_name == 'push' && contains(github.event.head_commit.modified, 'mern/client/'))
+    needs: front-or-back
+    if: needs.front-or-back.outputs.check-front == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -65,10 +71,10 @@ jobs:
       run: npx eslint . --fix
       continue-on-error: true
   
+
   lint-for-backend:
-    if: |
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.changed_files, 'mern/server/')) || 
-      (github.event_name == 'push' && contains(github.event.head_commit.modified, 'mern/server/'))
+    needs: front-or-back
+    if: needs.front-or-back.outputs.check-back == 'true'
     runs-on: ubuntu-latest
 
     steps:
