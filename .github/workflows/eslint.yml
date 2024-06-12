@@ -68,7 +68,7 @@ jobs:
       
     - name: Run frontend ESLint
       working-directory: mern/client
-      run: npx eslint . --fix
+      run: npx eslint . --fix --max-warnings 0
       continue-on-error: true
   
 
@@ -92,5 +92,5 @@ jobs:
 
       - name: Run backend ESLint
         working-directory: mern/server
-        run: npx eslint . --fix
+        run: npx eslint . --fix --max-warnings 0
         continue-on-error: true
