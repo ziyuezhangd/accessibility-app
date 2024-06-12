@@ -1,9 +1,9 @@
-import React from 'react';
-import { Map as MapComponent } from '../components/map/Map';
-import { GoogleMapApiLoader } from 'react-google-map-wrapper';
-import { Suspense } from 'react';
-import PersistentDrawerLeft from '../components/map/Drawer';
 import { Box, Grid } from '@mui/material';
+import React from 'react';
+import { Suspense } from 'react';
+import { GoogleMapApiLoader } from 'react-google-map-wrapper';
+import PersistentDrawerLeft from '../components/map/Drawer';
+import { Map as MapComponent } from '../components/map/Map';
 
 export default function MapPage() {
   const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY;
