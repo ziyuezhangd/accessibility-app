@@ -1,6 +1,6 @@
-import React from 'react';
 import { Grid, Container, Typography, Box, Paper } from '@mui/material';
 import { cyan } from '@mui/material/colors';
+import React from 'react';
 
 export default function Features() {
   const features = [
@@ -47,7 +47,7 @@ export default function Features() {
           Features
         </Typography>
         <Typography variant='body1' color='text.secondary'>
-          Explore the city with ease using our platform's features.
+          Explore the city with ease using our platforms features.
         </Typography>
       </Box>
       <Grid container spacing={2}>
