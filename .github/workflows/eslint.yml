@@ -8,7 +8,7 @@ on:
   push:
 
 jobs:
-  front-or-back:
+  check-file-changes:
     runs-on: ubuntu-latest
     outputs:
       check-front: ${{ steps.check-folder.outputs.check-front }}
@@ -49,8 +49,8 @@ jobs:
         
 
   lint-for-frontend:
-    needs: front-or-back
-    if: needs.front-or-back.outputs.check-front == 'true'
+    needs: check-file-changes
+    if: needs.check-file-changes.outputs.check-front == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -72,8 +72,8 @@ jobs:
   
 
   lint-for-backend:
-    needs: front-or-back
-    if: needs.front-or-back.outputs.check-back == 'true'
+    needs: check-file-changes
+    if: needs.check-file-changes.outputs.check-back == 'true'
     runs-on: ubuntu-latest
 
     steps:
