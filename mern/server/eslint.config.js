@@ -39,7 +39,7 @@ export default [
         },
       }],
       
-      // Best Practice - test5
+      // Best Practice
       "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }],
       "eqeqeq": ["error", "always"],
       'no-console': 'warn',
