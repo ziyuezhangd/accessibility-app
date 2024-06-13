@@ -66,9 +66,9 @@ jobs:
       working-directory: mern/client
       run: npm install
       
-    - name: Run frontend ESLint
+    - name: Run frontend ESLint check
       working-directory: mern/client
-      run: npx eslint . --fix
+      run: npx eslint .
   
 
   lint-for-backend:
@@ -89,6 +89,6 @@ jobs:
         working-directory: mern/server
         run: npm install
 
-      - name: Run backend ESLint
+      - name: Run backend ESLint check
         working-directory: mern/server
-        run: npx eslint . --fix
+        run: npx eslint .
