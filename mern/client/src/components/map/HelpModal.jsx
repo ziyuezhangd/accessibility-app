@@ -19,9 +19,9 @@ const style = {
 
 export default function HelpModal({ isOpen, onClose }) {
   const handleButtonClicked = () => {
-    console.log('Clicked')
     onClose();
   }
+
   return (
     <Modal open={isOpen} onClose={onClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
       <Box sx={style}>
