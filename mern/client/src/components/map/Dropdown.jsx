@@ -4,7 +4,7 @@ import list from '../../list.json';
 
 function Dropdown({ onSelect }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('Heatmap'); // default button text
+  const [selectedOption, setSelectedOption] = useState('Select Heatmap'); // default button text
 
   const handleSelect = (item) => {
     onSelect(item);

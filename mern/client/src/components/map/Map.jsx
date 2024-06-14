@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG } from '../../utils/MapUtils';
@@ -7,42 +7,94 @@ import { Box, useTheme } from '@mui/material';
 import Dropdown from './Dropdown';
 
 const busynessData = [
-  { lat: 40.7831, lng: -73.9712 },
-  { lat: 40.748817, lng: -73.985428 },
-  // ... other data points
+  { lat: 40.7831, lng: -73.9712, weight: 2 },
+  { lat: 40.748817, lng: -73.985428, weight: 1 },
+  { lat: 40.73061, lng: -73.935242, weight: 3 },
+  { lat: 40.712776, lng: -74.005974, weight: 4 },
+  { lat: 40.758896, lng: -73.98513, weight: 2 },
+  { lat: 40.748817, lng: -73.968285, weight: 3 },
+  { lat: 40.729975, lng: -73.980003, weight: 1 },
+  { lat: 40.7624, lng: -73.975661, weight: 4 },
+  { lat: 40.771302, lng: -73.964422, weight: 2 },
+  { lat: 40.748441, lng: -73.985664, weight: 5 },
 ];
 
 const noiseData = [
-  { lat: 40.730610, lng: -73.935242 },
-  { lat: 40.789623, lng: -73.959893 },
-  // ... other data points
+  { lat: 40.73061, lng: -73.935242, weight: 3 },
+  { lat: 40.789623, lng: -73.959893, weight: 1 },
+  { lat: 40.776676, lng: -73.971321, weight: 4 },
+  { lat: 40.754932, lng: -73.984016, weight: 2 },
+  { lat: 40.748817, lng: -73.992428, weight: 5 },
+  { lat: 40.7366, lng: -73.998321, weight: 2 },
+  { lat: 40.712776, lng: -73.995974, weight: 3 },
+  { lat: 40.780751, lng: -73.977182, weight: 1 },
+  { lat: 40.764356, lng: -73.973028, weight: 4 },
+  { lat: 40.743305, lng: -73.98821, weight: 5 },
 ];
 
 const odorData = [
-  { lat: 40.712776, lng: -74.005974 },
-  { lat: 40.706446, lng: -74.009370 },
-  // ... other data points
+  { lat: 40.712776, lng: -74.005974, weight: 5 },
+  { lat: 40.706446, lng: -74.00937, weight: 3 },
+  { lat: 40.759011, lng: -73.984472, weight: 1 },
+  { lat: 40.7433, lng: -74.003597, weight: 4 },
+  { lat: 40.742054, lng: -74.003047, weight: 2 },
+  { lat: 40.729517, lng: -73.998512, weight: 3 },
+  { lat: 40.753182, lng: -73.982253, weight: 5 },
+  { lat: 40.758896, lng: -73.96813, weight: 1 },
+  { lat: 40.731233, lng: -73.994242, weight: 4 },
+  { lat: 40.7243, lng: -73.99771, weight: 2 },
 ];
 
 const busynessGradient = [
-  'rgba(0, 0, 255, 0)',
-  'rgba(0, 0, 255, 1)'
+  'rgba(173, 216, 230, 0)',  // light blue
+  'rgba(173, 216, 230, 1)',
+  'rgba(0, 0, 255, 1)',  // blue
+  'rgba(0, 0, 139, 1)'   // dark blue
 ];
 
 const noiseGradient = [
-  'rgba(255, 255, 0, 0)',
-  'rgba(255, 0, 0, 1)'
+  'rgba(0, 255, 0, 0)',  // green
+  'rgba(0, 255, 0, 1)',
+  'rgba(255, 255, 0, 1)',  // yellow
+  'rgba(255, 0, 0, 1)'   // red
 ];
 
 const odorGradient = [
-  'rgba(0, 255, 0, 0)',
-  'rgba(0, 255, 0, 1)'
+  'rgba(0, 255, 0, 0)',  // green
+  'rgba(0, 255, 0, 1)',
+  'rgba(255, 255, 0, 1)',  // yellow
+  'rgba(128, 0, 128, 1)'   // purple
 ];
 
 export const Map = () => {
   const theme = useTheme();
-  const [heatMapData, setHeatMapData] = useState(busynessData);
-  const [heatMapGradient, setHeatMapGradient] = useState(busynessGradient);
+  const [heatMapData, setHeatMapData] = useState([]);
+  const [heatMapGradient, setHeatMapGradient] = useState([]);
+  const [mapInstance, setMapInstance] = useState(null);
+  const [heatmapLayer, setHeatmapLayer] = useState(null);
+
+  useEffect(() => {
+    if (!mapInstance) return;
+
+    if (heatmapLayer) {
+      heatmapLayer.setMap(null); // Remove existing heatmap layer
+    }
+
+    if (heatMapData.length > 0) {
+      const newHeatmapLayer = new window.google.maps.visualization.HeatmapLayer({
+        data: heatMapData.map(data => ({
+          location: new window.google.maps.LatLng(data.lat, data.lng),
+          weight: data.weight
+        })),
+        map: mapInstance,
+        gradient: heatMapGradient,
+        radius: 50,
+        opacity: 0.6,
+      });
+
+      setHeatmapLayer(newHeatmapLayer); // Store the new heatmap layer instance
+    }
+  }, [mapInstance, heatMapData, heatMapGradient]);
 
   const handleSelect = (item) => {
     switch (item.id) {
@@ -59,8 +111,8 @@ export const Map = () => {
         setHeatMapGradient(odorGradient);
         break;
       default:
-        setHeatMapData(busynessData);
-        setHeatMapGradient(busynessGradient);
+        setHeatMapData([]);
+        setHeatMapGradient([]);
     }
   };
 
@@ -85,21 +137,26 @@ export const Map = () => {
         zoom={DEFAULT_ZOOM}
         center={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
         onClick={handleMapClicked}
+        onLoad={map => setMapInstance(map)}
         options={{
-          // Including the visualization library to use HeatmapLayer
-          libraries: ['visualization']
+          libraries: ['visualization'],
         }}
       >
         <Dropdown onSelect={handleSelect} />
         <HelpIcon />
-        <HeatmapLayer
-          data={heatMapData.map(data => new window.google.maps.LatLng(data.lat, data.lng))}
-          options={{
-            radius: 50, // a more typical radius for visualization
-            opacity: 0.6,
-            gradient: heatMapGradient,
-          }}
-        />
+        {heatMapData.length >= 0 && (
+          <HeatmapLayer
+            data={heatMapData.map(data => ({
+              location: new window.google.maps.LatLng(data.lat, data.lng),
+              weight: data.weight
+            }))}
+            options={{
+              radius: 50,
+              opacity: 0.6,
+              gradient: heatMapGradient,
+            }}
+          />
+        )}
         <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} />
       </GoogleMap>
     </Box>
