@@ -47,7 +47,7 @@ export default function Features() {
           Features
         </Typography>
         <Typography variant='body1' color='text.secondary'>
-          Explore the city with ease using our platform's features.
+          Explore the city with ease using our platform features.
         </Typography>
       </Box>
       <Grid container spacing={2}>
