@@ -1,10 +1,10 @@
 {
   "name": "server",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon --env-file=.env server.js",
+    "dev": "npx nodemon --env-file=.env server.js",
     "lint": "npx eslint . --fix",
     "start": "node --env-file=.env server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.4.0",
-    "eslint": "^9.4.0",
+    "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
     "globals": "^15.4.0",
     "nodemon": "^3.1.3"

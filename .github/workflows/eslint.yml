@@ -1,0 +1,94 @@
+name: ESLint Check
+
+on: 
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+    - dev
+  push:
+
+jobs:
+  check-file-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      check-front: ${{ steps.check-folder.outputs.check-front }}
+      check-back: ${{ steps.check-folder.outputs.check-back }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+      
+    - name: Get changed folders
+      id: changed-folders
+      uses: tj-actions/changed-files@v44
+      with:
+        dir_names: 'true'
+        dir_names_include_files: 
+          mern/client/**
+          mern/server/**
+    
+    - name: Check if frontend or backend folder is changed
+      id: check-folder
+      env:
+        ALL_CHANGED_FILES: ${{ steps.changed-folders.outputs.all_changed_files }}
+      run: |
+        echo "check-front=false" >> $GITHUB_OUTPUT
+        echo "check-back=false" >> $GITHUB_OUTPUT
+        for file in ${ALL_CHANGED_FILES}; do
+          if [[ $file == *"mern/client"* ]]; then
+            echo "check-front=true" >> $GITHUB_OUTPUT
+            echo "files in mern/client/ are changed"
+          fi
+          if [[ $file == *"mern/server"* ]]; then
+            echo "check-back=true" >> $GITHUB_OUTPUT
+            echo "files in mern/server/ are changed"
+          fi
+        done
+        
+
+  lint-for-frontend:
+    needs: check-file-changes
+    if: needs.check-file-changes.outputs.check-front == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Set up Node.js environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        
+    - name: Install frontend dependencies
+      working-directory: mern/client
+      run: npm install
+      
+    - name: Run frontend ESLint check
+      working-directory: mern/client
+      run: npx eslint .
+  
+
+  lint-for-backend:
+    needs: check-file-changes
+    if: needs.check-file-changes.outputs.check-back == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      
+      - name: Install backend dependencies
+        working-directory: mern/server
+        run: npm install
+
+      - name: Run backend ESLint check
+        working-directory: mern/server
+        run: npx eslint .
