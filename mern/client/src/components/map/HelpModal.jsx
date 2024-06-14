@@ -20,7 +20,7 @@ const style = {
 export default function HelpModal({ isOpen, onClose }) {
   const handleButtonClicked = () => {
     onClose();
-  }
+  };
 
   return (
     <Modal open={isOpen} onClose={onClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
@@ -71,7 +71,7 @@ export default function HelpModal({ isOpen, onClose }) {
                 Click for details
               </Typography>
               <Typography variant='subtitle1' component='h1'>
-                Learn more about the selected street to see it's busyness, noise and odour scores as well as nearby accessible points of interest.
+                Learn more about the selected street to see its busyness, noise and odour scores as well as nearby accessible points of interest.
               </Typography>
             </Paper>
           </Grid>
