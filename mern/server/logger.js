@@ -21,10 +21,8 @@ const level = () => {
 // Define format
 const commonFormat = format.combine(
   format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  format.errors({ stack: true }),
-  format.printf(({ level, timestamp, message, stack }) => {
-    const msg = `${timestamp} [${level.toUpperCase()}] ${message}`;
-    return stack ? `${msg}\nTraceback:\n${stack}` : msg;
+  format.printf(({ level, timestamp, message }) => {
+    return `${timestamp} [${level.toUpperCase()}] ${message}`;
   })
 );
 const consoleFormat = format.combine(
@@ -44,12 +42,7 @@ const fileFormat = format.combine(
   commonFormat,
   format.uncolorize()    
 );
-const exceptionFormat = format.combine(
-  format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  format.printf(({ level, timestamp, message }) => {
-    return `${timestamp} [${level.toUpperCase()}] ${message}`;
-  })
-);
+
 
 // Define file paths
 const __dirname = path.resolve();
@@ -70,7 +63,7 @@ const logTransport = [
 const logger = createLogger({
   level: level(), //default level
   levels: levels,
-  format: exceptionFormat,
+  format: commonFormat,
   transports: logTransport,
   exceptionHandlers: [
     new transports.Console(),
