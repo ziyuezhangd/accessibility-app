@@ -1,10 +1,12 @@
 
 export const getBusynessRatings = () => {
-    return;
-}
+  return;
+};
+
 export const getNoiseRatings = () => {
-    return;
-}
+  return;
+};
+
 export const getOdourRatings = () => {
-    return;
-}
+  return;
+};
