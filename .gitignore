@@ -80,13 +80,9 @@ web_modules/
 .cache
 .parcel-cache
 
-# Next.js build output
-.next
-out
-
-# Nuxt.js build / generate output
-.nuxt
-dist
+# build output
+dist/
+out/
 
 # Gatsby files
 .cache/
