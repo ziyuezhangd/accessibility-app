@@ -1,7 +1,7 @@
 # Code inspired by https://jeremysze.github.io/GIS_exploration/build/html/networkdistance_lion.html
 # This script is an example of how to find the LION SegmentId from Lat/Lon coordinates
 import geopandas as gpd
-from shapely.geometry import box, LineString, Point,MultiPoint
+from shapely.geometry import Point
 
 gdb_file = r"input_data/lion/lion.gdb"
 lion_gdf = gpd.read_file(gdb_file, engine='pyogrio', layer='lion')
