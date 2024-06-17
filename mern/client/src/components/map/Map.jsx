@@ -4,7 +4,8 @@ import React from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import HelpIcon from './HelpIcon';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG } from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+
 
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
@@ -45,27 +46,6 @@ const odorData = [
   { lat: 40.7243, lng: -73.99771, weight: 2 },
 ];
 
-const busynessGradient = [
-  'rgba(173, 216, 230, 0)',//light blue
-  'rgba(173, 216, 230, 1)',
-  'rgba(0, 0, 255, 1)',// blue
-  'rgba(0, 0, 139, 1)'// dark blue
-];
-
-const noiseGradient = [
-  'rgba(0, 255, 0, 0)',// green
-  'rgba(0, 255, 0, 1)',
-  'rgba(255, 255, 0, 1)',// yellow
-  'rgba(255, 0, 0, 1)'// red
-];
-
-const odorGradient = [
-  'rgba(0, 255, 0, 0)', // green
-  'rgba(0, 255, 0, 1)',
-  'rgba(255, 255, 0, 1)', // yellow
-  'rgba(128, 0, 128, 1)' // purple
-];
-
 export const Map = () => {
   const theme = useTheme();
   const [heatMapData, setHeatMapData] = useState([]);
@@ -98,21 +78,21 @@ export const Map = () => {
 
   const handleSelect = (item) => {
     switch (item.id) {
-    case 1:
-      setHeatMapData(busynessData);
-      setHeatMapGradient(busynessGradient);
-      break;
-    case 2:
-      setHeatMapData(noiseData);
-      setHeatMapGradient(noiseGradient);
-      break;
-    case 3:
-      setHeatMapData(odorData);
-      setHeatMapGradient(odorGradient);
-      break;
-    default:
-      setHeatMapData([]);
-      setHeatMapGradient([]);
+      case 'busyness':
+        setHeatMapData(busynessData);
+        setHeatMapGradient(busynessGradient);
+        break;
+      case 'noise':
+        setHeatMapData(noiseData);
+        setHeatMapGradient(noiseGradient);
+        break;
+      case 'odor':
+        setHeatMapData(odorData);
+        setHeatMapGradient(odorGradient);
+        break;
+      default:
+        setHeatMapData([]);
+        setHeatMapGradient([]);
     }
   };
 

@@ -1,14 +1,14 @@
 [
     {
-        "id": 1,
+        "id": "busyness",
         "name": "Busyness"
     },
     {
-        "id": 2,
+        "id": "noise",
         "name": "Noise"
     },
     {
-        "id": 3,
+        "id": "odor",
         "name": "Odor"
     }
 ]
