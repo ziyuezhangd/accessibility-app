@@ -40,8 +40,7 @@ router.post('/', async (req, res) => {
     const collection = await db.collection('records');
     const result = await collection.insertOne(newDocument);
     res.send(result).status(204);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
     res.status(500).send('Error adding record');
   }
 });
@@ -62,7 +61,6 @@ router.patch('/:id', async (req, res) => {
     const result = await collection.updateOne(query, updates);
     res.send(result).status(200);
   } catch (error) {
-    console.error(error);
     res.status(500).send('Error updating record');
   }
 });
@@ -77,7 +75,6 @@ router.delete('/:id', async (req, res) => {
 
     res.send(result).status(200);
   } catch (error) {
-    console.error(error);
     res.status(500).send('Error deleting record');
   }
 });

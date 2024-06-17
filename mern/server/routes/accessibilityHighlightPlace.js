@@ -10,7 +10,6 @@ router.get('/', async (req, res) => {
     res.status(200).json(results);
 
   } catch (error) {
-    console.error('Error fetching accessbility highlight places:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
