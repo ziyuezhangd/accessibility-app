@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     const predictions = latestModel.predict(datetimeObj);
 
     res.status(200).send(predictions);
-  } catch {
+  } catch (error){
     res
       .status(500)
       .send({ message: 'An error occurred', error: error.message });

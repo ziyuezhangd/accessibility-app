@@ -61,8 +61,8 @@ router.patch('/:id', async (req, res) => {
     const collection = await db.collection('records');
     const result = await collection.updateOne(query, updates);
     res.send(result).status(200);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     res.status(500).send('Error updating record');
   }
 });
@@ -76,8 +76,8 @@ router.delete('/:id', async (req, res) => {
     const result = await collection.deleteOne(query);
 
     res.send(result).status(200);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     res.status(500).send('Error deleting record');
   }
 });
