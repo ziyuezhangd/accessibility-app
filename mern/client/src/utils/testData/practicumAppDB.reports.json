@@ -1,0 +1,15 @@
+[{
+  "_id": {
+    "$oid": "665c47d9eb5af44eb6f60c5b"
+  },
+  "name": "John Doe",
+  "emailAddress": "john.doe@example.com",
+  "feedback": "This is a great place!",
+  "coordinates": {
+    "type": "Point",
+    "coordinates": [
+      -73.9712,
+      40.7831
+    ]
+  }
+}]
