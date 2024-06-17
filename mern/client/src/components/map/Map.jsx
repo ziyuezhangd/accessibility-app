@@ -1,6 +1,8 @@
 import { Box, useTheme } from '@mui/material';
+import { useEffect } from 'react';
 import { GoogleMap, Marker } from 'react-google-map-wrapper';
 import HelpIcon from './HelpIcon';
+import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG } from '../../utils/MapUtils';
 
 // Docs: https://pyjun01.github.io/react-google-map-wrapper/docs/introdution/
@@ -21,6 +23,21 @@ export const Map = () => {
       console.log('Location clicked: ', lat, lng);
     }
   };
+
+  const fetchData = async () => {
+    const busynessRatings = await getBusynessRatings(new Date());
+    console.log('busynessRatings: ', busynessRatings);
+    const noiseRatings = await getNoiseRatings(new Date());
+    console.log('noiseRatings: ', noiseRatings);
+    const odourRatings = await getOdourRatings(new Date());
+    console.log('odourRatings: ', odourRatings);
+  };
+
+  useEffect(() => {
+    // This is just testing the rating queries
+    fetchData();
+  }, []);
+
   return (
     // you can pass props to map container element.
     // use Tailwind CSS or styled-components or anything to style your container.
