@@ -17,7 +17,7 @@ export default function HelpIcon() {
           <Help sx={{ fontSize: 40 }} />
         </IconButton>
       </Control>
-      <HelpModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)}/>
+      <HelpModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} />
     </>
   );
 }
