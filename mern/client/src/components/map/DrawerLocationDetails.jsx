@@ -18,7 +18,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function DrawerLocationDetails({ location, onBackClicked }) {
   const [error, setError] = React.useState('');
+  const [isFeedbackComplete, setIsFeedbackComplete] = React.useState(false);
   const handleButtonClicked = async () => {
+    // TODO: these alerts need to disappear, like toasts
+    setError('');
     try {
       await postFeedback({
         name: 'April',
@@ -29,7 +32,10 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     } catch (e) {
       setError(e.toString());
     }
+    console.log('Complete!');
+    setIsFeedbackComplete(true);
   };
+
   return (
     <>
       <DrawerHeader>
@@ -43,6 +49,7 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
         <Button onClick={handleButtonClicked}>Submit Feedback</Button>
       </Box>
       {error && <Alert severity='error'>{error}</Alert>}
+      {isFeedbackComplete && <Alert severity='success'>Feedback submitted!</Alert>}
     </>
   );
 }
