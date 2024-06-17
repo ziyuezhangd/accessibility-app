@@ -1,11 +1,15 @@
 import https from 'https';
 import dotenv from 'dotenv';
 import express from 'express';
-
 dotenv.config();
+import pkg from '@googlemaps/google-maps-services-js';
+const { Client } = pkg;
 
 const ACCESSIBILITY_CLOUD_API_KEY = process.env.ACCESSIBILITY_CLOUD_API_KEY;
+const VITE_GOOGLEMAP_KEY= process.env.VITE_GOOGLEMAP_KEY
+const client = new Client({});
 const placeInfosRouter = express.Router();
+
 const tiles = [
   { z: 14, x: 4825, y: 6160 },
   { z: 14, x: 4824, y: 6160 },
@@ -98,10 +102,14 @@ placeInfosRouter.get('/', async (req, res) => {
 });
 
 
+//trialling finding the closest point using d=√((x2 – x1)² + (y2 – y1)²).
+//so we find the points surrounding the point we're searching for and then 
+
+//scratch"" "  - Need to use API to locate accessibility cloud PLACE IDs and comapre them to the original 
+//https://developers.google.com/maps/documentation/javascript/examples/place-autocomplete-data-simple
+
 placeInfosRouter.get("/googleMapsLocation", async (req, res) => {
-  //const {lat, long } = req.query;
-  const lat = 40.7057752;
-  const long = -74.0028376;
+  const {lat, long } = req.query;
   const accuracy = 1;
 
   if (!lat || !long) {
@@ -146,14 +154,54 @@ placeInfosRouter.get("/googleMapsLocation", async (req, res) => {
 
       request.end();
     });
+//get place names from accessibility cloud respose
+    const placeNames = data.features.map(feature => feature.properties.name);
+    return placeNames;
+//     const { AutocompleteSessionToken, AutocompleteSuggestion } = await google.maps.importLibrary("places");
+//     const googlePlacesAddresses = [];
+// for (let i = 0; i < placeNames.length; i++) {
+//       const placeName = placeNames[i];
+//       const request = {
+//         input: placeName,
+//         location: { lat, lng: long },
+//         radius: 50000, // adjust the radius as needed
+//         key: VITE_GOOGLEMAP_KEY,
+//         sessionToken: new AutocompleteSessionToken(),
+//       }
+// //get the autocomplete results
+//       try {
+//         const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
+//         if (suggestions.length > 0) {
+//           const firstPrediction = suggestions[0].placePrediction;
+//           googlePlacesResults.push({
+//             name: placeName,
+//             address: firstPrediction.text.toString()
+//  // Use the text of the prediction as the address
+//           });
+// //if theres no suggestion then add the original name with no address to googlePlaceResults
+//         } else {
+//           googlePlacesResults.push({
+//             name: placeName,
+//             address: null
+//           });
+//         }
+//       } catch (error) {
+//         console.error('Error fetching suggested results', error);
+//         googlePlacesResults.push({
+//           name: placeName,
+//           address: null
+//         });
+//       }
+//     }
 
-    res.status(200).send(data);
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-});
-
-
-  
+//     res.status(200).send(googlePlacesResults);
+//   } catch (error) {
+//     res.status(500).send({ message: error.message });
+//   }
+// })
 
 export default placeInfosRouter;
+
+//{"message":"google is not defined"} ? - getting this because the API is not meant to be used in the backend...
+//npm install core-js --legacy-peer-deps
+
