@@ -1,4 +1,3 @@
-/* eslint-disable import/no-named-export */
 const dummyFeedbacks = [
   {
     name: 'April',
