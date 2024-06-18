@@ -5,8 +5,9 @@ from shapely.geometry import Point
 
 gdb_file = r"input_data/lion/lion.gdb"
 lion_gdf = gpd.read_file(gdb_file, engine='pyogrio', layer='lion')
-for col in lion_gdf.columns:
-    print(col)
+
+lion_gdf = lion_gdf[lion_gdf.LBoro == 1]
+
 # Your given coordinates
 longitude, latitude = -73.985656, 40.748433  # Example coordinates
 
@@ -20,7 +21,13 @@ if lion_gdf.crs.is_geographic:
     point_gdf = gpd.GeoDataFrame([{'geometry': point}], crs=lion_gdf.crs)
 else:
     point_gdf = gpd.GeoDataFrame([{'geometry': point}], crs="EPSG:4326").to_crs(lion_gdf.crs)
-print("Got point_gdf: ", point_gdf)
+
+# segment_data = {}
+# for row in lion_gdf.iterrows():
+#     # we know the geometry and the ID
+#     centroid_x = row.geometry.centroid.x
+#     segment_data[]
+
 # Find the nearest LION segment
 lion_gdf['distance'] = lion_gdf.geometry.distance(point_gdf.iloc[0].geometry)
 nearest_segment = lion_gdf.loc[lion_gdf['distance'].idxmin()]
