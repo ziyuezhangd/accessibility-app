@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const collection = await db.collection('accessibilityHighlightPlace');
+    const collection = db.collection('accessibilityHighlightPlace');
     const results = await collection.find({}).toArray();
     res.status(200).json(results);
 
