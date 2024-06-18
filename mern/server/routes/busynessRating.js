@@ -19,8 +19,8 @@ router.get('/', async (req, res) => {
 
     res.status(200).send(predictions);
   }
-  catch{
-    res.status(500).send({ message: 'An error occurred', error: error.message });
+  catch (error){
+    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error });
   }
 });
 router.get('/location', async (req, res) => {
@@ -45,8 +45,8 @@ router.get('/location', async (req, res) => {
 
     res.status(200).send(predictions);
   }
-  catch{
-    res.status(500).send({ message: 'An error occurred', error: error.message });
+  catch (error){
+    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error });
   }
 });
 
