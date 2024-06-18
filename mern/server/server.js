@@ -13,6 +13,7 @@ import odourRating from './routes/odourRating.js';
 import placeInfosRouter from './routes/place-infos.js';
 import records from './routes/record.js';
 //npm install body-parser
+import seatingAreas from './routes/seatingAreas.js';
 import soundRating from './routes/soundRating.js';
 //import reports from "./routes/report.js"
 
@@ -34,6 +35,7 @@ app.use('/accessibility-highlight-place', accessibilityHighlightPlace);
 
 app.use('/feedback', feedback);
 app.use('/sound-ratings', soundRating);
+app.use('/seating-areas', seatingAreas);
 
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
