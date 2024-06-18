@@ -5,10 +5,9 @@ export const DEFAULT_ZOOM = 14;
 
 // New code for gradients
 export const busynessGradient = [
-  'rgba(173, 216, 230, 0)', // light blue
-  'rgba(173, 216, 230, 1)',
+  'rgba(0, 0, 255, 0)', // transparent blue
   'rgba(0, 0, 255, 1)', // blue
-  'rgba(0, 0, 139, 1)' // dark blue
+  'rgba(255, 0, 0, 1)'  // red
 ];
 
 export const noiseGradient = [

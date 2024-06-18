@@ -6,7 +6,6 @@ import Dropdown from './Dropdown';
 import HelpIcon from './HelpIcon';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 
-
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
   { lat: 40.748817, lng: -73.985428, weight: 1 },
@@ -51,42 +50,25 @@ export const Map = () => {
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
   const [mapInstance, setMapInstance] = useState(null);
-  const [heatmapLayer, setHeatmapLayer] = useState(null);
 
   useEffect(() => {
-    if (!mapInstance) return;
-
-    if (heatmapLayer) {
-      heatmapLayer.setMap(null); // Remove existing heatmap layer
-    }
-
-    if (heatMapData.length > 0) {
-      const newHeatmapLayer = new window.google.maps.visualization.HeatmapLayer({
-        data: heatMapData.map(data => ({
-          location: new window.google.maps.LatLng(data.lat, data.lng),
-          weight: data.weight
-        })),
-        map: mapInstance,
-        gradient: heatMapGradient,
-        radius: 50,
-        opacity: 0.6,
-      });
-
-      setHeatmapLayer(newHeatmapLayer); // Store the new heatmap layer instance
-    }
-  }, [mapInstance, heatMapData, heatMapGradient]);
+    console.log('Map instance loaded:', mapInstance);
+  }, [mapInstance]);
 
   const handleSelect = (item) => {
     switch (item.id) {
       case 'busyness':
+        console.log('Setting busyness data and gradient');
         setHeatMapData(busynessData);
         setHeatMapGradient(busynessGradient);
         break;
       case 'noise':
+        console.log('Setting noise data and gradient');
         setHeatMapData(noiseData);
         setHeatMapGradient(noiseGradient);
         break;
       case 'odor':
+        console.log('Setting odor data and gradient');
         setHeatMapData(odorData);
         setHeatMapGradient(odorGradient);
         break;
@@ -117,25 +99,24 @@ export const Map = () => {
         zoom={DEFAULT_ZOOM}
         center={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
         onClick={handleMapClicked}
-        onLoad={map => setMapInstance(map)}
+        onLoad={(map) => setMapInstance(map)}
         options={{
           libraries: ['visualization'],
-          
         }}
       >
         <Dropdown onSelect={handleSelect} />
         <HelpIcon />
-        {heatMapData.length >= 0 && (
+        {console.log('Rendering HeatMap Data:', heatMapData)}
+        {console.log('Rendering HeatMap Gradient:', heatMapGradient)}
+        {heatMapData.length > 0 && (
           <HeatmapLayer
             data={heatMapData.map(data => ({
               location: new window.google.maps.LatLng(data.lat, data.lng),
               weight: data.weight
             }))}
-            options={{
-              radius: 50,
-              opacity: 0.6,
-              gradient: heatMapGradient,
-            }}
+            gradient={heatMapGradient}
+            radius={20}
+            opacity={0.6}
           />
         )}
         <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} />
