@@ -1,5 +1,7 @@
+import { API_HOST } from './utils';
+
 export const getBusynessRatings = async (datetime) => {
-  const response = await fetch(`http://localhost:5050/busyness-ratings?` + new URLSearchParams({ datetime }));
+  const response = await fetch(`${API_HOST}/busyness-ratings?` + new URLSearchParams({ datetime }));
   if (!response.ok) {
     const message = `An error has occurred: ${response.statusText}`;
     console.error(message);
@@ -10,7 +12,7 @@ export const getBusynessRatings = async (datetime) => {
 };
 
 export const getNoiseRatings = async (datetime) => {
-  const response = await fetch(`http://localhost:5050/noise-ratings?` + new URLSearchParams({ datetime }));
+  const response = await fetch(`${API_HOST}/noise-ratings?` + new URLSearchParams({ datetime }));
   if (!response.ok) {
     const message = `An error has occurred: ${response.statusText}`;
     console.error(message);
@@ -21,7 +23,7 @@ export const getNoiseRatings = async (datetime) => {
 };
 
 export const getOdourRatings = async (datetime) => {
-  const response = await fetch(`http://localhost:5050/odour-ratings?` + new URLSearchParams({ datetime }));
+  const response = await fetch(`${API_HOST}/odour-ratings?` + new URLSearchParams({ datetime }));
   if (!response.ok) {
     const message = `An error has occurred: ${response.statusText}`;
     console.error(message);
