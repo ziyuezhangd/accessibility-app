@@ -91,7 +91,6 @@ placeInfosRouter.get('/', async (req, res) => {
     const combinedResults = results.flat();
     res.status(200).json(combinedResults);
   } catch (error) {
-    console.error('Error fetching data:', error);
     res
       .status(500)
       .send({ message: 'An error occurred', error: error.message });
