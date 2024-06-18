@@ -43,7 +43,6 @@ const fileFormat = format.combine(
   format.uncolorize()    
 );
 
-
 // Define file paths
 const __dirname = path.resolve();
 const logFolderPath = path.join(__dirname, 'logs');

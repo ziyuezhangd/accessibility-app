@@ -1,8 +1,7 @@
-import { describe, it, expect } from '@jest/globals';
-import logger from "../logger";
 import fs from 'fs';
-import mockfs from 'mock-fs';
 import path from 'path';
+import { describe, it, expect } from '@jest/globals';
+import logger from '../logger';
 
 describe('Logger', () => {
   const serverPath = path.resolve();
