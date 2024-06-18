@@ -26,6 +26,7 @@ export const Map = () => {
   };
   //To make backend calls we can use fetch or a library like axios https://mayankt.hashnode.dev/connecting-frontend-with-backend-mern
   const fetchAccessibilityCloudInfo = async (lat, lng) => {
+    console.log('starting funciton,, test:');
     const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY
     try {
       const response = await fetch('/routes/place-infos/googleMapsLocation');
@@ -55,9 +56,7 @@ export const Map = () => {
             googlePlacesAddresses.push({
               name: placeName,
               address: firstPrediction.text.toString()
-              // Use the text of the prediction as the address
             });
-            //if theres no suggestion then add the original name with no address/prediction to googlePlaceResults
           } else {
             googlePlacesAddresses.push({
               name: placeName,
@@ -72,9 +71,9 @@ export const Map = () => {
           });
         }
       }
-
+  
       console.log('Google Places results:', googlePlacesAddresses);
-    } catch(error) {
+    } catch (error) {
       console.error('Error fetching data:', error);
     }
   };

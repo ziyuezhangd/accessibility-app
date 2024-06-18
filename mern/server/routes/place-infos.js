@@ -104,15 +104,15 @@ placeInfosRouter.get('/', async (req, res) => {
 //scratch"" "  - Need to use API to locate accessibility cloud PLACE IDs and comapre them to the original 
 //https://developers.google.com/maps/documentation/javascript/examples/place-autocomplete-data-simple
 
-placeInfosRouter.get("/googleMapsLocation", async (req, res) => {
-  const {lat, long } = req.query;
-  const accuracy = 1;
+placeInfosRouter.get('/googleMapsLocation', async (req, res) => {
+  const {lat, lng } = req.query;
+  const accuracy = 100;
 
-  if (!lat || !long) {
+  if (!lat || !lng) {
     return res.status(400).send({ message: 'The latitude and longitude parameters are required'});
   }  
-//not specifically filtering for 'fully' accessible here
-  const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&latitude=${lat}&longitude=${long}&accuracy=${accuracy}&exclude=properties.infoPageUrl,properties.parentCategoryIds`;;
+  //not specifically filtering for 'fully' accessible here
+  const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&latitude=${lat}&longitude=${lng}&accuracy=${accuracy}&exclude=properties.infoPageUrl,properties.parentCategoryIds`;;
   const options = {
     hostname: 'accessibility-cloud-v2.freetls.fastly.net',
     path: `/place-infos.json${queryString}`,
@@ -152,6 +152,7 @@ placeInfosRouter.get("/googleMapsLocation", async (req, res) => {
     });
 
     const placeNames = data.features.map((feature) => feature.properties.name);
+    console.log('Accessibility cloud locations:', placeNames); 
     res.status(200).json(placeNames);
   } catch (error) {
     res.status(500).send({ message: 'Could not retrieve place names', error: error.message });
