@@ -28,7 +28,7 @@ export const Map = () => {
   const fetchAccessibilityCloudInfo = async (lat, lng) => {
     const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY
     try {
-      const response = await fetch('/routes/place-infos/googleMapsLocation');
+      const response = await fetch(`http://localhost:5050/place-infos/googleMapsLocation?lat=${lat}&lng=${lng}`);
       if (!response) {
         throw new Error('Failed to fetch data');
       }
