@@ -22,6 +22,10 @@
     "concurrently": "^8.2.2"
   },
   "dependencies": {
-    "concurrent": "^0.3.2"
+    "@googlemaps/google-maps-services-js": "^3.4.0",
+    "@rollup/rollup-darwin-x64": "^4.18.0",
+    "concurrent": "^0.3.2",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2"
   }
 }

@@ -154,7 +154,6 @@ placeInfosRouter.get("/googleMapsLocation", async (req, res) => {
     const placeNames = data.features.map((feature) => feature.properties.name);
     res.status(200).json(placeNames);
   } catch (error) {
-    console.error('Error fetching data:', error);
     res.status(500).send({ message: 'Could not retrieve place names', error: error.message });
   }
 });

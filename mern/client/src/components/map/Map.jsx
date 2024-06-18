@@ -4,7 +4,7 @@ import HelpIcon from './HelpIcon';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG } from '../../utils/MapUtils';
 
 // Docs: https://pyjun01.github.io/react-google-map-wrapper/docs/introdution/
-const Map = () => {
+export const Map = () => {
   const theme = useTheme();
   const handleMapClicked = (map, e) => {
     const isPlaceIconClicked = e.placeId !== undefined;
