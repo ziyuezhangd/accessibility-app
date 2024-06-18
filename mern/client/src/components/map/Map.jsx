@@ -5,6 +5,7 @@ import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG } from '../../utils/MapUtils
 
 // Docs: https://pyjun01.github.io/react-google-map-wrapper/docs/introdution/
 export const Map = () => {
+
   const theme = useTheme();
   const handleMapClicked = (map, e) => {
     const isPlaceIconClicked = e.placeId !== undefined;
@@ -25,7 +26,7 @@ export const Map = () => {
   };
   //To make backend calls we can use fetch or a library like axios https://mayankt.hashnode.dev/connecting-frontend-with-backend-mern
   const fetchAccessibilityCloudInfo = async (lat, lng) => {
-    const googleMapConfig = process.env.VITE_GOOGLEMAP_KEY;
+    const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY
     try {
       const response = await fetch('/routes/place-infos/googleMapsLocation');
       if (!response) {
@@ -73,7 +74,7 @@ export const Map = () => {
       }
 
       console.log('Google Places results:', googlePlacesAddresses);
-    } catch (error) {
+    } catch(error) {
       console.error('Error fetching data:', error);
     }
   };

@@ -160,5 +160,3 @@ placeInfosRouter.get("/googleMapsLocation", async (req, res) => {
 
 export default placeInfosRouter;
 
-//{"message":"google is not defined"} ? - getting this because the API is not meant to be used in the backend...
-//npm install core-js --legacy-peer-deps
