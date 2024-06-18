@@ -1,13 +1,10 @@
 import https from 'https';
 import dotenv from 'dotenv';
 import express from 'express';
+
 dotenv.config();
-import pkg from '@googlemaps/google-maps-services-js';
-const { Client } = pkg;
 
 const ACCESSIBILITY_CLOUD_API_KEY = process.env.ACCESSIBILITY_CLOUD_API_KEY;
-const VITE_GOOGLEMAP_KEY= process.env.VITE_GOOGLEMAP_KEY
-const client = new Client({});
 const placeInfosRouter = express.Router();
 
 const tiles = [
@@ -113,9 +110,9 @@ placeInfosRouter.get("/googleMapsLocation", async (req, res) => {
   const accuracy = 1;
 
   if (!lat || !long) {
-    return res.status(400).send({ message: "The latitude and longitude parameters are required" });
+    return res.status(400).send({ message: 'The latitude and longitude parameters are required'});
   }  
-    //not specifically filtering for 'fully' accessible here
+//not specifically filtering for 'fully' accessible here
   const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&latitude=${lat}&longitude=${long}&accuracy=${accuracy}&exclude=properties.infoPageUrl,properties.parentCategoryIds`;;
   const options = {
     hostname: 'accessibility-cloud-v2.freetls.fastly.net',
@@ -154,54 +151,16 @@ placeInfosRouter.get("/googleMapsLocation", async (req, res) => {
 
       request.end();
     });
-//get place names from accessibility cloud respose
-    const placeNames = data.features.map(feature => feature.properties.name);
-    return placeNames;
-//     const { AutocompleteSessionToken, AutocompleteSuggestion } = await google.maps.importLibrary("places");
-//     const googlePlacesAddresses = [];
-// for (let i = 0; i < placeNames.length; i++) {
-//       const placeName = placeNames[i];
-//       const request = {
-//         input: placeName,
-//         location: { lat, lng: long },
-//         radius: 50000, // adjust the radius as needed
-//         key: VITE_GOOGLEMAP_KEY,
-//         sessionToken: new AutocompleteSessionToken(),
-//       }
-// //get the autocomplete results
-//       try {
-//         const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
-//         if (suggestions.length > 0) {
-//           const firstPrediction = suggestions[0].placePrediction;
-//           googlePlacesResults.push({
-//             name: placeName,
-//             address: firstPrediction.text.toString()
-//  // Use the text of the prediction as the address
-//           });
-// //if theres no suggestion then add the original name with no address to googlePlaceResults
-//         } else {
-//           googlePlacesResults.push({
-//             name: placeName,
-//             address: null
-//           });
-//         }
-//       } catch (error) {
-//         console.error('Error fetching suggested results', error);
-//         googlePlacesResults.push({
-//           name: placeName,
-//           address: null
-//         });
-//       }
-//     }
 
-//     res.status(200).send(googlePlacesResults);
-//   } catch (error) {
-//     res.status(500).send({ message: error.message });
-//   }
-// })
+    const placeNames = data.features.map((feature) => feature.properties.name);
+    res.status(200).json(placeNames);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).send({ message: 'Could not retrieve place names', error: error.message });
+  }
+});
 
 export default placeInfosRouter;
 
 //{"message":"google is not defined"} ? - getting this because the API is not meant to be used in the backend...
 //npm install core-js --legacy-peer-deps
-

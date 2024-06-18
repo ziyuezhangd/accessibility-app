@@ -4,7 +4,7 @@ import HelpIcon from './HelpIcon';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG } from '../../utils/MapUtils';
 
 // Docs: https://pyjun01.github.io/react-google-map-wrapper/docs/introdution/
-export const Map = () => {
+const Map = () => {
   const theme = useTheme();
   const handleMapClicked = (map, e) => {
     const isPlaceIconClicked = e.placeId !== undefined;
@@ -24,62 +24,60 @@ export const Map = () => {
     }
   };
   //To make backend calls we can use fetch or a library like axios https://mayankt.hashnode.dev/connecting-frontend-with-backend-mern
-  const fetchAccessibilityCloudInfo = async () => {
+  const fetchAccessibilityCloudInfo = async (lat, lng) => {
+    const googleMapConfig = process.env.VITE_GOOGLEMAP_KEY;
     try {
       const response = await fetch('/routes/place-infos/googleMapsLocation');
-    if (!response) {
-      throw new Error('Failed to fetch data');
-    }
-  const data = await response.json();
-  console.log('Accessibility cloud locations:', placeNames);
-  
-
-  //now getting the place names based on the accessibility cloud names 
-  const { AutocompleteSessionToken, AutocompleteSuggestion } = await google.maps.importLibrary("places");
-  const googlePlacesAddresses = [];
-  for (let i = 0; i < placeNames.length; i++) {
-      const placeName = placeNames[i];
-      const request = {
-        input: placeName,
-        location: { lat, lng: long },
-        radius: 20, 
-        key: VITE_GOOGLEMAP_KEY,
-        sessionToken: new AutocompleteSessionToken(),
+      if (!response) {
+        throw new Error('Failed to fetch data');
       }
-//get the autocomplete results
-      try {
-        const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
-        if (suggestions.length > 0) {
-          const firstPrediction = suggestions[0].placePrediction;
-          googlePlacesResults.push({
-            name: placeName,
-            address: firstPrediction.text.toString()
- // Use the text of the prediction as the address
-          });
-//if theres no suggestion then add the original name with no address/prediction to googlePlaceResults
-        } else {
-          googlePlacesResults.push({
+      const data = await response.json();
+      console.log('Accessibility cloud locations:', data);
+  
+      //now getting the place names based on the accessibility cloud names 
+      const { AutocompleteSessionToken, AutocompleteSuggestion } = await google.maps.importLibrary('places');
+      const googlePlacesAddresses = [];
+      for (let i = 0; i < data.length; i++) {
+        const placeName = data[i];
+        const request = {
+          input: placeName,
+          location: { lat, lng },
+          radius: 20, 
+          key: googleMapConfig,
+          sessionToken: new AutocompleteSessionToken(),
+        };
+        //get the autocomplete results
+        try {
+          const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
+          if (suggestions.length > 0) {
+            const firstPrediction = suggestions[0].placePrediction;
+            googlePlacesAddresses.push({
+              name: placeName,
+              address: firstPrediction.text.toString()
+              // Use the text of the prediction as the address
+            });
+            //if theres no suggestion then add the original name with no address/prediction to googlePlaceResults
+          } else {
+            googlePlacesAddresses.push({
+              name: placeName,
+              address: null
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching suggested results', error);
+          googlePlacesAddresses.push({
             name: placeName,
             address: null
           });
         }
-      }  catch (error) {
-        console.error('Error fetching suggested results', error);
-        googlePlacesResults.push({
-          name: placeName,
-          address: null
-        });
       }
+
+      console.log('Google Places results:', googlePlacesAddresses);
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
-
-    console.log('Google Places results:', googlePlacesResults);
-    setGooglePlacesResults(googlePlacesResults); 
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-};
-
-    
+  };
+ 
   return (
     // you can pass props to map container element.
     // use Tailwind CSS or styled-components or anything to style your container.
@@ -92,4 +90,4 @@ export const Map = () => {
   );
 };
 
-
+export default Map;
