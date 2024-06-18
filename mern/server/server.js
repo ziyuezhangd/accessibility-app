@@ -10,6 +10,7 @@ import busynessRating from './routes/busynessRating.js';
 import feedback from './routes/feedback.js';
 import noiseRating from './routes/noiseRating.js';
 import odourRating from './routes/odourRating.js';
+import pedestrianRamps from './routes/pedestrianRamps.js';
 import pedestrianSignals from './routes/pedestrianSignals.js';
 import placeInfosRouter from './routes/place-infos.js';
 import records from './routes/record.js';
@@ -36,6 +37,7 @@ app.use('/feedback', feedback);
 app.use('/sound-ratings', soundRating);
 app.use('/seating-areas', seatingAreas);
 app.use('/pedestrian-signals', pedestrianSignals);
+app.use('/pedestrian-ramps', pedestrianRamps);
 
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
