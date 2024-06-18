@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     res.status(200).json(results);
 
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({message: 'Failed to get feedback documents.', error });
   }
 });
 
