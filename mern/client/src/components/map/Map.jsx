@@ -4,6 +4,7 @@ import React from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import HelpIcon from './HelpIcon';
+import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 
 const busynessData = [
@@ -57,24 +58,24 @@ export const Map = () => {
 
   const handleSelect = (item) => {
     switch (item.id) {
-      case 'busyness':
-        console.log('Setting busyness data and gradient');
-        setHeatMapData(busynessData);
-        setHeatMapGradient(busynessGradient);
-        break;
-      case 'noise':
-        console.log('Setting noise data and gradient');
-        setHeatMapData(noiseData);
-        setHeatMapGradient(noiseGradient);
-        break;
-      case 'odor':
-        console.log('Setting odor data and gradient');
-        setHeatMapData(odorData);
-        setHeatMapGradient(odorGradient);
-        break;
-      default:
-        setHeatMapData([]);
-        setHeatMapGradient([]);
+    case 'busyness':
+      console.log('Setting busyness data and gradient');
+      setHeatMapData(busynessData);
+      setHeatMapGradient(busynessGradient);
+      break;
+    case 'noise':
+      console.log('Setting noise data and gradient');
+      setHeatMapData(noiseData);
+      setHeatMapGradient(noiseGradient);
+      break;
+    case 'odor':
+      console.log('Setting odor data and gradient');
+      setHeatMapData(odorData);
+      setHeatMapGradient(odorGradient);
+      break;
+    default:
+      setHeatMapData([]);
+      setHeatMapGradient([]);
     }
   };
 
@@ -91,6 +92,20 @@ export const Map = () => {
       console.log('Location clicked: ', lat, lng);
     }
   };
+
+  const fetchData = async () => {
+    const busynessRatings = await getBusynessRatings(new Date());
+    console.log('busynessRatings: ', busynessRatings);
+    const noiseRatings = await getNoiseRatings(new Date());
+    console.log('noiseRatings: ', noiseRatings);
+    const odourRatings = await getOdourRatings(new Date());
+    console.log('odourRatings: ', odourRatings);
+  };
+
+  useEffect(() => {
+    // This is just testing the rating queries
+    fetchData();
+  }, []);
 
   return (
     <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
