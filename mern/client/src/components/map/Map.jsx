@@ -26,7 +26,6 @@ export const Map = () => {
   };
   //To make backend calls we can use fetch or a library like axios https://mayankt.hashnode.dev/connecting-frontend-with-backend-mern
   const fetchAccessibilityCloudInfo = async (lat, lng) => {
-    console.log('starting funciton,, test:');
     const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY
     try {
       const response = await fetch('/routes/place-infos/googleMapsLocation');
