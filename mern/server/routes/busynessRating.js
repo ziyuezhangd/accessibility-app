@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
   if (!datetime) {
     return res.status(400).send({ message: 'Datetime parameter is required' });
   }
-    
+
   try{
     const collection = db.collection('busynessModel');
     const latestModel = await collection.findOne({}, { sort: { date: -1 } });

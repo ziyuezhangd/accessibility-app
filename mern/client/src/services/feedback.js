@@ -1,3 +1,5 @@
+import { API_HOST } from './utils';
+
 const dummyFeedbacks = [
   {
     name: 'April',
@@ -13,6 +15,17 @@ const dummyFeedbacks = [
   },
 ];
 
-export const postFeedback = (feedback) => {
+export const postFeedback = async (feedback) => {
   // Call the API here
+  const response = await fetch(`${API_HOST}/feedback`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(feedback),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error);
+  }
 };
