@@ -29,6 +29,7 @@ export const Map = () => {
     }
   };
 
+  // TODO: this should be moved into DrawerLocationDetails
   const getNearestSubwayStations = async (selectedLat, selectedLng) => {
     // There are a lot of duplicates - grab only the stations which contain the subway lines
     const stations = placeInfos.filter((place) => (place.category === 'subway_station' || place.category === 'train_station') && place.name && place.name.indexOf('(') > -1);
