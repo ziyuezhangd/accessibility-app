@@ -8,8 +8,13 @@ const app = express();
 app.use('/', router);
 
 describe('GET', () => {
+  beforeAll(() => {
+    jest.mock('../db/connection.js');
+  });
+
   describe('/busynessRating', () => {
-    it('should return 200 and prediction if model is retrieved', async () => {
+    // This test requires knowledge of how data is retrieved.
+    it('should return 200 and prediction if model is retrieved and no error occurs', async () => {
       const dummyPredictions = [{ _id: '1', rating: 'A' }, { _id: '2', rating: 'C' }];
       const mockLatestModel = {
         predict: jest.fn().mockReturnValue(dummyPredictions),
@@ -40,6 +45,7 @@ describe('GET', () => {
   });
 
   describe('/busynessRating/location', () => {
+    // This test requires knowledge of how data is retrieved.
     it('should return 200 and prediction if model is retrieved', async () => {
       const dummyPrediction = { rating: 'A' };
       const mockLatestModel = {

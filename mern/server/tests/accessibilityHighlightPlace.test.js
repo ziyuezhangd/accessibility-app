@@ -8,18 +8,25 @@ const app = express();
 app.use('/', router);
 
 describe('GET /accessibilityHighlightPlace', () => {
+  beforeAll(() => {
+    jest.mock('../db/connection.js');
+  });
   
-  it('should return 200 and result if documents are retrieved', async () => {
+  it('should return 200 if no error occurs', async () => {
+    const response = await request(app).get('/');
+    expect(response.status).toBe(200);
+  });
+
+  // This test requires knowledge of how data is retrieved.
+  it('should return result if documents are retrieved', async () => {
     const dummyResults = [{ _id: '1', name: 'Place 1' }, { _id: '2', name: 'Place 2' }];
     const mockCollection = {
       find: jest.fn().mockReturnThis(),
       toArray: jest.fn().mockResolvedValue(dummyResults),
-    };
+    }
     jest.spyOn(db, 'collection').mockReturnValue(mockCollection);
-    // db.collection = mockCollection;
-    
+
     const response = await request(app).get('/');
-    expect(response.status).toBe(200);
     expect(response.body).toEqual(dummyResults);
   });
 
