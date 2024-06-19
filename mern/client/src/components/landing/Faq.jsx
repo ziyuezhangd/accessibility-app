@@ -1,6 +1,5 @@
 import { Container, Grid, Typography } from '@mui/material';
 import { lightBlue } from '@mui/material/colors';
-import React from 'react';
 
 export default function Faq() {
   return (

@@ -1,5 +1,3 @@
-import { API_HOST } from './utils';
-
 /**
  *
  * Queries the backend for all accessibility cloud place infos in Manhattan
@@ -15,7 +13,7 @@ import { API_HOST } from './utils';
  * }
  */
 export const getPlaceInfos = async () => {
-  const response = await fetch(`${API_HOST}/place-infos`);
+  const response = await fetch(`/place-infos`);
 
   const placeInfo = await response.json();
   if (placeInfo.error) {
@@ -32,7 +30,7 @@ export const getPlaceInfos = async () => {
  * @returns Array of categories (strings)
  */
 export const getCategories = async () => {
-  const response = await fetch(`${API_HOST}/place-infos/categories`);
+  const response = await fetch(`/place-infos/categories`);
   if (!response.ok) {
     const message = `An error has occurred: ${response.statusText}`;
     console.error(message);
