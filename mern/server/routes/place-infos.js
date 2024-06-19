@@ -53,6 +53,7 @@ placeInfosRouter.get('/', async (req, res) => {
           x,
           y,
           z,
+          filter: 'fully-accessible-by-wheelchair'
         },
       });
       results.push(result.data);
@@ -65,7 +66,7 @@ placeInfosRouter.get('/', async (req, res) => {
         const { properties } = place;
         const placeInfo = {
           category: properties.category,
-          name: properties.name.en,
+          name: properties.name?.en,
           address: properties.address,
           latitude: place.geometry.coordinates[1],
           longitude: place.geometry.coordinates[0],
