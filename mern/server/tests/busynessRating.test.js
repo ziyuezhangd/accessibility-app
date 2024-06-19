@@ -46,7 +46,7 @@ describe('GET', () => {
 
   describe('/busynessRating/location', () => {
     // This test requires knowledge of how data is retrieved.
-    it('should return 200 and prediction if model is retrieved', async () => {
+    it('should return 200 and prediction if model is retrieved and no error occurs', async () => {
       const dummyPrediction = { rating: 'A' };
       const mockLatestModel = {
         predict: jest.fn().mockReturnValue(dummyPrediction),
