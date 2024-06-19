@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     const result = await fetch(`https://data.cityofnewyork.us/resource/de3m-c5p4.json?boroname=Manhattan&$$app_token=${process.env.SOCRATA_APP_KEY}`);
     const data = await result.json();
     // TODO: cant get the logger to work correctly
-    // logger.log(`${data}`);
+    logger.info(`${data}`);
     // Filter down to the data we care about
     const signalInfo = data.map((d) => ({
       latitude: d.point_y,
