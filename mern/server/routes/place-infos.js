@@ -61,10 +61,7 @@ const makeRequest = ({ x, y, z }) => {
       });
 
       response.on('end', () => {
-        if (
-          response.headers['content-type'] &&
-          response.headers['content-type'].includes('application/json')
-        ) {
+        if (response.headers['content-type'] && response.headers['content-type'].includes('application/json')) {
           try {
             resolve(JSON.parse(data));
           } catch (error) {
@@ -90,9 +87,50 @@ placeInfosRouter.get('/', async (req, res) => {
     const combinedResults = results.flat();
     res.status(200).json(combinedResults);
   } catch (error) {
-    res
-      .status(500)
-      .send({ message: 'An error occurred', error: error.message });
+    res.status(500).send({ message: 'An error occurred', error: error.message });
+  }
+});
+
+placeInfosRouter.get('/categories', async (req, res) => {
+  try {
+    const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}`;
+    const options = {
+      hostname: 'accessibility-cloud-v2.freetls.fastly.net',
+      path: `/categories.json${queryString}`,
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    };
+
+    const request = https.request(options, (response) => {
+      let data = '';
+
+      response.on('data', (chunk) => {
+        data += chunk;
+      });
+      
+      response.on('end', () => {
+        if (data.error) {
+          res.status(500).send({ message: 'Failed to query categories.', error: data.error.details });
+        }
+        if (response.headers['content-type'] && response.headers['content-type'].includes('application/json')) {
+          res.status(200).send(JSON.parse(data));
+        }
+      });
+
+      response.on('error', (error) => {
+        res.status(500).send({ message: 'Failed to query categories.', error: error.message });
+      });
+    });
+
+    request.on('error', (error) => {
+      res.status(500).send({ message: 'Failed to query categories.', error: error.message });
+    });
+
+    request.end();
+  } catch (error) {
+    res.status(500).send({ message: 'An error occurred', error: error.message });
   }
 });
 
