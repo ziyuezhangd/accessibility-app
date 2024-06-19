@@ -1,3 +1,5 @@
+import { API_HOST } from './utils';
+
 const dummyPlaceInfo = {
   type: 'Feature',
   geometry: { type: 'Point', coordinates: [-73.967895, 40.697597] },
@@ -16,7 +18,25 @@ const dummyPlaceInfo = {
   },
 };
 
-export const getPlaceInfos = () => {
+export const getPlaceInfos = async () => {
+  const response = await fetch(`${API_HOST}/place-infos`);
+  if (!response.ok) {
+    const message = `An error has occurred: ${response.statusText}`;
+    console.error(message);
+    return;
+  }
+  const placeInfo = await response.json();
+  return placeInfo;
+};
+
+export const getCategories = async () => {
   // TODO: actually call the endpoint
-  return [dummyPlaceInfo];
+  const response = await fetch(`${API_HOST}/place-infos/categories`);
+  if (!response.ok) {
+    const message = `An error has occurred: ${response.statusText}`;
+    console.error(message);
+    return;
+  }
+  const categories = await response.json();
+  return categories;
 };
