@@ -1,3 +1,4 @@
+import { Chat, Search, Subway, Whatshot } from '@mui/icons-material';
 import { Grid, Container, Typography, Box, Paper } from '@mui/material';
 import { cyan } from '@mui/material/colors';
 import React from 'react';
@@ -7,18 +8,22 @@ export default function Features() {
     {
       title: 'Accessibility heatmap',
       description: 'See the busyness, odor and noise levels across the entire city.',
+      icon: <Whatshot fontSize='large' />,
     },
     {
       title: 'Subway station accessibility',
       description: 'Find subway stations with accessible entrances',
+      icon: <Subway fontSize='large' />,
     },
     {
       title: 'Search by location',
       description: 'Discover destinations which accommodate to your needs',
+      icon: <Search fontSize='large' />,
     },
     {
       title: 'Provide feedback',
       description: 'Help keep our information up-to-date and accurate',
+      icon: <Chat fontSize='large' />,
     },
   ];
   return (
@@ -43,10 +48,10 @@ export default function Features() {
           textAlign: { sm: 'left', md: 'center' },
         }}
       >
-        <Typography component='h2' variant='h4' color='text.primary'>
+        <Typography component='h2' variant='h4' color='text.primary' sx={{ fontVariant: 'all-small-caps', fontWeight: '100' }}>
           Features
         </Typography>
-        <Typography variant='body1' color='text.secondary'>
+        <Typography color='text.primary' sx={{ fontSize: 24 }}>
           Explore the city with ease using our platform&apos;s features.
         </Typography>
       </Box>
@@ -58,22 +63,23 @@ export default function Features() {
               square='false'
               sx={{
                 display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'start',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start',
                 flexGrow: 1,
-                p: 1,
+                p: 5,
                 backgroundColor: cyan[50],
-                height: '150px',
+                minHeight: '200px',
               }}
             >
-              {/* ICON HERE */}
-              <Typography variant='h5' color='text.primary'>
-                {feature.title}
-              </Typography>
-              <Typography variant='body' color='text.secondary'>
-                {feature.description}
-              </Typography>
+              <Box sx={{ width: 100 }}>{feature.icon}</Box>
+              <Box sx={{ textAlign: 'left'}}>
+                <Typography variant='h5' color='text.primary' fontSize={24} pb={2}>
+                  {feature.title}
+                </Typography>
+                <Typography variant='body' color='text.secondary' fontSize={20}>
+                  {feature.description}
+                </Typography>
+              </Box>
             </Paper>
           </Grid>
         ))}
