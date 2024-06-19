@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     }));
     res.status(200).send(signalInfo);
   } catch (error) {
-    logger.error(error);
+    logger.error(error.stack);
     res.status(500).send({ message: 'Failed to load pedestrian signals.', error: error.message });
   }
 });
