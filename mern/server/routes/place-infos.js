@@ -1,4 +1,5 @@
 import https from 'https';
+import axios from 'axios';
 import dotenv from 'dotenv';
 import express from 'express';
 
@@ -41,96 +42,57 @@ const tiles = [
   { z: 14, x: 4827, y: 6150 },
 ];
 
-const makeRequest = ({ x, y, z }) => {
-  return new Promise((resolve, reject) => {
-    const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}&z=${z}&x=${x}&y=${y}&filter=fully-accessible-by-wheelchair&exclude=properties.infoPageUrl,properties.parentCategoryIds`;
-    const options = {
-      hostname: 'accessibility-cloud-v2.freetls.fastly.net',
-      path: `/place-infos.json${queryString}`,
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-    };
-
-    const request = https.request(options, (response) => {
-      let data = '';
-
-      response.on('data', (chunk) => {
-        data += chunk;
-      });
-
-      response.on('end', () => {
-        if (response.headers['content-type'] && response.headers['content-type'].includes('application/json')) {
-          try {
-            resolve(JSON.parse(data));
-          } catch (error) {
-            reject(new Error('Error parsing JSON: ' + error.message));
-          }
-        } else {
-          reject(new Error('Received non-JSON response'));
-        }
-      });
-    });
-
-    request.on('error', (error) => {
-      reject(new Error('Request error: ' + error.message));
-    });
-
-    request.end();
-  });
-};
-
 placeInfosRouter.get('/', async (req, res) => {
   try {
-    const results = await Promise.all(tiles.map((tile) => makeRequest(tile)));
-    const combinedResults = results.flat();
-    res.status(200).json(combinedResults);
+    const results = [];
+    for (const tile of tiles) {
+      const { x, y, z } = tile;
+      const result = await axios.get('https://accessibility-cloud-v2.freetls.fastly.net/place-infos.json', {
+        params: {
+          appToken: ACCESSIBILITY_CLOUD_API_KEY,
+          x,
+          y,
+          z,
+        },
+      });
+      results.push(result.data);
+    }
+
+    const placeInfos = [];
+    for (const result of results) {
+      const places = result.features;
+      for (const place of places) {
+        const { properties } = place;
+        const placeInfo = {
+          category: properties.category,
+          name: properties.name.en,
+          address: properties.address,
+          latitude: place.geometry.coordinates[1],
+          longitude: place.geometry.coordinates[0],
+        };
+        placeInfos.push(placeInfo);
+      }
+    }
+    res.status(200).json(placeInfos);
   } catch (error) {
-    res.status(500).send({ message: 'An error occurred', error: error.message });
+    res.status(500).send({ message: 'Failed to get place infos.', error: error.message });
   }
 });
 
 placeInfosRouter.get('/categories', async (req, res) => {
   try {
-    const queryString = `?appToken=${ACCESSIBILITY_CLOUD_API_KEY}`;
-    const options = {
-      hostname: 'accessibility-cloud-v2.freetls.fastly.net',
-      path: `/categories.json${queryString}`,
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
+    const result = await axios.get('https://accessibility-cloud-v2.freetls.fastly.net/categories.json', {
+      params: {
+        appToken: ACCESSIBILITY_CLOUD_API_KEY,
       },
-    };
-
-    const request = https.request(options, (response) => {
-      let data = '';
-
-      response.on('data', (chunk) => {
-        data += chunk;
-      });
-      
-      response.on('end', () => {
-        if (data.error) {
-          res.status(500).send({ message: 'Failed to query categories.', error: data.error.details });
-        }
-        if (response.headers['content-type'] && response.headers['content-type'].includes('application/json')) {
-          res.status(200).send(JSON.parse(data));
-        }
-      });
-
-      response.on('error', (error) => {
-        res.status(500).send({ message: 'Failed to query categories.', error: error.message });
-      });
     });
-
-    request.on('error', (error) => {
-      res.status(500).send({ message: 'Failed to query categories.', error: error.message });
-    });
-
-    request.end();
+    const categories = [];
+    for (const d of result.data.results) {
+      categories.push(d._id);
+    }
+    res.status(200).send(categories);
   } catch (error) {
-    res.status(500).send({ message: 'An error occurred', error: error.message });
+    res.status(500).send({ message: 'Failed to get categories.', error: error.message });
   }
 });
 

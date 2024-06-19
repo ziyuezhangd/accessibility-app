@@ -30,7 +30,6 @@ export const getPlaceInfos = async () => {
 };
 
 export const getCategories = async () => {
-  // TODO: actually call the endpoint
   const response = await fetch(`${API_HOST}/place-infos/categories`);
   if (!response.ok) {
     const message = `An error has occurred: ${response.statusText}`;
