@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Control } from 'react-google-map-wrapper';
 import { AiOutlineCaretUp, AiOutlineCaretDown } from 'react-icons/ai';
 import list from '../../list.json';
-import { Control } from 'react-google-map-wrapper';
 
-// eslint-disable-next-line react/prop-types
 function Dropdown({ onSelect }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Select Heatmap'); 
@@ -15,7 +14,6 @@ function Dropdown({ onSelect }) {
   };
 
   return (
-    // eslint-disable-next-line no-undef
     <Control position={google.maps.ControlPosition.TOP_LEFT}>
       <div className='relative flex flex-col items-center w-[340px] h-[340px] rounded-lg'>
         <button

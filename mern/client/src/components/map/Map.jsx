@@ -1,6 +1,5 @@
 import { Box, useTheme } from '@mui/material';
 import { useState, useEffect } from 'react';
-import React from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import HelpIcon from './HelpIcon';
