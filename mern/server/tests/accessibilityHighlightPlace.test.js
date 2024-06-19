@@ -1,8 +1,8 @@
-import request from 'supertest';
+import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
-import router from '../routes/accessibilityHighlightPlace.js';
+import request from 'supertest';
 import db from '../db/connection.js';
-import { describe, it, expect, jest, afterAll } from '@jest/globals';
+import router from '../routes/accessibilityHighlightPlace.js';
 
 const app = express();
 app.use('/', router);
@@ -23,7 +23,7 @@ describe('GET /accessibilityHighlightPlace', () => {
     const mockCollection = {
       find: jest.fn().mockReturnThis(),
       toArray: jest.fn().mockResolvedValue(dummyResults),
-    }
+    };
     jest.spyOn(db, 'collection').mockReturnValue(mockCollection);
 
     const response = await request(app).get('/');

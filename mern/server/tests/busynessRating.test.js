@@ -1,8 +1,8 @@
-import request from 'supertest';
+import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
-import router from '../routes/busynessRating.js';
+import request from 'supertest';
 import db from '../db/connection.js';
-import { describe, it, expect, jest, afterAll } from '@jest/globals';
+import router from '../routes/busynessRating.js';
 
 const app = express();
 app.use('/', router);
