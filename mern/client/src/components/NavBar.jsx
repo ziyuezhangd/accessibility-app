@@ -1,6 +1,8 @@
+// NavBar.jsx
+
 import { Accessibility, FavoriteBorder } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { List, ListItem } from '@mui/material';
+import { List, ListItem, ListItemText } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -18,11 +20,14 @@ const pages = ['Map', 'About us'];
 export const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElFavorites, setAnchorElFavorites] = React.useState(null);
+  const [favorites, setFavorites] = React.useState([]);
 
   const navigate = useNavigate();
+
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenFavorites = (event) => {
     setAnchorElFavorites(event.currentTarget);
   };
@@ -44,6 +49,18 @@ export const NavBar = () => {
   const handleCloseFavorites = () => {
     setAnchorElFavorites(null);
   };
+
+  React.useEffect(() => {
+    const handleFavoriteAdded = (event) => {
+      setFavorites([...favorites, event.detail]);
+    };
+
+    window.addEventListener('favoriteAdded', handleFavoriteAdded);
+
+    return () => {
+      window.removeEventListener('favoriteAdded', handleFavoriteAdded);
+    };
+  }, [favorites]);
 
   return (
     <AppBar position='fixed' sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -161,7 +178,11 @@ export const NavBar = () => {
               onClose={handleCloseFavorites}
             >
               <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                <ListItem alignItems='flex-start'>Favorites go here</ListItem>
+                {favorites.map((favorite, index) => (
+                  <ListItem key={index} alignItems='flex-start'>
+                    <ListItemText primary={`Place ID: ${favorite.id}`} secondary={`Lat: ${favorite.lat}, Lng: ${favorite.lng}`} />
+                  </ListItem>
+                ))}
               </List>
             </Menu>
           </Box>
