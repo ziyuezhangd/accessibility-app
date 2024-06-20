@@ -1,17 +1,29 @@
-import './App.css';
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-import { Outlet } from 'react-router-dom';
-import { NavBar } from './components/NavBar';
-import DataTransferComponent from './DataTransferComponent'
+import React, { useState } from 'react';
+import CssBaseline from '@mui/material/CssBaseline';
+import Container from '@mui/material/Container';
+import SearchBar from './components/SearchBar';
+// import Map from '../Map';
+import Map from './components/map/Map';
+
+import NavBar from './components/NavBar';
+import PointOfInterestDetails from './components/PointOfInterestDetails';
 
 const App = () => {
+  const [selectedPOI, setSelectedPOI] = useState(null);
+
+  const handlePOISelect = (poi) => {
+    setSelectedPOI(poi);
+  };
+
   return (
-    <div className='w-full'>
+    <div>
+      <CssBaseline />
       <NavBar />
-      <Outlet />
+      <Container>
+        <SearchBar onPOISelect={handlePOISelect} />
+        <Map selectedPOI={selectedPOI} />
+        {selectedPOI && <PointOfInterestDetails poi={selectedPOI} />}
+      </Container>
     </div>
   );
 };
