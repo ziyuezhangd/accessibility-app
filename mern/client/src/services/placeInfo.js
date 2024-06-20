@@ -13,7 +13,7 @@
  * }
  */
 export const getPlaceInfos = async () => {
-  const response = await fetch(`/place-infos`);
+  const response = await fetch(`/api/place-infos`);
 
   const placeInfo = await response.json();
   if (placeInfo.error) {
@@ -30,7 +30,7 @@ export const getPlaceInfos = async () => {
  * @returns Array of categories (strings)
  */
 export const getCategories = async () => {
-  const response = await fetch(`/place-infos/categories`);
+  const response = await fetch(`/api/place-infos/categories`);
   if (!response.ok) {
     const message = `An error has occurred: ${response.statusText}`;
     console.error(message);
