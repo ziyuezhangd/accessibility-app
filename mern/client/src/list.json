@@ -1,0 +1,14 @@
+[
+    {
+        "id": "busyness",
+        "name": "Busyness"
+    },
+    {
+        "id": "noise",
+        "name": "Noise"
+    },
+    {
+        "id": "odor",
+        "name": "Odor"
+    }
+]
