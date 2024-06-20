@@ -90,7 +90,7 @@ export const Map = () => {
     const lng = latLng.lng();
     getNearestSubwayStations(lat, lng);
     if (isPlaceIconClicked) {
-      console.log('Place clicked: ', e.placeId, lat, lng);
+      console.log('Place clicked: ', e, lat, lng);
     }
     if (isLocationClicked) {
       console.log('Location clicked: ', lat, lng);
