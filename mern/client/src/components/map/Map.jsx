@@ -5,7 +5,7 @@ import { GoogleMap, Marker } from 'react-google-map-wrapper';
 import HelpIcon from './HelpIcon';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG } from '../../utils/MapUtils';
 
 // Docs: https://pyjun01.github.io/react-google-map-wrapper/docs/introdution/
 export const Map = () => {
@@ -18,7 +18,6 @@ export const Map = () => {
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
-    getNearestSubwayStations(lat, lng);
     if (isPlaceIconClicked) {
       // Do things
       console.log('Place clicked: ', e.placeId, lat, lng);
@@ -27,19 +26,6 @@ export const Map = () => {
       // Do things
       console.log('Location clicked: ', lat, lng);
     }
-  };
-
-  // TODO: this should be moved into DrawerLocationDetails
-  const getNearestSubwayStations = async (selectedLat, selectedLng) => {
-    // There are a lot of duplicates - grab only the stations which contain the subway lines
-    const stations = placeInfos.filter((place) => (place.category === 'subway_station' || place.category === 'train_station') && place.name && place.name.indexOf('(') > -1);
-    // Get all stations within 500 meters
-    let nearestStations = stations.filter(s => calculateDistanceBetweenTwoCoordinates(selectedLat, selectedLng, s.latitude, s.longitude) <= 500);
-    if (nearestStations.length === 0) {
-      nearestStations = [_.minBy(stations, s => calculateDistanceBetweenTwoCoordinates(selectedLat, selectedLng, s.latitude, s.longitude))];
-    }
-
-    console.log(`${nearestStations.length} stations within 500m: `, nearestStations);
   };
 
   const fetchData = async () => {
