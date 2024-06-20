@@ -22,7 +22,8 @@
     "mongodb": "^6.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-google-map-wrapper": "^1.0.5"
+    "react-google-map-wrapper": "^1.0.5",
+    "react-icons": "^5.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^8.57.0",
