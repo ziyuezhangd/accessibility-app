@@ -1,6 +1,8 @@
 import { Avatar, Container, Grid, Typography } from '@mui/material';
 import aprilImage from '../../assets/april.png';
 import ellenImage from '../../assets/ellen.png';
+import thomasImage from '../../assets/thomas.jpg'
+import danielleImage from '../../assets/danielle.jpg'
 
 const nameStyles = {
   fontWeight: 600,
@@ -40,12 +42,12 @@ export default function MeetTheTeam() {
           <Typography sx={titleStyles}>Backend Lead</Typography>
         </Grid>
         <Grid item sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Avatar alt='Thomas Pollock' sx={{ width: 300, height: 300, filter: 'grayscale(100%)' }} />
+          <Avatar alt='Thomas Pollock' src={thomasImage} sx={{ width: 300, height: 300, filter: 'grayscale(100%)' }} />
           <Typography sx={nameStyles}>Thomas Pollock</Typography>
           <Typography sx={titleStyles}>Data Lead</Typography>
         </Grid>
         <Grid item sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Avatar alt='Ziyue Zhang' sx={{ width: 300, height: 300, filter: 'grayscale(100%)' }} />
+          <Avatar alt='Ziyue Zhang' src={danielleImage} sx={{ width: 300, height: 300, filter: 'grayscale(100%)' }} />
           <Typography sx={nameStyles}>Ziyue Zhang</Typography>
           <Typography sx={titleStyles}>Maintenance Lead</Typography>
         </Grid>
