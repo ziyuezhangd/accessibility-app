@@ -1,5 +1,4 @@
 import { Modal, Typography, Box, Paper, Grid, Button } from '@mui/material';
-import React from 'react';
 import clickRoadImage from '../../assets/click-road.png';
 import heartImage from '../../assets/heart.png';
 import restaurantMarkerImage from '../../assets/restaurant-marker.png';
