@@ -25,7 +25,6 @@ export const odorGradient = [
   'rgba(128, 0, 128, 1)'// purple
 ];
 
-
 // Code from https://henry-rossiter.medium.com/calculating-distance-between-geographic-coordinates-with-javascript-5f3097b61898
 export const calculateDistanceBetweenTwoCoordinates = (lat1, lon1, lat2, lon2) => {
   var R = 6371.071; // Radius of the Earth in km
