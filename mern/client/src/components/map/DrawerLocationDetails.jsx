@@ -4,9 +4,11 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
 import { postFeedback } from '../../services/feedback';
+import { getPlaceInfos } from '../../services/placeInfo';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -20,6 +22,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function DrawerLocationDetails({ location, onBackClicked }) {
   const [error, setError] = useState('');
   const [isFeedbackComplete, setIsFeedbackComplete] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [placeInfos, setPlaceInfos] = useState([]);
+
+  useEffect(() => {
+    getPlaceInfos().then((infos) => {
+      setPlaceInfos(infos);
+      setIsLoading(false);
+    });
+  }, []);
 
   const handleButtonClicked = async () => {
     // TODO: these alerts need to disappear, like toasts
@@ -48,7 +59,12 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
       <Box sx={{ overflow: 'auto', px: 5 }}>
         <Typography variant='h5'>{location}</Typography>
         Hello
-        <NearestStations />
+        {!isLoading && (
+          <>
+            <NearestRestrooms placeInfos={placeInfos} />
+            <NearestStations placeInfos={placeInfos} />
+          </>
+        )}
         <Button onClick={handleButtonClicked}>Submit Feedback</Button>
       </Box>
       {error && <Alert severity='error'>{error}</Alert>}

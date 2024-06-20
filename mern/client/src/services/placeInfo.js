@@ -2,7 +2,7 @@
  *
  * Queries the backend for all accessibility cloud place infos in Manhattan
  * which are fully wheelchair accessible.
- * 
+ *
  * @returns Place Info object:
  * {
  *  category: string,
@@ -26,7 +26,7 @@ export const getPlaceInfos = async () => {
 /**
  *
  * Queries the backend for all possible placeInfo categories
- * 
+ *
  * @returns Array of categories (strings)
  */
 export const getCategories = async () => {
@@ -39,3 +39,16 @@ export const getCategories = async () => {
   const categories = await response.json();
   return categories;
 };
+
+export class PlaceInfoUtilities {
+  static getStreetAddressText = (placeInfo) => {
+    if (placeInfo.address && placeInfo.address.street !== null) {
+      return placeInfo.address.text;
+    }
+    return '';
+  };
+
+  static hasWheelchairAccessibleRestroom = (placeInfo) => {
+    return placeInfo.hasWheelchairAccessibleRestroom || placeInfo.category === 'toilets';
+  };
+}
