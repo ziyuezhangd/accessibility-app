@@ -1,8 +1,8 @@
 import { Avatar, Container, Grid, Typography } from '@mui/material';
 import aprilImage from '../../assets/april.png';
+import danielleImage from '../../assets/danielle.jpg';
 import ellenImage from '../../assets/ellen.png';
-import thomasImage from '../../assets/thomas.jpg'
-import danielleImage from '../../assets/danielle.jpg'
+import thomasImage from '../../assets/thomas.jpg';
 
 const nameStyles = {
   fontWeight: 600,
