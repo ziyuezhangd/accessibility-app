@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { getPlaceInfos } from './services/placeInfo';
+//###import {getPlaceInfo} from;
 
 const DataTransferComponent = () => {
   const [data, setData] = useState(null);
@@ -7,6 +9,7 @@ const DataTransferComponent = () => {
 
   useEffect(() => {
     // Step 1: Fetch data from the first API
+    const data = getPlaceInfos()
     const fetchDataFromFirstAPI = async () => {
       try {
         setData(response.data);
