@@ -1,10 +1,12 @@
 import { Box, useTheme } from '@mui/material';
-import { useState, useEffect } from 'react';
+import * as _ from 'lodash';
+import { useState, useEffect, useState } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import HelpIcon from './HelpIcon';
+import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient, calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
@@ -46,6 +48,8 @@ const odorData = [
 ];
 
 export const Map = () => {
+  const [placeInfos, setPlaceInfos] = useState([]);
+
   const theme = useTheme();
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
@@ -84,12 +88,26 @@ export const Map = () => {
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
+    getNearestSubwayStations(lat, lng);
     if (isPlaceIconClicked) {
       console.log('Place clicked: ', e.placeId, lat, lng);
     }
     if (isLocationClicked) {
       console.log('Location clicked: ', lat, lng);
     }
+  };
+
+  // TODO: this should be moved into DrawerLocationDetails
+  const getNearestSubwayStations = async (selectedLat, selectedLng) => {
+    // There are a lot of duplicates - grab only the stations which contain the subway lines
+    const stations = placeInfos.filter((place) => (place.category === 'subway_station' || place.category === 'train_station') && place.name && place.name.indexOf('(') > -1);
+    // Get all stations within 500 meters
+    let nearestStations = stations.filter(s => calculateDistanceBetweenTwoCoordinates(selectedLat, selectedLng, s.latitude, s.longitude) <= 500);
+    if (nearestStations.length === 0) {
+      nearestStations = [_.minBy(stations, s => calculateDistanceBetweenTwoCoordinates(selectedLat, selectedLng, s.latitude, s.longitude))];
+    }
+
+    console.log(`${nearestStations.length} stations within 500m: `, nearestStations);
   };
 
   const fetchData = async () => {
@@ -99,6 +117,7 @@ export const Map = () => {
     console.log('noiseRatings: ', noiseRatings);
     const odourRatings = await getOdourRatings(new Date());
     console.log('odourRatings: ', odourRatings);
+    getPlaceInfos().then(setPlaceInfos);
   };
 
   useEffect(() => {
