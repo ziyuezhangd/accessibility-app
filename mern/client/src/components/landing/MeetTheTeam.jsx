@@ -1,10 +1,10 @@
 import { Avatar, Container, Grid, Typography } from '@mui/material';
+import abishekImage from '../../assets/abishek.png';
 import aprilImage from '../../assets/april.png';
 import danielleImage from '../../assets/danielle.jpg';
 import ellenImage from '../../assets/ellen.png';
 import nithishhImage from '../../assets/nithishh.jpg';
 import thomasImage from '../../assets/thomas.jpg';
-import abishekImage from '../../assets/abishek.png';
 
 const nameStyles = {
   fontWeight: 600,

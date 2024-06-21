@@ -47,7 +47,7 @@ const odorData = [
   { lat: 40.7243, lng: -73.99771, weight: 2 },
 ];
 
-export const Map = () => {
+export const Map = ({ onMapClicked }) => {
   const [placeInfos, setPlaceInfos] = useState([]);
 
   const theme = useTheme();
@@ -88,21 +88,19 @@ export const Map = () => {
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
-    if (isPlaceIconClicked) {
-      console.log('Place clicked: ', e, lat, lng);
-    }
-    if (isLocationClicked) {
-      console.log('Location clicked: ', lat, lng);
-    }
+
+    // TODO: we will want to know the place name
+    onMapClicked({ lat, lng, isPlace: isPlaceIconClicked });
   };
 
   const fetchData = async () => {
-    const busynessRatings = await getBusynessRatings(new Date());
-    console.log('busynessRatings: ', busynessRatings);
-    const noiseRatings = await getNoiseRatings(new Date());
-    console.log('noiseRatings: ', noiseRatings);
-    const odourRatings = await getOdourRatings(new Date());
-    console.log('odourRatings: ', odourRatings);
+    // TODO: when we have these models ready
+    // const busynessRatings = await getBusynessRatings(new Date());
+    // console.log('busynessRatings: ', busynessRatings);
+    // const noiseRatings = await getNoiseRatings(new Date());
+    // console.log('noiseRatings: ', noiseRatings);
+    // const odourRatings = await getOdourRatings(new Date());
+    // console.log('odourRatings: ', odourRatings);
     getPlaceInfos().then(setPlaceInfos);
   };
 
@@ -125,13 +123,11 @@ export const Map = () => {
       >
         <Dropdown onSelect={handleSelect} />
         <HelpIcon />
-        {console.log('Rendering HeatMap Data:', heatMapData)}
-        {console.log('Rendering HeatMap Gradient:', heatMapGradient)}
         {heatMapData.length > 0 && (
           <HeatmapLayer
-            data={heatMapData.map(data => ({
+            data={heatMapData.map((data) => ({
               location: new window.google.maps.LatLng(data.lat, data.lng),
-              weight: data.weight
+              weight: data.weight,
             }))}
             gradient={heatMapGradient}
             radius={20}
