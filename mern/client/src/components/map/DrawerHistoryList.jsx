@@ -39,7 +39,8 @@ export default function DrawerHistoryList({ onLocationSelected }) {
       <Box sx={{ overflow: 'auto' }}>
         <List>
           {history.map((text, index) => (
-            <ListItem key={text} disablePadding>
+            <ListItem key={text}
+              disablePadding>
               <ListItemButton onClick={() => onLocationSelected(text)}>
                 <ListItemText primary={text} />
                 <ChevronRightIcon />
