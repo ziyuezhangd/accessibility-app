@@ -5,7 +5,8 @@ dotenv.config();
 
 const accessibilityCloud = {
   ACCESSIBILITY_CLOUD_API_KEY: process.env.ACCESSIBILITY_CLOUD_API_KEY,
-  tiles: [
+  ACCESSIBILITY_CLOUD_URL: 'https://accessibility-cloud-v2.freetls.fastly.net/',
+  TILES: [
     { z: 15, x: 9650, y: 12320},
     { z: 15, x: 9649, y: 12320},
     { z: 15, x: 9648, y: 12320},
@@ -106,9 +107,9 @@ const accessibilityCloud = {
     const results = [];
     const placeInfos = [];
     
-    for (const tile of this.tiles) {
+    for (const tile of this.TILES) {
       const { x, y, z } = tile;
-      const result = await axios.get('https://accessibility-cloud-v2.freetls.fastly.net/place-infos.json', {
+      const result = await axios.get(`${this.ACCESSIBILITY_CLOUD_URL}place-infos.json`, {
         params: {
           appToken: this.ACCESSIBILITY_CLOUD_API_KEY,
           x,
@@ -140,7 +141,7 @@ const accessibilityCloud = {
       
   async getCategories() {
     const categories = [];
-    const result = await axios.get('https://accessibility-cloud-v2.freetls.fastly.net/categories.json', {
+    const result = await axios.get(`${this.ACCESSIBILITY_CLOUD_URL}categories.json`, {
       params: {
         appToken: this.ACCESSIBILITY_CLOUD_API_KEY,
       },

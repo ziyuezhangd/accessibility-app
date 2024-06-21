@@ -1,6 +1,9 @@
 const cityofNY = {
+  SOCRATA_APP_KEY: process.env.SOCRATA_APP_KEY,
+  CITYOFNEWYORK_URL: 'https://data.cityofnewyork.us/resource/',
+
   async getPedestrianRamps() {
-    const result = await fetch(`https://data.cityofnewyork.us/resource/ufzp-rrqu.json?borough=1&$$app_token=${process.env.SOCRATA_APP_KEY}`);
+    const result = await fetch(`${this.CITYOFNEWYORK_URL}ufzp-rrqu.json?borough=1&$$app_token=${this.SOCRATA_APP_KEY}`);
     const data = await result.json();
     // TODO: cant get the logger to work correctly - fixed: use logger.info()
     // logger.info(`${data}`);
@@ -15,7 +18,7 @@ const cityofNY = {
   },
 
   async getPedestrianSignals() {
-    const result = await fetch(`https://data.cityofnewyork.us/resource/de3m-c5p4.json?boroname=Manhattan&$$app_token=${process.env.SOCRATA_APP_KEY}`);
+    const result = await fetch(`${this.CITYOFNEWYORK_URL}de3m-c5p4.json?boroname=Manhattan&$$app_token=${this.SOCRATA_APP_KEY}`);
     const data = await result.json();
     // TODO: cant get the logger to work correctly - fixed: use logger.info()
     // logger.info(`${data}`);
@@ -29,7 +32,7 @@ const cityofNY = {
   },
 
   async getSeatingAreas() {
-    const result = await fetch(`https://data.cityofnewyork.us/resource/esmy-s8q5.json?boroname=Manhattan&$$app_token=${process.env.SOCRATA_APP_KEY}`);
+    const result = await fetch(`${this.CITYOFNEWYORK_URL}esmy-s8q5.json?boroname=Manhattan&$$app_token=${this.SOCRATA_APP_KEY}`);
     const data = await result.json();
     // TODO: cant get the logger to work correctly - fixed: use logger.info()
     // logger.info(`${data}`);

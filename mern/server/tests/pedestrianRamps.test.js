@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import router from '../routes/pedestrianRamps.js';
-import cityofNY from '../services/cityofNY.js';
+import cityofNY from '../apis/cityofNY.js';
 
 const app = express();
 app.use('/', router);
@@ -14,7 +14,7 @@ describe('GET /pedestrianRamps', () => {
   ];
 
   beforeAll(() => {
-    jest.mock('../services/cityofNY.js');
+    jest.mock('../apis/cityofNY.js');
   });
 
   it('should return 200 and result if external API call succeeds', async () => {

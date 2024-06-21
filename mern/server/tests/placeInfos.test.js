@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import router from '../routes/placeInfos.js';
-import accessibilityCloud from '../services/accessibilityCloud.js';
+import accessibilityCloud from '../apis/accessibilityCloud.js';
 
 const app = express();
 app.use('/', router);
@@ -15,7 +15,7 @@ describe('GET', () => {
   const dummyCategories = ['airport','biergarten','books'];
 
   beforeAll(() => {
-    jest.mock('../services/accessibilityCloud.js');
+    jest.mock('../apis/accessibilityCloud.js');
   });
 
   describe('/placeInfo', () => {
