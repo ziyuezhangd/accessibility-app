@@ -1,6 +1,6 @@
 import express from 'express';
 import logger from '../logger.js';
-import accessibilityCloud from '../service/accessibilityCloud.js';
+import accessibilityCloud from '../services/accessibilityCloud.js';
 
 const placeInfosRouter = express.Router();
 
