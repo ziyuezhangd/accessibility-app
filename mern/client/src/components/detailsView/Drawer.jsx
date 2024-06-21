@@ -2,7 +2,7 @@ import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import { useEffect, useState } from 'react';
 import DrawerHistoryList from './DrawerHistoryList';
-import DrawerLocationDetails from './DrawerLocationDetails';
+import DrawerLocationDetails from '../map/DrawerLocationDetails';
 
 const drawerWidth = 400;
 

@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { Suspense, useState } from 'react';
 import { GoogleMapApiLoader } from 'react-google-map-wrapper';
-import PersistentDrawerLeft from '../components/map/Drawer';
+import PersistentDrawerLeft from '../components/detailsView/Drawer';
 import { Map as MapComponent } from '../components/map/Map';
 
 export default function MapPage() {
