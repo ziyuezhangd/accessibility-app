@@ -2,6 +2,7 @@ import { Avatar, Container, Grid, Typography } from '@mui/material';
 import aprilImage from '../../assets/april.png';
 import danielleImage from '../../assets/danielle.jpg';
 import ellenImage from '../../assets/ellen.png';
+import nithishhImage from '../../assets/nithishh.jpg';
 import thomasImage from '../../assets/thomas.jpg';
 
 const nameStyles = {
@@ -57,7 +58,7 @@ export default function MeetTheTeam() {
           <Typography sx={titleStyles}>Frontend Lead</Typography>
         </Grid>
         <Grid item sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Avatar alt='Nithishh Saravanan' sx={{ width: 300, height: 300, filter: 'grayscale(100%)' }} />
+          <Avatar alt='Nithishh Saravanan' src={nithishhImage} sx={{ width: 300, height: 300, filter: 'grayscale(100%)' }} />
           <Typography sx={nameStyles}>Nithishh Saravanan</Typography>
           <Typography sx={titleStyles}>Customer Lead</Typography>
         </Grid>

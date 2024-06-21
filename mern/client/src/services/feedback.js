@@ -15,7 +15,7 @@ const dummyFeedbacks = [
 
 export const postFeedback = async (feedback) => {
   // Call the API here
-  const response = await fetch('/feedback', {
+  const response = await fetch('/api/feedback', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
