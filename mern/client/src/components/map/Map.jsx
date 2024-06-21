@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useState, useEffect } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
-import { getPlaceInfos } from '../../services/placeInfo';
+import { PlaceInfoUtilities, getPlaceInfos } from '../../services/placeInfo';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import HelpIcon from '../helpModal/HelpIcon';
 
@@ -136,9 +136,25 @@ export const Map = ({ onMapClicked }) => {
           />
         )}
         <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} />
+        <MarkerClusterer>
+          
+        placeInfos.map((place, i) => {
+              const icon = PlaceInfosUtilities.getMarkerPNG(place);
+              if (!icon) continue;
+              const iconBase ="https://developers.google.com/maps/documentation/javascript/examples/full/images/";
+              return (
+                <AdvancedMarker>
+                 key={i}
+                  position={{ lat: place.lat, lng: place.lng }}
+                  icon={iconBase} + {icon}
+                  clusterer={clusterer}
+                </AdvancedMarker> 
+          </MarkerClusterer>
       </GoogleMap>
     </Box>
   );
 };
 
 export default Map;
+//https://stackoverflow.com/questions/25496625/add-local-image-as-custom-marker-in-google-maps
+//https://developers.google.com/maps/documentation/javascript/custom-markers
