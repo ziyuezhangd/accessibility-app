@@ -3,10 +3,9 @@ import * as _ from 'lodash';
 import { useState, useEffect } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
-import HelpIcon from './HelpIcon';
 import { getPlaceInfos } from '../../services/placeInfo';
-import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import HelpIcon from '../helpModal/HelpIcon';
 
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
@@ -61,24 +60,24 @@ export const Map = ({ onMapClicked }) => {
 
   const handleSelect = (item) => {
     switch (item.id) {
-    case 'busyness':
-      console.log('Setting busyness data and gradient');
-      setHeatMapData(busynessData);
-      setHeatMapGradient(busynessGradient);
-      break;
-    case 'noise':
-      console.log('Setting noise data and gradient');
-      setHeatMapData(noiseData);
-      setHeatMapGradient(noiseGradient);
-      break;
-    case 'odor':
-      console.log('Setting odor data and gradient');
-      setHeatMapData(odorData);
-      setHeatMapGradient(odorGradient);
-      break;
-    default:
-      setHeatMapData([]);
-      setHeatMapGradient([]);
+      case 'busyness':
+        console.log('Setting busyness data and gradient');
+        setHeatMapData(busynessData);
+        setHeatMapGradient(busynessGradient);
+        break;
+      case 'noise':
+        console.log('Setting noise data and gradient');
+        setHeatMapData(noiseData);
+        setHeatMapGradient(noiseGradient);
+        break;
+      case 'odor':
+        console.log('Setting odor data and gradient');
+        setHeatMapData(odorData);
+        setHeatMapGradient(odorGradient);
+        break;
+      default:
+        setHeatMapData([]);
+        setHeatMapGradient([]);
     }
   };
 

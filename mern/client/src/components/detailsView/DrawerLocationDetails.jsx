@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
+import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
 import { postFeedback } from '../../services/feedback';
@@ -44,14 +45,14 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     }
     history = JSON.parse(localStorage.getItem('searchHistory'));
 
-    if (history[0] === location) {
+    if (_.isEqual(history[0], location)) {
       // Do nothing
       return;
     }
 
-    if (history.includes(location)) {
+    if (_.find(history, (h) => _.isEqual(h, location))) {
       // Remove and we will put it back to the start
-      _.remove(history, (h) => h === location);
+      _.remove(history, (h) => _.isEqual(h, location));
     }
     history = [location, ...history];
 
@@ -83,12 +84,13 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
         </IconButton>
       </DrawerHeader>
       <Box sx={{ overflow: 'auto', px: 5 }}>
-        <Typography variant='h5'>{location}</Typography>
+        <Typography variant='h5'>{location.name}</Typography>
         Hello
         {!isLoading && (
           <>
-            <NearestRestrooms placeInfos={placeInfos} />
-            <NearestStations placeInfos={placeInfos} />
+            <Grades />
+            <NearestRestrooms placeInfos={placeInfos} lat={location.lat} lng={location.lng} />
+            <NearestStations placeInfos={placeInfos} lat={location.lat} lng={location.lng} />
           </>
         )}
         <Button onClick={handleButtonClicked}>Submit Feedback</Button>

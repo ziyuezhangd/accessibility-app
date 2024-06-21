@@ -1,9 +1,9 @@
-import { Avatar, AvatarGroup, Box, Container, Typography } from '@mui/material';
+import { Avatar, AvatarGroup, Box, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
-import { getPlaceInfos } from '../../services/placeInfo';
-import { SUBWAY_LINE_COLORS, getSubwayLinesFromPlaceInfoString, getSubwayStationNameFromPlaceInfoString } from '../../utils/MapUtils';
+import { PlaceInfoUtilities } from '../../services/placeInfo';
+import { SUBWAY_LINE_COLORS } from '../../utils/MapUtils';
 
-export default function NearestStations({ placeInfos }) {
+export default function NearestStations({ placeInfos, lat, lng }) {
   const [nearestStations, setNearestStations] = useState([]);
 
   useEffect(() => {
@@ -12,14 +12,9 @@ export default function NearestStations({ placeInfos }) {
 
   // TODO: merge stations like Fulton Street
   const getNearestSubwayStations = async () => {
-    // Grab a few stations for demo purposes
-    const testStations = ['Fulton Street (2,3,A,C)', 'Fulton Street (A,C,J,Z)', '42nd Street-Grand Central (S,4,5,6,7)', '14th Street-Union Square (L,N,Q,R)', '33rd Street (PATH)'];
-    const stations = placeInfos.filter((place) => testStations.includes(place.name));
-    console.log(stations);
-    for (const station of stations) {
-      getSubwayLinesFromPlaceInfoString(station.name);
-    }
-    setNearestStations(stations);
+    const stations = placeInfos.filter((place) => PlaceInfoUtilities.isSubwayStation(place) && place.name !== '');
+    const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
+    setNearestStations(nearestStations);
   };
 
   return (
@@ -30,13 +25,13 @@ export default function NearestStations({ placeInfos }) {
       {nearestStations.map((station) => (
         <>
           <AvatarGroup key={station.name}>
-            {getSubwayLinesFromPlaceInfoString(station.name).map((line) => (
+            {PlaceInfoUtilities.getSubwayLines(station).map((line) => (
               <Avatar key={`${station.name}-${line}`} sx={{ bgcolor: SUBWAY_LINE_COLORS[line], fontSize: line === 'PATH' ? 10 : 20 }}>
                 {line}
               </Avatar>
             ))}
           </AvatarGroup>
-          <Typography variant='body1'>{getSubwayStationNameFromPlaceInfoString(station.name)}</Typography>
+          <Typography variant='body1'>{PlaceInfoUtilities.getSubwayStationName(station)}</Typography>
           <Typography>500m</Typography>
         </>
       ))}
