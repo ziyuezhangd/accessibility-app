@@ -88,26 +88,12 @@ export const Map = () => {
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
-    getNearestSubwayStations(lat, lng);
     if (isPlaceIconClicked) {
       console.log('Place clicked: ', e, lat, lng);
     }
     if (isLocationClicked) {
       console.log('Location clicked: ', lat, lng);
     }
-  };
-
-  // TODO: this should be moved into DrawerLocationDetails
-  const getNearestSubwayStations = async (selectedLat, selectedLng) => {
-    // There are a lot of duplicates - grab only the stations which contain the subway lines
-    const stations = placeInfos.filter((place) => (place.category === 'subway_station' || place.category === 'train_station') && place.name && place.name.indexOf('(') > -1);
-    // Get all stations within 500 meters
-    let nearestStations = stations.filter(s => calculateDistanceBetweenTwoCoordinates(selectedLat, selectedLng, s.latitude, s.longitude) <= 500);
-    if (nearestStations.length === 0) {
-      nearestStations = [_.minBy(stations, s => calculateDistanceBetweenTwoCoordinates(selectedLat, selectedLng, s.latitude, s.longitude))];
-    }
-
-    console.log(`${nearestStations.length} stations within 500m: `, nearestStations);
   };
 
   const fetchData = async () => {
