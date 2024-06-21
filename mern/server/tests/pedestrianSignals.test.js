@@ -8,10 +8,10 @@ const app = express();
 app.use('/', router);
 
 describe('GET /pedestrianSignals', () => {
-  const dummySignals = [{"latitude":"40.712731","longitude":"-73.988491"},{"latitude":"40.782928","longitude":"-73.943914"}];
+  const dummySignals = [{'latitude':'40.712731','longitude':'-73.988491'},{'latitude':'40.782928','longitude':'-73.943914'}];
 
   beforeAll(() => {
-    jest.mock('../services/cityofNY.js')
+    jest.mock('../services/cityofNY.js');
   });
 
   it('should return 200 and result if external API call succeeds', async () => {

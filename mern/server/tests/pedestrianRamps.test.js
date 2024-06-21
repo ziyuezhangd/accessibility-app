@@ -9,12 +9,12 @@ app.use('/', router);
 
 describe('GET /pedestrianRamps', () => {
   const dummyRamps = [
-    {"latitude":40.7467994372694,"longitude":-73.9883520547057,"width":"40.8"},
-    {"latitude":40.77621584906011,"longitude":-73.964196820598,"width":"49.2"}
+    {'latitude':40.7467994372694,'longitude':-73.9883520547057,'width':'40.8'},
+    {'latitude':40.77621584906011,'longitude':-73.964196820598,'width':'49.2'}
   ];
 
   beforeAll(() => {
-    jest.mock('../services/cityofNY.js')
+    jest.mock('../services/cityofNY.js');
   });
 
   it('should return 200 and result if external API call succeeds', async () => {

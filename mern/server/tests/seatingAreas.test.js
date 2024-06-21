@@ -9,12 +9,12 @@ app.use('/', router);
 
 describe('GET /seatingAreas', () => {
   const dummySeatings = [
-    {"seatType":"LEANING BAR","category":"SBS","latitude":"40.744235","longitude":"-73.973042"},
-    {"seatType":"BACKED 1.0","category":"Municipal Facilities","latitude":"40.802362","longitude":"-73.948246"}
-];
+    {'seatType':'LEANING BAR','category':'SBS','latitude':'40.744235','longitude':'-73.973042'},
+    {'seatType':'BACKED 1.0','category':'Municipal Facilities','latitude':'40.802362','longitude':'-73.948246'}
+  ];
 
   beforeAll(() => {
-    jest.mock('../services/cityofNY.js')
+    jest.mock('../services/cityofNY.js');
   });
 
   it('should return 200 and result if external API call succeeds', async () => {
