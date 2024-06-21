@@ -89,7 +89,7 @@ export const Map = () => {
     const lat = latLng.lat();
     const lng = latLng.lng();
     if (isPlaceIconClicked) {
-      console.log('Place clicked: ', e.placeId, lat, lng);
+      console.log('Place clicked: ', e, lat, lng);
     }
     if (isLocationClicked) {
       console.log('Location clicked: ', lat, lng);

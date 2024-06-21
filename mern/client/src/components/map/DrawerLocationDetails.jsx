@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
@@ -31,6 +32,31 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
       setIsLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    addLocationToHistory();
+  }, []);
+
+  const addLocationToHistory = () => {
+    let history = localStorage.getItem('searchHistory');
+    if (!history) {
+      localStorage.setItem('searchHistory', JSON.stringify([]));
+    }
+    history = JSON.parse(localStorage.getItem('searchHistory'));
+
+    if (history[0] === location) {
+      // Do nothing
+      return;
+    }
+
+    if (history.includes(location)) {
+      // Remove and we will put it back to the start
+      _.remove(history, (h) => h === location);
+    }
+    history = [location, ...history];
+
+    localStorage.setItem('searchHistory', JSON.stringify(history));
+  };
 
   const handleButtonClicked = async () => {
     // TODO: these alerts need to disappear, like toasts
