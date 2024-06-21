@@ -47,16 +47,26 @@ export default function Features() {
           textAlign: { sm: 'left', md: 'center' },
         }}
       >
-        <Typography component='h2' variant='h4' color='text.primary' sx={{ fontVariant: 'all-small-caps', fontWeight: '100' }}>
+        <Typography component='h2'
+          variant='h4'
+          color='text.primary'
+          sx={{ fontVariant: 'all-small-caps', fontWeight: '100' }}>
           Features
         </Typography>
-        <Typography color='text.primary' sx={{ fontSize: 24 }}>
+        <Typography color='text.primary'
+          sx={{ fontSize: 24 }}>
           Explore the city with ease using our platform&apos;s features.
         </Typography>
       </Box>
-      <Grid container spacing={2}>
+      <Grid container
+        spacing={2}>
         {features.map((feature, index) => (
-          <Grid item xs={12} sm={6} md={6} key={index} sx={{ display: 'flex' }}>
+          <Grid item
+            xs={12}
+            sm={6}
+            md={6}
+            key={index}
+            sx={{ display: 'flex' }}>
             <Paper
               elevation={0}
               square='false'
@@ -72,10 +82,15 @@ export default function Features() {
             >
               <Box sx={{ width: 100 }}>{feature.icon}</Box>
               <Box sx={{ textAlign: 'left'}}>
-                <Typography variant='h5' color='text.primary' fontSize={24} pb={2}>
+                <Typography variant='h5'
+                  color='text.primary'
+                  fontSize={24}
+                  pb={2}>
                   {feature.title}
                 </Typography>
-                <Typography variant='body' color='text.secondary' fontSize={20}>
+                <Typography variant='body'
+                  color='text.secondary'
+                  fontSize={20}>
                   {feature.description}
                 </Typography>
               </Box>

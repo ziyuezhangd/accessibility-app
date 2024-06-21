@@ -24,8 +24,11 @@ export default function NearestStations() {
   };
 
   return (
-    <Box display='flex' flexDirection='column' alignItems='flex-start'>
-      <Typography variant='h6' sx={{ fontWeight: 400, fontSize: 18 }}>
+    <Box display='flex'
+      flexDirection='column'
+      alignItems='flex-start'>
+      <Typography variant='h6'
+        sx={{ fontWeight: 400, fontSize: 18 }}>
         Wheelchair accessible subway stations
       </Typography>
       {nearestStations.map((station) => (
@@ -33,7 +36,8 @@ export default function NearestStations() {
           <AvatarGroup key={station.name}>
             {getSubwayLinesFromPlaceInfoString(station.name).map((line) => (
               <>
-                <Avatar key={`${station.name}-${line}`} sx={{ bgcolor: SUBWAY_LINE_COLORS[line], fontSize: line === 'PATH' ? 10 : 20 }}>
+                <Avatar key={`${station.name}-${line}`}
+                  sx={{ bgcolor: SUBWAY_LINE_COLORS[line], fontSize: line === 'PATH' ? 10 : 20 }}>
                   {line}
                 </Avatar>
               </>
