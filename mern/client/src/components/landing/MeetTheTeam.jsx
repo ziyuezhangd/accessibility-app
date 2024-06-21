@@ -4,6 +4,7 @@ import danielleImage from '../../assets/danielle.jpg';
 import ellenImage from '../../assets/ellen.png';
 import nithishhImage from '../../assets/nithishh.jpg';
 import thomasImage from '../../assets/thomas.jpg';
+import abishekImage from '../../assets/abishek.png';
 
 const nameStyles = {
   fontWeight: 600,
@@ -53,7 +54,7 @@ export default function MeetTheTeam() {
           <Typography sx={titleStyles}>Maintenance Lead</Typography>
         </Grid>
         <Grid item sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Avatar alt='Abishek B' sx={{ width: 300, height: 300, filter: 'grayscale(100%)' }} />
+          <Avatar src={abishekImage} alt='Abishek B' sx={{ width: 300, height: 300, filter: 'grayscale(100%)' }} />
           <Typography sx={nameStyles}>Abishek B</Typography>
           <Typography sx={titleStyles}>Frontend Lead</Typography>
         </Grid>
