@@ -4,7 +4,8 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import * as React from 'react';
+import { useState } from 'react';
+import NearestStations from './NearestStations';
 import { postFeedback } from '../../services/feedback';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -17,8 +18,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function DrawerLocationDetails({ location, onBackClicked }) {
-  const [error, setError] = React.useState('');
-  const [isFeedbackComplete, setIsFeedbackComplete] = React.useState(false);
+  const [error, setError] = useState('');
+  const [isFeedbackComplete, setIsFeedbackComplete] = useState(false);
+
   const handleButtonClicked = async () => {
     // TODO: these alerts need to disappear, like toasts
     setError('');
@@ -43,9 +45,10 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
           <ChevronLeftIcon />
         </IconButton>
       </DrawerHeader>
-      <Box sx={{ overflow: 'auto' }}>
+      <Box sx={{ overflow: 'auto', px: 5 }}>
         <Typography variant='h5'>{location}</Typography>
         Hello
+        <NearestStations />
         <Button onClick={handleButtonClicked}>Submit Feedback</Button>
       </Box>
       {error && <Alert severity='error'>{error}</Alert>}
