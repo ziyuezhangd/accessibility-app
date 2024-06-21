@@ -15,7 +15,7 @@ describe('GET', () => {
   const dummyCategories = ['airport','biergarten','books'];
 
   beforeAll(() => {
-    jest.mock('../service/accessibilityCloud.js');
+    jest.mock('../services/accessibilityCloud.js');
   });
 
   describe('/placeInfo', () => {
