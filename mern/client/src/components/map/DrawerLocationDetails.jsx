@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import _ from 'lodash';
 import { useState, useEffect } from 'react';
+import NearestStations from './NearestStations';
 import { postFeedback } from '../../services/feedback';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -70,9 +71,10 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
           <ChevronLeftIcon />
         </IconButton>
       </DrawerHeader>
-      <Box sx={{ overflow: 'auto' }}>
+      <Box sx={{ overflow: 'auto', px: 5 }}>
         <Typography variant='h5'>{location}</Typography>
         Hello
+        <NearestStations />
         <Button onClick={handleButtonClicked}>Submit Feedback</Button>
       </Box>
       {error && <Alert severity='error'>{error}</Alert>}
