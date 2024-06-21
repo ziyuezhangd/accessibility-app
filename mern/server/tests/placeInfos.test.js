@@ -1,8 +1,8 @@
 import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
-import router from '../routes/placeInfos.js';
 import accessibilityCloud from '../apis/accessibilityCloud.js';
+import router from '../routes/placeInfos.js';
 
 const app = express();
 app.use('/', router);

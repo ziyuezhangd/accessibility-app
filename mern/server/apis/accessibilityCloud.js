@@ -1,7 +1,4 @@
 import axios from 'axios';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const accessibilityCloud = {
   ACCESSIBILITY_CLOUD_API_KEY: process.env.ACCESSIBILITY_CLOUD_API_KEY,
@@ -102,7 +99,10 @@ const accessibilityCloud = {
     { z: 17, x: 38620, y: 49201},
     {z: 17, x: 38621, y: 49201},
   ],
-    
+  
+  /**
+   * @returns{Promise<Array<{category: string, name: string, latitude: number, longitude: number}>>} 
+  */
   async getPlaceInfos() {
     const results = [];
     const placeInfos = [];
@@ -138,7 +138,10 @@ const accessibilityCloud = {
     
     return placeInfos;
   },
-      
+  
+  /**
+   * @returns{Promise<Array<string>>} 
+  */
   async getCategories() {
     const categories = [];
     const result = await axios.get(`${this.ACCESSIBILITY_CLOUD_URL}categories.json`, {

@@ -1,6 +1,6 @@
 import express from 'express';
-import logger from '../logger.js';
 import cityofNY from '../apis/cityofNY.js';
+import logger from '../logger.js';
 
 const router = express.Router();
 

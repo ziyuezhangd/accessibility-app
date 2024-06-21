@@ -1,8 +1,8 @@
 import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
-import router from '../routes/pedestrianRamps.js';
 import cityofNY from '../apis/cityofNY.js';
+import router from '../routes/pedestrianRamps.js';
 
 const app = express();
 app.use('/', router);
