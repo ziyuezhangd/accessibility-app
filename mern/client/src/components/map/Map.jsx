@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { GoogleMap, Marker } from 'react-google-map-wrapper';
 import HelpIcon from './HelpIcon';
-import { getPlaceInfos } from '../../services/placeInfo';
+import { getCategories, getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
@@ -57,6 +57,8 @@ export const Map = () => {
     fetchData();
   }, []);
 
+
+
   return (
     // you can pass props to map container element.
     // use Tailwind CSS or styled-components or anything to style your container.
@@ -68,3 +70,4 @@ export const Map = () => {
     </Box>
   );
 };
+
