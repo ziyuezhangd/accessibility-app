@@ -94,6 +94,11 @@ export default [
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      "react/jsx-max-props-per-line": ["error", { "maximum": 1 }],
+      "react/jsx-wrap-multilines": ["error", {
+        "declaration": "parens-new-line",
+        "prop": "parens-new-line"
+      }],
 
       // React Hooks
       "react-hooks/rules-of-hooks": "error",
