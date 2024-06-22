@@ -34,7 +34,8 @@ export default function PersistentDrawerLeft() {
       >
         <Toolbar />
         {selectedDrawerContent === 'history' && <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
-        {selectedDrawerContent === 'location' && <DrawerLocationDetails location={location} onBackClicked={handleBackClicked} />}
+        {selectedDrawerContent === 'location' && <DrawerLocationDetails location={location}
+          onBackClicked={handleBackClicked} />}
       </Drawer>
     </>
   );

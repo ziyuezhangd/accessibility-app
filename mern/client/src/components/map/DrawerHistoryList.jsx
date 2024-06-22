@@ -9,6 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import { useEffect, useState } from 'react';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -18,15 +19,28 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function DrawerHistoryList({ onLocationSelected }) {
+  const [history, setHistory] = useState([]);
+  useEffect(() => {
+    getHistory();
+  }, []);
+  // TODO: maybe we want to show the date/time?
+  const getHistory = () => {
+    const history = localStorage.getItem('searchHistory');
+    if (history) {
+      setHistory(JSON.parse(history));
+    }
+  };
+
   return (
     <>
       <DrawerHeader>
-        <Typography variant='h5'>History</Typography>
+        <Typography variant='h5'>Last viewed</Typography>
       </DrawerHeader>
       <Box sx={{ overflow: 'auto' }}>
         <List>
-          {['Place 1', 'Place 2', 'Place 3', 'Place 4'].map((text, index) => (
-            <ListItem key={text} disablePadding>
+          {history.map((text, index) => (
+            <ListItem key={text}
+              disablePadding>
               <ListItemButton onClick={() => onLocationSelected(text)}>
                 <ListItemText primary={text} />
                 <ChevronRightIcon />
@@ -35,16 +49,6 @@ export default function DrawerHistoryList({ onLocationSelected }) {
           ))}
         </List>
         <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
       </Box>
     </>
   );

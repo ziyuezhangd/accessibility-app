@@ -6,7 +6,7 @@ import noiseRating from './noiseRating.js';
 import odourRating from './odourRating.js';
 import pedestrianRamps from './pedestrianRamps.js';
 import pedestrianSignals from './pedestrianSignals.js';
-import placeInfos from './place-infos.js';
+import placeInfos from './placeInfos.js';
 import seatingAreas from './seatingAreas.js';
 import soundRating from './soundRating.js';
 
