@@ -1,4 +1,5 @@
-import { Box, useTheme } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
 import * as _ from 'lodash';
 import { useState, useEffect } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
@@ -7,6 +8,8 @@ import HelpIcon from './HelpIcon';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient, calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
+import SearchBar from './SearchBar';
+import DateTimePicker from './DateTimePicker';
 
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
@@ -49,86 +52,98 @@ const odorData = [
 
 export const Map = () => {
   const [placeInfos, setPlaceInfos] = useState([]);
-
-  const theme = useTheme();
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
   const [mapInstance, setMapInstance] = useState(null);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());  // Define selectedDate state
 
-  useEffect(() => {
-    console.log('Map instance loaded:', mapInstance);
-  }, [mapInstance]);
+  const theme = useTheme();
 
   const handleSelect = (item) => {
     switch (item.id) {
-    case 'busyness':
-      console.log('Setting busyness data and gradient');
-      setHeatMapData(busynessData);
-      setHeatMapGradient(busynessGradient);
-      break;
-    case 'noise':
-      console.log('Setting noise data and gradient');
-      setHeatMapData(noiseData);
-      setHeatMapGradient(noiseGradient);
-      break;
-    case 'odor':
-      console.log('Setting odor data and gradient');
-      setHeatMapData(odorData);
-      setHeatMapGradient(odorGradient);
-      break;
-    default:
-      setHeatMapData([]);
-      setHeatMapGradient([]);
+      case 'busyness':
+        console.log('Setting busyness data and gradient');
+        setHeatMapData(busynessData);
+        setHeatMapGradient(busynessGradient);
+        break;
+      case 'noise':
+        console.log('Setting noise data and gradient');
+        setHeatMapData(noiseData);
+        setHeatMapGradient(noiseGradient);
+        break;
+      case 'odor':
+        console.log('Setting odor data and gradient');
+        setHeatMapData(odorData);
+        setHeatMapGradient(odorGradient);
+        break;
+      default:
+        setHeatMapData([]);
+        setHeatMapGradient([]);
     }
   };
 
   const handleMapClicked = (map, e) => {
     const isPlaceIconClicked = e.placeId !== undefined;
     const isLocationClicked = e.placeId === undefined;
-
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
-    getNearestSubwayStations(lat, lng);
+
     if (isPlaceIconClicked) {
       console.log('Place clicked: ', e.placeId, lat, lng);
+      setSelectedPlace({ id: e.placeId, lat, lng });
+      setSnackbarOpen(true);
     }
     if (isLocationClicked) {
       console.log('Location clicked: ', lat, lng);
-      setOpen(false);  // Close the InfoWindow when a location is clicked
     }
   };
 
-  // TODO: this should be moved into DrawerLocationDetails
-  const getNearestSubwayStations = async (selectedLat, selectedLng) => {
-    // There are a lot of duplicates - grab only the stations which contain the subway lines
-    const stations = placeInfos.filter((place) => (place.category === 'subway_station' || place.category === 'train_station') && place.name && place.name.indexOf('(') > -1);
-    // Get all stations within 500 meters
-    let nearestStations = stations.filter(s => calculateDistanceBetweenTwoCoordinates(selectedLat, selectedLng, s.latitude, s.longitude) <= 500);
-    if (nearestStations.length === 0) {
-      nearestStations = [_.minBy(stations, s => calculateDistanceBetweenTwoCoordinates(selectedLat, selectedLng, s.latitude, s.longitude))];
+  const handleAddToFavorites = () => {
+    if (selectedPlace) {
+      console.log('Added to favorites:', selectedPlace);
+      const event = new CustomEvent('favoriteAdded', { detail: selectedPlace });
+      window.dispatchEvent(event);
+      setSnackbarOpen(false);
     }
+  };
 
-    console.log(`${nearestStations.length} stations within 500m: `, nearestStations);
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
   };
 
   const fetchData = async () => {
-    const busynessRatings = await getBusynessRatings(new Date());
+    const busynessRatings = await getBusynessRatings(selectedDate);  // Use selectedDate
     console.log('busynessRatings: ', busynessRatings);
-    const noiseRatings = await getNoiseRatings(new Date());
+    const noiseRatings = await getNoiseRatings(selectedDate);  // Use selectedDate
     console.log('noiseRatings: ', noiseRatings);
-    const odourRatings = await getOdourRatings(new Date());
+    const odourRatings = await getOdourRatings(selectedDate);  // Use selectedDate
     console.log('odourRatings: ', odourRatings);
     getPlaceInfos().then(setPlaceInfos);
   };
 
+  const containerStyle = {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '10px',
+    width: '100%',
+    padding: '10px', // Optional padding for better spacing
+  };
+
   useEffect(() => {
-    // This is just testing the rating queries
     fetchData();
-  }, []);
+  }, [selectedDate]);  // Fetch data when selectedDate changes
 
   return (
     <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
+      
       <GoogleMap
         style={{ height: '95vh', top: '7vh' }}
         zoom={DEFAULT_ZOOM}
@@ -136,13 +151,15 @@ export const Map = () => {
         onClick={handleMapClicked}
         onLoad={(map) => setMapInstance(map)}
         options={{
-          libraries: ['visualization'],
+          libraries: ['places', 'visualization'],
         }}
       >
-        <Dropdown onSelect={handleSelect} />
+       <div style={containerStyle}>
+          <Dropdown onSelect={handleSelect} />
+          <SearchBar mapInstance={mapInstance} setSelectedPlace={setSelectedPlace} />
+          <DateTimePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+        </div>
         <HelpIcon />
-        {console.log('Rendering HeatMap Data:', heatMapData)}
-        {console.log('Rendering HeatMap Gradient:', heatMapGradient)}
         {heatMapData.length > 0 && (
           <HeatmapLayer
             data={heatMapData.map(data => ({
@@ -154,8 +171,26 @@ export const Map = () => {
             opacity={0.6}
           />
         )}
-        <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} />
+        {selectedPlace && (
+          <Marker lat={selectedPlace.lat} lng={selectedPlace.lng} />
+        )}
       </GoogleMap>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message="Add this place to favorites?"
+        action={
+          <>
+            <Button color="secondary" size="small" onClick={handleAddToFavorites}>
+              Add to Favorites
+            </Button>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleSnackbarClose}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </>
+        }
+      />
     </Box>
   );
 };

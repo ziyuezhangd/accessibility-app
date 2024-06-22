@@ -8,21 +8,10 @@ import { Outlet } from 'react-router-dom';
 import { NavBar } from './components/NavBar';
 
 const App = () => {
-  const [selectedPOI, setSelectedPOI] = useState(null);
-
-  const handlePOISelect = (poi) => {
-    setSelectedPOI(poi);
-  };
-
   return (
-    <div>
-      <CssBaseline />
+    <div className='w-full'>
       <NavBar />
-      <Container>
-        <SearchBar onPOISelect={handlePOISelect} />
-        <Map selectedPOI={selectedPOI} />
-        {selectedPOI && <PointOfInterestDetails poi={selectedPOI} />}
-      </Container>
+      <Outlet />
     </div>
   );
 };
