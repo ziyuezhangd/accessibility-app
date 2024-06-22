@@ -1,16 +1,15 @@
 import { Box } from '@mui/material';
 import { Suspense } from 'react';
 import { GoogleMapApiLoader } from 'react-google-map-wrapper';
+import PersistentDrawerLeft from '../components/map/Drawer';
 import { Map as MapComponent } from '../components/map/Map';
-import HelpIcon from '../components/map/HelpIcon';
-import SearchBar from '../components/SearchBar'; // Ensure the correct path
 
 export default function MapPage() {
   const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY;
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <SearchBar /> {/* Include the SearchBar component */}
+      <PersistentDrawerLeft />
       <Suspense>
         {/* TODO: add fallback */}
         {/* Load the google map api */}
