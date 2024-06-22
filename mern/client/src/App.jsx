@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
-import Container from '@mui/material/Container';
-import SearchBar from './components/SearchBar';
-// import Map from '../Map';
-import Map from './components/map/Map';
-
-import NavBar from './components/NavBar';
-import PointOfInterestDetails from './components/PointOfInterestDetails';
+import './App.css';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import '@fontsource/playfair-display';
+import { Outlet } from 'react-router-dom';
+import { NavBar } from './components/NavBar';
 
 const App = () => {
   const [selectedPOI, setSelectedPOI] = useState(null);
