@@ -1,6 +1,6 @@
 import { Help } from '@mui/icons-material';
-import { Button, Icon, IconButton } from '@mui/material';
-import React, { useState } from 'react';
+import { IconButton } from '@mui/material';
+import { useState } from 'react';
 import { Control } from 'react-google-map-wrapper';
 import HelpModal from './HelpModal';
 
@@ -17,7 +17,7 @@ export default function HelpIcon() {
           <Help sx={{ fontSize: 40 }} />
         </IconButton>
       </Control>
-      <HelpModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)}/>
+      <HelpModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} />
     </>
   );
 }

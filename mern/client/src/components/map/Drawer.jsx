@@ -1,7 +1,4 @@
-import MuiAppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import * as React from 'react';
 import DrawerHistoryList from './DrawerHistoryList';
@@ -32,7 +29,7 @@ export default function PersistentDrawerLeft() {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          ['& .MuiDrawer-paper']: { width: drawerWidth, boxSizing: 'border-box' },
+          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
         }}
       >
         <Toolbar />

@@ -3,7 +3,7 @@ import db from '../db/connection.js';
 
 const router = express.Router();
 
-router.get('/sound-ratings', async (req, res) => {
+router.get('/', async (req, res) => {
   const { datetime } = req.query;
   const datetimeObj = new Date(datetime);
   if (!datetime) {
@@ -18,13 +18,13 @@ router.get('/sound-ratings', async (req, res) => {
     const predictions = latestModel.predict(datetimeObj);
 
     res.status(200).send(predictions);
-  } catch {
+  } catch (error){
     res
       .status(500)
       .send({ message: 'An error occurred', error: error.message });
   }
 });
-router.get('/sound-ratings/location', async (req, res) => {
+router.get('/location', async (req, res) => {
   const { datetime, lat, long } = req.query;
   if (!datetime) {
     return res
@@ -49,7 +49,7 @@ router.get('/sound-ratings/location', async (req, res) => {
     const predictions = latestModel.predict(datetimeObj, latitude, longitude);
 
     res.status(200).send(predictions);
-  } catch {
+  } catch (error){
     res
       .status(500)
       .send({ message: 'An error occurred', error: error.message });
