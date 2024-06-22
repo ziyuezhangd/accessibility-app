@@ -90,9 +90,8 @@ export const Map = () => {
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
-
     if (isPlaceIconClicked) {
-      console.log('Place clicked: ', e.placeId, lat, lng);
+      console.log('Place clicked: ', e, lat, lng);
       setSelectedPlace({ id: e.placeId, lat, lng });
       setSnackbarOpen(true);
     }
