@@ -232,138 +232,137 @@ const bankCategories = ['bank'];
 const picnicTableCategories = ['picnic_table'];
 const cemeteryCategories = ['cemetery'];
 
-
 const categoryToParentCategory = (category) => {
-  if( pubCategories.includes('category')) {
+  if( pubCategories.includes(category)) {
     return 'pub';
   }
-  if( airportCategories.includes('category')) {
+  if( airportCategories.includes(category)) {
     return 'airport';
   }
-  if( booksCategories.includes('category')) {
+  if( booksCategories.includes(category)) {
     return 'books';
   }
-  if( educationCategories.includes('category')) {
+  if( educationCategories.includes(category)) {
     return 'education';
   }
-  if( drinkingWaterCategories.includes('category')) {
+  if( drinkingWaterCategories.includes(category)) {
     return 'drinkingWater';
   }
-  if( retailCategories.includes('category')) {
+  if( retailCategories.includes(category)) {
     return 'retail';
   }
-  if( officeCategories.includes('category')) {
+  if( officeCategories.includes(category)) {
     return 'office';
   }
-  if( theatreCategories.includes('category')) {
+  if( theatreCategories.includes(category)) {
     return 'theatre';
   }
-  if( cinemaCategories.includes('category')) {
+  if( cinemaCategories.includes(category)) {
     return 'cinema';
   }
-  if( carCategories.includes('category')) {
+  if( carCategories.includes(category)) {
     return 'car';
   }
-  if( accomodationCategories.includes('category')) {
+  if( accomodationCategories.includes(category)) {
     return 'accomodation';
   }
-  if( policeStationCategories.includes('category')) {
+  if( policeStationCategories.includes(category)) {
     return 'policeStation';
   }
-  if( healthCategories.includes('category')) {
+  if( healthCategories.includes(category)) {
     return 'health';
   }
-  if( restaurantCategories.includes('category')) {
+  if( restaurantCategories.includes(category)) {
     return 'restaurant';
   }
-  if( trainCategoories.includes('category')) {
+  if( trainCategoories.includes(category)) {
     return 'trainStation';
   }
-  if( artCategories.includes('category')) {
+  if( artCategories.includes(category)) {
     return 'art';
   }
-  if( busCategories.includes('category')) {
+  if( busCategories.includes(category)) {
     return 'bus';
   }
-  if( marketCategories.includes('category')) {
+  if( marketCategories.includes(category)) {
     return 'market';
   }
-  if( toiletCategories.includes('category')) {
+  if( toiletCategories.includes(category)) {
     return 'toilet';
   }
-  if( flowersCategories.includes('category')) {
+  if( flowersCategories.includes(category)) {
     return 'flowers';
   }
-  if( parkCategories.includes('category')) {
+  if( parkCategories.includes(category)) {
     return 'park';
   }
-  if( veterinaryCategories.includes('category')) {
+  if( veterinaryCategories.includes(category)) {
     return 'veterinary';
   }
-  if( waterCategories.includes('category')) {
+  if( waterCategories.includes(category)) {
     return 'water';
   }
-  if( historicCategories.includes('category')) {
+  if( historicCategories.includes(category)) {
     return 'historic';
   }
-  if( ferryCategories.includes('category')) {
+  if( ferryCategories.includes(category)) {
     return 'ferry';
   }
-  if( campingCategories.includes('category')) {
+  if( campingCategories.includes(category)) {
     return 'toilet';
   }
-  if( parkingCategories.includes('category')) {
+  if( parkingCategories.includes(category)) {
     return 'parking';
   }
-  if( playgroundCategories.includes('category')) {
+  if( playgroundCategories.includes(category)) {
     return 'playground';
   }
-  if( subwayCategories.includes('category')) {
+  if( subwayCategories.includes(category)) {
     return 'subway';
   }
-  if( beautyCategories.includes('category')) {
+  if( beautyCategories.includes(category)) {
     return 'beauty';
   }
-  if( postCategories.includes('category')) {
+  if( postCategories.includes(category)) {
     return 'post';
   }
-  if( bikeCategories.includes('category')) {
+  if( bikeCategories.includes(category)) {
     return 'bike';
   }
-  if( supermarketCategories.includes('category')) {
+  if( supermarketCategories.includes(category)) {
     return 'supermarket';
   }
-  if( serviceCategories.includes('category')) {
+  if( serviceCategories.includes(category)) {
     return 'service';
   }
-  if( phoneCategories.includes('category')) {
+  if( phoneCategories.includes(category)) {
     return 'phone';
   }
-  if( picnicTableCategories.includes('category')) {
+  if( picnicTableCategories.includes(category)) {
     return 'picnic';
   }
-  if( bankCategories.includes('category')) {
+  if( bankCategories.includes(category)) {
     return 'bank';
   }
-  if( cemeteryCategories.includes('category')) {
+  if( cemeteryCategories.includes(category)) {
     return 'cemetery';
   }
-  if( campingCategories.includes('category')) {
+  if( campingCategories.includes(category)) {
     return 'toilet';
   }
-  if( sportsCategories.includes('category')) {
+  if( sportsCategories.includes(category)) {
     return 'sports';
   }
-  if( atmCategories.includes('category')) {
+  if( atmCategories.includes(category)) {
     return 'atm';
   }
-  if( placeOfWorshipCategories.includes('category')) {
+  if( placeOfWorshipCategories.includes(category)) {
     return 'placeOfWorship';
   }
-  if( museumCategories.includes('category')) {
+  if( museumCategories.includes(category)) {
     return 'museum';
   }
-  if( attractionCategories.includes('category')) {
+  if( attractionCategories.includes(category)) {
     return 'attraction';
   }
 };
