@@ -176,60 +176,16 @@ export class PlaceInfoUtilities {
 */
   static getMarkerPNG = (placeInfo) => {
     const { category } = placeInfo;
+    const pngUrl = '../../assets/accessibilityMarkers/';
     const parentCategory = categoryToParentCategory[category];
     //we dont want to include all categories that accessibility cloud offers, they have been ommitted from the mapping to the parent category and will not return anything
+
     if (!parentCategory) {
       return null;
     }
-    return parentCategoryMarkers[parentCategory]
+    const iconUrl = `${pngUrl}${category}.png`;
+    return iconUrl;
   };
-}
-
-const parentCategoryMarkers = {
-  camping: '../../assets/accessibilityMarkers/camping.png',
-  car:'../../assets/accessibilityMarkers/car.png',
-  cinema: '../../assets/accessibilityMarkers/cinema.png',
-  airport:'../../assets/accessibilityMarkers/airport.png',
-  pub: '../../assets/accessibilityMarkers/pub.png',
-  library: '../../assets/accessibilityMarkers/library.png',
-  education: '../../assets/accessibilityMarkers/education.png',
-  drinkingWater: '../../assets/accessibilityMarkers/dirnkingWater.png',
-  retail: '../../assets/accessibilityMarkers/retail.png',
-  misc: '../../assets/accessibilityMarkers/misc.png',
-  theatre: '../../assets/accessibilityMarkers/theatre.png',
-  accomodation: '../../assets/accessibilityMarkers/accomodation.png',
-  police_station:'../../assets/accessibilityMarkers/police_station.png',
-  health: '../../assets/accessibilityMarkers/health.png',
-  restaurant: '../../assets/accessibilityMarkers/restaurant.png',
-  place_of_worship: '../../assets/accessibilityMarkers/place_of_worship.png',
-  attraction: '../../assets/accessibilityMarkers/attraction.png',
-  train_station: '../../assets/accessibilityMarkers/train_station.png',
-  //will adjust the rest later
-  art: '../../assets/accessibilityMarkers/camping.png',
-  museum: '../../assets/accessibilityMarkers/camping.png',
-  bus_station: '../../assets/accessibilityMarkers/camping.png',
-  market: '../../assets/accessibilityMarkers/camping.png',
-  toilets: '../../assets/accessibilityMarkers/camping.png',
-  atm: '../../assets/accessibilityMarkers/camping.png',
-  flowers: '../../assets/accessibilityMarkers/camping.png',
-  park: '../../assets/accessibilityMarkers/camping.png',
-  veterinary: '../../assets/accessibilityMarkers/camping.png',
-  water: '../../assets/accessibilityMarkers/camping.png',
-  historic_site: '../../assets/accessibilityMarkers/camping.png',
-  ferry: '../../assets/accessibilityMarkers/camping.png',
-  parking: '../../assets/accessibilityMarkers/camping.png',
-  playground: '../../assets/accessibilityMarkers/camping.png',
-  subway: '../../assets/accessibilityMarkers/camping.png',
-  beauty: '../../assets/accessibilityMarkers/camping.png',
-  post_office: '../../assets/accessibilityMarkers/camping.png',
-  sports: '../../assets/accessibilityMarkers/camping.png',
-  bike: '../../assets/accessibilityMarkers/camping.png',
-  supermarket: '../../assets/accessibilityMarkers/camping.png',
-  service: '../../assets/accessibilityMarkers/camping.png',
-  phone: '../../assets/accessibilityMarkers/camping.png',
-  bank: '../../assets/accessibilityMarkers/camping.png',
-  picnic_table: '../../assets/accessibilityMarkers/camping.png',
-  cemetery: '../../assets/accessibilityMarkers/camping.png',
 }
 
 //missing most categories
