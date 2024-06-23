@@ -366,7 +366,4 @@ const categoryToParentCategory = (category) => {
   if( attractionCategories.includes('category')) {
     return 'attraction';
   }
-  
-  
-
-
+};

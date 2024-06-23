@@ -1,7 +1,7 @@
 import { Box, useTheme } from '@mui/material';
 import * as _ from 'lodash';
 import { useState, useEffect } from 'react';
-import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
+import { GoogleMap, HeatmapLayer, Marker, AdvancedMarker, MarkerClusterer } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import { PlaceInfoUtilities, getPlaceInfos } from '../../services/placeInfo';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
@@ -136,20 +136,18 @@ export const Map = ({ onMapClicked }) => {
           />
         )}
         <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} />
-        <MarkerClusterer>
-          
-        placeInfos.map((place, i) => {
-              const icon = PlaceInfosUtilities.getMarkerPNG(place);
-              if (!icon) continue;
-              const iconBase ="https://developers.google.com/maps/documentation/javascript/examples/full/images/";
-              return (
-                <AdvancedMarker>
-                 key={i}
-                  position={{ lat: place.lat, lng: place.lng }}
-                  icon={iconBase} + {icon}
-                  clusterer={clusterer}
-                </AdvancedMarker> 
-          </MarkerClusterer>
+        <MarkerClusterer> 
+          {placeInfos.map(({lat, lng}, i) => {
+            const icon = PlaceInfoUtilities.getMarkerPNG(i);
+            if (!icon) return null;
+
+            return (
+              <AdvancedMarker key={i} lat={i.lat} lng={i.lng} >
+                <img src={icon} alt='Marker PNG' />
+              </AdvancedMarker> 
+            );
+          })}
+        </MarkerClusterer>
       </GoogleMap>
     </Box>
   );
