@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
   if (!datetime) {
     return res.status(400).send({ message: 'Datetime parameter is required' });
   }
-    
+
   try{
     const collection = db.collection('busynessModel');
     const latestModel = await collection.findOne({}, { sort: { date: -1 } });
@@ -19,10 +19,11 @@ router.get('/', async (req, res) => {
 
     res.status(200).send(predictions);
   }
-  catch{
-    res.status(500).send({ message: 'An error occurred', error: error.message });
+  catch (error){
+    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error });
   }
 });
+
 router.get('/location', async (req, res) => {
   const { datetime, lat, long } = req.query;
   if (!datetime) {
@@ -45,8 +46,8 @@ router.get('/location', async (req, res) => {
 
     res.status(200).send(predictions);
   }
-  catch{
-    res.status(500).send({ message: 'An error occurred', error: error.message });
+  catch (error){
+    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error });
   }
 });
 

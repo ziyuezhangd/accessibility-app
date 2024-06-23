@@ -1,5 +1,4 @@
 import { Button, Container, Typography } from '@mui/material';
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Hero() {
@@ -19,13 +18,22 @@ export default function Hero() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: { xs: 3, sm: 6 },
+        justifyContent: 'center',
         height: '85vh',
       }}
     >
-      <Typography variant='h1'>Discover Accessible Areas in NYC</Typography>
-      <Typography variant='h2'>Find the best spots that cater to your needs</Typography>
-      <Button variant='contained' onClick={handleGetStartedClicked}>
+      <Typography variant='h1'
+        fontFamily={'Playfair Display'}>
+        Discover Accessible Areas in NYC
+      </Typography>
+      <Typography variant='h4'
+        component={'h2'}
+        sx={{ mb: 4 }}>
+        Find the best spots that cater to your needs
+      </Typography>
+      <Button variant='contained'
+        size='large'
+        onClick={handleGetStartedClicked}>
         Get started
       </Button>
       <Button variant='text'>Learn more</Button>

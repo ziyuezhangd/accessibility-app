@@ -2,7 +2,6 @@ import { Accessibility, FavoriteBorder } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { List, ListItem } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -11,7 +10,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -48,7 +46,8 @@ export const NavBar = () => {
   };
 
   return (
-    <AppBar position='fixed' sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar position='fixed'
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
           <Accessibility sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
@@ -73,7 +72,6 @@ export const NavBar = () => {
             variant='h6'
             noWrap
             component='a'
-            href='#app-bar-with-responsive-menu'
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -88,7 +86,12 @@ export const NavBar = () => {
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton size='large' aria-label='account of current user' aria-controls='menu-appbar' aria-haspopup='true' onClick={handleOpenNavMenu} color='inherit'>
+            <IconButton size='large'
+              aria-label='account of current user'
+              aria-controls='menu-appbar'
+              aria-haspopup='true'
+              onClick={handleOpenNavMenu}
+              color='inherit'>
               <MenuIcon />
             </IconButton>
             <Menu
@@ -110,7 +113,8 @@ export const NavBar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page}
+                  onClick={handleCloseNavMenu}>
                   <Typography textAlign='center'>{page}</Typography>
                 </MenuItem>
               ))}
@@ -137,15 +141,19 @@ export const NavBar = () => {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
+              <Button key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}>
                 {page}
               </Button>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={handleOpenFavorites} sx={{ p: 0 }}>
-              <FavoriteBorder alt='Favorites' sx={{ color: 'white' }} />
+            <IconButton onClick={handleOpenFavorites}
+              sx={{ p: 0 }}>
+              <FavoriteBorder alt='Favorites'
+                sx={{ color: 'white' }} />
             </IconButton>
             <Menu
               sx={{ mt: '45px' }}

@@ -1,5 +1,4 @@
-import { Box, Grid } from '@mui/material';
-import React from 'react';
+import { Box } from '@mui/material';
 import { Suspense } from 'react';
 import { GoogleMapApiLoader } from 'react-google-map-wrapper';
 import PersistentDrawerLeft from '../components/map/Drawer';
@@ -14,7 +13,8 @@ export default function MapPage() {
       <Suspense>
         {/* TODO: add fallback */}
         {/* Load the google map api */}
-        <GoogleMapApiLoader apiKey={googleMapConfig} suspense>
+        <GoogleMapApiLoader apiKey={googleMapConfig}
+          suspense>
           <MapComponent />
         </GoogleMapApiLoader>
       </Suspense>
