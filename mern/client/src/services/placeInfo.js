@@ -226,7 +226,7 @@ const bikeCategories = ['bicycle_rental', 'bicycle_repair'];
 const supermarketCategories = ['organic_food', 'supermarket'];
 const serviceCategories = ['charging_station', 'dry_cleaning', 'funeral_home', 'information', 'nursing_home', 'parcel_locker', 'recycling', 'retirement_home', 'shower', 'social_facility', 'tailor'];
 const phoneCategories = ['telephone'];
-const bank = ['bank'];
+const bankCategories = ['bank'];
 const picnicTableCategories = ['picnic_table'];
 const cemeteryCategories = ['cemetery'];
 
