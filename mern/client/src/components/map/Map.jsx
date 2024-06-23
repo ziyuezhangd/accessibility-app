@@ -135,11 +135,12 @@ export const Map = ({ onMapClicked }) => {
         )}
         <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} />
         <MarkerClusterer> 
-          {placeInfos.map(({lat, lng}, i) => {
-            const icon = PlaceInfoUtilities.getMarkerPNG(i);
+          {placeInfos.map((placeInfo, i) => {
+            const {latitude, longitude} = placeInfo;
+            const icon = PlaceInfoUtilities.getMarkerPNG(placeInfo);
             if (!icon) return null;
             return (
-              <AdvancedMarker key={i} lat={lat} lng={lng} >
+              <AdvancedMarker key = {i} lat={latitude} lng={longitude} >
                 <img src={icon} alt='Marker PNG' />
               </AdvancedMarker> 
             );
