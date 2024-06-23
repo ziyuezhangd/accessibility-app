@@ -188,53 +188,45 @@ export class PlaceInfoUtilities {
   };
 }
 
-//missing most categories
-const categoryToParentCategory = {
-  airport: 'airport',
-  biergarten: 'pub',
-  alcohol: 'pub',
-  beverages:'pub',
-  nightclub:'pub',
-  pub:'pub',
-  books: 'books',
-  library: 'books',
-  college: 'education',
-  education:'education',
-  kindergarten:'education',
-  music_school:'education',
-  school:'education',
-  university:'education',
-  drinkingWater:'drinkingWater',
-  antiques:'retail',
-  art_shop:'retail',
-  bicycle_store:'retail',
-  butcher:'retail',
-  clothes:"retail",
-  computers:"retail",
-  confectionary:"retail",
-  convenience_store:"retail",
-  copyshop:"retail",
-  department_store:"retail",
-  electronics:"retail",
-  furniture:"retail",
-  gifts:"retail",
-  greengrocer:"retail",
-  hiking:"retail",
-  instruments:"retail",
-  jewelry:"retail",
-  kiosk:"retail",
-  laundry:"retail",
-  mobile_phones:"retail",
-  newsagent:"retail",
-  shoes:"retail",
-  shopping:"retail",
-  sports_shop:"retail",
-  stationery:"retail",
-  tea_shop:"retail",
-  textiles:"retail",
-  tobacco:"retail",
-  tools:"retail",
-  toys:"retail",
-  variety_store:"retail",
-  video_store:"retail",
-};
+const pubCategories = ['beverages', 'alcohol', 'nightlife'];
+const airportCategories = ['airport'];
+const booksCategories = ['books','library'];
+const educationCategories = ['college', 'education', 'kindergarten', 'music_school', 'school,university'];
+const drinkingWaterCategories = ['drinkingwater'];
+const retailCategories = ['2nd_hand', 'antiques', 'art_shop', 'bicycle_store', 'butcher', 'clothes', 'computers', 'confectionary', 'convenience_store', 'copyshop', 'department_store', 'electronics', 'furniture', 'gifts', 'greengrocer', 'hiking', 'instruments', 'jewelry', 'kiosk', 'laundry', 'mobile_phones', 'newsagent', 'shoes', 'shopping', 'sports_shop', 'stationery', 'tea_shop', 'textiles', 'tobacco', 'tools', 'toys', 'variety_store', 'video_store'];
+const officeCategories = ['communitycentre', 'court', 'embassy', 'employment_agency', 'government_office', 'insurance', 'lawyer', 'other', 'political_party', 'townhall', 'travel_agency'];
+const theatreCategories = ['theater'];
+const cinemaCategories = ['cinema'];
+const accomodatoinCategories = ['accommodation', 'bed_breakfast', 'chalet', 'dormitory', 'guest_house', 'hostel', 'hotel', 'motel', 'shelter'];
+const policeStationCategories = ['police']
+const healthCategories = ['abortion', 'allergology', 'alternative_medicine', 'anaesthetics', 'birthing_centre', 'blood_bank', 'blood_donation', 'cardiology', 'cardiothoracic_surgery', 'chemist', 'child_psychiatry', 'clinic', 'counselling', 'dental_oral_maxillo_facial_surgery', 'dentist', 'dermatology', 'dermatovenereology', 'diagnostic_radiology', 'doctor', 'emergency', 'endocrinology', 'ergotherapist', 'fertility', 'gastroenterology', 'geriatrics', 'gynaecology', 'haematology', 'health', 'hearing_aids', 'hepatology', 'hospice', 'infectious_diseases', 'medical_store', 'midwife', 'neonatology', 'nephrology', 'neurology', 'neuropsychiatry', 'neurosurgery', 'nursing', 'nursing_home', 'nutrition_counselling', 'occupational', 'occupational_therapist', 'oncology', 'ophthalmology', 'orthodontics', 'orthopaedics', 'paediatric_surgery', 'palliative', 'pharmacy', 'physiotherapist', 'plastic_surgery', 'podiatrist', 'psychotherapist', 'psychotherapy', 'rehabilitation', 'speech_therapist', 'therapist', 'vaccination', 'vaccination_centre'];
+const restaurantCategories = ['canteen', 'deli', 'fastfood', 'food', 'icecream', 'restaurant'];
+const placeOfWorshipCategories = ['place_of_worship'];
+const attractionCategories = ['attraction', 'cablecar', 'casino', 'leisure', 'themepark', 'tourism', 'zoo'];
+const trainCategoories = ['platform', 'railway_platform', 'train', 'train_station', 'tram_crossing', 'tram_stop'];
+const artCategories = ['art_gallery', 'arts_center', 'culture'];
+const museumCategories = ['museum'];
+const busCategories = ['bus_station', 'bus_stop'];
+const marketCategories = ['market'];
+const toiletCategories = ['toilets'];
+const atmCategories = ['atm', 'currencyexchange'];
+const flowersCategories = ['garden_centre', 'flowers', 'allotments'];
+const parkCategories = ['park', 'dog_park'];
+const veterinaryCategories = ['veterinary'];
+const waterCategories = ['beach', 'marina', 'pier', 'swimming'];
+const historicCategories = ['archaeological_site', 'castle', 'memorial'];
+const ferryCategories = ['ferry'];
+const parkingCategories = ['parking,parking_carports,parking_half_on_kerb,parking_layby,parking_multi_storey,parking_on_kerb,parking_rooftop,parking_street_side,parking_surface,parking_underground'];
+const playgroundCategories = ['playground'];
+const subwayCategories = ['subway_station', 'subway_entrance'];
+const beautyCategories = ['barber', 'beautysalon', 'massage', 'sauna'];
+const postCategories = ['post_box', 'post_office'];
+const sportsCategories = ['soccer', 'sport', 'sports_center', 'stadium'];
+const bikeCategories = ['bicycle_rental', 'bicycle_repair'];
+const supermarketCategories = ['organic_food', 'supermarket'];
+const serviceCategories = ['charging_station', 'dry_cleaning', 'funeral_home', 'information', 'nursing_home', 'parcel_locker', 'recycling', 'retirement_home', 'shower', 'social_facility', 'tailor'];
+const phoneCategories = ['telephone'];
+const bank = ['bank'];
+const picnicTableCategories = ['picnic_table'];
+const cemeteryCategories = ['cemetery'];
+
