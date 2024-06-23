@@ -237,7 +237,7 @@ const categoryToParentCategory = (category) => {
   if( pubCategories.includes('category')) {
     return 'pub';
   }
-   if( airportCategories.includes('category')) {
+  if( airportCategories.includes('category')) {
     return 'airport';
   }
   if( booksCategories.includes('category')) {
