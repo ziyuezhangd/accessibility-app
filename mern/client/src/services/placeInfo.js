@@ -169,26 +169,9 @@ export class PlaceInfoUtilities {
     const openingParenIdx = placeInfo.name.indexOf('(');
     return placeInfo.name.substring(0, openingParenIdx);
   };
-  /**
-   *
-   * function to return the marker image of a place info object .
-   *
-*/
-  static getMarkerPNG = (placeInfo) => {
-    const { category } = placeInfo;
-    const pngUrl = '../../assets/accessibilityMarkers/';
-    const parentCategory = categoryToParentCategory[category];
-    //we dont want to include all categories that accessibility cloud offers, they have been ommitted from the mapping to the parent category and will not return anything
 
-    if (!parentCategory) {
-      return null;
-    }
-    const iconUrl = `${pngUrl}${parentCategory}.png`;
-    return iconUrl;
-  };
-}
 
-const pubCategories = ['beverages', 'alcohol', 'nightlife'];
+  const pubCategories = ['beverages', 'alcohol', 'nightlife'];
 const airportCategories = ['airport'];
 const booksCategories = ['books','library'];
 const educationCategories = ['college', 'education', 'kindergarten', 'music_school', 'school,university'];
@@ -276,7 +259,7 @@ const categoryToParentCategory = (category) => {
     return 'restaurant';
   }
   if( trainCategoories.includes(category)) {
-    return 'trainStation';
+    return 'train';
   }
   if( artCategories.includes(category)) {
     return 'art';
@@ -366,3 +349,22 @@ const categoryToParentCategory = (category) => {
     return 'attraction';
   }
 };
+  /**
+   *
+   * function to return the marker image of a place info object .
+   *
+*/
+  static getMarkerPNG = (placeInfo) => {
+    const { category } = placeInfo;
+    const pngUrl = '../../assets/accessibilityMarkers/';
+    const parentCategory = categoryToParentCategory[category];
+    //we dont want to include all categories that accessibility cloud offers, they have been ommitted from the mapping to the parent category and will not return anything
+
+    if (!parentCategory) {
+      return null;
+    }
+    const iconUrl = `${pngUrl}${parentCategory}.png`;
+    return iconUrl;
+  };
+}
+

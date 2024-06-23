@@ -60,24 +60,24 @@ export const Map = ({ onMapClicked }) => {
 
   const handleSelect = (item) => {
     switch (item.id) {
-      case 'busyness':
-        console.log('Setting busyness data and gradient');
-        setHeatMapData(busynessData);
-        setHeatMapGradient(busynessGradient);
-        break;
-      case 'noise':
-        console.log('Setting noise data and gradient');
-        setHeatMapData(noiseData);
-        setHeatMapGradient(noiseGradient);
-        break;
-      case 'odor':
-        console.log('Setting odor data and gradient');
-        setHeatMapData(odorData);
-        setHeatMapGradient(odorGradient);
-        break;
-      default:
-        setHeatMapData([]);
-        setHeatMapGradient([]);
+    case 'busyness':
+      console.log('Setting busyness data and gradient');
+      setHeatMapData(busynessData);
+      setHeatMapGradient(busynessGradient);
+      break;
+    case 'noise':
+      console.log('Setting noise data and gradient');
+      setHeatMapData(noiseData);
+      setHeatMapGradient(noiseGradient);
+      break;
+    case 'odor':
+      console.log('Setting odor data and gradient');
+      setHeatMapData(odorData);
+      setHeatMapGradient(odorGradient);
+      break;
+    default:
+      setHeatMapData([]);
+      setHeatMapGradient([]);
     }
   };
 
@@ -107,8 +107,6 @@ export const Map = ({ onMapClicked }) => {
     // This is just testing the rating queries
     fetchData();
   }, []);
-
-
 
   return (
     <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
@@ -140,9 +138,8 @@ export const Map = ({ onMapClicked }) => {
           {placeInfos.map(({lat, lng}, i) => {
             const icon = PlaceInfoUtilities.getMarkerPNG(i);
             if (!icon) return null;
-
             return (
-              <AdvancedMarker key={i} lat={i.lat} lng={i.lng} >
+              <AdvancedMarker key={i} lat={lat} lng={lng} >
                 <img src={icon} alt='Marker PNG' />
               </AdvancedMarker> 
             );
