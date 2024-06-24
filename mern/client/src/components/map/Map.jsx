@@ -11,6 +11,7 @@ import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGrad
 import SearchBar from './SearchBar';
 import DateTimePicker from './DateTimePicker';
 
+
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
   { lat: 40.748817, lng: -73.985428, weight: 1 },
@@ -153,7 +154,7 @@ export const Map = () => {
           libraries: ['places', 'visualization'],
         }}
       >
-       <div style={containerStyle}>
+       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '10px', width: '30%', padding: '6 0px' }}>
           <Dropdown onSelect={handleSelect} />
           <SearchBar mapInstance={mapInstance} setSelectedPlace={setSelectedPlace} />
           <DateTimePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
