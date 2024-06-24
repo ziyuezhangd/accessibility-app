@@ -131,23 +131,29 @@ export const Map = () => {
             opacity={0.6}
           />
         )}
-        <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} />
+        <Marker lat={MANHATTAN_LAT}
+          lng={MANHATTAN_LNG} />
       </GoogleMap>
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
         message="Add this place to favorites?"
-        action={
+        action={(
           <>
-            <Button color="secondary" size="small" onClick={handleAddToFavorites}>
+            <Button color="secondary"
+              size="small"
+              onClick={handleAddToFavorites}>
               Add to Favorites
             </Button>
-            <IconButton size="small" aria-label="close" color="inherit" onClick={handleSnackbarClose}>
+            <IconButton size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleSnackbarClose}>
               <CloseIcon fontSize="small" />
             </IconButton>
           </>
-        }
+        )}
       />
     </Box>
   );

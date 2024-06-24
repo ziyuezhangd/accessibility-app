@@ -63,7 +63,8 @@ export const NavBar = () => {
   }, [favorites]);
 
   return (
-    <AppBar position='fixed' sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar position='fixed'
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
           <Accessibility sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
@@ -102,7 +103,12 @@ export const NavBar = () => {
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton size='large' aria-label='account of current user' aria-controls='menu-appbar' aria-haspopup='true' onClick={handleOpenNavMenu} color='inherit'>
+            <IconButton size='large'
+              aria-label='account of current user'
+              aria-controls='menu-appbar'
+              aria-haspopup='true'
+              onClick={handleOpenNavMenu}
+              color='inherit'>
               <MenuIcon />
             </IconButton>
             <Menu
@@ -124,7 +130,8 @@ export const NavBar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page}
+                  onClick={handleCloseNavMenu}>
                   <Typography textAlign='center'>{page}</Typography>
                 </MenuItem>
               ))}
@@ -151,15 +158,19 @@ export const NavBar = () => {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
+              <Button key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}>
                 {page}
               </Button>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={handleOpenFavorites} sx={{ p: 0 }}>
-              <FavoriteBorder alt='Favorites' sx={{ color: 'white' }} />
+            <IconButton onClick={handleOpenFavorites}
+              sx={{ p: 0 }}>
+              <FavoriteBorder alt='Favorites'
+                sx={{ color: 'white' }} />
             </IconButton>
             <Menu
               sx={{ mt: '45px' }}
