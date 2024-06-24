@@ -7,6 +7,8 @@ import { PlaceInfoUtilities, getPlaceInfos } from '../../services/placeInfo';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import HelpIcon from '../helpModal/HelpIcon';
 
+const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
+
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
   { lat: 40.748817, lng: -73.985428, weight: 1 },
@@ -116,6 +118,9 @@ export const Map = ({ onMapClicked }) => {
         center={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
         onClick={handleMapClicked}
         onLoad={(map) => setMapInstance(map)}
+        mapOptions={{
+          mapId: VITE_MAP_ID,
+        }}
         options={{
           libraries: ['visualization'],
         }}
@@ -141,7 +146,7 @@ export const Map = ({ onMapClicked }) => {
             if (!icon) return null;
             return (
               <AdvancedMarker key = {i} lat={latitude} lng={longitude} >
-                <img src={icon} alt='Marker PNG' />
+                <img src={icon} style={{ height: '50px'}} alt='Marker PNG' />
               </AdvancedMarker> 
             );
           })}

@@ -176,7 +176,7 @@ export class PlaceInfoUtilities {
 */
   static getMarkerPNG = (placeInfo) => {
     const { category } = placeInfo;
-    const pngUrl = '../../assets/accessibilityMarkers/';
+    const pngUrl = '../../public/accessibilityMarkers/';
     const parentCategory = categoryToParentCategory(category);
     //we dont want to include all categories that accessibility cloud offers, they have been ommitted from the mapping to the parent category and will not return anything
 
