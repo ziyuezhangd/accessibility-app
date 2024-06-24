@@ -1,5 +1,3 @@
-// Map.jsx
-
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
 import * as _ from 'lodash';
@@ -7,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import HelpIcon from './HelpIcon';
-import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient, calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
@@ -60,7 +57,7 @@ export const Map = () => {
     }
   };
 
-  const handleMapClicked = (map, e) => {
+  const handleMapClicked = async (map, e) => {
     const isPlaceIconClicked = e.placeId !== undefined;
     const isLocationClicked = e.placeId === undefined;
     const latLng = e.latLng;
@@ -68,8 +65,32 @@ export const Map = () => {
     const lng = latLng.lng();
     if (isPlaceIconClicked) {
       console.log('Place clicked: ', e.placeId, lat, lng);
-      setSelectedPlace({ id: e.placeId, lat, lng });
-      setSnackbarOpen(true);
+      try {
+        const map = new window.google.maps.Map(document.createElement('div'));
+        
+        const PlacesService = await google.maps.importLibrary('places');
+        const Places = PlacesService.PlacesService;
+        // const service = new window.google.maps.places.PlacesService(map);
+
+        const request = {
+          placeId: e.placeId,
+          fields: ['name', 'formatted_address', 'place_id', 'geometry', 'opening_hours']
+        };
+
+        Places.getDetails(request, (place, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
+            console.log('place', place);
+          } else {
+            console.error('PlacesService failed: ', status);
+          }
+        });
+
+        const placeDetails = await getPlaceDetails(e.placeId);
+        setSelectedPlace({ id: e.placeId, lat, lng, name: placeDetails.name });
+        setSnackbarOpen(true);
+      } catch (error) {
+        console.error(error);
+      }
     }
     if (isLocationClicked) {
       console.log('Location clicked: ', lat, lng);
@@ -99,7 +120,6 @@ export const Map = () => {
     console.log('noiseRatings: ', noiseRatings);
     const odourRatings = await getOdourRatings(new Date());
     console.log('odourRatings: ', odourRatings);
-    getPlaceInfos().then(setPlaceInfos);
   };
 
   useEffect(() => {
@@ -115,7 +135,7 @@ export const Map = () => {
         onClick={handleMapClicked}
         onLoad={(map) => setMapInstance(map)}
         options={{
-          libraries: ['visualization'],
+          libraries: ['visualization', 'places'], // Added 'places' library
         }}
       >
         <Dropdown onSelect={handleSelect} />
