@@ -1,13 +1,10 @@
-// NavBar.jsx
-
-import { Accessibility, FavoriteBorder } from '@mui/icons-material';
+import { Accessibility, FavoriteBorder, Delete } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { List, ListItem, ListItemText } from '@mui/material';
+import { List, ListItem, ListItemText, Snackbar, IconButton, ListItemSecondaryAction } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
@@ -21,6 +18,8 @@ export const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElFavorites, setAnchorElFavorites] = React.useState(null);
   const [favorites, setFavorites] = React.useState([]);
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState('');
 
   const navigate = useNavigate();
 
@@ -52,7 +51,24 @@ export const NavBar = () => {
 
   React.useEffect(() => {
     const handleFavoriteAdded = (event) => {
-      setFavorites([...favorites, event.detail]);
+      const newFavorite = event.detail;
+
+      // Check if the favorite already exists
+      const isAlreadyAdded = favorites.some(favorite => favorite.id === newFavorite.id);
+      if (isAlreadyAdded) {
+        setSnackbarMessage('This place is already in your favorites');
+        setSnackbarOpen(true);
+        return;
+      }
+
+      // Check if the favorites list has less than 5 items
+      if (favorites.length < 5) {
+        setFavorites([...favorites, newFavorite]);
+        setSnackbarMessage('Added to favorites');
+      } else {
+        setSnackbarMessage('Maximum of 5 favorites allowed');
+      }
+      setSnackbarOpen(true);
     };
 
     window.addEventListener('favoriteAdded', handleFavoriteAdded);
@@ -61,6 +77,19 @@ export const NavBar = () => {
       window.removeEventListener('favoriteAdded', handleFavoriteAdded);
     };
   }, [favorites]);
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  const handleRemoveFavorite = (id) => {
+    setFavorites(favorites.filter(favorite => favorite.id !== id));
+    setSnackbarMessage('Removed from favorites');
+    setSnackbarOpen(true);
+  };
 
   return (
     <AppBar position='fixed'
@@ -190,8 +219,16 @@ export const NavBar = () => {
             >
               <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                 {favorites.map((favorite, index) => (
-                  <ListItem key={index} alignItems='flex-start'>
-                    <ListItemText primary={`Place ID: ${favorite.id}`} secondary={`Lat: ${favorite.lat}, Lng: ${favorite.lng}`} />
+                  <ListItem key={index}
+                    alignItems='flex-start'>
+                    <ListItemText primary={favorite.name} />
+                    <ListItemSecondaryAction>
+                      <IconButton edge="end"
+                        aria-label="delete"
+                        onClick={() => handleRemoveFavorite(favorite.id)}>
+                        <Delete />
+                      </IconButton>
+                    </ListItemSecondaryAction>
                   </ListItem>
                 ))}
               </List>
@@ -199,6 +236,12 @@ export const NavBar = () => {
           </Box>
         </Toolbar>
       </Container>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage}
+      />
     </AppBar>
   );
 };

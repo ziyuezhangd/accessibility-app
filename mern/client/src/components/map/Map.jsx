@@ -1,27 +1,52 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
-import * as _ from 'lodash';
 import { useState, useEffect } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import HelpIcon from './HelpIcon';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient, calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 
 const busynessData = [
-  // Your busyness data here...
+  { lat: 40.7831, lng: -73.9712, weight: 2 },
+  { lat: 40.748817, lng: -73.985428, weight: 1 },
+  { lat: 40.73061, lng: -73.935242, weight: 3 },
+  { lat: 40.712776, lng: -74.005974, weight: 4 },
+  { lat: 40.758896, lng: -73.98513, weight: 2 },
+  { lat: 40.748817, lng: -73.968285, weight: 3 },
+  { lat: 40.729975, lng: -73.980003, weight: 1 },
+  { lat: 40.7624, lng: -73.975661, weight: 4 },
+  { lat: 40.771302, lng: -73.964422, weight: 2 },
+  { lat: 40.748441, lng: -73.985664, weight: 5 },
 ];
 
 const noiseData = [
-  // Your noise data here...
+  { lat: 40.73061, lng: -73.935242, weight: 3 },
+  { lat: 40.789623, lng: -73.959893, weight: 1 },
+  { lat: 40.776676, lng: -73.971321, weight: 4 },
+  { lat: 40.754932, lng: -73.984016, weight: 2 },
+  { lat: 40.748817, lng: -73.992428, weight: 5 },
+  { lat: 40.7366, lng: -73.998321, weight: 2 },
+  { lat: 40.712776, lng: -73.995974, weight: 3 },
+  { lat: 40.780751, lng: -73.977182, weight: 1 },
+  { lat: 40.764356, lng: -73.973028, weight: 4 },
+  { lat: 40.743305, lng: -73.98821, weight: 5 },
 ];
 
 const odorData = [
-  // Your odor data here...
+  { lat: 40.712776, lng: -74.005974, weight: 5 },
+  { lat: 40.706446, lng: -74.00937, weight: 3 },
+  { lat: 40.759011, lng: -73.984472, weight: 1 },
+  { lat: 40.7433, lng: -74.003597, weight: 4 },
+  { lat: 40.742054, lng: -74.003047, weight: 2 },
+  { lat: 40.729517, lng: -73.998512, weight: 3 },
+  { lat: 40.753182, lng: -73.982253, weight: 5 },
+  { lat: 40.758896, lng: -73.96813, weight: 1 },
+  { lat: 40.731233, lng: -73.994242, weight: 4 },
+  { lat: 40.7243, lng: -73.99771, weight: 2 },
 ];
 
 export const Map = () => {
-  const [placeInfos, setPlaceInfos] = useState([]);
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
   const [mapInstance, setMapInstance] = useState(null);
@@ -37,17 +62,14 @@ export const Map = () => {
   const handleSelect = (item) => {
     switch (item.id) {
     case 'busyness':
-      console.log('Setting busyness data and gradient');
       setHeatMapData(busynessData);
       setHeatMapGradient(busynessGradient);
       break;
     case 'noise':
-      console.log('Setting noise data and gradient');
       setHeatMapData(noiseData);
       setHeatMapGradient(noiseGradient);
       break;
     case 'odor':
-      console.log('Setting odor data and gradient');
       setHeatMapData(odorData);
       setHeatMapGradient(odorGradient);
       break;
@@ -59,40 +81,38 @@ export const Map = () => {
 
   const handleMapClicked = async (map, e) => {
     const isPlaceIconClicked = e.placeId !== undefined;
-    const isLocationClicked = e.placeId === undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
     if (isPlaceIconClicked) {
       console.log('Place clicked: ', e.placeId, lat, lng);
       try {
-        const map = new window.google.maps.Map(document.createElement('div'));
-        
         const PlacesService = await google.maps.importLibrary('places');
-        const Places = PlacesService.PlacesService;
-        // const service = new window.google.maps.places.PlacesService(map);
+        const service = new PlacesService.PlacesService(map);
 
         const request = {
           placeId: e.placeId,
           fields: ['name', 'formatted_address', 'place_id', 'geometry', 'opening_hours']
         };
 
-        Places.getDetails(request, (place, status) => {
+        service.getDetails(request, (place, status) => {
           if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
             console.log('place', place);
+            setSelectedPlace({
+              id: e.placeId,
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng(),
+              name: place.name
+            });
+            setSnackbarOpen(true);
           } else {
             console.error('PlacesService failed: ', status);
           }
         });
-
-        const placeDetails = await getPlaceDetails(e.placeId);
-        setSelectedPlace({ id: e.placeId, lat, lng, name: placeDetails.name });
-        setSnackbarOpen(true);
       } catch (error) {
         console.error(error);
       }
-    }
-    if (isLocationClicked) {
+    } else {
       console.log('Location clicked: ', lat, lng);
     }
   };
@@ -113,16 +133,16 @@ export const Map = () => {
     setSnackbarOpen(false);
   };
 
-  const fetchData = async () => {
-    const busynessRatings = await getBusynessRatings(new Date());
-    console.log('busynessRatings: ', busynessRatings);
-    const noiseRatings = await getNoiseRatings(new Date());
-    console.log('noiseRatings: ', noiseRatings);
-    const odourRatings = await getOdourRatings(new Date());
-    console.log('odourRatings: ', odourRatings);
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      const busynessRatings = await getBusynessRatings(new Date());
+      console.log('busynessRatings: ', busynessRatings);
+      const noiseRatings = await getNoiseRatings(new Date());
+      console.log('noiseRatings: ', noiseRatings);
+      const odourRatings = await getOdourRatings(new Date());
+      console.log('odourRatings: ', odourRatings);
+    };
+
     fetchData();
   }, []);
 
@@ -135,7 +155,7 @@ export const Map = () => {
         onClick={handleMapClicked}
         onLoad={(map) => setMapInstance(map)}
         options={{
-          libraries: ['visualization', 'places'], // Added 'places' library
+          libraries: ['visualization', 'places'],
         }}
       >
         <Dropdown onSelect={handleSelect} />
