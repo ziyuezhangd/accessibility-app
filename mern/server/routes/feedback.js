@@ -27,7 +27,6 @@ router.post('/', async (req, res) => {
   
     res.status(201).send({ message: 'Thank you for your feedback!' });
   } catch (error) {
-    
     res.status(500).send({ message: 'An error occurred', error: error.message });
   }
 });
