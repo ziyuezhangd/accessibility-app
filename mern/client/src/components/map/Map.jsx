@@ -146,7 +146,7 @@ export const Map = ({ onMapClicked }) => {
             if (!icon) return null;
             return (
               <AdvancedMarker key = {i} lat={latitude} lng={longitude} >
-                <img src={icon} style={{ height: '50px'}} alt='Marker PNG' />
+                <img src={icon} style={{ height: '45px'}} alt='Marker PNG' />
               </AdvancedMarker> 
             );
           })}
