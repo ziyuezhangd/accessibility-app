@@ -1,17 +1,17 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
-import dayjs from 'dayjs';
-import * as _ from 'lodash';
+import { Box, useTheme, Snackbar, IconButton, Button, TextField, Autocomplete, useMediaQuery } from '@mui/material';
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
-import { Control } from 'react-google-map-wrapper';
-import DateTimePicker from './DateTimePicker';
 import Dropdown from './Dropdown';
 import HelpIcon from './HelpIcon';
-import SearchBar from './SearchBar';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient, calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import SearchBar from './SearchBar';
+import DateTimePicker from './DateTimePicker';
+import dayjs from 'dayjs';
+import { Control } from 'react-google-map-wrapper';
 
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
@@ -59,31 +59,33 @@ export const Map = () => {
   const [mapInstance, setMapInstance] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(dayjs()); // Define selectedDate state
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleSelect = (item) => {
     switch (item.id) {
-    case 'busyness':
-      console.log('Setting busyness data and gradient');
-      setHeatMapData(busynessData);
-      setHeatMapGradient(busynessGradient);
-      break;
-    case 'noise':
-      console.log('Setting noise data and gradient');
-      setHeatMapData(noiseData);
-      setHeatMapGradient(noiseGradient);
-      break;
-    case 'odor':
-      console.log('Setting odor data and gradient');
-      setHeatMapData(odorData);
-      setHeatMapGradient(odorGradient);
-      break;
-    default:
-      setHeatMapData([]);
-      setHeatMapGradient([]);
+      case 'busyness':
+        console.log('Setting busyness data and gradient');
+        setHeatMapData(busynessData);
+        setHeatMapGradient(busynessGradient);
+        break;
+      case 'noise':
+        console.log('Setting noise data and gradient');
+        setHeatMapData(noiseData);
+        setHeatMapGradient(noiseGradient);
+        break;
+      case 'odor':
+        console.log('Setting odor data and gradient');
+        setHeatMapData(odorData);
+        setHeatMapGradient(odorGradient);
+        break;
+      default:
+        setHeatMapData([]);
+        setHeatMapGradient([]);
     }
   };
 
@@ -120,14 +122,39 @@ export const Map = () => {
   };
 
   const fetchData = async () => {
-    const busynessRatings = await getBusynessRatings(selectedDate); // Use selectedDate
+    const busynessRatings = await getBusynessRatings(selectedDate);
     console.log('busynessRatings: ', busynessRatings);
-    const noiseRatings = await getNoiseRatings(selectedDate); // Use selectedDate
+    const noiseRatings = await getNoiseRatings(selectedDate);
     console.log('noiseRatings: ', noiseRatings);
-    const odourRatings = await getOdourRatings(selectedDate); // Use selectedDate
+    const odourRatings = await getOdourRatings(selectedDate);
     console.log('odourRatings: ', odourRatings);
     getPlaceInfos().then(setPlaceInfos);
   };
+
+  const searchPlaces = async (query) => {
+    try {
+      const response = await axios.get(`https://accessibility.cloud/api/v2/places-infos?q=${query}&limit=10`, {
+        headers: {
+          'Authorization': `Bearer YOUR_API_KEY` // Replace with your actual API key
+        }
+      });
+      setSearchResults(response.data);
+    } catch (error) {
+      console.error('Error fetching place infos:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [selectedDate]);
+
+  useEffect(() => {
+    if (searchInput.length > 2) {
+      searchPlaces(searchInput);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchInput]);
 
   const containerStyle = {
     display: 'flex',
@@ -136,7 +163,7 @@ export const Map = () => {
     justifyContent: 'space-between',
     gap: '10px',
     width: '100%',
-    padding: '10px', // Optional padding for better spacing
+    padding: '10px',
   };
 
   const dateTimeHelpContainerStyle = {
@@ -144,10 +171,6 @@ export const Map = () => {
     alignItems: 'center',
     gap: '10px',
   };
-
-  useEffect(() => {
-    fetchData();
-  }, [selectedDate]); // Fetch data when selectedDate changes
 
   return (
     <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
@@ -164,13 +187,11 @@ export const Map = () => {
         <Box sx={containerStyle}>
           <Dropdown onSelect={handleSelect} />
           <Control position={google.maps.ControlPosition.TOP_CENTER}>
-            <SearchBar mapInstance={mapInstance}
-              setSelectedPlace={setSelectedPlace} />
+            <SearchBar mapInstance={mapInstance} setSelectedPlace={setSelectedPlace} />
           </Control>
           <Control position={google.maps.ControlPosition.TOP_RIGHT}>
             <Box sx={dateTimeHelpContainerStyle}>
-              <DateTimePicker selectedDate={selectedDate}
-                setSelectedDate={setSelectedDate} />
+              <DateTimePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
               <HelpIcon />
             </Box>
           </Control>
@@ -187,8 +208,7 @@ export const Map = () => {
           />
         )}
         {selectedPlace && (
-          <Marker lat={selectedPlace.lat}
-            lng={selectedPlace.lng} />
+          <Marker lat={selectedPlace.lat} lng={selectedPlace.lng} />
         )}
       </GoogleMap>
       <Snackbar
@@ -196,21 +216,16 @@ export const Map = () => {
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
         message="Add this place to favorites?"
-        action={(
+        action={
           <>
-            <Button color="secondary"
-              size="small"
-              onClick={handleAddToFavorites}>
+            <Button color="secondary" size="small" onClick={handleAddToFavorites}>
               Add to Favorites
             </Button>
-            <IconButton size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={handleSnackbarClose}>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleSnackbarClose}>
               <CloseIcon fontSize="small" />
             </IconButton>
           </>
-        )}
+        }
       />
     </Box>
   );
