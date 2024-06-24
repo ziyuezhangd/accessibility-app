@@ -1,9 +1,12 @@
 // DateTimePicker.jsx
 
-import React from 'react';
+import * as React from 'react';
 import { TextField } from '@mui/material';
-import { LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker as MuiDateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import dayjs from 'dayjs';
 
 const DateTimePicker = ({ selectedDate, setSelectedDate }) => {
   const handleDateChange = (newDate) => {
@@ -11,13 +14,15 @@ const DateTimePicker = ({ selectedDate, setSelectedDate }) => {
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <MobileDateTimePicker
-        label="Select Date & Time"
-        value={selectedDate}
-        onChange={handleDateChange}
-        renderInput={(params) => <TextField {...params} />}
-      />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={['DateTimePicker']}>
+        <MuiDateTimePicker
+          label="Select Date & Time"
+          value={selectedDate}
+          onChange={handleDateChange}
+          renderInput={(params) => <TextField {...params} />}
+        />
+      </DemoContainer>
     </LocalizationProvider>
   );
 };

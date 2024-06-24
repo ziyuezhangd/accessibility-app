@@ -1,6 +1,7 @@
 // SearchBar.jsx
 
 import React, { useRef, useEffect } from 'react';
+import { Control } from 'react-google-map-wrapper';
 import { TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -46,7 +47,7 @@ const SearchBar = ({ mapInstance, setSelectedPlace }) => {
   }, [mapInstance]);
 
   return (
-    <TextField
+    <><Control position={google.maps.ControlPosition.TOP_LEFT}></Control><TextField
       inputRef={searchInputRef}
       placeholder="Search for places"
       variant="outlined"
@@ -73,8 +74,7 @@ const SearchBar = ({ mapInstance, setSelectedPlace }) => {
             <SearchIcon />
           </InputAdornment>
         ),
-      }}
-    />
+      }} /></>
   );
 };
 

@@ -1,5 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
+import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
 import * as _ from 'lodash';
 import { useState, useEffect } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
@@ -10,7 +10,8 @@ import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../serv
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient, calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 import SearchBar from './SearchBar';
 import DateTimePicker from './DateTimePicker';
-
+import dayjs from 'dayjs';
+import { Control } from 'react-google-map-wrapper';
 
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
@@ -58,9 +59,10 @@ export const Map = () => {
   const [mapInstance, setMapInstance] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());  // Define selectedDate state
+  const [selectedDate, setSelectedDate] = useState(dayjs());  // Define selectedDate state
 
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleSelect = (item) => {
     switch (item.id) {
@@ -129,12 +131,18 @@ export const Map = () => {
 
   const containerStyle = {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: isMobile ? 'column' : 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: '10px',
     width: '100%',
     padding: '10px', // Optional padding for better spacing
+  };
+
+  const dateTimeHelpContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
   };
 
   useEffect(() => {
@@ -143,9 +151,8 @@ export const Map = () => {
 
   return (
     <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
-      
       <GoogleMap
-        style={{ height: '95vh', top: '7vh' }}
+        style={{ height: isMobile ? '50vh' : '95vh', top: isMobile ? '10vh' : '7vh' }}
         zoom={DEFAULT_ZOOM}
         center={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
         onClick={handleMapClicked}
@@ -154,12 +161,18 @@ export const Map = () => {
           libraries: ['places', 'visualization'],
         }}
       >
-       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '10px', width: '30%', padding: '6 0px' }}>
+        <Box sx={containerStyle}>
           <Dropdown onSelect={handleSelect} />
-          <SearchBar mapInstance={mapInstance} setSelectedPlace={setSelectedPlace} />
-          <DateTimePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
-        </div>
-        <HelpIcon />
+          <Control position={google.maps.ControlPosition.TOP_CENTER}>
+            <SearchBar mapInstance={mapInstance} setSelectedPlace={setSelectedPlace} />
+          </Control>
+          <Control position={google.maps.ControlPosition.TOP_RIGHT}>
+            <Box sx={dateTimeHelpContainerStyle}>
+              <DateTimePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+              <HelpIcon />
+            </Box>
+          </Control>
+        </Box>
         {heatMapData.length > 0 && (
           <HeatmapLayer
             data={heatMapData.map(data => ({
