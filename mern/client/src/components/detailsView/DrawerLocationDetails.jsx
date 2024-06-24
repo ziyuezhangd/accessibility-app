@@ -1,3 +1,4 @@
+import {PlaceOverview} from '@googlemaps/extended-component-library/react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Button, Alert } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -84,13 +85,18 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
         </IconButton>
       </DrawerHeader>
       <Box sx={{ overflow: 'auto', px: 5 }}>
-        <Typography variant='h5'>{location.name}</Typography>
-        Hello
+        {/* TODO: move the google logo elsewhere */}
+        <PlaceOverview place={location.placeId}
+          size='medium'></PlaceOverview>
         {!isLoading && (
           <>
             <Grades />
-            <NearestRestrooms placeInfos={placeInfos} lat={location.lat} lng={location.lng} />
-            <NearestStations placeInfos={placeInfos} lat={location.lat} lng={location.lng} />
+            <NearestRestrooms placeInfos={placeInfos}
+              lat={location.lat}
+              lng={location.lng} />
+            <NearestStations placeInfos={placeInfos}
+              lat={location.lat}
+              lng={location.lng} />
           </>
         )}
         <Button onClick={handleButtonClicked}>Submit Feedback</Button>

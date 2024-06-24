@@ -16,9 +16,8 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
 
   useEffect(() => {
     if (selectedLocation?.lat && selectedLocation?.lng) {
-      const locationName = `${selectedLocation.lat}, ${selectedLocation.lng}`;
       setSelectedDrawerContent('location');
-      setLocation({ name: locationName, lat: selectedLocation.lat, lng: selectedLocation.lng });
+      setLocation(selectedLocation);
     }
   }, [selectedLocation]);
 

@@ -48,6 +48,8 @@ const odorData = [
 
 export const Map = ({ onMapClicked }) => {
   const [placeInfos, setPlaceInfos] = useState([]);
+  const [placesService, setPlacesService] = useState();
+  const [geocoder, setGeocoder] = useState();
 
   const theme = useTheme();
   const [heatMapData, setHeatMapData] = useState([]);
@@ -55,41 +57,77 @@ export const Map = ({ onMapClicked }) => {
   const [mapInstance, setMapInstance] = useState(null);
 
   useEffect(() => {
-    console.log('Map instance loaded:', mapInstance);
+    if (mapInstance) {
+      loadPlaces();
+      loadGeocoder();
+    }
   }, [mapInstance]);
+
+  const loadPlaces = async () => {
+    const {PlacesService} = await google.maps.importLibrary('places');
+    const service = new PlacesService(mapInstance);
+    setPlacesService(service);
+  };
+
+  const loadGeocoder = async () => {
+    const geocoder = new google.maps.Geocoder();
+    setGeocoder(geocoder);
+  };
 
   const handleSelect = (item) => {
     switch (item.id) {
-      case 'busyness':
-        console.log('Setting busyness data and gradient');
-        setHeatMapData(busynessData);
-        setHeatMapGradient(busynessGradient);
-        break;
-      case 'noise':
-        console.log('Setting noise data and gradient');
-        setHeatMapData(noiseData);
-        setHeatMapGradient(noiseGradient);
-        break;
-      case 'odor':
-        console.log('Setting odor data and gradient');
-        setHeatMapData(odorData);
-        setHeatMapGradient(odorGradient);
-        break;
-      default:
-        setHeatMapData([]);
-        setHeatMapGradient([]);
+    case 'busyness':
+      console.log('Setting busyness data and gradient');
+      setHeatMapData(busynessData);
+      setHeatMapGradient(busynessGradient);
+      break;
+    case 'noise':
+      console.log('Setting noise data and gradient');
+      setHeatMapData(noiseData);
+      setHeatMapGradient(noiseGradient);
+      break;
+    case 'odor':
+      console.log('Setting odor data and gradient');
+      setHeatMapData(odorData);
+      setHeatMapGradient(odorGradient);
+      break;
+    default:
+      setHeatMapData([]);
+      setHeatMapGradient([]);
     }
   };
 
-  const handleMapClicked = (map, e) => {
+  const handleMapClicked = async (map, e) => {
     const isPlaceIconClicked = e.placeId !== undefined;
     const isLocationClicked = e.placeId === undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
-
-    // TODO: we will want to know the place name
-    onMapClicked({ lat, lng, isPlace: isPlaceIconClicked });
+    if (isPlaceIconClicked) {
+      var request = {
+        placeId: e.placeId,
+        fields: ['name']
+      };
+      placesService.getDetails(request, (place, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          onMapClicked({ lat, lng, isPlace: isPlaceIconClicked, placeId: e.placeId, name: place.name });
+        } else {
+          console.error('Oh no!');
+        }
+      });
+    } else {
+      geocoder.geocode({location: {lat, lng}}).then((response) => {
+        if (response.results[0]) {
+          console.log(response.results);
+          console.log(response.results[0]);
+          mapInstance.setZoom(DEFAULT_ZOOM + 5);
+          onMapClicked({ lat, lng, isPlace: isPlaceIconClicked, placeId: response.results[0].place_id, name: response.results[0].formatted_address });
+        } else {
+          window.alert('No results found');
+        }
+      });
+    }
+    
   };
 
   const fetchData = async () => {
@@ -117,7 +155,7 @@ export const Map = ({ onMapClicked }) => {
         onClick={handleMapClicked}
         onLoad={(map) => setMapInstance(map)}
         options={{
-          libraries: ['visualization'],
+          libraries: ['visualization', 'places'],
         }}
       >
         <Dropdown onSelect={handleSelect} />
