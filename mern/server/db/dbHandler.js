@@ -1,5 +1,4 @@
 import db from './connection.js';
-import logger from '../logger.js';
 
 const dbHandler = {
   db: db,
@@ -21,18 +20,11 @@ const dbHandler = {
      * @param {string} feedback.email
      * @param {string} feedback.comment
      * @param {Date} feedback.date
-     * @param {[number, number]} feedback.coordinates
-     * @returns {Promise<Array<string>>} 
+     * @param {[number, number]} feedback.coordinates 
      */
   async insertFeedback(feedback){
-    try {
-      const collection = db.collection('feedback');
-      await collection.insertOne(feedback);
-
-    } catch(error) {
-      logger.error(error.stack);
-
-    }
+    const collection = db.collection('feedback');
+    await collection.insertOne(feedback);
   }
 };
 
