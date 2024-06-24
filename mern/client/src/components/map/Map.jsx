@@ -138,7 +138,8 @@ export const Map = () => {
             opacity={0.6}
           />
         )}
-        <Marker lat={MANHATTAN_LAT} lng={MANHATTAN_LNG} />
+        <Marker lat={MANHATTAN_LAT}
+          lng={MANHATTAN_LNG} />
       </GoogleMap>
     </Box>
   );

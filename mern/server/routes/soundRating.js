@@ -24,6 +24,7 @@ router.get('/', async (req, res) => {
       .send({ message: 'An error occurred', error: error.message });
   }
 });
+
 router.get('/location', async (req, res) => {
   const { datetime, lat, long } = req.query;
   if (!datetime) {
