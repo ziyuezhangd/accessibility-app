@@ -1,9 +1,9 @@
 // SearchBar.jsx
 
+import SearchIcon from '@mui/icons-material/Search';
+import { TextField, InputAdornment } from '@mui/material';
 import React, { useRef, useEffect } from 'react';
 import { Control } from 'react-google-map-wrapper';
-import { TextField, InputAdornment } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
 
 const SearchBar = ({ mapInstance, setSelectedPlace }) => {
   const searchInputRef = useRef(null);

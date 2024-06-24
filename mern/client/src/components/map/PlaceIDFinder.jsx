@@ -85,10 +85,15 @@ const PlaceIDFinder = () => {
 
   return (
     <div>
-      <input id="pac-input" className="controls" type="text" placeholder="Enter a location" />
-      <div id="map" style={{ height: '400px' }}></div>
+      <input id="pac-input"
+        className="controls"
+        type="text"
+        placeholder="Enter a location" />
+      <div id="map"
+        style={{ height: '400px' }}></div>
       <div id="infowindow-content">
-        <span id="place-name" className="title"></span><br />
+        <span id="place-name"
+          className="title"></span><br />
         Place ID <span id="place-id"></span><br />
         <span id="place-address"></span>
       </div>

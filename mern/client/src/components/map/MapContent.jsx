@@ -4,7 +4,8 @@ export default function MapContent() {
   return (
     <div id='content'>
       <div id='siteNotice'></div>
-      <h1 id='firstHeading' className='firstHeading'>
+      <h1 id='firstHeading'
+        className='firstHeading'>
         Uluru
       </h1>
       <div id='bodyContent'>
