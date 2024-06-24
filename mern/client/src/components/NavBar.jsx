@@ -1,6 +1,6 @@
 import { Accessibility, FavoriteBorder, Delete } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { List, ListItem, ListItemText, Snackbar, IconButton, ListItemSecondaryAction } from '@mui/material';
+import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Snackbar } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -28,7 +28,12 @@ export const NavBar = () => {
   };
 
   const handleOpenFavorites = (event) => {
-    setAnchorElFavorites(event.currentTarget);
+    if (favorites.length > 0) {
+      setAnchorElFavorites(event.currentTarget);
+    } else {
+      setSnackbarMessage('No favorite places added yet');
+      setSnackbarOpen(true);
+    }
   };
 
   const handleCloseNavMenu = (e) => {
@@ -47,6 +52,12 @@ export const NavBar = () => {
 
   const handleCloseFavorites = () => {
     setAnchorElFavorites(null);
+  };
+
+  const handleRemoveFavorite = (id) => {
+    setFavorites(favorites.filter(favorite => favorite.id !== id));
+    setSnackbarMessage('Removed from favorites');
+    setSnackbarOpen(true);
   };
 
   React.useEffect(() => {
@@ -83,12 +94,6 @@ export const NavBar = () => {
       return;
     }
     setSnackbarOpen(false);
-  };
-
-  const handleRemoveFavorite = (id) => {
-    setFavorites(favorites.filter(favorite => favorite.id !== id));
-    setSnackbarMessage('Removed from favorites');
-    setSnackbarOpen(true);
   };
 
   return (
@@ -201,38 +206,40 @@ export const NavBar = () => {
               <FavoriteBorder alt='Favorites'
                 sx={{ color: 'white' }} />
             </IconButton>
-            <Menu
-              sx={{ mt: '45px' }}
-              id='menu-appbar'
-              anchorEl={anchorElFavorites}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElFavorites)}
-              onClose={handleCloseFavorites}
-            >
-              <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                {favorites.map((favorite, index) => (
-                  <ListItem key={index}
-                    alignItems='flex-start'>
-                    <ListItemText primary={favorite.name} />
-                    <ListItemSecondaryAction>
-                      <IconButton edge="end"
-                        aria-label="delete"
-                        onClick={() => handleRemoveFavorite(favorite.id)}>
-                        <Delete />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
-              </List>
-            </Menu>
+            {favorites.length > 0 && (
+              <Menu
+                sx={{ mt: '45px' }}
+                id='menu-appbar'
+                anchorEl={anchorElFavorites}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElFavorites)}
+                onClose={handleCloseFavorites}
+              >
+                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                  {favorites.map((favorite, index) => (
+                    <ListItem key={index}
+                      alignItems='flex-start'>
+                      <ListItemText primary={favorite.name} />
+                      <ListItemSecondaryAction>
+                        <IconButton edge="end"
+                          aria-label="delete"
+                          onClick={() => handleRemoveFavorite(favorite.id)}>
+                          <Delete />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  ))}
+                </List>
+              </Menu>
+            )}
           </Box>
         </Toolbar>
       </Container>
