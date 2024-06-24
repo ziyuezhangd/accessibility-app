@@ -19,8 +19,11 @@ export default function NearestRestrooms({ placeInfos }) {
   };
 
   return (
-    <Box display='flex' flexDirection='column' alignItems='flex-start'>
-      <Typography variant='h6' sx={{ fontWeight: 400, fontSize: 18 }}>
+    <Box display='flex'
+      flexDirection='column'
+      alignItems='flex-start'>
+      <Typography variant='h6'
+        sx={{ fontWeight: 400, fontSize: 18 }}>
         Wheelchair accessible restrooms
       </Typography>
       {nearestRestrooms.map((restroom) => (
