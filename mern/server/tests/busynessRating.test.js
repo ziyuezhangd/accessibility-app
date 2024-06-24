@@ -13,7 +13,6 @@ describe('GET', () => {
   const testLong = -73.9990;
   
   beforeAll(() => {
-    jest.mock('../db/connection.js');
     jest.mock('../db/dbHandler.js');
   });
 
