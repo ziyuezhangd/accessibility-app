@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 
+const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY;
+
 const loadScript = (url) => {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
@@ -66,7 +68,7 @@ const PlaceIDFinder = () => {
     const initMapScript = async () => {
       if (!window.google) {
         try {
-          await loadScript(`https://maps.googleapis.com/maps/api/js?key=AIzaSyB17Gx1bZvQZ67I2S0f6431oMb1NARnuBU&libraries=places`);
+          await loadScript(`https://maps.googleapis.com/maps/api/js?key=${googleMapConfig}&libraries=places`);
           if (window.google) {
             initMap();
           }
