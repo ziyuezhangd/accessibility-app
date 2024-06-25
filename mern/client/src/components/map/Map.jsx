@@ -73,17 +73,14 @@ export const Map = () => {
   const handleSelect = (item) => {
     switch (item.id) {
     case 'busyness':
-      console.log('Setting busyness data and gradient');
       setHeatMapData(busynessData);
       setHeatMapGradient(busynessGradient);
       break;
     case 'noise':
-      console.log('Setting noise data and gradient');
       setHeatMapData(noiseData);
       setHeatMapGradient(noiseGradient);
       break;
     case 'odor':
-      console.log('Setting odor data and gradient');
       setHeatMapData(odorData);
       setHeatMapGradient(odorGradient);
       break;
@@ -93,9 +90,8 @@ export const Map = () => {
     }
   };
 
-  const handleMapClicked = (map, e) => {
+  const handleMapClicked = async (map, e) => {
     const isPlaceIconClicked = e.placeId !== undefined;
-    const isLocationClicked = e.placeId === undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
@@ -105,6 +101,34 @@ export const Map = () => {
       setSnackbarOpen(true);
     }
     if (isLocationClicked) {
+      console.log('Place clicked: ', e.placeId, lat, lng);
+      try {
+        const PlacesService = await google.maps.importLibrary('places');
+        const service = new PlacesService.PlacesService(map);
+
+        const request = {
+          placeId: e.placeId,
+          fields: ['name', 'formatted_address', 'place_id', 'geometry', 'opening_hours']
+        };
+
+        service.getDetails(request, (place, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
+            console.log('place', place);
+            setSelectedPlace({
+              id: e.placeId,
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng(),
+              name: place.name
+            });
+            setSnackbarOpen(true);
+          } else {
+            console.error('PlacesService failed: ', status);
+          }
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
       console.log('Location clicked: ', lat, lng);
     }
   };
