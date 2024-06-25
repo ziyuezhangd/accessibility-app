@@ -1,7 +1,6 @@
 import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
-import db from '../db/connection.js';
 import dbHandler from '../db/dbHandler.js';
 import router from '../routes/noiseRating.js';
 
