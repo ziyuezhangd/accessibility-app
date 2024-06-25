@@ -1,6 +1,5 @@
 import express from 'express';
 import dbHandler from '../db/dbHandler.js';
-import logger from '../logger.js';
 
 const router = express.Router();
 router.post('/', async (req, res) => {

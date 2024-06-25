@@ -8,7 +8,6 @@ import pedestrianRamps from './pedestrianRamps.js';
 import pedestrianSignals from './pedestrianSignals.js';
 import placeInfos from './placeInfos.js';
 import seatingAreas from './seatingAreas.js';
-import soundRating from './soundRating.js';
 
 const router = express.Router();
 
@@ -18,7 +17,6 @@ router.use('/feedback', feedback);
 router.use('/noise-ratings', noiseRating);
 router.use('/odour-ratings', odourRating);
 router.use('/place-infos', placeInfos);
-router.use('/sound-ratings', soundRating);
 router.use('/seating-areas', seatingAreas);
 router.use('/pedestrian-signals', pedestrianSignals);
 router.use('/pedestrian-ramps', pedestrianRamps);
