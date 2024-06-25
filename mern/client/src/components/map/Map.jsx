@@ -186,7 +186,8 @@ export const Map = () => {
             if (!icon) return null;
             return (
               <AdvancedMarker key = {i}
-                lat={latitude} lng={longitude} >
+                lat={latitude}
+                lng={longitude} >
                 <img src={icon}
                   style={{ height: '45px'}} 
                   alt='Marker PNG' />
