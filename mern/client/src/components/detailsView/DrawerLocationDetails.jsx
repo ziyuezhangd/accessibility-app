@@ -51,9 +51,9 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
       return;
     }
 
-    if (_.find(history, (h) => _.isEqual(h, location))) {
+    if (_.find(history, (h) => h.name === location.name)) {
       // Remove and we will put it back to the start
-      _.remove(history, (h) => _.isEqual(h, location));
+      _.remove(history, (h) => h.name === location.name);
     }
     history = [location, ...history];
 

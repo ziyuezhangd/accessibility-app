@@ -5,7 +5,7 @@ import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import HelpIcon from '../helpModal/HelpIcon';
 
 const busynessData = [
@@ -103,6 +103,7 @@ export const Map = ({ onMapClicked }) => {
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
+
     if (isPlaceIconClicked) {
       var request = {
         placeId: e.placeId,
@@ -111,7 +112,7 @@ export const Map = ({ onMapClicked }) => {
       placesService.getDetails(request, (place, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
           setSnackbarOpen(true);
-          onMapClicked({ lat, lng, isPlace: isPlaceIconClicked, placeId: e.placeId, name: place.name });
+          setLocationData(lat, lng, e.placeId, place.name, true);
         } else {
           console.error('Oh no!');
         }
@@ -119,16 +120,20 @@ export const Map = ({ onMapClicked }) => {
     } else {
       geocoder.geocode({location: {lat, lng}}).then((response) => {
         if (response.results[0]) {
-          console.log(response.results);
-          console.log(response.results[0]);
-          mapInstance.setZoom(DEFAULT_ZOOM + 5);
-          onMapClicked({ lat, lng, isPlace: isPlaceIconClicked, placeId: response.results[0].place_id, name: response.results[0].formatted_address });
+          setLocationData(lat, lng, response.results[0].place_id, response.results[0].formatted_address, false);
         } else {
           window.alert('No results found');
         }
       });
     }
     
+  };
+
+  const setLocationData = (lat, lng, placeId, name, isPlace) => {
+    const selectedLocation = new Location(lat, lng, placeId, name, isPlace);
+    onMapClicked(selectedLocation);
+    setSelectedPlace(selectedLocation);
+    mapInstance.setZoom(DEFAULT_ZOOM + 5);
   };
 
   const fetchData = async () => {
@@ -167,7 +172,7 @@ export const Map = ({ onMapClicked }) => {
       <GoogleMap
         style={{ height: '95vh', top: '7vh' }}
         zoom={DEFAULT_ZOOM}
-        center={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
+        center={selectedPlace === null ? { lat: MANHATTAN_LAT, lng: MANHATTAN_LNG } : { lat: selectedPlace.lat, lng: selectedPlace.lng }}
         onClick={handleMapClicked}
         onLoad={(map) => setMapInstance(map)}
         options={{
@@ -187,8 +192,8 @@ export const Map = ({ onMapClicked }) => {
             opacity={0.6}
           />
         )}
-        <Marker lat={MANHATTAN_LAT}
-          lng={MANHATTAN_LNG} />
+        {selectedPlace && <Marker lat={selectedPlace.lat}
+          lng={selectedPlace.lng} />}
       </GoogleMap>
       <Snackbar
         open={snackbarOpen}

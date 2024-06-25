@@ -6,10 +6,6 @@ import DrawerLocationDetails from './DrawerLocationDetails';
 
 const drawerWidth = 400;
 
-/**
- *
- * @param {selectedLocation: {lat: number, lng: number, isPlace: boolean }} props
- */
 export default function PersistentDrawerLeft({ selectedLocation }) {
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
   const [location, setLocation] = useState(null);
