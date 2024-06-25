@@ -55,13 +55,12 @@ export const Map = () => {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [placeInfos, setPlaceInfos] = useState([]);
-  getPlaceInfos().then(setPlaceInfos);
   const theme = useTheme();
 
   useEffect(() => {
     console.log('Map instance loaded:', mapInstance);
   }, [mapInstance]);
-
+  getPlaceInfos().then(setPlaceInfos);
   const handleSelect = (item) => {
     switch (item.id) {
     case 'busyness':
