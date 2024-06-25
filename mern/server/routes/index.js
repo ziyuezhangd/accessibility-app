@@ -7,6 +7,7 @@ import odourRating from './odourRating.js';
 import pedestrianRamps from './pedestrianRamps.js';
 import pedestrianSignals from './pedestrianSignals.js';
 import placeInfos from './placeInfos.js';
+import publicRestrooms from './publicRestrooms.js';
 import seatingAreas from './seatingAreas.js';
 import soundRating from './soundRating.js';
 
@@ -22,5 +23,6 @@ router.use('/sound-ratings', soundRating);
 router.use('/seating-areas', seatingAreas);
 router.use('/pedestrian-signals', pedestrianSignals);
 router.use('/pedestrian-ramps', pedestrianRamps);
+router.use('/restrooms', publicRestrooms);
 
 export default router;
