@@ -1,6 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
-import axios from 'axios';
 import dayjs from 'dayjs';
 import { useState, useEffect } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
@@ -67,8 +66,6 @@ export const Map = () => {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchInput, setSearchInput] = useState('');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -138,33 +135,9 @@ export const Map = () => {
     getPlaceInfos().then(setPlaceInfos);
   };
 
-  const searchPlaces = async (query) => {
-    try {
-      const response = await axios.get(
-        `https://accessibility.cloud/api/v2/places-infos?q=${query}&limit=10`,
-        {
-          headers: {
-            Authorization: `Bearer YOUR_API_KEY`, // Replace with your actual API key
-          },
-        }
-      );
-      setSearchResults(response.data);
-    } catch (error) {
-      console.error('Error fetching place infos:', error);
-    }
-  };
-
   useEffect(() => {
     fetchData();
   }, [selectedDate]);
-
-  useEffect(() => {
-    if (searchInput.length > 2) {
-      searchPlaces(searchInput);
-    } else {
-      setSearchResults([]);
-    }
-  }, [searchInput]);
 
   const containerStyle = {
     display: 'flex',
