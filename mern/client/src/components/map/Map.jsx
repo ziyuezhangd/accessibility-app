@@ -96,11 +96,6 @@ export const Map = () => {
     const lat = latLng.lat();
     const lng = latLng.lng();
     if (isPlaceIconClicked) {
-      console.log('Place clicked: ', e, lat, lng);
-      setSelectedPlace({ id: e.placeId, lat, lng });
-      setSnackbarOpen(true);
-    }
-    if (isLocationClicked) {
       console.log('Place clicked: ', e.placeId, lat, lng);
       try {
         const PlacesService = await google.maps.importLibrary('places');
