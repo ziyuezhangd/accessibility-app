@@ -1,11 +1,12 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Chip, Typography } from '@mui/material';
 import _ from 'lodash';
 import { useState, useEffect } from 'react';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
-import { getPublicRestrooms } from '../../services/restrooms';
+import { PublicRestroom, PublicRestroomUtilities, getPublicRestrooms } from '../../services/restrooms';
 import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
 export default function NearestRestrooms({ lat, lng, onLoaded }) {
+  /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
 
   useEffect(() => {
@@ -15,7 +16,7 @@ export default function NearestRestrooms({ lat, lng, onLoaded }) {
   const getNearestRestrooms = async () => {
     // TODO: we don't need to query all restrooms every single time - move this up the stack? maybe even cache?
     const restrooms = await getPublicRestrooms('incl-partial');
-    const nearest = PlaceInfoUtilities.getNearest(restrooms, lat, lng, 3);
+    const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
     setNearestRestrooms(nearest);
     onLoaded(nearest);
   };
@@ -31,7 +32,10 @@ export default function NearestRestrooms({ lat, lng, onLoaded }) {
       {nearestRestrooms.map((restroom) => (
         <>
           <div>{restroom.name}</div>
-          <div>{PlaceInfoUtilities.getStreetAddressText(restroom)}</div>
+          <div>{restroom.hours}</div>
+          <div>{PublicRestroomUtilities.isRestroomOpenNow(restroom) ? <Chip label='OPEN'
+            color='success'/> : <Chip label='CLOSED'
+            color='error'/>}</div>
           <div>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</div>
         </>
       ))}
