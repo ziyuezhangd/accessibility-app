@@ -1,12 +1,11 @@
-import { Box, useTheme } from '@mui/material';
-import * as _ from 'lodash';
+import CloseIcon from '@mui/icons-material/Close';
+import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import HelpIcon from './HelpIcon';
-import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient, calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
@@ -48,12 +47,13 @@ const odorData = [
 ];
 
 export const Map = () => {
-  const [placeInfos, setPlaceInfos] = useState([]);
-
-  const theme = useTheme();
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
   const [mapInstance, setMapInstance] = useState(null);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const theme = useTheme();
 
   useEffect(() => {
     console.log('Map instance loaded:', mapInstance);
@@ -62,17 +62,14 @@ export const Map = () => {
   const handleSelect = (item) => {
     switch (item.id) {
     case 'busyness':
-      console.log('Setting busyness data and gradient');
       setHeatMapData(busynessData);
       setHeatMapGradient(busynessGradient);
       break;
     case 'noise':
-      console.log('Setting noise data and gradient');
       setHeatMapData(noiseData);
       setHeatMapGradient(noiseGradient);
       break;
     case 'odor':
-      console.log('Setting odor data and gradient');
       setHeatMapData(odorData);
       setHeatMapGradient(odorGradient);
       break;
@@ -82,32 +79,70 @@ export const Map = () => {
     }
   };
 
-  const handleMapClicked = (map, e) => {
+  const handleMapClicked = async (map, e) => {
     const isPlaceIconClicked = e.placeId !== undefined;
-    const isLocationClicked = e.placeId === undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
     if (isPlaceIconClicked) {
-      console.log('Place clicked: ', e, lat, lng);
-    }
-    if (isLocationClicked) {
+      console.log('Place clicked: ', e.placeId, lat, lng);
+      try {
+        const PlacesService = await google.maps.importLibrary('places');
+        const service = new PlacesService.PlacesService(map);
+
+        const request = {
+          placeId: e.placeId,
+          fields: ['name', 'formatted_address', 'place_id', 'geometry', 'opening_hours']
+        };
+
+        service.getDetails(request, (place, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
+            console.log('place', place);
+            setSelectedPlace({
+              id: e.placeId,
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng(),
+              name: place.name
+            });
+            setSnackbarOpen(true);
+          } else {
+            console.error('PlacesService failed: ', status);
+          }
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
       console.log('Location clicked: ', lat, lng);
     }
   };
 
-  const fetchData = async () => {
-    const busynessRatings = await getBusynessRatings(new Date());
-    console.log('busynessRatings: ', busynessRatings);
-    const noiseRatings = await getNoiseRatings(new Date());
-    console.log('noiseRatings: ', noiseRatings);
-    const odourRatings = await getOdourRatings(new Date());
-    console.log('odourRatings: ', odourRatings);
-    getPlaceInfos().then(setPlaceInfos);
+  const handleAddToFavorites = () => {
+    if (selectedPlace) {
+      console.log('Added to favorites:', selectedPlace);
+      const event = new CustomEvent('favoriteAdded', { detail: selectedPlace });
+      window.dispatchEvent(event);
+      setSnackbarOpen(false);
+    }
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
   };
 
   useEffect(() => {
-    // This is just testing the rating queries
+    const fetchData = async () => {
+      const busynessRatings = await getBusynessRatings(new Date());
+      console.log('busynessRatings: ', busynessRatings);
+      const noiseRatings = await getNoiseRatings(new Date());
+      console.log('noiseRatings: ', noiseRatings);
+      const odourRatings = await getOdourRatings(new Date());
+      console.log('odourRatings: ', odourRatings);
+    };
+
     fetchData();
   }, []);
 
@@ -120,13 +155,11 @@ export const Map = () => {
         onClick={handleMapClicked}
         onLoad={(map) => setMapInstance(map)}
         options={{
-          libraries: ['visualization'],
+          libraries: ['visualization', 'places'],
         }}
       >
         <Dropdown onSelect={handleSelect} />
         <HelpIcon />
-        {console.log('Rendering HeatMap Data:', heatMapData)}
-        {console.log('Rendering HeatMap Gradient:', heatMapGradient)}
         {heatMapData.length > 0 && (
           <HeatmapLayer
             data={heatMapData.map(data => ({
@@ -141,6 +174,27 @@ export const Map = () => {
         <Marker lat={MANHATTAN_LAT}
           lng={MANHATTAN_LNG} />
       </GoogleMap>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message="Add this place to favorites?"
+        action={(
+          <>
+            <Button color="secondary"
+              size="small"
+              onClick={handleAddToFavorites}>
+              Add to Favorites
+            </Button>
+            <IconButton size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleSnackbarClose}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </>
+        )}
+      />
     </Box>
   );
 };
