@@ -14,8 +14,9 @@ export default function MapPage() {
       <Suspense>
         {/* TODO: add fallback */}
         {/* Load the google map api */}
-        <GoogleMapApiLoader apiKey={googleMapConfig} suspense>
-          <MapComponent onMapClicked={(e) => setSelectedLocation(e)} />
+        <GoogleMapApiLoader apiKey={googleMapConfig}
+          suspense>
+          <MapComponent />
         </GoogleMapApiLoader>
       </Suspense>
     </Box>

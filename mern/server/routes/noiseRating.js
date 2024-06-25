@@ -22,6 +22,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({message: 'Failed to retrieve the noise rating', error });
   }
 });
+
 router.get('/location', async (req, res) => {
   const { datetime, lat, long } = req.query;
   if (!datetime) {

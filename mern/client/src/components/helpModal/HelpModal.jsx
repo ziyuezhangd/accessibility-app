@@ -22,13 +22,25 @@ export default function HelpModal({ isOpen, onClose }) {
   };
 
   return (
-    <Modal open={isOpen} onClose={onClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
+    <Modal open={isOpen}
+      onClose={onClose}
+      aria-labelledby='modal-modal-title'
+      aria-describedby='modal-modal-description'>
       <Box sx={style}>
-        <Typography id='modal-modal-title' variant='h4' component='h2'>
+        <Typography id='modal-modal-title'
+          variant='h4'
+          component='h2'>
           How it works
         </Typography>
-        <Grid container spacing={2} marginTop={5} sx={{ display: 'flex', justifyContent: 'center'}}>
-          <Grid item xs={12} sm={3} md={3} sx={{ display: 'flex' }}>
+        <Grid container
+          spacing={2}
+          marginTop={5}
+          sx={{ display: 'flex', justifyContent: 'center'}}>
+          <Grid item
+            xs={12}
+            sm={3}
+            md={3}
+            sx={{ display: 'flex' }}>
             <Paper
               elevation={0}
               square='false'
@@ -42,16 +54,24 @@ export default function HelpModal({ isOpen, onClose }) {
                 height: '400px',
               }}
             >
-              <img src={selectDateImage} alt='Description of the image' style={{ width: 150, height: 150 }} />
-              <Typography variant='h6' component='h1'>
+              <img src={selectDateImage}
+                alt='Description of the image'
+                style={{ width: 150, height: 150 }} />
+              <Typography variant='h6'
+                component='h1'>
                 Pick a date and time
               </Typography>
-              <Typography variant='subtitle1' component='h1'>
+              <Typography variant='subtitle1'
+                component='h1'>
                 See the predicted busyness, noise and odour levels across Manhattan on any day or time.
               </Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={3} md={3} sx={{ display: 'flex' }}>
+          <Grid item
+            xs={12}
+            sm={3}
+            md={3}
+            sx={{ display: 'flex' }}>
             <Paper
               elevation={0}
               square='false'
@@ -65,16 +85,24 @@ export default function HelpModal({ isOpen, onClose }) {
                 height: '400px',
               }}
             >
-              <img src={clickRoadImage} alt='Description of the image' style={{ width: 150, height: 150 }} />
-              <Typography variant='h6' component='h1'>
+              <img src={clickRoadImage}
+                alt='Description of the image'
+                style={{ width: 150, height: 150 }} />
+              <Typography variant='h6'
+                component='h1'>
                 Click for details
               </Typography>
-              <Typography variant='subtitle1' component='h1'>
+              <Typography variant='subtitle1'
+                component='h1'>
                 Learn more about the selected street to see its busyness, noise and odour scores as well as nearby accessible points of interest.
               </Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={3} md={3} sx={{ display: 'flex' }}>
+          <Grid item
+            xs={12}
+            sm={3}
+            md={3}
+            sx={{ display: 'flex' }}>
             <Paper
               elevation={0}
               square='false'
@@ -88,16 +116,24 @@ export default function HelpModal({ isOpen, onClose }) {
                 height: '400px',
               }}
             >
-              <img src={restaurantMarkerImage} alt='Description of the image' style={{ width: 150, height: 150 }} />
-              <Typography variant='h6' component='h1'>
+              <img src={restaurantMarkerImage}
+                alt='Description of the image'
+                style={{ width: 150, height: 150 }} />
+              <Typography variant='h6'
+                component='h1'>
                 Search for businesses
               </Typography>
-              <Typography variant='subtitle1' component='h1'>
+              <Typography variant='subtitle1'
+                component='h1'>
                 Find restaurants and attractions to gauge the busyness levels in that area. Click on a business to see accessibility details.
               </Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={3} md={3} sx={{ display: 'flex' }}>
+          <Grid item
+            xs={12}
+            sm={3}
+            md={3}
+            sx={{ display: 'flex' }}>
             <Paper
               elevation={0}
               square='false'
@@ -111,17 +147,22 @@ export default function HelpModal({ isOpen, onClose }) {
                 height: '400px',
               }}
             >
-              <img src={heartImage} alt='Description of the image' style={{ width: 150, height: 150 }} />
+              <img src={heartImage}
+                alt='Description of the image'
+                style={{ width: 150, height: 150 }} />
 
-              <Typography variant='h6' component='h1'>
+              <Typography variant='h6'
+                component='h1'>
                 Save your favorites.
               </Typography>
-              <Typography variant='subtitle1' component='h1'>
+              <Typography variant='subtitle1'
+                component='h1'>
                 Keep track of your favorite places so you can quickly check in on predictions.
               </Typography>
             </Paper>
           </Grid>
-          <Button variant='contained' onClick={handleButtonClicked}>Get started</Button>
+          <Button variant='contained'
+            onClick={handleButtonClicked}>Get started</Button>
         </Grid>
       </Box>
     </Modal>
