@@ -211,6 +211,7 @@ const busCategories = ['bus_station', 'bus_stop'];
 const marketCategories = ['market'];
 const toiletCategories = ['toilets'];
 const atmCategories = ['atm', 'currencyexchange'];
+const coffeeCategories = ['coffee'];
 const flowersCategories = ['garden_centre', 'flowers', 'allotments'];
 const parkCategories = ['park', 'dog_park'];
 const veterinaryCategories = ['veterinary'];
@@ -235,6 +236,9 @@ const cemeteryCategories = ['cemetery'];
 const categoryToParentCategory = (category) => {
   if( pubCategories.includes(category)) {
     return 'pub';
+  }
+  if( campingCategories.includes(category)) {
+    return 'camping';
   }
   if( airportCategories.includes(category)) {
     return 'airport';
@@ -267,7 +271,7 @@ const categoryToParentCategory = (category) => {
     return 'accomodation';
   }
   if( policeStationCategories.includes(category)) {
-    return 'policeStation';
+    return 'police';
   }
   if( healthCategories.includes(category)) {
     return 'health';
@@ -288,7 +292,7 @@ const categoryToParentCategory = (category) => {
     return 'market';
   }
   if( toiletCategories.includes(category)) {
-    return 'toilet';
+    return 'toilets';
   }
   if( flowersCategories.includes(category)) {
     return 'flowers';
@@ -339,16 +343,13 @@ const categoryToParentCategory = (category) => {
     return 'phone';
   }
   if( picnicTableCategories.includes(category)) {
-    return 'picnic';
+    return 'picnicTable';
   }
   if( bankCategories.includes(category)) {
     return 'bank';
   }
   if( cemeteryCategories.includes(category)) {
     return 'cemetery';
-  }
-  if( campingCategories.includes(category)) {
-    return 'toilet';
   }
   if( sportsCategories.includes(category)) {
     return 'sports';
@@ -364,5 +365,8 @@ const categoryToParentCategory = (category) => {
   }
   if( attractionCategories.includes(category)) {
     return 'attraction';
+  }
+  if( coffeeCategories.includes(category)) {
+    return 'coffee';
   }
 };
