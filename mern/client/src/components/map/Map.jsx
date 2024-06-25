@@ -1,9 +1,10 @@
-import { Box, useTheme } from '@mui/material';
-import * as _ from 'lodash';
+import CloseIcon from '@mui/icons-material/Close';
+import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import { getPlaceInfos } from '../../services/placeInfo';
+import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import HelpIcon from '../helpModal/HelpIcon';
 
@@ -51,10 +52,13 @@ export const Map = ({ onMapClicked }) => {
   const [placesService, setPlacesService] = useState();
   const [geocoder, setGeocoder] = useState();
 
-  const theme = useTheme();
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
   const [mapInstance, setMapInstance] = useState(null);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const theme = useTheme();
 
   useEffect(() => {
     if (mapInstance) {
@@ -77,17 +81,14 @@ export const Map = ({ onMapClicked }) => {
   const handleSelect = (item) => {
     switch (item.id) {
     case 'busyness':
-      console.log('Setting busyness data and gradient');
       setHeatMapData(busynessData);
       setHeatMapGradient(busynessGradient);
       break;
     case 'noise':
-      console.log('Setting noise data and gradient');
       setHeatMapData(noiseData);
       setHeatMapGradient(noiseGradient);
       break;
     case 'odor':
-      console.log('Setting odor data and gradient');
       setHeatMapData(odorData);
       setHeatMapGradient(odorGradient);
       break;
@@ -99,7 +100,6 @@ export const Map = ({ onMapClicked }) => {
 
   const handleMapClicked = async (map, e) => {
     const isPlaceIconClicked = e.placeId !== undefined;
-    const isLocationClicked = e.placeId === undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
@@ -110,6 +110,7 @@ export const Map = ({ onMapClicked }) => {
       };
       placesService.getDetails(request, (place, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
+          setSnackbarOpen(true);
           onMapClicked({ lat, lng, isPlace: isPlaceIconClicked, placeId: e.placeId, name: place.name });
         } else {
           console.error('Oh no!');
@@ -140,9 +141,24 @@ export const Map = ({ onMapClicked }) => {
     // console.log('odourRatings: ', odourRatings);
     getPlaceInfos().then(setPlaceInfos);
   };
+  
+  const handleAddToFavorites = () => {
+    if (selectedPlace) {
+      console.log('Added to favorites:', selectedPlace);
+      const event = new CustomEvent('favoriteAdded', { detail: selectedPlace });
+      window.dispatchEvent(event);
+      setSnackbarOpen(false);
+    }
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
 
   useEffect(() => {
-    // This is just testing the rating queries
     fetchData();
   }, []);
 
@@ -174,6 +190,27 @@ export const Map = ({ onMapClicked }) => {
         <Marker lat={MANHATTAN_LAT}
           lng={MANHATTAN_LNG} />
       </GoogleMap>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message="Add this place to favorites?"
+        action={(
+          <>
+            <Button color="secondary"
+              size="small"
+              onClick={handleAddToFavorites}>
+              Add to Favorites
+            </Button>
+            <IconButton size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleSnackbarClose}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </>
+        )}
+      />
     </Box>
   );
 };

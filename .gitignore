@@ -125,3 +125,7 @@ out/
 
 # OS files
 .DS_Store
+
+
+# ML file
+ml/input_data
