@@ -9,16 +9,13 @@ export default function MapPage() {
   const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY;
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <PersistentDrawerLeft selectedLocation={selectedLocation} />
-      <Suspense>
-        {/* TODO: add fallback */}
-        {/* Load the google map api */}
-        <GoogleMapApiLoader apiKey={googleMapConfig} 
-          suspense>
-          <MapComponent onMapClicked={(e) => setSelectedLocation(e)} />
-        </GoogleMapApiLoader>
-      </Suspense>
-    </Box>
+    <Suspense>
+      {/* TODO: add fallback */}
+      {/* Load the google map api */}
+      <GoogleMapApiLoader apiKey={googleMapConfig} 
+        suspense>
+        <MapComponent onMapClicked={(e) => setSelectedLocation(e)} />
+      </GoogleMapApiLoader>
+    </Suspense>
   );
 }

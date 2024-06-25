@@ -6,7 +6,7 @@ import DrawerLocationDetails from './DrawerLocationDetails';
 
 const drawerWidth = 400;
 
-export default function PersistentDrawerLeft({ selectedLocation }) {
+export default function PersistentDrawerLeft({ selectedLocation, addMarkers, clearMarkers }) {
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
   const [location, setLocation] = useState(null);
 
@@ -18,6 +18,7 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
   }, [selectedLocation]);
 
   const handleLocationSelected = (e) => {
+    clearMarkers();
     setSelectedDrawerContent('location');
     setLocation(e);
   };
@@ -25,6 +26,7 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
   const handleBackClicked = (e) => {
     setSelectedDrawerContent('history');
     setLocation(null);
+    clearMarkers();
   };
 
   return (
@@ -40,7 +42,8 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
         <Toolbar />
         {selectedDrawerContent === 'history' && <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
         {selectedDrawerContent === 'location' && <DrawerLocationDetails location={location}
-          onBackClicked={handleBackClicked} />}
+          onBackClicked={handleBackClicked}
+          addMarkers={(e) => addMarkers(e)}/>}
       </Drawer>
     </>
   );

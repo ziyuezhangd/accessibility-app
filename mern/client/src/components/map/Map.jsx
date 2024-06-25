@@ -6,8 +6,10 @@ import Dropdown from './Dropdown';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
+const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
   { lat: 40.748817, lng: -73.985428, weight: 1 },
@@ -51,6 +53,7 @@ export const Map = ({ onMapClicked }) => {
   const [placeInfos, setPlaceInfos] = useState([]);
   const [placesService, setPlacesService] = useState();
   const [geocoder, setGeocoder] = useState();
+  const [markers, setMarkers]= useState([]);
 
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
@@ -99,6 +102,8 @@ export const Map = ({ onMapClicked }) => {
   };
 
   const handleMapClicked = async (map, e) => {
+    // Clear any existing markers
+    setMarkers([]);
     const isPlaceIconClicked = e.placeId !== undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
@@ -167,55 +172,73 @@ export const Map = ({ onMapClicked }) => {
     fetchData();
   }, []);
 
+  // TODO: have a way to clear markers
+  // TODO: have a way to differentiate the styles
+  const handleAddMarkers = (coordinates) => {
+    setMarkers([...markers, ...coordinates]);
+  };
+
   return (
-    <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
-      <GoogleMap
-        style={{ height: '95vh', top: '7vh' }}
-        zoom={DEFAULT_ZOOM}
-        center={selectedPlace === null ? { lat: MANHATTAN_LAT, lng: MANHATTAN_LNG } : { lat: selectedPlace.lat, lng: selectedPlace.lng }}
-        onClick={handleMapClicked}
-        onLoad={(map) => setMapInstance(map)}
-        options={{
-          libraries: ['visualization', 'places'],
-        }}
-      >
-        <Dropdown onSelect={handleSelect} />
-        <HelpIcon />
-        {heatMapData.length > 0 && (
-          <HeatmapLayer
-            data={heatMapData.map((data) => ({
-              location: new window.google.maps.LatLng(data.lat, data.lng),
-              weight: data.weight,
-            }))}
-            gradient={heatMapGradient}
-            radius={20}
-            opacity={0.6}
-          />
-        )}
-        {selectedPlace && <Marker lat={selectedPlace.lat}
-          lng={selectedPlace.lng} />}
-      </GoogleMap>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message="Add this place to favorites?"
-        action={(
-          <>
-            <Button color="secondary"
-              size="small"
-              onClick={handleAddToFavorites}>
+    <Box sx={{ display: 'flex' }}>
+      <PersistentDrawerLeft selectedLocation={selectedPlace}
+        addMarkers={handleAddMarkers}
+        clearMarkers={() => setMarkers([])}/>
+      <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
+        <GoogleMap
+          style={{ height: '95vh', top: '7vh' }}
+          zoom={DEFAULT_ZOOM}
+          center={selectedPlace === null ? { lat: MANHATTAN_LAT, lng: MANHATTAN_LNG } : { lat: selectedPlace.lat, lng: selectedPlace.lng }}
+          onClick={handleMapClicked}
+          onLoad={(map) => setMapInstance(map)}
+          options={{
+            libraries: ['visualization', 'places'],
+          }}
+          mapOptions={{
+            mapId: VITE_MAP_ID,
+          }}
+        >
+          <Dropdown onSelect={handleSelect} />
+          <HelpIcon />
+          {heatMapData.length > 0 && (
+            <HeatmapLayer
+              data={heatMapData.map((data) => ({
+                location: new window.google.maps.LatLng(data.lat, data.lng),
+                weight: data.weight,
+              }))}
+              gradient={heatMapGradient}
+              radius={20}
+              opacity={0.6}
+            />
+          )}
+          {selectedPlace && <Marker lat={selectedPlace.lat}
+            lng={selectedPlace.lng} />}
+          {markers.map((m, idx) => (<Marker 
+            key={idx}
+            lat={m.lat}
+            lng={m.lng} />))}
+        </GoogleMap>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          message="Add this place to favorites?"
+          action={(
+            <>
+              <Button color="secondary"
+                size="small"
+                onClick={handleAddToFavorites}>
               Add to Favorites
-            </Button>
-            <IconButton size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={handleSnackbarClose}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </>
-        )}
-      />
+              </Button>
+              <IconButton size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={handleSnackbarClose}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </>
+          )}
+        />
+      </Box>
     </Box>
   );
 };

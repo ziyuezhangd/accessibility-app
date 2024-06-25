@@ -22,7 +22,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'start',
 }));
 
-export default function DrawerLocationDetails({ location, onBackClicked }) {
+export default function DrawerLocationDetails({ location, onBackClicked, addMarkers }) {
   const [error, setError] = useState('');
   const [isFeedbackComplete, setIsFeedbackComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -77,6 +77,10 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     setIsFeedbackComplete(true);
   };
 
+  const handleRestroomsLoaded = (restrooms) => {
+    addMarkers(restrooms.map(restroom => ({lat: parseFloat(restroom.latitude),lng: parseFloat(restroom.longitude)})));
+  };
+
   return (
     <>
       <DrawerHeader>
@@ -91,9 +95,9 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
         {!isLoading && (
           <>
             <Grades />
-            <NearestRestrooms placeInfos={placeInfos}
-              lat={location.lat}
-              lng={location.lng} />
+            <NearestRestrooms lat={location.lat}
+              lng={location.lng}
+              onLoaded={handleRestroomsLoaded} />
             <NearestStations placeInfos={placeInfos}
               lat={location.lat}
               lng={location.lng} />

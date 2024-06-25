@@ -1,11 +1,11 @@
 import { Box, Typography } from '@mui/material';
-import _, { rest } from 'lodash';
+import _ from 'lodash';
 import { useState, useEffect } from 'react';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { getPublicRestrooms } from '../../services/restrooms';
 import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
-export default function NearestRestrooms({ placeInfos, lat, lng }) {
+export default function NearestRestrooms({ lat, lng, onLoaded }) {
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
 
   useEffect(() => {
@@ -13,10 +13,11 @@ export default function NearestRestrooms({ placeInfos, lat, lng }) {
   }, []);
 
   const getNearestRestrooms = async () => {
+    // TODO: we don't need to query all restrooms every single time - move this up the stack? maybe even cache?
     const restrooms = await getPublicRestrooms('incl-partial');
     const nearest = PlaceInfoUtilities.getNearest(restrooms, lat, lng, 3);
     setNearestRestrooms(nearest);
-    // TODO: add markers for each restrooms
+    onLoaded(nearest);
   };
 
   return (
