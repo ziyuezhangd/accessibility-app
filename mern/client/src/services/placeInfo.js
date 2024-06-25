@@ -43,8 +43,6 @@ export const getCategories = async () => {
   return categories;
 };
 
-
-
 export class PlaceInfoUtilities {
   /**
    * Given a placeInfo object, gets a human-readable string of the address -
