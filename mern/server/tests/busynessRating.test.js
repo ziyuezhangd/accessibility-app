@@ -17,7 +17,6 @@ describe('GET', () => {
   });
 
   describe('/busynessRating', () => {
-
     it('should return 200 and prediction if model is retrieved and no error occurs', async () => {
       const dummyPredictions = [{ _id: '1', rating: 'A' }, { _id: '2', rating: 'C' }];
       const mockLatestModel = {
@@ -28,6 +27,7 @@ describe('GET', () => {
       const response = await request(app).get(`?datetime=${testDateTime}`);
       expect(response.status).toBe(200);
       expect(response.body).toEqual(dummyPredictions);
+      expect(dbHandler.getLatestModel).toHaveBeenCalledWith('busynessModel');
       expect(mockLatestModel.predict).toHaveBeenCalledWith(new Date(testDateTime));
     });
 
@@ -57,6 +57,7 @@ describe('GET', () => {
       const response = await request(app).get(`/location?datetime=${testDateTime}&lat=${testLat}&long=${testLong}`);
       expect(response.status).toBe(200);
       expect(response.body).toEqual(dummyPrediction);
+      expect(dbHandler.getLatestModel).toHaveBeenCalledWith('busynessModel');
       expect(mockLatestModel.predict).toHaveBeenCalledWith(new Date(testDateTime), testLat, testLong);
     });
 

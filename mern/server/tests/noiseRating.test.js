@@ -28,6 +28,7 @@ describe('GET', () => {
       const response = await request(app).get(`?datetime=${testDateTime}`);
       expect(response.status).toBe(200);
       expect(response.body).toEqual(dummyPredictions);
+      expect(dbHandler.getLatestModel).toHaveBeenCalledWith('noiseModel');
       expect(mockLatestModel.predict).toHaveBeenCalledWith(new Date(testDateTime));
     });
   
@@ -36,7 +37,7 @@ describe('GET', () => {
         throw new Error('Database error');
       });
   
-      const response = await request(app).get('?datetime=2024-06-18T12:34:56Z');
+      const response = await request(app).get(`?datetime=${testDateTime}`);
       expect(response.status).toBe(500);
     });
   
@@ -47,7 +48,6 @@ describe('GET', () => {
   });
   
   describe('/noiseRating/location', () => {
-    // This test requires knowledge of how data is retrieved.
     it('should return 200 and prediction if model is retrieved', async () => {
       const dummyPrediction = { rating: 'A' };
       const mockLatestModel = {
@@ -58,6 +58,7 @@ describe('GET', () => {
       const response = await request(app).get(`/location?datetime=${testDateTime}&lat=${testLat}&long=${testLong}`);
       expect(response.status).toBe(200);
       expect(response.body).toEqual(dummyPrediction);
+      expect(dbHandler.getLatestModel).toHaveBeenCalledWith('noiseModel');
       expect(mockLatestModel.predict).toHaveBeenCalledWith(new Date(testDateTime), testLat, testLong);
     });
   
