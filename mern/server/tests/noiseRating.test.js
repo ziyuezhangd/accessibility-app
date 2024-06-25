@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals';
+import { describe, it, expect, jest, afterEach } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import dbHandler from '../db/dbHandler.js';
@@ -7,15 +7,13 @@ import router from '../routes/noiseRating.js';
 const app = express();
 app.use('/', router);
 
-describe('GET', () => {
-  const testDateTime = '2024-06-18T12:34:56.000Z';
-  const testLat = 40.7646;
-  const testLong = -73.9990;
+jest.mock('../db/dbHandler.js');
 
-  beforeAll(() => {
-    jest.mock('../db/dbHandler.js');
-  });
-  
+const testDateTime = '2024-06-18T12:34:56.000Z';
+const testLat = 40.7646;
+const testLong = -73.9990;
+
+describe('GET', () => {
   describe('/noiseRating', () => {
     it('should return 200 and prediction if model is retrieved and no error occurs', async () => {
       const dummyPredictions = [{ _id: '1', rating: 'A' }, { _id: '2', rating: 'C' }];
@@ -86,7 +84,7 @@ describe('GET', () => {
     });
   });
   
-  afterAll(() => {
+  afterEach(() => {
     jest.restoreAllMocks();
   });
 });
