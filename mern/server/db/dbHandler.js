@@ -1,8 +1,6 @@
 import db from './connection.js';
 
 const dbHandler = {
-  db: db,
-
   /**
      * @param {string} modelName
      * @returns {Promise<Array<string>>} 
