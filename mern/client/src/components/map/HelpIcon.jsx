@@ -1,13 +1,28 @@
 import { Help } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Control } from 'react-google-map-wrapper';
 import HelpModal from './HelpModal';
+import DontRemindButton from './DontRemindButton'; // Import DontRemindButton
 
 export default function HelpIcon() {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [dontRemind, setDontRemind] = useState(false);
+
+  useEffect(() => {
+    setDontRemind(localStorage.getItem('dontRemind') === 'true');
+  }, []);
+
   const handleButtonClick = () => {
-    setIsModalVisible(!isModalVisible);
+    if (!dontRemind) {
+      setIsModalVisible(!isModalVisible);
+    }
+  };
+
+  const handleDontRemind = () => {
+    localStorage.setItem('dontRemind', 'true');
+    setDontRemind(true);
+    setIsModalVisible(false);
   };
 
   return (
@@ -21,8 +36,13 @@ export default function HelpIcon() {
           <Help sx={{ fontSize: 40 }} />
         </IconButton>
       </Control>
-      <HelpModal isOpen={isModalVisible}
-        onClose={() => setIsModalVisible(false)} />
+      <HelpModal
+        isOpen={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+      />
+      {isModalVisible && (
+        <DontRemindButton onClick={handleDontRemind} />
+      )}
     </>
   );
 }

@@ -72,21 +72,21 @@ export const Map = () => {
 
   const handleSelect = (item) => {
     switch (item.id) {
-    case 'busyness':
-      setHeatMapData(busynessData);
-      setHeatMapGradient(busynessGradient);
-      break;
-    case 'noise':
-      setHeatMapData(noiseData);
-      setHeatMapGradient(noiseGradient);
-      break;
-    case 'odor':
-      setHeatMapData(odorData);
-      setHeatMapGradient(odorGradient);
-      break;
-    default:
-      setHeatMapData([]);
-      setHeatMapGradient([]);
+      case 'busyness':
+        setHeatMapData(busynessData);
+        setHeatMapGradient(busynessGradient);
+        break;
+      case 'noise':
+        setHeatMapData(noiseData);
+        setHeatMapGradient(noiseGradient);
+        break;
+      case 'odor':
+        setHeatMapData(odorData);
+        setHeatMapGradient(odorGradient);
+        break;
+      default:
+        setHeatMapData([]);
+        setHeatMapGradient([]);
     }
   };
 
