@@ -3,7 +3,7 @@ import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
-import { GoogleApiContext } from '../../providers/GoogleApiProvider';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
@@ -50,13 +50,13 @@ const odorData = [
   { lat: 40.7243, lng: -73.99771, weight: 2 },
 ];
 
-export const Map = ({ onMapClicked }) => {
+export const Map = () => {
   const theme = useTheme();
+  const {clearMarkers, createMarkers} = useContext(GoogleMapContext);
 
   // TODO: add loading state to handle this
-  const {placesService, mapInstance, geocoder, onMapLoaded} = useContext(GoogleApiContext);
+  const {placesService, mapInstance, geocoder, onMapLoaded, markers} = useContext(GoogleMapContext);
   const [placeInfos, setPlaceInfos] = useState([]);
-  const [markers, setMarkers]= useState([]);
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -84,7 +84,7 @@ export const Map = ({ onMapClicked }) => {
 
   const handleMapClicked = async (map, e) => {
     // Clear any existing markers
-    setMarkers([]);
+    clearMarkers();
     const isPlaceIconClicked = e.placeId !== undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
@@ -116,8 +116,8 @@ export const Map = ({ onMapClicked }) => {
 
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
     const selectedLocation = new Location(lat, lng, placeId, name, isPlace);
-    onMapClicked(selectedLocation);
     setSelectedPlace(selectedLocation);
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
   };
 
@@ -152,16 +152,9 @@ export const Map = ({ onMapClicked }) => {
     fetchData();
   }, []);
 
-  // TODO: have a way to differentiate the styles
-  const handleAddMarkers = (coordinates) => {
-    setMarkers([...markers, ...coordinates]);
-  };
-
   return (
     <Box sx={{ display: 'flex' }}>
-      <PersistentDrawerLeft selectedLocation={selectedPlace}
-        addMarkers={handleAddMarkers}
-        clearMarkers={() => setMarkers([])}/>
+      <PersistentDrawerLeft selectedLocation={selectedPlace}/>
       <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
@@ -189,12 +182,7 @@ export const Map = ({ onMapClicked }) => {
               opacity={0.6}
             />
           )}
-          {selectedPlace && <Marker lat={selectedPlace.lat}
-            lng={selectedPlace.lng} />}
-          {markers.map((m, idx) => (<Marker 
-            key={idx}
-            lat={m.lat}
-            lng={m.lng} />))}
+          {markers.map(marker => marker)}
         </GoogleMap>
         <Snackbar
           open={snackbarOpen}

@@ -1,12 +1,9 @@
-import { Box } from '@mui/material';
-import React, { Suspense, createContext, useEffect, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { GoogleMapApiLoader } from 'react-google-map-wrapper';
-import PersistentDrawerLeft from '../components/detailsView/Drawer';
 import { Map as MapComponent } from '../components/map/Map';
-import { GoogleApiProvider } from '../providers/GoogleApiProvider';
+import { GoogleMapProvider } from '../providers/GoogleMapProvider';
 
 export default function MapPage() {
-  const [selectedLocation, setSelectedLocation] = useState({});
   const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY;
 
   return (
@@ -16,10 +13,9 @@ export default function MapPage() {
       <GoogleMapApiLoader apiKey={googleMapConfig} 
         suspense>
         {/* TODO: put back our drawer! */}
-        <GoogleApiProvider>
-          <MapComponent onMapClicked={(e) => setSelectedLocation(e)}
-          />
-        </GoogleApiProvider>
+        <GoogleMapProvider>
+          <MapComponent/>
+        </GoogleMapProvider>
       </GoogleMapApiLoader>
     </Suspense>
   );

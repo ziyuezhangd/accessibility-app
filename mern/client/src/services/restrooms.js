@@ -108,9 +108,11 @@ export class PublicRestroom {
    * @returns {string} hours formatted to a list
    */
   formatHours() {
+    // "7:30am - dusk"
+    // "Everyday 6:00 am-9:00 pm"
     const parsedHours = parseTimeRangeFromString(this.hours);
     if (parsedHours.length === 1) {
-      return parsedHours[0].text;
+      return this.hours;
     }
     let formattedHours = '';
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -118,7 +120,7 @@ export class PublicRestroom {
       const day = segment.date().getDay();
       const dayString = days[day];
       if (!segment.start.isCertain('hour')) {
-        if (days.includes(segment.start.text)) {
+        if (days.includes(segment.start.text) || days.includes(segment.text)) {
           formattedHours += `${dayString}: Closed`;
         }
         continue;
@@ -152,26 +154,31 @@ export class PublicRestroomUtilities {
    * @return {PublicRestroom[]} list of restrooms
    */
   static isRestroomOpenNow = (restroom) => {
-    const hoursString = restroom.hours;
-    const now = getCurrentTimeInNewYork();
-    let openingTime, closingTime;
+    try {
+      const hoursString = restroom.hours;
+      const now = getCurrentTimeInNewYork();
+      let openingTime, closingTime;
 
-    const parsedHours = parseTimeRangeFromString(hoursString);
-    if (parsedHours.length === 1) {
-      // Hours are the same daily
-      openingTime = parsedHours[0].start.date();
-      closingTime = parsedHours[0].end.date();
-    } else if (parsedHours.length > 1) {
-      // Varying hours by day
-      const today = getDayString(now);
-      const todaysHours = parsedHours.find((h) => h.text.includes(today));
-      openingTime = todaysHours.start.date();
-      closingTime = todaysHours.end.date();
-    } else {
-      // TODO: unknown - handle this
-      return;
+      const parsedHours = parseTimeRangeFromString(hoursString);
+      if (parsedHours.length === 1) {
+        // Hours are the same daily
+        openingTime = parsedHours[0].start.date();
+        closingTime = parsedHours[0].end.date();
+      } else if (parsedHours.length > 1) {
+        // Varying hours by day
+        const today = getDayString(now);
+        const todaysHours = parsedHours.find((h) => h.text.includes(today));
+        openingTime = todaysHours.start.date();
+        closingTime = todaysHours.end.date();
+      } else {
+        // TODO: unknown - handle this
+        return;
+      }
+      const isOpen = isTimeInRange(now, openingTime, closingTime);
+      return isOpen;
+    } catch (e) {
+      console.error(e);
+      return false; // Return false for now
     }
-    const isOpen = isTimeInRange(now, openingTime, closingTime);
-    return isOpen;
   };
 }
