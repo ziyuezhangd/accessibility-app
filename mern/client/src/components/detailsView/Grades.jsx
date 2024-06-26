@@ -43,21 +43,36 @@ export default function Grades() {
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mb: 1 }}>
         <Typography variant='h6'>Busyness</Typography>
         <Box sx={{ display: 'flex' }}>
-          <StyledRating name='highlight-selected-only' readOnly defaultValue={4} IconContainerComponent={IconContainer} getLabelText={(value) => customIcons[value].label} highlightSelectedOnly />
+          <StyledRating name='highlight-selected-only'
+            readOnly
+            defaultValue={4}
+            IconContainerComponent={IconContainer}
+            getLabelText={(value) => customIcons[value].label}
+            highlightSelectedOnly />
           <Typography variant='body2'>Good</Typography>
         </Box>
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mb: 1 }}>
         <Typography variant='h6'>Noise</Typography>
         <Box sx={{ display: 'flex' }}>
-          <StyledRating name='highlight-selected-only' readOnly defaultValue={3} IconContainerComponent={IconContainer} getLabelText={(value) => customIcons[value].label} highlightSelectedOnly />
+          <StyledRating name='highlight-selected-only'
+            readOnly
+            defaultValue={3}
+            IconContainerComponent={IconContainer}
+            getLabelText={(value) => customIcons[value].label}
+            highlightSelectedOnly />
           <Typography variant='body2'>Okay</Typography>
         </Box>
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mb: 1 }}>
         <Typography variant='h6'>Odor</Typography>
         <Box sx={{ display: 'flex' }}>
-          <StyledRating name='highlight-selected-only' readOnly defaultValue={2} IconContainerComponent={IconContainer} getLabelText={(value) => customIcons[value].label} highlightSelectedOnly />
+          <StyledRating name='highlight-selected-only'
+            readOnly
+            defaultValue={2}
+            IconContainerComponent={IconContainer}
+            getLabelText={(value) => customIcons[value].label}
+            highlightSelectedOnly />
           <Typography variant='body2'>Bad</Typography>
         </Box>
       </Box>
