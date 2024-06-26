@@ -1,12 +1,13 @@
-import { Box, Chip, Typography, List, ListItem, ListItemButton, ListItemText, ListItemIcon, ListItemSecondaryAction } from '@mui/material';
+import { Box, Chip, Typography, List, ListItem, ListItemButton, ListItemText, ListItemSecondaryAction } from '@mui/material';
 import _ from 'lodash';
 import { useState, useEffect, useContext } from 'react';
+import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { PlaceInfoUtilities } from '../../services/placeInfo';
-import { PublicRestroom, PublicRestroomUtilities, getPublicRestrooms } from '../../services/restrooms';
+import { PublicRestroomUtilities } from '../../services/restrooms';
 import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
 export default function NearestRestrooms({ lat, lng }) {
+  const {restrooms} = useContext(DataContext);
   const { createMarkers } = useContext(GoogleMapContext);
   /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
@@ -16,8 +17,6 @@ export default function NearestRestrooms({ lat, lng }) {
   }, [lat, lng]);
 
   const getNearestRestrooms = async () => {
-    // TODO: we don't need to query all restrooms every single time - move this up the stack? maybe even cache?
-    const restrooms = await getPublicRestrooms('incl-partial');
     // TODO: remove not operational
     const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
     console.log(`Nearest ${nearest.length} restrooms: `, nearest);

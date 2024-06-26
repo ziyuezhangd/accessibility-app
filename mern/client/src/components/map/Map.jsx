@@ -4,7 +4,6 @@ import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import PersistentDrawerLeft from '../detailsView/Drawer';
@@ -52,11 +51,8 @@ const odorData = [
 
 export const Map = () => {
   const theme = useTheme();
-  const {clearMarkers, createMarkers} = useContext(GoogleMapContext);
+  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
 
-  // TODO: add loading state to handle this
-  const {placesService, mapInstance, geocoder, onMapLoaded, markers} = useContext(GoogleMapContext);
-  const [placeInfos, setPlaceInfos] = useState([]);
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -129,7 +125,6 @@ export const Map = () => {
     // console.log('noiseRatings: ', noiseRatings);
     // const odourRatings = await getOdourRatings(new Date());
     // console.log('odourRatings: ', odourRatings);
-    getPlaceInfos().then(setPlaceInfos);
   };
   
   const handleAddToFavorites = () => {

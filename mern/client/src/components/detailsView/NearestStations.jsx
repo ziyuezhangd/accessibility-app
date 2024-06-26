@@ -1,9 +1,11 @@
 import { Avatar, AvatarGroup, Box, Typography } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { DataContext } from '../../providers/DataProvider';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { SUBWAY_LINE_COLORS } from '../../utils/MapUtils';
 
-export default function NearestStations({ placeInfos, lat, lng }) {
+export default function NearestStations({ lat, lng }) {
+  const {placeInfos} = useContext(DataContext);
   const [nearestStations, setNearestStations] = useState([]);
 
   useEffect(() => {

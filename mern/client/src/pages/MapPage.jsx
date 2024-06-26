@@ -1,6 +1,7 @@
 import { Suspense, useState } from 'react';
 import { GoogleMapApiLoader } from 'react-google-map-wrapper';
 import { Map as MapComponent } from '../components/map/Map';
+import { DataProvider } from '../providers/DataProvider';
 import { GoogleMapProvider } from '../providers/GoogleMapProvider';
 
 export default function MapPage() {
@@ -13,9 +14,11 @@ export default function MapPage() {
       <GoogleMapApiLoader apiKey={googleMapConfig} 
         suspense>
         {/* TODO: put back our drawer! */}
-        <GoogleMapProvider>
-          <MapComponent/>
-        </GoogleMapProvider>
+        <DataProvider>
+          <GoogleMapProvider>
+            <MapComponent/>
+          </GoogleMapProvider>
+        </DataProvider>
       </GoogleMapApiLoader>
     </Suspense>
   );
