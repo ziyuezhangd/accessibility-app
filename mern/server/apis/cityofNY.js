@@ -3,8 +3,8 @@ const cityofNY = {
   CITYOFNEWYORK_URL: 'https://data.cityofnewyork.us/resource/',
 
   /**
-   * @returns {Promise<Array<{latitude: number, longitude: number, width: string}>>} 
-  */
+   * @returns {Promise<Array<{latitude: number, longitude: number, width: string}>>}
+   */
   async getPedestrianRamps() {
     const result = await fetch(`${this.CITYOFNEWYORK_URL}ufzp-rrqu.json?borough=1&$$app_token=${this.SOCRATA_APP_KEY}`);
     const data = await result.json();
@@ -21,8 +21,8 @@ const cityofNY = {
   },
 
   /**
-   * @returns {Promise<Array<{latitude: number, longitude: number}>>} 
-  */
+   * @returns {Promise<Array<{latitude: number, longitude: number}>>}
+   */
   async getPedestrianSignals() {
     const result = await fetch(`${this.CITYOFNEWYORK_URL}de3m-c5p4.json?boroname=Manhattan&$$app_token=${this.SOCRATA_APP_KEY}`);
     const data = await result.json();
@@ -38,8 +38,8 @@ const cityofNY = {
   },
 
   /**
-   * @returns {Promise<Array<{seatType: string, category: string, latitude: string, longitude: string}>>} 
-  */
+   * @returns {Promise<Array<{seatType: string, category: string, latitude: string, longitude: string}>>}
+   */
   async getSeatingAreas() {
     const result = await fetch(`${this.CITYOFNEWYORK_URL}esmy-s8q5.json?boroname=Manhattan&$$app_token=${this.SOCRATA_APP_KEY}`);
     const data = await result.json();
@@ -52,9 +52,83 @@ const cityofNY = {
       latitude: d.latitude,
       longitude: d.longitude,
     }));
-        
+
     return seatingInfo;
-  }
+  },
+
+  /**
+   * @returns { Promise<Array<{
+   *  name: string,
+   *  status: string,
+   *  hours: string,
+   *  isAccessible: boolean,
+   *  isFullyAccessible: boolean,
+   *  isPartiallyAccessible: boolean,
+   *  restroomType: string,
+   *  hasChangingStations: boolean,
+   *  url: string,
+   *  latitude: string,
+   *  longitude: string}>>}
+   */
+  async getPublicRestrooms() {
+    const result = await fetch(`${this.CITYOFNEWYORK_URL}i7jb-7jku.json?$$app_token=${this.SOCRATA_APP_KEY}`);
+    const data = await result.json();
+    // Filter down to the data we care about
+    const restroomInfo = data.map((d) => ({
+      name: d.facility_name,
+      status: d.status,
+      hours: d.hours_of_operation,
+      isAccessible: d.accessibility === 'Fully Accessible' || d.accessibility === 'Partially Accessible',
+      isFullyAccessible: d.accessibility === 'Fully Accessible',
+      isPartiallyAccessible: d.accessibility === 'Partially Accessible',
+      restroomType: d.restroom_type,
+      hasChangingStations: d.changing_stations === 'Yes',
+      url: d.website,
+      latitude: d.latitude,
+      longitude: d.longitude,
+    }));
+
+    return restroomInfo;
+  },
+
+  /**
+   * @returns { Promise<Array<{
+   *  name: string,
+   *  status: string,
+   *  hours: string,
+   *  isAccessible: boolean,
+   *  isFullyAccessible: boolean,
+   *  isPartiallyAccessible: boolean,
+   *  restroomType: string,
+   *  hasChangingStations: boolean,
+   *  url: string,
+   *  latitude: string,
+   *  longitude: string}>>}
+   */
+  async getAccessibleRestrooms(includePartiallyAccessible) {
+    let filterString = '$where=accessibility = \'Fully Accessible\'';
+    if (includePartiallyAccessible) {
+      filterString += ' or accessibility = \'Partially Accessible\'';
+    }
+    const result = await fetch(`${this.CITYOFNEWYORK_URL}i7jb-7jku.json?${filterString}&$$app_token=${this.SOCRATA_APP_KEY}`);
+    const data = await result.json();
+    // Filter down to the data we care about
+    const restroomInfo = data.map((d) => ({
+      name: d.facility_name,
+      status: d.status,
+      hours: d.hours_of_operation,
+      isAccessible: d.accessibility === 'Fully Accessible' || d.accessibility === 'Partially Accessible',
+      isFullyAccessible: d.accessibility === 'Fully Accessible',
+      isPartiallyAccessible: d.accessibility === 'Partially Accessible',
+      restroomType: d.restroom_type,
+      hasChangingStations: d.changing_stations === 'Yes',
+      url: d.website,
+      latitude: d.latitude,
+      longitude: d.longitude,
+    }));
+
+    return restroomInfo;
+  },
 };
 
 export default cityofNY;

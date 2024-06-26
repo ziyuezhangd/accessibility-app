@@ -7,6 +7,7 @@ import odourRating from './odourRating.js';
 import pedestrianRamps from './pedestrianRamps.js';
 import pedestrianSignals from './pedestrianSignals.js';
 import placeInfos from './placeInfos.js';
+import publicRestrooms from './publicRestrooms.js';
 import seatingAreas from './seatingAreas.js';
 
 const router = express.Router();
@@ -20,5 +21,6 @@ router.use('/place-infos', placeInfos);
 router.use('/seating-areas', seatingAreas);
 router.use('/pedestrian-signals', pedestrianSignals);
 router.use('/pedestrian-ramps', pedestrianRamps);
+router.use('/restrooms', publicRestrooms);
 
 export default router;
