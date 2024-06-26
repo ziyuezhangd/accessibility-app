@@ -1,4 +1,4 @@
-import { Box, Chip, Typography } from '@mui/material';
+import { Box, Chip, Typography, List, ListItem, ListItemButton, ListItemText, ListItemIcon, ListItemSecondaryAction } from '@mui/material';
 import _ from 'lodash';
 import { useState, useEffect } from 'react';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
@@ -29,16 +29,40 @@ export default function NearestRestrooms({ lat, lng, onLoaded }) {
         sx={{ fontWeight: 400, fontSize: 18 }}>
         Wheelchair accessible restrooms
       </Typography>
-      {nearestRestrooms.map((restroom) => (
-        <>
-          <div>{restroom.name}</div>
-          <div>{restroom.hours}</div>
-          <div>{PublicRestroomUtilities.isRestroomOpenNow(restroom) ? <Chip label='OPEN'
-            color='success'/> : <Chip label='CLOSED'
-            color='error'/>}</div>
-          <div>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</div>
-        </>
-      ))}
+      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+        aria-label='contacts'>
+        {nearestRestrooms.map((restroom, i) => (
+          <ListItem key={i}
+            disablePadding>
+            <ListItemButton>
+              <ListItemText
+                primary={restroom.name}
+                secondary={(
+                  <>
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {/* TODO: would be nice if we could make today's day bold */}
+                      {restroom.formatHours().split('\n').map(h => <p key={h}>{h}</p>)}
+                    </Typography>
+                    <div>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</div>
+                  </>
+                )}
+                
+              />
+              <ListItemSecondaryAction>
+                {/* TODO: we will actually want to know if its open at the predicted time */}
+                {PublicRestroomUtilities.isRestroomOpenNow(restroom) ? <Chip label='OPEN'
+                  color='success' /> : <Chip label='CLOSED'
+                  color='error' />}
+              </ListItemSecondaryAction>
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
     </Box>
   );
 }

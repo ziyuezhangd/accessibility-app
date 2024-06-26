@@ -17,7 +17,7 @@ export const getPublicRestrooms = async (accessibility = 'all') => {
     return;
   }
 
-  return restrooms;
+  return restrooms.map((restroom) => new PublicRestroom(restroom));
 };
 
 /**
@@ -101,6 +101,33 @@ export class PublicRestroom {
      * @type {number}
      */
     this.longitude = longitude;
+  }
+
+  /**
+   *
+   * @returns {string} hours formatted to a list
+   */
+  formatHours() {
+    const parsedHours = parseTimeRangeFromString(this.hours);
+    if (parsedHours.length === 1) {
+      return parsedHours[0].text;
+    }
+    let formattedHours = '';
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    for (const segment of parsedHours) {
+      const day = segment.date().getDay();
+      const dayString = days[day];
+      if (!segment.start.isCertain('hour')) {
+        if (days.includes(segment.start.text)) {
+          formattedHours += `${dayString}: Closed`;
+        }
+        continue;
+      }
+      const start = segment.start.date();
+      const end = segment.end.date();
+      formattedHours += `\n${dayString}: ${start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}-${end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+    }
+    return formattedHours;
   }
 }
 
