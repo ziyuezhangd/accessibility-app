@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
 import { getCurrentTimeInNewYork, getDayString, isTimeInRange, parseTimeRangeFromString } from '../utils/dateTime';
+import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
 
 /**
  *

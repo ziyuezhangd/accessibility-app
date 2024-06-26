@@ -1,8 +1,8 @@
+import * as chrono from 'chrono-node';
 import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import isBetween from 'dayjs/plugin/isBetween';
-import * as chrono from 'chrono-node';
 
 dayjs.extend(timezone);
 dayjs.extend(utc);
