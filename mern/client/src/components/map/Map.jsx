@@ -3,10 +3,13 @@ import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
-import HelpIcon from './HelpIcon';
+import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import PersistentDrawerLeft from '../detailsView/Drawer';
+import HelpIcon from '../helpModal/HelpIcon';
 
+const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
   { lat: 40.748817, lng: -73.985428, weight: 1 },
@@ -46,7 +49,12 @@ const odorData = [
   { lat: 40.7243, lng: -73.99771, weight: 2 },
 ];
 
-export const Map = () => {
+export const Map = ({ onMapClicked }) => {
+  const [placeInfos, setPlaceInfos] = useState([]);
+  const [placesService, setPlacesService] = useState();
+  const [geocoder, setGeocoder] = useState();
+  const [markers, setMarkers]= useState([]);
+
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
   const [mapInstance, setMapInstance] = useState(null);
@@ -56,8 +64,22 @@ export const Map = () => {
   const theme = useTheme();
 
   useEffect(() => {
-    console.log('Map instance loaded:', mapInstance);
+    if (mapInstance) {
+      loadPlaces();
+      loadGeocoder();
+    }
   }, [mapInstance]);
+
+  const loadPlaces = async () => {
+    const {PlacesService} = await google.maps.importLibrary('places');
+    const service = new PlacesService(mapInstance);
+    setPlacesService(service);
+  };
+
+  const loadGeocoder = async () => {
+    const geocoder = new google.maps.Geocoder();
+    setGeocoder(geocoder);
+  };
 
   const handleSelect = (item) => {
     switch (item.id) {
@@ -80,43 +102,56 @@ export const Map = () => {
   };
 
   const handleMapClicked = async (map, e) => {
+    // Clear any existing markers
+    setMarkers([]);
     const isPlaceIconClicked = e.placeId !== undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
+
     if (isPlaceIconClicked) {
-      console.log('Place clicked: ', e.placeId, lat, lng);
-      try {
-        const PlacesService = await google.maps.importLibrary('places');
-        const service = new PlacesService.PlacesService(map);
-
-        const request = {
-          placeId: e.placeId,
-          fields: ['name', 'formatted_address', 'place_id', 'geometry', 'opening_hours']
-        };
-
-        service.getDetails(request, (place, status) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
-            console.log('place', place);
-            setSelectedPlace({
-              id: e.placeId,
-              lat: place.geometry.location.lat(),
-              lng: place.geometry.location.lng(),
-              name: place.name
-            });
-            setSnackbarOpen(true);
-          } else {
-            console.error('PlacesService failed: ', status);
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
+      var request = {
+        placeId: e.placeId,
+        fields: ['name']
+      };
+      placesService.getDetails(request, (place, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          setSnackbarOpen(true);
+          setLocationData(lat, lng, e.placeId, place.name, true);
+        } else {
+          console.error('Oh no!');
+        }
+      });
     } else {
-      console.log('Location clicked: ', lat, lng);
+      geocoder.geocode({location: {lat, lng}}).then((response) => {
+        if (response.results[0]) {
+          setLocationData(lat, lng, response.results[0].place_id, response.results[0].formatted_address, false);
+        } else {
+          window.alert('No results found');
+        }
+      });
     }
+    
   };
 
+  const setLocationData = (lat, lng, placeId, name, isPlace) => {
+    const selectedLocation = new Location(lat, lng, placeId, name, isPlace);
+    onMapClicked(selectedLocation);
+    setSelectedPlace(selectedLocation);
+    mapInstance.setZoom(DEFAULT_ZOOM + 5);
+  };
+
+  const fetchData = async () => {
+    // TODO: when we have these models ready
+    // const busynessRatings = await getBusynessRatings(new Date());
+    // console.log('busynessRatings: ', busynessRatings);
+    // const noiseRatings = await getNoiseRatings(new Date());
+    // console.log('noiseRatings: ', noiseRatings);
+    // const odourRatings = await getOdourRatings(new Date());
+    // console.log('odourRatings: ', odourRatings);
+    getPlaceInfos().then(setPlaceInfos);
+  };
+  
   const handleAddToFavorites = () => {
     if (selectedPlace) {
       console.log('Added to favorites:', selectedPlace);
@@ -134,67 +169,76 @@ export const Map = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const busynessRatings = await getBusynessRatings(new Date());
-      console.log('busynessRatings: ', busynessRatings);
-      const noiseRatings = await getNoiseRatings(new Date());
-      console.log('noiseRatings: ', noiseRatings);
-      const odourRatings = await getOdourRatings(new Date());
-      console.log('odourRatings: ', odourRatings);
-    };
-
     fetchData();
   }, []);
 
+  // TODO: have a way to clear markers
+  // TODO: have a way to differentiate the styles
+  const handleAddMarkers = (coordinates) => {
+    setMarkers([...markers, ...coordinates]);
+  };
+
   return (
-    <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
-      <GoogleMap
-        style={{ height: '95vh', top: '7vh' }}
-        zoom={DEFAULT_ZOOM}
-        center={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
-        onClick={handleMapClicked}
-        onLoad={(map) => setMapInstance(map)}
-        options={{
-          libraries: ['visualization', 'places'],
-        }}
-      >
-        <Dropdown onSelect={handleSelect} />
-        <HelpIcon />
-        {heatMapData.length > 0 && (
-          <HeatmapLayer
-            data={heatMapData.map(data => ({
-              location: new window.google.maps.LatLng(data.lat, data.lng),
-              weight: data.weight
-            }))}
-            gradient={heatMapGradient}
-            radius={20}
-            opacity={0.6}
-          />
-        )}
-        <Marker lat={MANHATTAN_LAT}
-          lng={MANHATTAN_LNG} />
-      </GoogleMap>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message="Add this place to favorites?"
-        action={(
-          <>
-            <Button color="secondary"
-              size="small"
-              onClick={handleAddToFavorites}>
+    <Box sx={{ display: 'flex' }}>
+      <PersistentDrawerLeft selectedLocation={selectedPlace}
+        addMarkers={handleAddMarkers}
+        clearMarkers={() => setMarkers([])}/>
+      <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
+        <GoogleMap
+          style={{ height: '95vh', top: '7vh' }}
+          zoom={DEFAULT_ZOOM}
+          center={selectedPlace === null ? { lat: MANHATTAN_LAT, lng: MANHATTAN_LNG } : { lat: selectedPlace.lat, lng: selectedPlace.lng }}
+          onClick={handleMapClicked}
+          onLoad={(map) => setMapInstance(map)}
+          options={{
+            libraries: ['visualization', 'places'],
+          }}
+          mapOptions={{
+            mapId: VITE_MAP_ID,
+          }}
+        >
+          <Dropdown onSelect={handleSelect} />
+          <HelpIcon />
+          {heatMapData.length > 0 && (
+            <HeatmapLayer
+              data={heatMapData.map((data) => ({
+                location: new window.google.maps.LatLng(data.lat, data.lng),
+                weight: data.weight,
+              }))}
+              gradient={heatMapGradient}
+              radius={20}
+              opacity={0.6}
+            />
+          )}
+          {selectedPlace && <Marker lat={selectedPlace.lat}
+            lng={selectedPlace.lng} />}
+          {markers.map((m, idx) => (<Marker 
+            key={idx}
+            lat={m.lat}
+            lng={m.lng} />))}
+        </GoogleMap>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          message="Add this place to favorites?"
+          action={(
+            <>
+              <Button color="secondary"
+                size="small"
+                onClick={handleAddToFavorites}>
               Add to Favorites
-            </Button>
-            <IconButton size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={handleSnackbarClose}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </>
-        )}
-      />
+              </Button>
+              <IconButton size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={handleSnackbarClose}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </>
+          )}
+        />
+      </Box>
     </Box>
   );
 };

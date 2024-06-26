@@ -1,25 +1,32 @@
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
-import * as React from 'react';
+import { useEffect, useState } from 'react';
 import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
 
 const drawerWidth = 400;
 
-export default function PersistentDrawerLeft() {
-  const [selectedDrawerContent, setSelectedDrawerContent] = React.useState('history');
-  const [location, setLocation] = React.useState(null);
+export default function PersistentDrawerLeft({ selectedLocation, addMarkers, clearMarkers }) {
+  const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    if (selectedLocation?.lat && selectedLocation?.lng) {
+      setSelectedDrawerContent('location');
+      setLocation(selectedLocation);
+    }
+  }, [selectedLocation]);
 
   const handleLocationSelected = (e) => {
-    console.log('Location selected:', e); 
+    clearMarkers();
     setSelectedDrawerContent('location');
     setLocation(e);
   };
 
   const handleBackClicked = (e) => {
-    console.log('Back clicked');  
     setSelectedDrawerContent('history');
     setLocation(null);
+    clearMarkers();
   };
 
   return (
@@ -35,7 +42,8 @@ export default function PersistentDrawerLeft() {
         <Toolbar />
         {selectedDrawerContent === 'history' && <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
         {selectedDrawerContent === 'location' && <DrawerLocationDetails location={location}
-          onBackClicked={handleBackClicked} />}
+          onBackClicked={handleBackClicked}
+          addMarkers={(e) => addMarkers(e)}/>}
       </Drawer>
     </>
   );
