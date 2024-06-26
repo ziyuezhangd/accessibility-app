@@ -1,8 +1,9 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
+import { GoogleApiContext } from '../../providers/GoogleApiProvider';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
@@ -50,36 +51,16 @@ const odorData = [
 ];
 
 export const Map = ({ onMapClicked }) => {
-  const [placeInfos, setPlaceInfos] = useState([]);
-  const [placesService, setPlacesService] = useState();
-  const [geocoder, setGeocoder] = useState();
-  const [markers, setMarkers]= useState([]);
-
-  const [heatMapData, setHeatMapData] = useState([]);
-  const [heatMapGradient, setHeatMapGradient] = useState([]);
-  const [mapInstance, setMapInstance] = useState(null);
-  const [selectedPlace, setSelectedPlace] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-
   const theme = useTheme();
 
-  useEffect(() => {
-    if (mapInstance) {
-      loadPlaces();
-      loadGeocoder();
-    }
-  }, [mapInstance]);
-
-  const loadPlaces = async () => {
-    const {PlacesService} = await google.maps.importLibrary('places');
-    const service = new PlacesService(mapInstance);
-    setPlacesService(service);
-  };
-
-  const loadGeocoder = async () => {
-    const geocoder = new google.maps.Geocoder();
-    setGeocoder(geocoder);
-  };
+  // TODO: add loading state to handle this
+  const {placesService, mapInstance, geocoder, onMapLoaded} = useContext(GoogleApiContext);
+  const [placeInfos, setPlaceInfos] = useState([]);
+  const [markers, setMarkers]= useState([]);
+  const [heatMapData, setHeatMapData] = useState([]);
+  const [heatMapGradient, setHeatMapGradient] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleSelect = (item) => {
     switch (item.id) {
@@ -131,7 +112,6 @@ export const Map = ({ onMapClicked }) => {
         }
       });
     }
-    
   };
 
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
@@ -172,7 +152,6 @@ export const Map = ({ onMapClicked }) => {
     fetchData();
   }, []);
 
-  // TODO: have a way to clear markers
   // TODO: have a way to differentiate the styles
   const handleAddMarkers = (coordinates) => {
     setMarkers([...markers, ...coordinates]);
@@ -189,7 +168,7 @@ export const Map = ({ onMapClicked }) => {
           zoom={DEFAULT_ZOOM}
           center={selectedPlace === null ? { lat: MANHATTAN_LAT, lng: MANHATTAN_LNG } : { lat: selectedPlace.lat, lng: selectedPlace.lng }}
           onClick={handleMapClicked}
-          onLoad={(map) => setMapInstance(map)}
+          onLoad={onMapLoaded}
           options={{
             libraries: ['visualization', 'places'],
           }}

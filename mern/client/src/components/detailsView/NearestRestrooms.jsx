@@ -9,6 +9,7 @@ export default function NearestRestrooms({ lat, lng, onLoaded }) {
   /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
 
+
   useEffect(() => {
     getNearestRestrooms();
   }, []);
