@@ -2,9 +2,9 @@ import getDB from './connection.js';
 
 const dbHandler = {
   /**
-     * @param {string} modelName
-     * @returns {Promise<Array<string>>} 
-     */
+   * @param {string} modelName
+   * @returns {Promise<Array<string>>} 
+   */
   async getLatestModel(modelName) {
     const db = await getDB();
     const collection = db.collection(modelName);
@@ -14,13 +14,13 @@ const dbHandler = {
   },
 
   /**
-     * @param {object} feedback
-     * @param {string} feedback.name
-     * @param {string} feedback.email
-     * @param {string} feedback.comment
-     * @param {Date} feedback.date
-     * @param {[number, number]} feedback.coordinates 
-     */
+   * @param {object} feedback
+   * @param {string} feedback.name
+   * @param {string} feedback.email
+   * @param {string} feedback.comment
+   * @param {Date} feedback.date
+   * @param {[number, number]} feedback.coordinates 
+   */
   async insertFeedback(feedback){
     if (feedback.coordinates){
       const db = await getDB();
