@@ -14,13 +14,17 @@ const testLat = 40.7646;
 const testLong = -73.9990;
 
 describe('GET', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('/odourRating', () => {
     it('should return 200 and prediction if model is retrieved and no error occurs', async () => {
       const dummyPredictions = [{ _id: '1', rating: 'A' }, { _id: '2', rating: 'C' }];
       const mockLatestModel = {
         predict: jest.fn().mockReturnValue(dummyPredictions),
       };
-      jest.spyOn(dbHandler, 'getLatestModel').mockResolvedValue(mockLatestModel);
+      dbHandler.getLatestModel = jest.fn().mockResolvedValue(mockLatestModel);
   
       const response = await request(app).get(`?datetime=${testDateTime}`);
       expect(response.status).toBe(200);
@@ -30,7 +34,7 @@ describe('GET', () => {
     });
   
     it('should return 500 if database error occurs', async () => {
-      jest.spyOn(dbHandler, 'getLatestModel').mockImplementation(() => {
+      dbHandler.getLatestModel = jest.fn().mockImplementation(() => {
         throw new Error('Database error');
       });
   
@@ -45,13 +49,12 @@ describe('GET', () => {
   });
   
   describe('/odourRating/location', () => {
-    // This test requires knowledge of how data is retrieved.
     it('should return 200 and prediction if model is retrieved', async () => {
       const dummyPrediction = { rating: 'A' };
       const mockLatestModel = {
         predict: jest.fn().mockReturnValue(dummyPrediction),
       };
-      jest.spyOn(dbHandler, 'getLatestModel').mockResolvedValue(mockLatestModel);
+      dbHandler.getLatestModel = jest.fn().mockResolvedValue(mockLatestModel);
   
       const response = await request(app).get(`/location?datetime=${testDateTime}&lat=${testLat}&long=${testLong}`);
       expect(response.status).toBe(200);
@@ -61,7 +64,7 @@ describe('GET', () => {
     });
   
     it('should return 500 if database error occurs', async () => {
-      jest.spyOn(dbHandler, 'getLatestModel').mockImplementation(() => {
+      dbHandler.getLatestModel = jest.fn().mockImplementation(() => {
         throw new Error('Database error');
       });
   
@@ -83,9 +86,5 @@ describe('GET', () => {
       const response6 = await request(app).get(`/location?long=${testLong}`);
       expect(response6.status).toBe(400);
     });
-  });
-  
-  afterEach(() => {
-    jest.restoreAllMocks();
   });
 });

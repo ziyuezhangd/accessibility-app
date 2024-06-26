@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
     res.status(200).send(predictions);
   }
   catch (error){
-    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error });
+    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error: error.message });
   }
 });
 
@@ -45,7 +45,7 @@ router.get('/location', async (req, res) => {
     res.status(200).send(predictions);
   }
   catch (error){
-    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error });
+    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error: error.message });
   }
 });
 

@@ -1,4 +1,4 @@
-import db from './connection.js';
+import getDB from './connection.js';
 
 const dbHandler = {
   /**
@@ -6,6 +6,7 @@ const dbHandler = {
      * @returns {Promise<Array<string>>} 
      */
   async getLatestModel(modelName) {
+    const db = await getDB();
     const collection = db.collection(modelName);
     const latestModel = await collection.findOne({}, { sort: { date: -1 } });
 
@@ -21,8 +22,24 @@ const dbHandler = {
      * @param {[number, number]} feedback.coordinates 
      */
   async insertFeedback(feedback){
-    const collection = db.collection('feedback');
-    await collection.insertOne(feedback);
+    if (feedback.coordinates){
+      const db = await getDB();
+      const collection = db.collection('feedback');
+      await collection.insertOne(feedback);
+    } else {
+      throw new Error('Coordinates is required');
+    }
+  },
+  
+  /**
+   * @returns {Promise<Array>}
+   */
+  async getAccessibilityHighlightPlaces(){
+    const db = await getDB();
+    const collection = db.collection('accessibilityHighlightPlace');
+    const results = await collection.find({}).toArray();
+
+    return results;
   }
 };
 
