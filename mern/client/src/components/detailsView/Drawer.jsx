@@ -1,12 +1,14 @@
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 
 const drawerWidth = 400;
 
-export default function PersistentDrawerLeft({ selectedLocation, addMarkers, clearMarkers }) {
+export default function PersistentDrawerLeft({ selectedLocation}) {
+  const {clearMarkers} = useContext(GoogleMapContext);
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
   const [location, setLocation] = useState(null);
 
@@ -24,9 +26,9 @@ export default function PersistentDrawerLeft({ selectedLocation, addMarkers, cle
   };
 
   const handleBackClicked = (e) => {
+    clearMarkers();
     setSelectedDrawerContent('history');
     setLocation(null);
-    clearMarkers();
   };
 
   return (
@@ -42,8 +44,7 @@ export default function PersistentDrawerLeft({ selectedLocation, addMarkers, cle
         <Toolbar />
         {selectedDrawerContent === 'history' && <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
         {selectedDrawerContent === 'location' && <DrawerLocationDetails location={location}
-          onBackClicked={handleBackClicked}
-          addMarkers={(e) => addMarkers(e)}/>}
+          onBackClicked={handleBackClicked} />}
       </Drawer>
     </>
   );

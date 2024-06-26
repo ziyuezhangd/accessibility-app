@@ -1,23 +1,41 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Chip, Typography, List, ListItem, ListItemButton, ListItemText, ListItemSecondaryAction } from '@mui/material';
 import _ from 'lodash';
-import { useState, useEffect } from 'react';
-import { PlaceInfoUtilities } from '../../services/placeInfo';
-import { getPublicRestrooms } from '../../services/restrooms';
+import { useState, useEffect, useContext } from 'react';
+import { DataContext } from '../../providers/DataProvider';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { PublicRestroomUtilities } from '../../services/restrooms';
 import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
-export default function NearestRestrooms({ lat, lng, onLoaded }) {
+export default function NearestRestrooms({ lat, lng }) {
+  const {restrooms} = useContext(DataContext);
+  const { createMarkers } = useContext(GoogleMapContext);
+  /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
 
   useEffect(() => {
     getNearestRestrooms();
-  }, []);
+  }, [lat, lng]);
 
   const getNearestRestrooms = async () => {
-    // TODO: we don't need to query all restrooms every single time - move this up the stack? maybe even cache?
-    const restrooms = await getPublicRestrooms('incl-partial');
-    const nearest = PlaceInfoUtilities.getNearest(restrooms, lat, lng, 3);
+    // TODO: remove not operational
+    const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
+    console.log(`Nearest ${nearest.length} restrooms: `, nearest);
     setNearestRestrooms(nearest);
-    onLoaded(nearest);
+    showRestroomMarkers(nearest);
+  };
+
+  /**
+   * 
+   * @param {PublicRestroom[]} restrooms 
+   */
+  const showRestroomMarkers = (restrooms) => {
+    const markers = restrooms.map(restroom => {
+      return {
+        lat: restroom.latitude,
+        lng: restroom.longitude
+      };
+    });
+    createMarkers(markers);
   };
 
   return (
@@ -28,13 +46,40 @@ export default function NearestRestrooms({ lat, lng, onLoaded }) {
         sx={{ fontWeight: 400, fontSize: 18 }}>
         Wheelchair accessible restrooms
       </Typography>
-      {nearestRestrooms.map((restroom) => (
-        <>
-          <div>{restroom.name}</div>
-          <div>{PlaceInfoUtilities.getStreetAddressText(restroom)}</div>
-          <div>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</div>
-        </>
-      ))}
+      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+        aria-label='contacts'>
+        {nearestRestrooms.map((restroom, i) => (
+          <ListItem key={i}
+            disablePadding>
+            <ListItemButton>
+              <ListItemText
+                primary={restroom.name}
+                secondary={(
+                  <>
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {/* TODO: would be nice if we could make today's day bold */}
+                      {restroom.formatHours().split('\n').map(h => <p key={h}>{h}</p>)}
+                    </Typography>
+                    <div>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</div>
+                  </>
+                )}
+                
+              />
+              <ListItemSecondaryAction>
+                {/* TODO: we will actually want to know if its open at the predicted time */}
+                {PublicRestroomUtilities.isRestroomOpenNow(restroom) ? <Chip label='OPEN'
+                  color='success' /> : <Chip label='CLOSED'
+                  color='error' />}
+              </ListItemSecondaryAction>
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
     </Box>
   );
 }

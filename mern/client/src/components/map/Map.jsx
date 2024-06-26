@@ -1,9 +1,9 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
-import { getPlaceInfos } from '../../services/placeInfo';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import PersistentDrawerLeft from '../detailsView/Drawer';
@@ -49,37 +49,14 @@ const odorData = [
   { lat: 40.7243, lng: -73.99771, weight: 2 },
 ];
 
-export const Map = ({ onMapClicked }) => {
-  const [placeInfos, setPlaceInfos] = useState([]);
-  const [placesService, setPlacesService] = useState();
-  const [geocoder, setGeocoder] = useState();
-  const [markers, setMarkers]= useState([]);
+export const Map = () => {
+  const theme = useTheme();
+  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
 
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
-  const [mapInstance, setMapInstance] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-
-  const theme = useTheme();
-
-  useEffect(() => {
-    if (mapInstance) {
-      loadPlaces();
-      loadGeocoder();
-    }
-  }, [mapInstance]);
-
-  const loadPlaces = async () => {
-    const {PlacesService} = await google.maps.importLibrary('places');
-    const service = new PlacesService(mapInstance);
-    setPlacesService(service);
-  };
-
-  const loadGeocoder = async () => {
-    const geocoder = new google.maps.Geocoder();
-    setGeocoder(geocoder);
-  };
 
   const handleSelect = (item) => {
     switch (item.id) {
@@ -103,7 +80,7 @@ export const Map = ({ onMapClicked }) => {
 
   const handleMapClicked = async (map, e) => {
     // Clear any existing markers
-    setMarkers([]);
+    clearMarkers();
     const isPlaceIconClicked = e.placeId !== undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
@@ -131,13 +108,12 @@ export const Map = ({ onMapClicked }) => {
         }
       });
     }
-    
   };
 
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
     const selectedLocation = new Location(lat, lng, placeId, name, isPlace);
-    onMapClicked(selectedLocation);
     setSelectedPlace(selectedLocation);
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
   };
 
@@ -149,7 +125,6 @@ export const Map = ({ onMapClicked }) => {
     // console.log('noiseRatings: ', noiseRatings);
     // const odourRatings = await getOdourRatings(new Date());
     // console.log('odourRatings: ', odourRatings);
-    getPlaceInfos().then(setPlaceInfos);
   };
   
   const handleAddToFavorites = () => {
@@ -172,24 +147,16 @@ export const Map = ({ onMapClicked }) => {
     fetchData();
   }, []);
 
-  // TODO: have a way to clear markers
-  // TODO: have a way to differentiate the styles
-  const handleAddMarkers = (coordinates) => {
-    setMarkers([...markers, ...coordinates]);
-  };
-
   return (
     <Box sx={{ display: 'flex' }}>
-      <PersistentDrawerLeft selectedLocation={selectedPlace}
-        addMarkers={handleAddMarkers}
-        clearMarkers={() => setMarkers([])}/>
+      <PersistentDrawerLeft selectedLocation={selectedPlace}/>
       <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
           zoom={DEFAULT_ZOOM}
           center={selectedPlace === null ? { lat: MANHATTAN_LAT, lng: MANHATTAN_LNG } : { lat: selectedPlace.lat, lng: selectedPlace.lng }}
           onClick={handleMapClicked}
-          onLoad={(map) => setMapInstance(map)}
+          onLoad={onMapLoaded}
           options={{
             libraries: ['visualization', 'places'],
           }}
@@ -210,12 +177,7 @@ export const Map = ({ onMapClicked }) => {
               opacity={0.6}
             />
           )}
-          {selectedPlace && <Marker lat={selectedPlace.lat}
-            lng={selectedPlace.lng} />}
-          {markers.map((m, idx) => (<Marker 
-            key={idx}
-            lat={m.lat}
-            lng={m.lng} />))}
+          {markers.map(marker => marker)}
         </GoogleMap>
         <Snackbar
           open={snackbarOpen}

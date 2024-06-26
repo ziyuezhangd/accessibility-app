@@ -5,14 +5,12 @@ import { Button, Alert } from '@mui/material';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
 import { postFeedback } from '../../services/feedback';
-import { getPlaceInfos } from '../../services/placeInfo';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -26,15 +24,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function DrawerLocationDetails({ location, onBackClicked, addMarkers }) {
   const [error, setError] = useState('');
   const [isFeedbackComplete, setIsFeedbackComplete] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [placeInfos, setPlaceInfos] = useState([]);
-
-  useEffect(() => {
-    getPlaceInfos().then((infos) => {
-      setPlaceInfos(infos);
-      setIsLoading(false);
-    });
-  }, []);
 
   useEffect(() => {
     addLocationToHistory();
@@ -93,17 +82,15 @@ export default function DrawerLocationDetails({ location, onBackClicked, addMark
         {/* TODO: move the google logo elsewhere */}
         <PlaceOverview place={location.placeId}
           size='medium'></PlaceOverview>
-        {!isLoading && (
-          <>
-            <Grades />
-            <NearestRestrooms lat={location.lat}
-              lng={location.lng}
-              onLoaded={handleRestroomsLoaded} />
-            <NearestStations placeInfos={placeInfos}
-              lat={location.lat}
-              lng={location.lng} />
-          </>
-        )}
+
+        <Grades />
+        <NearestRestrooms lat={location.lat}
+          lng={location.lng}
+          onLoaded={handleRestroomsLoaded} />
+        <NearestStations
+          lat={location.lat}
+          lng={location.lng} />
+
         <Button onClick={handleButtonClicked}>Submit Feedback</Button>
       </Box>
       {error && <Alert severity='error'>{error}</Alert>}
