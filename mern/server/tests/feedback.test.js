@@ -18,8 +18,12 @@ const dummyFeedback = {
 };
 
 describe('POST /feedback', () => {
-  it('with coordinates should return 201 if feedback is inserted and no error occurs', async () => {
-    jest.spyOn(dbHandler, 'insertFeedback');
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+  
+  it('should return 201 if feedback is inserted and no error occurs', async () => {
+    dbHandler.insertFeedback = jest.fn();
 
     const response = await request(app).post('/').send(dummyFeedback);
     expect(response.status).toBe(201);
@@ -30,17 +34,13 @@ describe('POST /feedback', () => {
     }));
   });
 
-  it('without coordinates should return 500 as it fails MongoDB validation', async () => {
+  it('without coordinates should return 500', async () => {
     const { coordinates, ...feedbackWithoutCoordinates} = dummyFeedback;
     jest.spyOn(dbHandler, 'insertFeedback');
 
     const response = await request(app).post('/').send(feedbackWithoutCoordinates);
     expect(response.status).toBe(500);
-    expect(dbHandler.insertFeedback).toHaveBeenCalledTimes(1);
-    expect(dbHandler.insertFeedback).toHaveBeenCalledWith(expect.objectContaining({
-      ...feedbackWithoutCoordinates,
-      date: expect.any(Date),
-    }));
+    expect(dbHandler.insertFeedback).toHaveBeenCalledTimes(0);
   });
 
   it('should return 400 if any of name/email/comment parameter is not provided', async () => {
@@ -65,8 +65,5 @@ describe('POST /feedback', () => {
     const response = await request(app).post('/').send(dummyFeedback);
     expect(response.status).toBe(500);
   });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
+  
 });

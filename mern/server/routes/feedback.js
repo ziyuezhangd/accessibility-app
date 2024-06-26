@@ -19,9 +19,10 @@ router.post('/', async (req, res) => {
 
     if (coordinates) {
       feedback.coordinates = coordinates;
+    } else {
+      throw new Error('Coordinates is required');
     }
   
-    // await collection.insertOne(feedback);
     await dbHandler.insertFeedback(feedback);
   
     res.status(201).send({ message: 'Thank you for your feedback!' });
