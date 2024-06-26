@@ -1,11 +1,14 @@
+/* eslint-disable import/no-unresolved, import/order, import/named */
+import {PlaceOverview} from '@googlemaps/extended-component-library/react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Button, Alert } from '@mui/material';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 import _ from 'lodash';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Grades from './Grades';
+import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
 import { postFeedback } from '../../services/feedback';
 
@@ -18,7 +21,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'start',
 }));
 
-export default function DrawerLocationDetails({ location, onBackClicked }) {
+export default function DrawerLocationDetails({ location, onBackClicked, addMarkers }) {
   const [error, setError] = useState('');
   const [isFeedbackComplete, setIsFeedbackComplete] = useState(false);
 
@@ -33,14 +36,14 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     }
     history = JSON.parse(localStorage.getItem('searchHistory'));
 
-    if (history[0] === location) {
+    if (_.isEqual(history[0], location)) {
       // Do nothing
       return;
     }
 
-    if (history.includes(location)) {
+    if (_.find(history, (h) => h.name === location.name)) {
       // Remove and we will put it back to the start
-      _.remove(history, (h) => h === location);
+      _.remove(history, (h) => h.name === location.name);
     }
     history = [location, ...history];
 
@@ -64,6 +67,10 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     setIsFeedbackComplete(true);
   };
 
+  const handleRestroomsLoaded = (restrooms) => {
+    addMarkers(restrooms.map(restroom => ({lat: parseFloat(restroom.latitude),lng: parseFloat(restroom.longitude)})));
+  };
+
   return (
     <>
       <DrawerHeader>
@@ -72,9 +79,18 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
         </IconButton>
       </DrawerHeader>
       <Box sx={{ overflow: 'auto', px: 5 }}>
-        <Typography variant='h5'>{location}</Typography>
-        Hello
-        <NearestStations />
+        {/* TODO: move the google logo elsewhere */}
+        <PlaceOverview place={location.placeId}
+          size='medium'></PlaceOverview>
+
+        <Grades />
+        <NearestRestrooms lat={location.lat}
+          lng={location.lng}
+          onLoaded={handleRestroomsLoaded} />
+        <NearestStations
+          lat={location.lat}
+          lng={location.lng} />
+
         <Button onClick={handleButtonClicked}>Submit Feedback</Button>
       </Box>
       {error && <Alert severity='error'>{error}</Alert>}

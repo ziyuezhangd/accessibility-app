@@ -2,6 +2,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
 import DateTimePicker from './DateTimePicker';
@@ -9,16 +10,14 @@ import Dropdown from './Dropdown';
 import HelpIcon from './HelpIcon';
 import SearchBar from './SearchBar';
 import { getPlaceInfos } from '../../services/placeInfo';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import {
-  DEFAULT_ZOOM,
-  MANHATTAN_LAT,
-  MANHATTAN_LNG,
-  busynessGradient,
-  noiseGradient,
-  odorGradient,
-} from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import PersistentDrawerLeft from '../detailsView/Drawer';
+import HelpIcon from '../helpModal/HelpIcon';
 
+
+const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
   { lat: 40.748817, lng: -73.985428, weight: 1 },
@@ -60,15 +59,16 @@ const odorData = [
 
 export const Map = () => {
   const [placeInfos, setPlaceInfos] = useState([]);
+  const theme = useTheme();
+  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
+
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
-  const [mapInstance, setMapInstance] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
-
-  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
 
   const handleSelect = (item) => {
     switch (item.id) {
@@ -91,43 +91,44 @@ export const Map = () => {
   };
 
   const handleMapClicked = async (map, e) => {
+    // Clear any existing markers
+    clearMarkers();
     const isPlaceIconClicked = e.placeId !== undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
+
     if (isPlaceIconClicked) {
-      console.log('Place clicked: ', e.placeId, lat, lng);
-      try {
-        const PlacesService = await google.maps.importLibrary('places');
-        const service = new PlacesService.PlacesService(map);
-
-        const request = {
-          placeId: e.placeId,
-          fields: ['name', 'formatted_address', 'place_id', 'geometry', 'opening_hours']
-        };
-
-        service.getDetails(request, (place, status) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK && place) {
-            console.log('place', place);
-            setSelectedPlace({
-              id: e.placeId,
-              lat: place.geometry.location.lat(),
-              lng: place.geometry.location.lng(),
-              name: place.name
-            });
-            setSnackbarOpen(true);
-          } else {
-            console.error('PlacesService failed: ', status);
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
+      var request = {
+        placeId: e.placeId,
+        fields: ['name']
+      };
+      placesService.getDetails(request, (place, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          setSnackbarOpen(true);
+          setLocationData(lat, lng, e.placeId, place.name, true);
+        } else {
+          console.error('Oh no!');
+        }
+      });
     } else {
-      console.log('Location clicked: ', lat, lng);
+      geocoder.geocode({location: {lat, lng}}).then((response) => {
+        if (response.results[0]) {
+          setLocationData(lat, lng, response.results[0].place_id, response.results[0].formatted_address, false);
+        } else {
+          window.alert('No results found');
+        }
+      });
     }
   };
 
+  const setLocationData = (lat, lng, placeId, name, isPlace) => {
+    const selectedLocation = new Location(lat, lng, placeId, name, isPlace);
+    setSelectedPlace(selectedLocation);
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
+    mapInstance.setZoom(DEFAULT_ZOOM + 5);
+  };
+  
   const handleAddToFavorites = () => {
     if (selectedPlace) {
       console.log('Added to favorites:', selectedPlace);
@@ -175,18 +176,23 @@ export const Map = () => {
   };
 
   return (
-    <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
-      <GoogleMap
-        style={{ height: isMobile ? '50vh' : '95vh', top: isMobile ? '10vh' : '7vh' }}
-        zoom={DEFAULT_ZOOM}
-        center={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
-        onClick={handleMapClicked}
-        onLoad={(map) => setMapInstance(map)}
-        options={{
-          libraries: ['places', 'visualization'],
-        }}
-      >
-        <Box sx={containerStyle}>
+    <Box sx={{ display: 'flex' }}>
+      <PersistentDrawerLeft selectedLocation={selectedPlace}/>
+      <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
+        <GoogleMap
+          style={{ height: '95vh', top: '7vh' }}
+          zoom={DEFAULT_ZOOM}
+          center={selectedPlace === null ? { lat: MANHATTAN_LAT, lng: MANHATTAN_LNG } : { lat: selectedPlace.lat, lng: selectedPlace.lng }}
+          onClick={handleMapClicked}
+          onLoad={onMapLoaded}
+          options={{
+            libraries: ['visualization', 'places'],
+          }}
+          mapOptions={{
+            mapId: VITE_MAP_ID,
+          }}
+        >
+          <Box sx={containerStyle}>
           <Dropdown onSelect={handleSelect} />
           <Control position={google.maps.ControlPosition.TOP_CENTER}>
             <SearchBar mapInstance={mapInstance}
@@ -200,41 +206,42 @@ export const Map = () => {
             </Box>
           </Control>
         </Box>
-        {heatMapData.length > 0 && (
-          <HeatmapLayer
-            data={heatMapData.map((data) => ({
-              location: new window.google.maps.LatLng(data.lat, data.lng),
-              weight: data.weight,
-            }))}
-            gradient={heatMapGradient}
-            radius={20}
-            opacity={0.6}
-          />
-        )}
-        {selectedPlace && <Marker lat={selectedPlace.lat}
-          lng={selectedPlace.lng} />}
-      </GoogleMap>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-        message="Add this place to favorites?"
-        action={(
-          <>
-            <Button color="secondary"
-              size="small"
-              onClick={handleAddToFavorites}>
+          <HelpIcon />
+          {heatMapData.length > 0 && (
+            <HeatmapLayer
+              data={heatMapData.map((data) => ({
+                location: new window.google.maps.LatLng(data.lat, data.lng),
+                weight: data.weight,
+              }))}
+              gradient={heatMapGradient}
+              radius={20}
+              opacity={0.6}
+            />
+          )}
+          {markers.map(marker => marker)}
+        </GoogleMap>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          message="Add this place to favorites?"
+          action={(
+            <>
+              <Button color="secondary"
+                size="small"
+                onClick={handleAddToFavorites}>
               Add to Favorites
-            </Button>
-            <IconButton size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={handleSnackbarClose}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </>
-        )}
-      />
+              </Button>
+              <IconButton size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={handleSnackbarClose}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </>
+          )}
+        />
+      </Box>
     </Box>
   );
 };
