@@ -1,23 +1,25 @@
-import { Box } from '@mui/material';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { GoogleMapApiLoader } from 'react-google-map-wrapper';
-import PersistentDrawerLeft from '../components/map/Drawer';
 import { Map as MapComponent } from '../components/map/Map';
+import { DataProvider } from '../providers/DataProvider';
+import { GoogleMapProvider } from '../providers/GoogleMapProvider';
 
 export default function MapPage() {
   const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY;
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <PersistentDrawerLeft />
-      <Suspense>
-        {/* TODO: add fallback */}
-        {/* Load the google map api */}
-        <GoogleMapApiLoader apiKey={googleMapConfig}
-          suspense>
-          <MapComponent />
-        </GoogleMapApiLoader>
-      </Suspense>
-    </Box>
+    <Suspense>
+      {/* TODO: add fallback */}
+      {/* Load the google map api */}
+      <GoogleMapApiLoader apiKey={googleMapConfig} 
+        suspense>
+        {/* TODO: put back our drawer! */}
+        <DataProvider>
+          <GoogleMapProvider>
+            <MapComponent/>
+          </GoogleMapProvider>
+        </DataProvider>
+      </GoogleMapApiLoader>
+    </Suspense>
   );
 }
