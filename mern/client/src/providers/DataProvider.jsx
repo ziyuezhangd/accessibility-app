@@ -6,7 +6,9 @@ import { getPublicRestrooms } from '../services/restrooms';
 const DataContext = createContext();
 
 const DataProvider = ({children}) => {
+  /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
   const [restrooms, setRestrooms] = useState([]);
+  /** @type {[PlaceInfo[], React.Dispatch<React.SetStateAction<PlaceInfo[]>>]} */
   const [placeInfos, setPlaceInfos] = useState([]);
     
   useEffect(() => {
