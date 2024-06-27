@@ -9,6 +9,7 @@ import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 export default function NearestRestrooms({ lat, lng }) {
   const {restrooms} = useContext(DataContext);
   const { createMarkers } = useContext(GoogleMapContext);
+
   /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
 
@@ -17,26 +18,22 @@ export default function NearestRestrooms({ lat, lng }) {
     // TODO: remove not operational
       const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
       console.log(`Nearest ${nearest.length} restrooms: `, nearest);
-      setNearestRestrooms(nearest[0]);
+      setNearestRestrooms(nearest);
       showRestroomMarkers(nearest);
     };
 
-    getNearestRestrooms();
-  }, [lat, lng]);
+    const showRestroomMarkers = (restrooms) => {
+      const markers = restrooms.map(restroom => {
+        return {
+          lat: restroom.latitude,
+          lng: restroom.longitude
+        };
+      });
+      createMarkers();
+    };
 
-  /**
-   * 
-   * @param {PublicRestroom[]} restrooms 
-   */
-  const showRestroomMarkers = (restrooms) => {
-    const markers = restrooms.map(restroom => {
-      return {
-        lat: restroom.latitude,
-        lng: restroom.longitude
-      };
-    });
-    createMarkers(markers);
-  };
+    getNearestRestrooms();
+  }, [lat, lng, restrooms, createMarkers]);
 
   return (
     <Box display='flex'

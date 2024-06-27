@@ -28,7 +28,7 @@ export class PublicRestroom {
    * Creates an instance of PublicRestroom.
    * @param {Object} options - The options for the restroom.
    * @param {string} options.name - The name of the restroom.
-   * @param {string} options.status - The status of the restroom (e.g., open, closed).
+   * @param {string} options.status - The status of the restroom
    * @param {string} options.hours - The operating hours of the restroom.
    * @param {boolean} options.isAccessible - Indicates if the restroom is accessible.
    * @param {boolean} options.isFullyAccessible - Indicates if the restroom is fully accessible.
@@ -36,18 +36,11 @@ export class PublicRestroom {
    * @param {string} options.restroomType - The type of the restroom (e.g., single, multiple).
    * @param {boolean} options.hasChangingStations - Indicates if the restroom has changing stations.
    * @param {string} options.url - The URL for more information about the restroom.
-   * @param {number} options.latitude - The latitude coordinate of the restroom.
-   * @param {number} options.longitude - The longitude coordinate of the restroom.
+   * @param {string} options.latitude - The latitude coordinate of the restroom.
+   * @param {string} options.longitude - The longitude coordinate of the restroom.
    */
   constructor({ name, status, hours, isAccessible, isFullyAccessible, isPartiallyAccessible, restroomType, hasChangingStations, url, latitude, longitude }) {
-    /**
-     * @type {string}
-     */
     this.name = name;
-
-    /**
-     * @type {string}
-     */
     this.status = status;
 
     /**
@@ -61,45 +54,24 @@ export class PublicRestroom {
      *
      */
     this.hours = hours;
-
-    /**
-     * @type {boolean}
-     */
     this.isAccessible = isAccessible;
-
-    /**
-     * @type {boolean}
-     */
     this.isFullyAccessible = isFullyAccessible;
-
-    /**
-     * @type {boolean}
-     */
     this.isPartiallyAccessible = isPartiallyAccessible;
 
     /**
+     * @todo need to put the possible restroom types here
      * @type {string}
+     * @example
+     *
+     * ```js
+     *
+     * ```
+     *
      */
     this.restroomType = restroomType;
-
-    /**
-     * @type {boolean}
-     */
     this.hasChangingStations = hasChangingStations;
-
-    /**
-     * @type {string}
-     */
     this.url = url;
-
-    /**
-     * @type {number}
-     */
     this.latitude = latitude;
-
-    /**
-     * @type {number}
-     */
     this.longitude = longitude;
   }
 
