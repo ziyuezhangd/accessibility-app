@@ -28,7 +28,7 @@ export class PublicRestroom {
    * Creates an instance of PublicRestroom.
    * @param {Object} options - The options for the restroom.
    * @param {string} options.name - The name of the restroom.
-   * @param {string} options.status - The status of the restroom (e.g., open, closed).
+   * @param {string} options.status - The status of the restroom
    * @param {string} options.hours - The operating hours of the restroom.
    * @param {boolean} options.isAccessible - Indicates if the restroom is accessible.
    * @param {boolean} options.isFullyAccessible - Indicates if the restroom is fully accessible.
@@ -36,18 +36,11 @@ export class PublicRestroom {
    * @param {string} options.restroomType - The type of the restroom (e.g., single, multiple).
    * @param {boolean} options.hasChangingStations - Indicates if the restroom has changing stations.
    * @param {string} options.url - The URL for more information about the restroom.
-   * @param {number} options.latitude - The latitude coordinate of the restroom.
-   * @param {number} options.longitude - The longitude coordinate of the restroom.
+   * @param {string} options.latitude - The latitude coordinate of the restroom.
+   * @param {string} options.longitude - The longitude coordinate of the restroom.
    */
   constructor({ name, status, hours, isAccessible, isFullyAccessible, isPartiallyAccessible, restroomType, hasChangingStations, url, latitude, longitude }) {
-    /**
-     * @type {string}
-     */
     this.name = name;
-
-    /**
-     * @type {string}
-     */
     this.status = status;
 
     /**
@@ -61,55 +54,42 @@ export class PublicRestroom {
      *
      */
     this.hours = hours;
-
-    /**
-     * @type {boolean}
-     */
     this.isAccessible = isAccessible;
-
-    /**
-     * @type {boolean}
-     */
     this.isFullyAccessible = isFullyAccessible;
-
-    /**
-     * @type {boolean}
-     */
     this.isPartiallyAccessible = isPartiallyAccessible;
 
     /**
+     * @todo need to put the possible restroom types here
      * @type {string}
+     * @example
+     *
+     * ```js
+     *
+     * ```
+     *
      */
     this.restroomType = restroomType;
-
-    /**
-     * @type {boolean}
-     */
     this.hasChangingStations = hasChangingStations;
-
-    /**
-     * @type {string}
-     */
     this.url = url;
-
-    /**
-     * @type {number}
-     */
     this.latitude = latitude;
-
-    /**
-     * @type {number}
-     */
     this.longitude = longitude;
   }
 
   /**
    *
+   * Formats the hours property into a string with new lines between each
+   * day's hours
+   *
+   * @example
+   * ```js
+   * Sunday: Closed
+   * Monday: 9am - 5pm
+   * Tuesday: 9am: 5pm
+   * ```
+   *
    * @returns {string} hours formatted to a list
    */
   formatHours() {
-    // "7:30am - dusk"
-    // "Everyday 6:00 am-9:00 pm"
     const parsedHours = parseTimeRangeFromString(this.hours);
     if (parsedHours.length === 1) {
       return this.hours;
@@ -131,31 +111,15 @@ export class PublicRestroom {
     }
     return formattedHours;
   }
-}
-
-export class PublicRestroomUtilities {
-  /**
-   * Finds the closest restroom to a given coordinate from a list of restrooms. By
-   * default, returns the closest. Optionally provide a qty number to get the closest
-   * x places.
-   *
-   * @param {PublicRestroom} restroom - a restroom object
-   * @return {PublicRestroom[]} list of restrooms
-   */
-  static getNearest = (restroom, lat, lng, qty = 1) => {
-    const placesSorted = _.sortBy(restroom, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
-    return placesSorted.slice(0, qty);
-  };
 
   /**
    * Checks if a restroom is open right now (in NYC timezone)
    *
-   * @param {PublicRestroom} restroom - a restroom object
-   * @return {PublicRestroom[]} list of restrooms
+   * @return {boolean} true if open
    */
-  static isRestroomOpenNow = (restroom) => {
+  isOpenNow() {
     try {
-      const hoursString = restroom.hours;
+      const hoursString = this.hours;
       const now = getCurrentTimeInNewYork();
       let openingTime, closingTime;
 
@@ -180,5 +144,20 @@ export class PublicRestroomUtilities {
       console.error(e);
       return false; // Return false for now
     }
+  }
+}
+
+export class PublicRestroomUtilities {
+  /**
+   * Finds the closest restroom to a given coordinate from a list of restrooms. By
+   * default, returns the closest. Optionally provide a qty number to get the closest
+   * x places.
+   *
+   * @param {PublicRestroom[]} restrooms - a list of restrooms to look in
+   * @return {PublicRestroom[]} list of restrooms
+   */
+  static getNearest = (restrooms, lat, lng, qty = 1) => {
+    const placesSorted = _.sortBy(restrooms, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
+    return placesSorted.slice(0, qty);
   };
 }
