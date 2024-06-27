@@ -105,11 +105,19 @@ export class PublicRestroom {
 
   /**
    *
+   * Formats the hours property into a string with new lines between each
+   * day's hours
+   *
+   * @example
+   * ```js
+   * Sunday: Closed
+   * Monday: 9am - 5pm
+   * Tuesday: 9am: 5pm
+   * ```
+   *
    * @returns {string} hours formatted to a list
    */
   formatHours() {
-    // "7:30am - dusk"
-    // "Everyday 6:00 am-9:00 pm"
     const parsedHours = parseTimeRangeFromString(this.hours);
     if (parsedHours.length === 1) {
       return this.hours;
@@ -131,31 +139,15 @@ export class PublicRestroom {
     }
     return formattedHours;
   }
-}
-
-export class PublicRestroomUtilities {
-  /**
-   * Finds the closest restroom to a given coordinate from a list of restrooms. By
-   * default, returns the closest. Optionally provide a qty number to get the closest
-   * x places.
-   *
-   * @param {PublicRestroom} restroom - a restroom object
-   * @return {PublicRestroom[]} list of restrooms
-   */
-  static getNearest = (restroom, lat, lng, qty = 1) => {
-    const placesSorted = _.sortBy(restroom, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
-    return placesSorted.slice(0, qty);
-  };
 
   /**
    * Checks if a restroom is open right now (in NYC timezone)
    *
-   * @param {PublicRestroom} restroom - a restroom object
-   * @return {PublicRestroom[]} list of restrooms
+   * @return {boolean} true if open
    */
-  static isRestroomOpenNow = (restroom) => {
+  isOpenNow() {
     try {
-      const hoursString = restroom.hours;
+      const hoursString = this.hours;
       const now = getCurrentTimeInNewYork();
       let openingTime, closingTime;
 
@@ -180,5 +172,20 @@ export class PublicRestroomUtilities {
       console.error(e);
       return false; // Return false for now
     }
+  }
+}
+
+export class PublicRestroomUtilities {
+  /**
+   * Finds the closest restroom to a given coordinate from a list of restrooms. By
+   * default, returns the closest. Optionally provide a qty number to get the closest
+   * x places.
+   *
+   * @param {PublicRestroom[]} restrooms - a list of restrooms to look in
+   * @return {PublicRestroom[]} list of restrooms
+   */
+  static getNearest = (restrooms, lat, lng, qty = 1) => {
+    const placesSorted = _.sortBy(restrooms, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
+    return placesSorted.slice(0, qty);
   };
 }

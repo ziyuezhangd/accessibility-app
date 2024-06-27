@@ -13,16 +13,16 @@ export default function NearestRestrooms({ lat, lng }) {
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
 
   useEffect(() => {
+    const getNearestRestrooms = async () => {
+    // TODO: remove not operational
+      const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
+      console.log(`Nearest ${nearest.length} restrooms: `, nearest);
+      setNearestRestrooms(nearest[0]);
+      showRestroomMarkers(nearest);
+    };
+
     getNearestRestrooms();
   }, [lat, lng]);
-
-  const getNearestRestrooms = async () => {
-    // TODO: remove not operational
-    const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
-    console.log(`Nearest ${nearest.length} restrooms: `, nearest);
-    setNearestRestrooms(nearest);
-    showRestroomMarkers(nearest);
-  };
 
   /**
    * 
@@ -72,7 +72,7 @@ export default function NearestRestrooms({ lat, lng }) {
               />
               <ListItemSecondaryAction>
                 {/* TODO: we will actually want to know if its open at the predicted time */}
-                {PublicRestroomUtilities.isRestroomOpenNow(restroom) ? <Chip label='OPEN'
+                {restroom.isOpenNow() ? <Chip label='OPEN'
                   color='success' /> : <Chip label='CLOSED'
                   color='error' />}
               </ListItemSecondaryAction>
