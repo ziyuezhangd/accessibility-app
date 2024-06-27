@@ -2,7 +2,7 @@ import { MANHATTAN_LAT, MANHATTAN_LNG } from '../utils/MapUtils';
 
 /**
  * Send feedback to be stored in our database
- * @param {Promise<Feedback>} feedback
+ * @param {Feedback} feedback
  */
 export const postFeedback = async (feedback) => {
   // Call the API here
