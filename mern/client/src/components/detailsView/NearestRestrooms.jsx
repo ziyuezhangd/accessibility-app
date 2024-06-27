@@ -6,6 +6,16 @@ import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PublicRestroomUtilities } from '../../services/restrooms';
 import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
+/**
+ * 
+ * This component retrieves and displays a list of nearest restrooms based on given coordinates.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {number} props.lat - The latitude coordinate.
+ * @param {number} props.lng - The longitude coordinate.
+ * 
+ * @returns {JSX.Element} The rendered NearestRestrooms component.
+ */
 export default function NearestRestrooms({ lat, lng }) {
   const {restrooms} = useContext(DataContext);
   const { createMarkers } = useContext(GoogleMapContext);
@@ -29,7 +39,7 @@ export default function NearestRestrooms({ lat, lng }) {
           lng: restroom.longitude
         };
       });
-      createMarkers();
+      createMarkers(markers);
     };
 
     getNearestRestrooms();
