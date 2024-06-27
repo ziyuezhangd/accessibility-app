@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
-import { PlaceInfo, getPlaceInfos } from '../services/placeInfo';
-import { PublicRestroom, getPublicRestrooms } from '../services/restrooms';
+import { getPlaceInfos } from '../services/placeInfo';
+import { getPublicRestrooms } from '../services/restrooms';
 
 const DataContext = createContext();
 
