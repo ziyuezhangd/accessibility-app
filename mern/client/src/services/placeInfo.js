@@ -173,6 +173,7 @@ export class PlaceInfoUtilities {
    *
 */
   static getMarkerPNG = (placeInfo) => {
+    console.log('getMarkerPNG has been called');
     const { category } = placeInfo;
     const pngUrl = '../../public/accessibilityMarkers/';
     const parentCategory = categoryToParentCategory(category);
@@ -181,8 +182,8 @@ export class PlaceInfoUtilities {
     if (!parentCategory) {
       return null;
     }
-    const iconUrl = `${pngUrl}${parentCategory}.png`;
-    return iconUrl;
+    const imgSrc = `${pngUrl}${parentCategory}.png`;
+    return imgSrc;
   };
 }
 

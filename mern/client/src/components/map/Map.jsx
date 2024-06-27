@@ -1,12 +1,15 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
-import { GoogleMap, HeatmapLayer, Marker, AdvancedMarker, MarkerClusterer } from 'react-google-map-wrapper';
+import { useContext} from 'react';
+import { GoogleMap, HeatmapLayer, MarkerClusterer } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import AccessibleMarkers from '../detailsView/accessibilityMarkers';
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
+
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 
@@ -52,6 +55,8 @@ const odorData = [
 export const Map = () => {
   const theme = useTheme();
   const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
+  
+  AccessibleMarkers();
 
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
