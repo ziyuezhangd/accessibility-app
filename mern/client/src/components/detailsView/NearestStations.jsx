@@ -4,20 +4,30 @@ import { DataContext } from '../../providers/DataProvider';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { SUBWAY_LINE_COLORS } from '../../utils/MapUtils';
 
+/**
+ * 
+ * This component retrieves and displays a list of nearest subway stations based on given coordinates.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {number} props.lat - The latitude coordinate.
+ * @param {number} props.lng - The longitude coordinate.
+ * 
+ * @returns {JSX.Element} The rendered NearestStations component.
+ */
 export default function NearestStations({ lat, lng }) {
   const {placeInfos} = useContext(DataContext);
   const [nearestStations, setNearestStations] = useState([]);
 
   useEffect(() => {
+    // TODO: merge stations like Fulton Street
+    const getNearestSubwayStations = async () => {
+      const stations = placeInfos.filter((place) => PlaceInfoUtilities.isSubwayStation(place) && place.name !== '');
+      const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
+      setNearestStations(nearestStations);
+    };
+  
     getNearestSubwayStations();
   }, []);
-
-  // TODO: merge stations like Fulton Street
-  const getNearestSubwayStations = async () => {
-    const stations = placeInfos.filter((place) => PlaceInfoUtilities.isSubwayStation(place) && place.name !== '');
-    const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
-    setNearestStations(nearestStations);
-  };
 
   return (
     <Box display='flex'

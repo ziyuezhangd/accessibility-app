@@ -101,8 +101,8 @@ const accessibilityCloud = {
   ],
   
   /**
-   * @returns{Promise<Array<{category: string, name: string, latitude: number, longitude: number}>>} 
-  */
+   * @returns {Promise<Array<{category: string, name: string, latitude: number, longitude: number}>>} 
+   */
   async getPlaceInfos() {
     const results = [];
     const placeInfos = [];
@@ -140,8 +140,8 @@ const accessibilityCloud = {
   },
   
   /**
-   * @returns{Promise<Array<string>>} 
-  */
+   * @returns {Promise<Array<string>>} 
+   */
   async getCategories() {
     const categories = [];
     const result = await axios.get(`${this.ACCESSIBILITY_CLOUD_URL}categories.json`, {
