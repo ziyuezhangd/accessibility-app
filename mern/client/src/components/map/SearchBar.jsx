@@ -1,21 +1,20 @@
-// SearchBar.jsx
-
-import SearchIcon from '@mui/icons-material/Search';
+import { useRef, useContext, useEffect } from 'react';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { TextField, InputAdornment } from '@mui/material';
-import { useRef, useEffect } from 'react';
+import SearchIcon from '@mui/icons-material/Search';
 import { Control } from 'react-google-map-wrapper';
 
-const SearchBar = ({ mapInstance, setSelectedPlace }) => {
+const SearchBar = ({ onSearchEntered }) => {
   const searchInputRef = useRef(null);
-  
+  const { mapInstance,placesService } = useContext(GoogleMapContext);
+
   useEffect(() => {
-    if (mapInstance) {
+    if (mapInstance && window.google && placesService) {
       loadPlacesSearchBox();
     }
-  }, [mapInstance]);
+  }, [mapInstance,placesService]);
 
   const loadPlacesSearchBox = async () => {
-    const PlacesService = await google.maps.importLibrary('places');  
     const input = searchInputRef.current;
     const searchBox = new window.google.maps.places.SearchBox(input);
 
@@ -41,10 +40,10 @@ const SearchBar = ({ mapInstance, setSelectedPlace }) => {
           bounds.extend(place.geometry.location);
         }
 
-        setSelectedPlace({
+       onSearchEntered({
           id: place.place_id,
           lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
+          lng: place.geometry.location.lng()
         });
       });
       mapInstance.fitBounds(bounds);
@@ -52,34 +51,39 @@ const SearchBar = ({ mapInstance, setSelectedPlace }) => {
   };
 
   return (
-    <><Control position={google.maps.ControlPosition.TOP_LEFT}></Control><TextField
-      inputRef={searchInputRef}
-      placeholder="Search for places"
-      variant="outlined"
-      size="small"
-      sx={{
-        position: 'absolute',
-        zIndex: 1000,
-        top: '10px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: '300px',
-        backgroundColor: 'white',
-        boxShadow: 3,
-        '& .MuiOutlinedInput-root': {
-          borderRadius: '50px',
-        },
-        '& .MuiOutlinedInput-input': {
-          padding: '10px 20px',
-        },
-      }}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon />
-          </InputAdornment>
-        ),
-      }} /></>
+    <>
+      <Control position={window.google.maps.ControlPosition.TOP_LEFT}>
+        <TextField
+          inputRef={searchInputRef}
+          placeholder="Search for places"
+          variant="outlined"
+          size="small"
+          sx={{
+            position: 'absolute',
+            zIndex: 1000,
+            top: '10px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '300px',
+            backgroundColor: 'white',
+            boxShadow: 3,
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '50px',
+            },
+            '& .MuiOutlinedInput-input': {
+              padding: '10px 20px',
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Control>
+    </>
   );
 };
 

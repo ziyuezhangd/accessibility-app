@@ -1,13 +1,11 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
-import { useState, useEffect } from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
 import DateTimePicker from './DateTimePicker';
 import Dropdown from './Dropdown';
-import HelpIcon from './HelpIcon';
 import SearchBar from './SearchBar';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
@@ -138,6 +136,21 @@ export const Map = () => {
     }
   };
 
+  const handleSearchEntered = (selected) => { 
+    var request = {
+      placeId: selected.id,
+      fields: ['name']
+    };
+    placesService.getDetails(request, (place, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        setSnackbarOpen(true);
+        setLocationData(selected.lat, selected.lng, selected.id, place.name, true);
+      } else {
+        console.error('Oh no!');
+      }
+    });
+  }
+
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -195,8 +208,8 @@ export const Map = () => {
           <Box sx={containerStyle}>
           <Dropdown onSelect={handleSelect} />
           <Control position={google.maps.ControlPosition.TOP_CENTER}>
-            <SearchBar mapInstance={mapInstance}
-              setSelectedPlace={setSelectedPlace} />
+            <SearchBar
+              onSearchEntered={handleSearchEntered}/>
           </Control>
           <Control position={google.maps.ControlPosition.TOP_RIGHT}>
             <Box sx={dateTimeHelpContainerStyle}>
