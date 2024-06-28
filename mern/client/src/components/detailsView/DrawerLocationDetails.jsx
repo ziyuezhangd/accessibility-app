@@ -1,17 +1,14 @@
 /* eslint-disable import/no-unresolved, import/order, import/named */
 import {PlaceOverview} from '@googlemaps/extended-component-library/react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { Button, Alert } from '@mui/material';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
+import { Button, TextField, Modal, Slide, Snackbar, Box, IconButton, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import{ useEffect, useState } from 'react';
 import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
-import { postFeedback } from '../../services/feedback';
-import { MapLocation } from '../../utils/MapUtils';
+import { postFeedback, Feedback } from '../../services/feedback';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -33,10 +30,31 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  * 
  * @returns {JSX.Element} The rendered DrawerLocationDetails component.
  */
+const modalStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const formStyle = {
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+};
 
 export default function DrawerLocationDetails({ location, onBackClicked }) {
-  const [error, setError] = useState('');
   const [isFeedbackComplete, setIsFeedbackComplete] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [comment, setComment] = useState('');
+  const [age, setAge] = useState('');
+  const [gender, setGender] = useState('');
+  const [condition, setCondition] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     addLocationToHistory();
@@ -63,21 +81,86 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     localStorage.setItem('searchHistory', JSON.stringify(history));
   };
 
-  const handleButtonClicked = async () => {
-    // TODO: these alerts need to disappear, like toasts
-    setError('');
-    try {
-      await postFeedback({
-        name: 'April',
-        email: 'april.polubiec@ucdconnect.ie',
-        comment: 'This place is no longer open.',
-        coordinates: [-73.9712, 40.7831],
-      });
-    } catch (e) {
-      setError(e.toString());
+  const handleButtonClicked = () => {
+    setIsFeedbackOpen(true);
+  };
+
+  const handleFeedbackChange = (setter) => (event) => {
+    setter(event.target.value);
+  };
+
+  const handleNameChange = (event) => {
+    const value = event.target.value;
+    if (/^[a-zA-Z\s]*$/.test(value)) {
+      setName(value);
     }
-    console.log('Complete!');
-    setIsFeedbackComplete(true);
+  };
+
+  const handleConditionChange = (event) => {
+    const value = event.target.value;
+    if (/^[a-zA-Z\s]*$/.test(value)) {
+      setCondition(value);
+    }
+  };
+
+  const handleEmailChange = (event) => {
+    const value = event.target.value;
+    setEmail(value);
+  };
+
+  const handleAgeChange = (event) => {
+    const value = event.target.value;
+    setAge(value);
+  };
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const handleSubmitFeedback = async () => {
+    const newErrors = {};
+    if (!validateEmail(email)) {
+      newErrors.email = 'Invalid email address';
+    }
+    if (!name) {
+      newErrors.name = 'Name is required';
+    }
+    if (!comment) {
+      newErrors.comment = 'Comment is required';
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    try {
+      const feedback = new Feedback(name, email, comment, age, gender, condition, [location.lng, location.lat]);
+      await postFeedback(feedback);
+      setSnackbarMessage('Feedback submitted successfully');
+      setSnackbarOpen(true);
+      setIsFeedbackOpen(false);
+      setName('');
+      setEmail('');
+      setComment('');
+      setAge('');
+      setGender('');
+      setCondition('');
+      setIsFeedbackComplete(true);
+      setErrors({});
+    } catch (e) {
+      setErrors({ form: e.toString() });
+    }
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsFeedbackOpen(false);
   };
 
   return (
@@ -96,14 +179,106 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
         <NearestRestrooms 
           lat={location.lat}
           lng={location.lng} />
-        <NearestStations
+        <NearestStations 
           lat={location.lat}
           lng={location.lng} />
-
+          
         <Button onClick={handleButtonClicked}>Submit Feedback</Button>
       </Box>
-      {error && <Alert severity='error'>{error}</Alert>}
-      {isFeedbackComplete && <Alert severity='success'>Feedback submitted!</Alert>}
+      <Modal
+        open={isFeedbackOpen}
+        onClose={handleCancel}
+        closeAfterTransition
+        sx={modalStyle}
+      >
+        <Slide direction="up"
+          in={isFeedbackOpen}
+          mountOnEnter
+          unmountOnExit>
+          <Box sx={formStyle}>
+            <Typography variant="h6"
+              component="h2"
+              align="center">Submit Feedback</Typography>
+            <TextField 
+              label="Name" 
+              value={name} 
+              onChange={handleNameChange} 
+              variant="outlined" 
+              fullWidth 
+              sx={{ mt: 2 }} 
+              error={!!errors.name}
+              helperText={errors.name}
+            />
+            <TextField 
+              label="Email" 
+              value={email} 
+              onChange={handleEmailChange} 
+              variant="outlined" 
+              fullWidth 
+              sx={{ mt: 2 }} 
+              error={!!errors.email} 
+              helperText={errors.email}
+            />
+            <TextField 
+              label="Age" 
+              value={age} 
+              onChange={handleAgeChange} 
+              variant="outlined" 
+              fullWidth 
+              sx={{ mt: 2 }} 
+              type="number"
+            />
+            <FormControl fullWidth
+              sx={{ mt: 2 }}
+              error={!!errors.gender}>
+              <InputLabel>Gender</InputLabel>
+              <Select
+                value={gender}
+                onChange={handleFeedbackChange(setGender)}
+                variant="outlined"
+                label="Gender"
+              >
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+                <MenuItem value="Other">Other</MenuItem>
+                <MenuItem value="Prefer not to say">Prefer not to say</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField 
+              label="Condition" 
+              value={condition} 
+              onChange={handleConditionChange} 
+              variant="outlined" 
+              fullWidth 
+              sx={{ mt: 2 }}
+            />
+            <TextField 
+              label="Comment" 
+              value={comment} 
+              onChange={handleFeedbackChange(setComment)} 
+              variant="outlined" 
+              multiline
+              rows={4} 
+              fullWidth 
+              sx={{ mt: 2 }} 
+              error={!!errors.comment} 
+              helperText={errors.comment}
+            />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+              <Button variant="contained"
+                color="secondary"
+                onClick={handleCancel}>Cancel</Button>
+              <Button variant="contained"
+                color="primary"
+                onClick={handleSubmitFeedback}>Send</Button>
+            </Box>
+          </Box>
+        </Slide>
+      </Modal>
+      {isFeedbackComplete && <Snackbar open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        message={snackbarMessage} />}
     </>
   );
 }
