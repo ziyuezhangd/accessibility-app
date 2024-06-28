@@ -11,6 +11,7 @@ import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
 import { postFeedback } from '../../services/feedback';
+import { MapLocation } from '../../utils/MapUtils';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -21,7 +22,19 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'start',
 }));
 
-export default function DrawerLocationDetails({ location, onBackClicked, addMarkers }) {
+/**
+ * DrawerLocationDetails component.
+ * 
+ * This component renders the details of a specific location within a drawer.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {MapLocation} props.location - The location object to show details about.
+ * @param {function} props.onBackClicked - The function to call when the back button is clicked.
+ * 
+ * @returns {JSX.Element} The rendered DrawerLocationDetails component.
+ */
+
+export default function DrawerLocationDetails({ location, onBackClicked }) {
   const [error, setError] = useState('');
   const [isFeedbackComplete, setIsFeedbackComplete] = useState(false);
 
@@ -67,10 +80,6 @@ export default function DrawerLocationDetails({ location, onBackClicked, addMark
     setIsFeedbackComplete(true);
   };
 
-  const handleRestroomsLoaded = (restrooms) => {
-    addMarkers(restrooms.map(restroom => ({lat: parseFloat(restroom.latitude),lng: parseFloat(restroom.longitude)})));
-  };
-
   return (
     <>
       <DrawerHeader>
@@ -84,9 +93,9 @@ export default function DrawerLocationDetails({ location, onBackClicked, addMark
           size='medium'></PlaceOverview>
 
         <Grades />
-        <NearestRestrooms lat={location.lat}
-          lng={location.lng}
-          onLoaded={handleRestroomsLoaded} />
+        <NearestRestrooms 
+          lat={location.lat}
+          lng={location.lng} />
         <NearestStations
           lat={location.lat}
           lng={location.lng} />

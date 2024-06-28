@@ -3,7 +3,7 @@ const cityofNY = {
   CITYOFNEWYORK_URL: 'https://data.cityofnewyork.us/resource/',
 
   /**
-   * @returns{Promise<Array<{latitude: number, longitude: number, width: string}>>}
+   * @returns {Promise<Array<{latitude: number, longitude: number, width: string}>>}
    */
   async getPedestrianRamps() {
     const result = await fetch(`${this.CITYOFNEWYORK_URL}ufzp-rrqu.json?borough=1&$$app_token=${this.SOCRATA_APP_KEY}`);
@@ -21,7 +21,7 @@ const cityofNY = {
   },
 
   /**
-   * @returns{Promise<Array<{latitude: number, longitude: number}>>}
+   * @returns {Promise<Array<{latitude: number, longitude: number}>>}
    */
   async getPedestrianSignals() {
     const result = await fetch(`${this.CITYOFNEWYORK_URL}de3m-c5p4.json?boroname=Manhattan&$$app_token=${this.SOCRATA_APP_KEY}`);
@@ -38,7 +38,7 @@ const cityofNY = {
   },
 
   /**
-   * @returns{Promise<Array<{seatType: string, category: string, latitude: string, longitude: string}>>}
+   * @returns {Promise<Array<{seatType: string, category: string, latitude: string, longitude: string}>>}
    */
   async getSeatingAreas() {
     const result = await fetch(`${this.CITYOFNEWYORK_URL}esmy-s8q5.json?boroname=Manhattan&$$app_token=${this.SOCRATA_APP_KEY}`);

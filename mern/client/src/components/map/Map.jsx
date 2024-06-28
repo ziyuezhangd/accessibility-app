@@ -10,7 +10,7 @@ import SearchBar from './SearchBar';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
@@ -61,10 +61,12 @@ export const Map = () => {
 
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
-  const [selectedPlace, setSelectedPlace] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
+  const [selectedPlace, setSelectedPlace] = useState(null);
 
   const handleSelect = (item) => {
     switch (item.id) {
@@ -119,7 +121,7 @@ export const Map = () => {
   };
 
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
-    const selectedLocation = new Location(lat, lng, placeId, name, isPlace);
+    const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
     createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
