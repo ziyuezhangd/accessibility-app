@@ -5,8 +5,7 @@ import { useContext} from 'react';
 import { GoogleMap, HeatmapLayer, MarkerClusterer } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
-import AccessibleMarkers from '../detailsView/accessibilityMarkers';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
@@ -60,8 +59,11 @@ export const Map = () => {
 
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
-  const [selectedPlace, setSelectedPlace] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
+  const [selectedPlace, setSelectedPlace] = useState(null);
+
   const handleSelect = (item) => {
     switch (item.id) {
     case 'busyness':
@@ -115,7 +117,7 @@ export const Map = () => {
   };
 
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
-    const selectedLocation = new Location(lat, lng, placeId, name, isPlace);
+    const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
     createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);

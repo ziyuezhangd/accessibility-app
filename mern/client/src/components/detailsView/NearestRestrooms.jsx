@@ -6,37 +6,44 @@ import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PublicRestroomUtilities } from '../../services/restrooms';
 import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
+/**
+ * 
+ * This component retrieves and displays a list of nearest restrooms based on given coordinates.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {number} props.lat - The latitude coordinate.
+ * @param {number} props.lng - The longitude coordinate.
+ * 
+ * @returns {JSX.Element} The rendered NearestRestrooms component.
+ */
 export default function NearestRestrooms({ lat, lng }) {
   const {restrooms} = useContext(DataContext);
   const { createMarkers } = useContext(GoogleMapContext);
+
   /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
 
   useEffect(() => {
-    getNearestRestrooms();
-  }, [lat, lng]);
-
-  const getNearestRestrooms = async () => {
+    const getNearestRestrooms = async () => {
     // TODO: remove not operational
-    const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
-    console.log(`Nearest ${nearest.length} restrooms: `, nearest);
-    setNearestRestrooms(nearest);
-    showRestroomMarkers(nearest);
-  };
+      const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
+      console.log(`Nearest ${nearest.length} restrooms: `, nearest);
+      setNearestRestrooms(nearest);
+      showRestroomMarkers(nearest);
+    };
 
-  /**
-   * 
-   * @param {PublicRestroom[]} restrooms 
-   */
-  const showRestroomMarkers = (restrooms) => {
-    const markers = restrooms.map(restroom => {
-      return {
-        lat: restroom.latitude,
-        lng: restroom.longitude
-      };
-    });
-    createMarkers(markers);
-  };
+    const showRestroomMarkers = (restrooms) => {
+      const markers = restrooms.map(restroom => {
+        return {
+          lat: restroom.latitude,
+          lng: restroom.longitude
+        };
+      });
+      createMarkers(markers);
+    };
+
+    getNearestRestrooms();
+  }, [lat, lng, restrooms, createMarkers]);
 
   return (
     <Box display='flex'
@@ -72,7 +79,7 @@ export default function NearestRestrooms({ lat, lng }) {
               />
               <ListItemSecondaryAction>
                 {/* TODO: we will actually want to know if its open at the predicted time */}
-                {PublicRestroomUtilities.isRestroomOpenNow(restroom) ? <Chip label='OPEN'
+                {restroom.isOpenNow() ? <Chip label='OPEN'
                   color='success' /> : <Chip label='CLOSED'
                   color='error' />}
               </ListItemSecondaryAction>
