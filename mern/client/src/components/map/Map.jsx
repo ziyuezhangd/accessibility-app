@@ -7,13 +7,12 @@ import { Control } from 'react-google-map-wrapper';
 import DateTimePicker from './DateTimePicker';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
-import { getPlaceInfos } from '../../services/placeInfo';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
-
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 const busynessData = [
@@ -66,7 +65,6 @@ export const Map = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
 
   const handleSelect = (item) => {
     switch (item.id) {
@@ -149,7 +147,7 @@ export const Map = () => {
         console.error('Oh no!');
       }
     });
-  }
+  };
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -206,19 +204,19 @@ export const Map = () => {
           }}
         >
           <Box sx={containerStyle}>
-          <Dropdown onSelect={handleSelect} />
-          <Control position={google.maps.ControlPosition.TOP_CENTER}>
-            <SearchBar
-              onSearchEntered={handleSearchEntered}/>
-          </Control>
-          <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-            <Box sx={dateTimeHelpContainerStyle}>
-              <DateTimePicker selectedDate={selectedDate}
-                setSelectedDate={setSelectedDate} />
-              <HelpIcon />
-            </Box>
-          </Control>
-        </Box>
+            <Dropdown onSelect={handleSelect} />
+            <Control position={google.maps.ControlPosition.TOP_CENTER}>
+              <SearchBar
+                onSearchEntered={handleSearchEntered}/>
+            </Control>
+            <Control position={google.maps.ControlPosition.TOP_RIGHT}>
+              <Box sx={dateTimeHelpContainerStyle}>
+                <DateTimePicker selectedDate={selectedDate}
+                  setSelectedDate={setSelectedDate} />
+                <HelpIcon />
+              </Box>
+            </Control>
+          </Box>
           <HelpIcon />
           {heatMapData.length > 0 && (
             <HeatmapLayer

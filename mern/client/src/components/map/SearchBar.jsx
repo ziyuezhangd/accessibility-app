@@ -1,8 +1,8 @@
-import { useRef, useContext, useEffect } from 'react';
-import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { TextField, InputAdornment } from '@mui/material';
+import { useRef, useContext, useEffect } from 'react';
 import { Control } from 'react-google-map-wrapper';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 
 const SearchBar = ({ onSearchEntered }) => {
   const searchInputRef = useRef(null);
@@ -40,7 +40,7 @@ const SearchBar = ({ onSearchEntered }) => {
           bounds.extend(place.geometry.location);
         }
 
-       onSearchEntered({
+        onSearchEntered({
           id: place.place_id,
           lat: place.geometry.location.lat(),
           lng: place.geometry.location.lng()
