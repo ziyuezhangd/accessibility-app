@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved, import/order, import/named */
 import {PlaceOverview} from '@googlemaps/extended-component-library/react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Button, Alert } from '@mui/material';
