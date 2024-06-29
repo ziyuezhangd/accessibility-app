@@ -51,7 +51,7 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
   const [comment, setComment] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
-  const [condition, setCondition] = useState('');
+  const [conditions, setConditions] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [errors, setErrors] = useState({});
@@ -96,10 +96,10 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     }
   };
 
-  const handleConditionChange = (event) => {
+  const handleConditionsChange = (event) => {
     const value = event.target.value;
     if (/^[a-zA-Z\s]*$/.test(value)) {
-      setCondition(value);
+      setConditions(value);
     }
   };
 
@@ -134,7 +134,7 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
       return;
     }
     try {
-      const feedback = new Feedback(name, email, comment, age, gender, condition, [location.lng, location.lat]);
+      const feedback = new Feedback(name, email, comment, Number(age), gender, conditions, [location.lng, location.lat]);
       await postFeedback(feedback);
       setSnackbarMessage('Feedback submitted successfully');
       setSnackbarOpen(true);
@@ -144,7 +144,7 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
       setComment('');
       setAge('');
       setGender('');
-      setCondition('');
+      setConditions('');
       setIsFeedbackComplete(true);
       setErrors({});
     } catch (e) {
@@ -245,9 +245,9 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
               </Select>
             </FormControl>
             <TextField 
-              label="Condition" 
-              value={condition} 
-              onChange={handleConditionChange} 
+              label="Conditions" 
+              value={conditions} 
+              onChange={handleConditionsChange} 
               variant="outlined" 
               fullWidth 
               sx={{ mt: 2 }}

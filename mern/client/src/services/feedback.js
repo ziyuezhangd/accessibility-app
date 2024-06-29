@@ -29,18 +29,18 @@ export class Feedback {
    * @param {string} name - The name of the user providing feedback.
    * @param {string} email - The email address of the user providing feedback.
    * @param {string} comment - The feedback comment provided by the user.
-   * @param {string} age - The age of the user providing feedback.
+   * @param {int} age - The age of the user providing feedback.
    * @param {string} gender - The gender of the user providing feedback.
-   * @param {string} condition - The condition mentioned in the feedback.
+   * @param {string} conditions - The conditions mentioned in the feedback.
    * @param {Array<number>|null} coordinates [latitude, longitude] - The latitude and longitude of the feedback location.
    */
-  constructor(name, email, comment, age, gender, condition, coordinates = null) {
+  constructor(name, email, comment, age, gender, conditions, coordinates = null) {
     this.name = name;
     this.email = email;
     this.comment = comment;
     this.age = age;
     this.gender = gender;
-    this.condition = condition;
+    this.conditions = conditions;
     if (coordinates) {
       if (coordinates.length !== 2) {
         throw new Error('Coordinates must be an array with two value: latitude, longitude');
