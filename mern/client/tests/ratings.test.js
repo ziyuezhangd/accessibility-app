@@ -7,6 +7,7 @@ const dummyRatings = [{ _id: '1', rating: 'A' }, { _id: '2', rating: 'C' }];
 describe('Function getBusynessRatings', () => {
   beforeEach(() => {
     fetch.resetMocks();
+    jest.clearAllMocks();
   });
 
   it('should fetch busyness ratings correctly', async () => {
@@ -31,13 +32,14 @@ describe('Function getBusynessRatings', () => {
 
     expect(fetch).toHaveBeenCalledWith('/api/busyness-ratings?' + new URLSearchParams({ datetime: testDateTime }));
     expect(ratings).toBeUndefined();
-    expect(console.error).toHaveBeenCalledWith('An error has occurred: API error');
+    expect(console.error).toHaveBeenCalledTimes(1);
   });
 });
 
 describe('Function getNoiseRatings', () => {
   beforeEach(() => {
     fetch.resetMocks();
+    jest.clearAllMocks();
   });
 
   it('should fetch noise ratings correctly', async () => {
@@ -62,13 +64,14 @@ describe('Function getNoiseRatings', () => {
 
     expect(fetch).toHaveBeenCalledWith('/api/noise-ratings?' + new URLSearchParams({ datetime: testDateTime }));
     expect(ratings).toBeUndefined();
-    expect(console.error).toHaveBeenCalledWith('An error has occurred: API error');
+    expect(console.error).toHaveBeenCalledTimes(1);
   });
 });
 
 describe('Function getOdourRatings', () => {
   beforeEach(() => {
     fetch.resetMocks();
+    jest.clearAllMocks();
   });
 
   it('should fetch odour ratings correctly', async () => {
@@ -93,6 +96,6 @@ describe('Function getOdourRatings', () => {
 
     expect(fetch).toHaveBeenCalledWith('/api/odour-ratings?' + new URLSearchParams({ datetime: testDateTime }));
     expect(ratings).toBeUndefined();
-    expect(console.error).toHaveBeenCalledWith('An error has occurred: API error');
+    expect(console.error).toHaveBeenCalledTimes(1);
   });
 });

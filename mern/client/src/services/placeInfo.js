@@ -10,13 +10,14 @@ import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
  */
 export const getPlaceInfos = async () => {
   const response = await fetch(`/api/place-infos`);
-
-  const placeInfos = await response.json();
-  if (placeInfos.error) {
-    console.error(placeInfos.error);
+  if (!response.ok) {
+    const message = `An error has occurred: ${response.statusText}`;
+    console.error(message);
     return;
   }
-  return placeInfos.map((placeInfo) => new PlaceInfo(...placeInfo));
+
+  const placeInfos = await response.json();
+  return placeInfos.map((placeInfo) => new PlaceInfo(...Object.values(placeInfo)));
 };
 
 /**
@@ -45,8 +46,8 @@ export class PlaceInfo {
    * @param {string} category - The category of the place info.
    * @param {string} name - The name of the place info.
    * @param {string} address - The address of the place info.
-   * @param {string} latitude - The latitude of the place info.
-   * @param {string} longitude - The longitude of the place info.
+   * @param {number} latitude - The latitude of the place info.
+   * @param {number} longitude - The longitude of the place info.
    * @param {string} accessibility - The accessibility information of the place info.
    * @param {string} hasWheelchairAccessibleRestroom - Indicates if the place info has a wheelchair-accessible restroom.
    */
@@ -84,7 +85,7 @@ export class PlaceInfo {
    * @returns {boolean} true if the place is a subway station
    */
   isSubwayStation() {
-    this.category === 'train_station' || this.category === 'subway_station';
+    return this.category === 'train_station' || this.category === 'subway_station';
   }
 
   /**
@@ -103,10 +104,15 @@ export class PlaceInfo {
       console.log(`Subway station has no name`);
       return [];
     }
+
     const openingParenIdx = this.name.indexOf('(');
     const closingParenIdx = this.name.indexOf(')');
+    if (openingParenIdx === -1 || closingParenIdx === -1 || openingParenIdx >= closingParenIdx) {
+      console.log(`Subway station name format is incorrect`);
+      return [];
+    }
     const linesString = this.name.substring(openingParenIdx + 1, closingParenIdx);
-    const linesArr = linesString.split(',');
+    const linesArr = linesString.split(',').map(line => line.trim());
     return linesArr;
   }
 
@@ -126,7 +132,10 @@ export class PlaceInfo {
       return '';
     }
     const openingParenIdx = this.name.indexOf('(');
-    return this.name.substring(0, openingParenIdx);
+    if (openingParenIdx === -1) {
+      return this.name;
+    }
+    return this.name.substring(0, openingParenIdx).trim();
   }
 }
 
