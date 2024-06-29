@@ -1,4 +1,5 @@
 import { Avatar, Container, Grid, Typography } from '@mui/material';
+import abishekImage from '../../assets/abishek.png';
 import aprilImage from '../../assets/april.png';
 import danielleImage from '../../assets/danielle.jpg';
 import ellenImage from '../../assets/ellen.png';

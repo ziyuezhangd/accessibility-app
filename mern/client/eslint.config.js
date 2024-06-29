@@ -37,7 +37,7 @@ export default [
           extensions: [".js", ".jsx", ".ts", ".tsx"],
         },
         alias: {
-          map: [["@", "./src"]],
+          map: [["@", "./src"], ["~", "./src"]],
           extensions: [".js", ".jsx", ".ts", ".tsx"],
         },
       },

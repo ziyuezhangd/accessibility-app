@@ -39,25 +39,6 @@ export const calculateDistanceBetweenTwoCoordinates = (lat1, lon1, lat2, lon2) =
   return d * 1000; // Meters
 };
 
-/**
- * @param {string} placeInfoString - String as returned by place-infos endpoint (eg: '42nd Street-Grand Central (S,4,5,6,7)')
- */
-export const getSubwayLinesFromPlaceInfoString = (placeInfoString) => {
-  const openingParenIdx = placeInfoString.indexOf('(');
-  const closingParenIdx = placeInfoString.indexOf(')');
-  const linesString = placeInfoString.substring(openingParenIdx + 1, closingParenIdx);
-  const linesArr = linesString.split(',');
-  return linesArr;
-};
-
-/**
- * @param {string} placeInfoString - String as returned by place-infos endpoint (eg: '42nd Street-Grand Central (S,4,5,6,7)')
- */
-export const getSubwayStationNameFromPlaceInfoString = (placeInfoString) => {
-  const openingParenIdx = placeInfoString.indexOf('(');
-  return placeInfoString.substring(0, openingParenIdx);
-};
-
 // https://en.wikipedia.org/wiki/List_of_New_York_City_Subway_lines
 export const SUBWAY_LINE_COLORS = {
   A: blue[900],
@@ -86,3 +67,13 @@ export const SUBWAY_LINE_COLORS = {
   S: grey[400],
   PATH: blue[900],
 };
+
+export class MapLocation {
+  constructor(lat, lng, placeId, name, isPlace) {
+    this.lat = lat;
+    this.lng = lng;
+    this.placeId = placeId;
+    this.name = name;
+    this.isPlace = isPlace;
+  }
+}
