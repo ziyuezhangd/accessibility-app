@@ -14,7 +14,7 @@ from os.path import abspath, dirname
 print ('argument list', sys.argv)
 source_type = sys.argv[1]
 csv_file_name = sys.argv[2]
-supported_sources = ['citibike-tripdata']
+supported_sources = ['citibike-tripdata', 'MTA_Subway_Hourly']
 
 is_supported = False
 for supported_source in supported_sources:
@@ -72,16 +72,26 @@ def standardize_columns(df):
         new_df['Latitude'] = new_df['Latitude_Unrounded'].round(3)
         new_df['Longitude'] = new_df['Longitude_Unrounded'].round(3)
         return new_df
+    if source_type == 'MTA_Subway_Hourly':
+        new_df = df.copy()
+        new_df.rename(columns={'latitude': 'Latitude', 'longitude': 'Longitude'}, inplace=True)
+        new_df['SegmentId'] = None
+        return new_df
+
 
 def filter_to_manhattan(df):
     if source_type == 'citibike-tripdata':
         return df # No boroughs in this data
+    if source_type == 'MTA_Subway_Hourly':
+        return df[df['borough'] == 'Manhattan']
 
 # Ensures columns Latitude, Longitude and Segment Id exist
 def read_csv(csv_file_path):
     if source_type == 'citibike-tripdata':
         # Capitalize Lat/Long and add Segment Id
         return pd.read_csv(csv_file_path, dtype={"start_station_id": str, "end_station_id": str})
+    else:
+        return pd.read_csv(csv_file_path)
 
 def download_lion_data():
     # Download and store lion files
