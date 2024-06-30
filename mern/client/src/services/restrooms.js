@@ -10,12 +10,13 @@ import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
  */
 export const getPublicRestrooms = async (accessibility = 'all') => {
   const response = await fetch('/api/restrooms?' + new URLSearchParams({ accessibility }));
-
-  const restrooms = await response.json();
-  if (restrooms.error) {
-    console.error(restrooms.error);
+  if (!response.ok) {
+    const message = `An error has occurred: ${response.statusText}`;
+    console.error(message);
     return;
   }
+
+  const restrooms = await response.json();
 
   return restrooms.map((restroom) => new PublicRestroom(restroom));
 };
@@ -35,7 +36,8 @@ export class PublicRestroom {
    * @param {boolean} options.isPartiallyAccessible - Indicates if the restroom is partially accessible.
    * @param {string} options.restroomType - The type of the restroom (e.g., single, multiple).
    * @param {boolean} options.hasChangingStations - Indicates if the restroom has changing stations.
-   * @param {string} options.url - The URL for more information about the restroom.
+   * @param {object} options.url - The URL for more information about the restroom.
+   * @param {string} options.url.url
    * @param {string} options.latitude - The latitude coordinate of the restroom.
    * @param {string} options.longitude - The longitude coordinate of the restroom.
    */
@@ -101,7 +103,7 @@ export class PublicRestroom {
       const dayString = days[day];
       if (!segment.start.isCertain('hour')) {
         if (days.includes(segment.start.text) || days.includes(segment.text)) {
-          formattedHours += `${dayString}: Closed`;
+          formattedHours += `\n${dayString}: Closed`;
         }
         continue;
       }
@@ -109,7 +111,7 @@ export class PublicRestroom {
       const end = segment.end.date();
       formattedHours += `\n${dayString}: ${start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}-${end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
     }
-    return formattedHours;
+    return formattedHours.substring(1);
   }
 
   /**

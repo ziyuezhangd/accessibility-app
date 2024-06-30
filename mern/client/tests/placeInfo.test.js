@@ -1,6 +1,5 @@
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { PlaceInfo, getPlaceInfos, getCategories, PlaceInfoUtilities } from '../src/services/placeInfo.js';
-import { calculateDistanceBetweenTwoCoordinates } from '../src/utils/MapUtils.js';
 
 describe('Class PlaceInfo', () => {
   const testCategory = 'restaurant';
@@ -166,7 +165,7 @@ describe('Function getPlaceInfos', () => {
     expect(fetch).toHaveBeenCalledWith('/api/place-infos');
     expect(placeInfos).toBeUndefined();
     expect(console.error).toHaveBeenCalledTimes(1);
-  })
+  });
 });
 
 describe('Function getCategories', () => {
@@ -200,45 +199,35 @@ describe('Function getCategories', () => {
     expect(fetch).toHaveBeenCalledWith('/api/place-infos/categories');
     expect(categories).toBeUndefined();
     expect(console.error).toHaveBeenCalledTimes(1);
-  })
+  });
 });
 
 describe('Class PlaceInfoUtilities', () => {
-  jest.mock('../src/utils/MapUtils.js', () => {
-    const mapUtils = jest.requireActual('../src/utils/MapUtils.js');
-    return {
-      __esModule: true,
-      ...mapUtils,
-      calculateDistanceBetweenTwoCoordinates: jest.fn((lat1, lon1, lat2, lon2) => {
-        return Math.abs(lat1 - lat2);
-      })
-    }
-  });
-
   describe('Method getNearest', () => {
     const testPlaceInfos = [
-      new PlaceInfo('test', 'Place A', 'test address', 3, 50),
-      new PlaceInfo('test', 'Place B', 'test address', 2, 4),
-      new PlaceInfo('test', 'Place C', 'test address', 1, 7),
-      new PlaceInfo('test', 'Place D', 'test address', 4, 100)
+      new PlaceInfo('test', 'Place A', 'test address', 41, -71),
+      new PlaceInfo('test', 'Place B', 'test address', 40, -70),
+      new PlaceInfo('test', 'Place C', 'test address', 39, -70),
+      new PlaceInfo('test', 'Place D', 'test address', 41, -70),
     ];
-    const testLat = 5;
-    const testLon = 8;
+    const testLat = 40;
+    const testLon = -71;
 
-    it('should return the top-ranked place based on calculateDistanceBetweenTwoCoordinates', () => {
+    it('should return the nearest place based on calculateDistanceBetweenTwoCoordinates', () => {
       const closestPlace = PlaceInfoUtilities.getNearest(testPlaceInfos, testLat, testLon);
 
       expect(closestPlace).toHaveLength(1);
       expect(closestPlace[0]).toBeInstanceOf(PlaceInfo);
-      expect(calculateDistanceBetweenTwoCoordinates).toHaveBeenCalledTimes(4);
-      expect(closestPlace[0].name).toBe('Place D');
+      expect(closestPlace[0].name).toBe('Place B');
     });
     it('should return the specified number of places', () => {
       const closestPlaces = PlaceInfoUtilities.getNearest(testPlaceInfos, testLat, testLon, 3);
 
       expect(closestPlaces).toHaveLength(3);
       expect(closestPlaces[1]).toBeInstanceOf(PlaceInfo);
-      expect(calculateDistanceBetweenTwoCoordinates).toHaveBeenCalledTimes(4);
+      expect(closestPlaces[0].name).toBe('Place B');
+      expect(closestPlaces[1].name).toBe('Place A');
+      expect(closestPlaces[2].name).toBe('Place D');
     });
-  })
-})
+  });
+});
