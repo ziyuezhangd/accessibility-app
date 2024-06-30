@@ -117,12 +117,12 @@ describe('Class PublicRestroom', () => {
     it('should format correctly for multiple time segments', () => {
       const formattedHours1 = publicRestroom.formatHours();
       const expectedOutput1 = 
-`Monday: 10:00 AM - 06:00 PM
-Tuesday: 01:00 PM - 08:00 PM
-Wednesday: 10:00 AM - 06:00 PM
-Thursday: 10:00 AM - 08:00 PM
-Friday: 10:00 AM - 06:00 PM
-Saturday: 10:00 AM - 05:00 PM
+`Monday: 10:00 AM-06:00 PM
+Tuesday: 01:00 PM-08:00 PM
+Wednesday: 10:00 AM-06:00 PM
+Thursday: 10:00 AM-08:00 PM
+Friday: 10:00 AM-06:00 PM
+Saturday: 10:00 AM-05:00 PM
 Sunday: Closed`.trim();
       expect(formattedHours1).toBe(expectedOutput1);
 
@@ -130,24 +130,24 @@ Sunday: Closed`.trim();
       const formattedHours2 = publicRestroom.formatHours();
       const expectedOutput2 = 
 `Sunday: Closed
-Monday: 11:00 AM - 06:00 PM
-Tuesday: 11:00 AM - 06:00 PM
-Wednesday: 11:00 AM - 06:00 PM
-Thursday: 11:00 AM - 06:00 PM
-Friday: 11:00 AM - 06:00 PM
-Saturday: 11:00 AM - 06:00 PM`.trim();
+Monday: 11:00 AM-06:00 PM
+Tuesday: 11:00 AM-06:00 PM
+Wednesday: 11:00 AM-06:00 PM
+Thursday: 11:00 AM-06:00 PM
+Friday: 11:00 AM-06:00 PM
+Saturday: 11:00 AM-06:00 PM`.trim();
       expect(formattedHours2).toBe(expectedOutput2);
 
       publicRestroom.hours = "Monday to Saturday: 7:00 am-11:00 pm; Sunday & holidays: 11:00 am-7:00 pm";
       const formattedHours3 = publicRestroom.formatHours();
       const expectedOutput3 = 
-`Monday: 07:00 AM - 11:00 PM
-Tuesday: 07:00 AM - 11:00 PM
-Wednesday: 07:00 AM - 11:00 PM
-Thursday: 07:00 AM - 11:00 PM
-Friday: 07:00 AM - 11:00 PM
-Saturday: 07:00 AM - 11:00 PM
-Sunday: 11:00 AM - 07:00 PM`.trim();
+`Monday: 07:00 AM-11:00 PM
+Tuesday: 07:00 AM-11:00 PM
+Wednesday: 07:00 AM-11:00 PM
+Thursday: 07:00 AM-11:00 PM
+Friday: 07:00 AM-11:00 PM
+Saturday: 07:00 AM-11:00 PM
+Sunday: 11:00 AM-07:00 PM`.trim();
       expect(formattedHours3).toBe(expectedOutput3);
     });
   });
