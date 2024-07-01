@@ -1,11 +1,16 @@
 from flask import Flask, request, jsonify
 import pickle
 import pandas as pd
+import json
 
 app = Flask(__name__)
 
-# All segment IDs & MODZCTAs for Manhattan here
-segment_ids = ["segment1", "segment2", "segment3", "segment4"]
+# All segment IDs for Manhattan
+with open('../ml/output/segment_to_lat_long.json', 'r') as f:
+  data = json.load(f)
+segment_ids = list(data.keys())
+
+# All MODZCTA for Manhattan here
 MODZCTAs = ["zipcode1", "zipcode2"]
 
 def load_model(model_path):
