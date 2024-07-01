@@ -3,6 +3,7 @@ import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useContext} from 'react';
 import { GoogleMap, HeatmapLayer, MarkerClusterer } from 'react-google-map-wrapper';
+import AccessibleMarkers from './accessibilityMarkers';
 import Dropdown from './Dropdown';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
