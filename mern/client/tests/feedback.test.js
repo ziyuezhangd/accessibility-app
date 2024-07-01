@@ -25,7 +25,12 @@ describe('Class Feedback', () => {
   });
 
   it('should handle invalid coordinates', () => {
-    const invalidCoordinates = [41];
+    let invalidCoordinates = [41];
+    expect(() => {
+      new Feedback(testName, testEmail, testComment, testAge, testGender, testConditions, invalidCoordinates);
+    }).toThrow(Error);
+
+    invalidCoordinates = {latitude: 41, longtitude: -73};
     expect(() => {
       new Feedback(testName, testEmail, testComment, testAge, testGender, testConditions, invalidCoordinates);
     }).toThrow(Error);
@@ -49,7 +54,11 @@ describe('Class Feedback', () => {
     const feedback4 = new Feedback(testName, testEmail, testComment, testAge, testGender, testConditions, suspiciousCoordinates);
     expect(feedback4).toBeInstanceOf(Feedback);
 
-    expect(console.warn).toHaveBeenCalledTimes(4);
+    suspiciousCoordinates = [MANHATTAN_LNG, MANHATTAN_LAT];
+    const feedback5 = new Feedback(testName, testEmail, testComment, testAge, testGender, testConditions, suspiciousCoordinates);
+    expect(feedback5).toBeInstanceOf(Feedback);
+
+    expect(console.warn).toHaveBeenCalledTimes(5);
   });
 });
 

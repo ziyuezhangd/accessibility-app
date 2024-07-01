@@ -149,6 +149,9 @@ export class PlaceInfoUtilities {
    * @return {Array<PlaceInfo>} list of places
    */
   static getNearest = (placeInfos, lat, lng, qty = 1) => {
+    if (!Array.isArray(placeInfos) || !placeInfos.every(place => place instanceof PlaceInfo)) {
+      return [];
+    }
     const placesSorted = _.sortBy(placeInfos, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
     return placesSorted.slice(0, qty);
   };

@@ -229,5 +229,40 @@ describe('Class PlaceInfoUtilities', () => {
       expect(closestPlaces[1].name).toBe('Place A');
       expect(closestPlaces[2].name).toBe('Place D');
     });
+    
+    it('should handle qty=0', () => {
+      const closestPlace = PlaceInfoUtilities.getNearest(testPlaceInfos, testLat, testLon, 0);
+
+      expect(closestPlace).toEqual([]);
+    });
+    it('should handle empty placeInfos', () => {
+      const closestPlace = PlaceInfoUtilities.getNearest([], testLat, testLon);
+
+      expect(closestPlace).toEqual([]);
+    });
+    it('should handle invalid placeInfos', () => {
+      const invalidInfos = [1, 2];
+      const closestPlace = PlaceInfoUtilities.getNearest(invalidInfos, testLat, testLon);
+
+      expect(closestPlace).toEqual([]);
+    });
+    it('should handle qty>length', () => {
+      const closestPlaces = PlaceInfoUtilities.getNearest(testPlaceInfos, testLat, testLon, 5);
+
+      expect(closestPlaces).toHaveLength(testPlaceInfos.length);
+      expect(closestPlaces[0].name).toBe('Place B');
+      expect(closestPlaces[1].name).toBe('Place A');
+      expect(closestPlaces[2].name).toBe('Place D');
+      expect(closestPlaces[3].name).toBe('Place C');
+    });
+    it('should handle lat/lng in string', () => {
+      const testLatStr = '40';
+      const testLonStr = '-71';
+      const closestPlace = PlaceInfoUtilities.getNearest(testPlaceInfos, testLatStr, testLonStr);
+
+      expect(closestPlace).toHaveLength(1);
+      expect(closestPlace[0]).toBeInstanceOf(PlaceInfo);
+      expect(closestPlace[0].name).toBe('Place B');
+    });
   });
 });

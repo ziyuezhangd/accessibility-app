@@ -157,9 +157,8 @@ Sunday: 11:00 AM-07:00 PM`.trim();
 
   describe('Method isOpenNow', () => {
     const now = getCurrentTimeInNewYork();
-    const dateNow = new Date(now);
-    const hourNow = dateNow.getUTCHours();
-    const dayNow = dateNow.getUTCDay();
+    const hourNow = now.hour();
+    const dayNow = now.day();
     it('should return correctly for restrooms with same daily opening hours', () => {
       publicRestroom.hours = '8am-4pm, Open later seasonally';
       const isOpen1 = publicRestroom.isOpenNow();
