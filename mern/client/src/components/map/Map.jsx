@@ -3,6 +3,7 @@ import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
+import HighlightMarkers from './highlightMarkers';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
@@ -52,7 +53,7 @@ const odorData = [
 export const Map = () => {
   const theme = useTheme();
   const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
-
+  HighlightMarkers();
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
