@@ -18,7 +18,13 @@ export const getPublicRestrooms = async (accessibility = 'all') => {
 
   const restrooms = await response.json();
 
-  return restrooms.map((restroom) => new PublicRestroom(restroom));
+  return restrooms.map((restroom) => {
+    return new PublicRestroom({
+      ...restroom,
+      latitude: parseFloat(restroom.latitude),
+      longitude: parseFloat(restroom.longitude)
+    });
+  });
 };
 
 /**
@@ -38,8 +44,8 @@ export class PublicRestroom {
    * @param {boolean} options.hasChangingStations - Indicates if the restroom has changing stations.
    * @param {object} options.url - The URL for more information about the restroom.
    * @param {string} options.url.url
-   * @param {string} options.latitude - The latitude coordinate of the restroom.
-   * @param {string} options.longitude - The longitude coordinate of the restroom.
+   * @param {number} options.latitude - The latitude coordinate of the restroom.
+   * @param {number} options.longitude - The longitude coordinate of the restroom.
    */
   constructor({ name, status, hours, isAccessible, isFullyAccessible, isPartiallyAccessible, restroomType, hasChangingStations, url, latitude, longitude }) {
     this.name = name;

@@ -45,6 +45,8 @@ describe('Function getPublicRestrooms', () => {
     expect(restrooms[1]).toBeInstanceOf(PublicRestroom);
     expect(restrooms[0].name).toBe('Corporal Thompson Playground');
     expect(restrooms[1].restroomType).toBe('Single-Stall All Gender Restroom(s)');
+    expect(typeof restrooms[0].latitude).toBe('number');
+    expect(typeof restrooms[0].longitude).toBe('number');
   });
 
   it('should handle fetch error', async () => {
@@ -109,6 +111,7 @@ describe('Class PublicRestroom', () => {
       const formattedHours2 = publicRestroom.formatHours();
       expect(formattedHours2).toBe(publicRestroom.hours);
 
+      // To be determined on how to display opening hours like this
       publicRestroom.hours = 'Fall, spring summer: 7am - 9pm. Winter: 7am - 5:30pm';
       const formattedHours3 = publicRestroom.formatHours();
       expect(formattedHours3).toBe(publicRestroom.hours);
