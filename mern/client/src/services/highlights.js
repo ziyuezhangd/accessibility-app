@@ -5,6 +5,6 @@ export const getAccessibilityHighlightPlaces = async () => {
     console.error(message);
     return;
   }
-  const busynessRatings = await response.json();
-  return busynessRatings;
+  const accessibilityHighlightPlaces = await response.json();
+  return accessibilityHighlightPlaces;
 };

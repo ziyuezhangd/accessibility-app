@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
+import { getAccessibilityHighlightPlaces } from '../services/highlights';
 import { getPlaceInfos } from '../services/placeInfo';
 import { getPublicRestrooms } from '../services/restrooms';
 
@@ -10,10 +11,13 @@ const DataProvider = ({children}) => {
   const [restrooms, setRestrooms] = useState([]);
   /** @type {[PlaceInfo[], React.Dispatch<React.SetStateAction<PlaceInfo[]>>]} */
   const [placeInfos, setPlaceInfos] = useState([]);
+  /** @type {[AccessibilityHighlightPlace[], React.Dispatch<React.SetStateAction<AccessibilityHighlightPlace]>>]} */
+  const [accessibilityHighlightPlaces, setAccessibilityHighlightPlaces] = useState([]);
     
   useEffect(() => {
     loadRestrooms();
     loadPlaceInfo();
+    loadAccessibilityHighlightPlaces();
   }, []);
 
   const loadRestrooms = async () => {
@@ -25,9 +29,14 @@ const DataProvider = ({children}) => {
     const placeInfos = await getPlaceInfos();
     setPlaceInfos(placeInfos);
   };
+
+  const loadAccessibilityHighlightPlaces = async () => {
+    const accessibilityHighlightPlaces = await getAccessibilityHighlightPlaces();
+    setAccessibilityHighlightPlaces(accessibilityHighlightPlaces);
+  };
   
   return (
-    <DataContext.Provider value={{restrooms, placeInfos}}>
+    <DataContext.Provider value={{restrooms, placeInfos, accessibilityHighlightPlaces}}>
       {children}
     </DataContext.Provider>
   );
