@@ -15,7 +15,7 @@ export default function AccessibleMarkers() {
           lat: placeInfo.latitude,
           lng: placeInfo.longitude,
           imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
-          imgSize: 2, 
+          imgSize: '30px', 
           imgAlt: PlaceInfoUtilities.name,
         };
       });

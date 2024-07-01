@@ -7,7 +7,6 @@ import AccessibleMarkers from './accessibilityMarkers';
 import Dropdown from './Dropdown';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
-import AccessibleMarkers from '../detailsView/accessibilityMarkers';
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
