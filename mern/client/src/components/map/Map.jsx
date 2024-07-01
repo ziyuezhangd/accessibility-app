@@ -1,9 +1,14 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
+import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
+import dayjs from 'dayjs';
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
+import { Control } from 'react-google-map-wrapper';
+import DateTimePicker from './DateTimePicker';
 import Dropdown from './Dropdown';
+import SearchBar from './SearchBar';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import PersistentDrawerLeft from '../detailsView/Drawer';
@@ -50,12 +55,15 @@ const odorData = [
 ];
 
 export const Map = () => {
+  const [placeInfos, setPlaceInfos] = useState([]);
   const theme = useTheme();
   const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
 
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -118,16 +126,6 @@ export const Map = () => {
     createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
   };
-
-  const fetchData = async () => {
-    // TODO: when we have these models ready
-    // const busynessRatings = await getBusynessRatings(new Date());
-    // console.log('busynessRatings: ', busynessRatings);
-    // const noiseRatings = await getNoiseRatings(new Date());
-    // console.log('noiseRatings: ', noiseRatings);
-    // const odourRatings = await getOdourRatings(new Date());
-    // console.log('odourRatings: ', odourRatings);
-  };
   
   const handleAddToFavorites = () => {
     if (selectedPlace) {
@@ -138,6 +136,21 @@ export const Map = () => {
     }
   };
 
+  const handleSearchEntered = (selected) => { 
+    var request = {
+      placeId: selected.id,
+      fields: ['name']
+    };
+    placesService.getDetails(request, (place, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        setSnackbarOpen(true);
+        setLocationData(selected.lat, selected.lng, selected.id, place.name, true);
+      } else {
+        console.error('Oh no!');
+      }
+    });
+  };
+
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -145,9 +158,35 @@ export const Map = () => {
     setSnackbarOpen(false);
   };
 
+  const fetchData = async () => {
+    const busynessRatings = await getBusynessRatings(selectedDate);
+    console.log('busynessRatings: ', busynessRatings);
+    const noiseRatings = await getNoiseRatings(selectedDate);
+    console.log('noiseRatings: ', noiseRatings);
+    const odourRatings = await getOdourRatings(selectedDate);
+    console.log('odourRatings: ', odourRatings);
+    getPlaceInfos().then(setPlaceInfos);
+  };
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [selectedDate]);
+
+  const containerStyle = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '10px',
+    width: '100%',
+    padding: '10px',
+  };
+
+  const dateTimeHelpContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+  };
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -166,7 +205,20 @@ export const Map = () => {
             mapId: VITE_MAP_ID,
           }}
         >
-          <Dropdown onSelect={handleSelect} />
+          <Box sx={containerStyle}>
+            <Dropdown onSelect={handleSelect} />
+            <Control position={google.maps.ControlPosition.TOP_CENTER}>
+              <SearchBar
+                onSearchEntered={handleSearchEntered}/>
+            </Control>
+            <Control position={google.maps.ControlPosition.TOP_RIGHT}>
+              <Box sx={dateTimeHelpContainerStyle}>
+                <DateTimePicker selectedDate={selectedDate}
+                  setSelectedDate={setSelectedDate} />
+                <HelpIcon />
+              </Box>
+            </Control>
+          </Box>
           <HelpIcon />
           {heatMapData.length > 0 && (
             <HeatmapLayer
