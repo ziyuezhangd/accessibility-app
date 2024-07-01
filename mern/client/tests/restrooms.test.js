@@ -101,15 +101,15 @@ describe('Class PublicRestroom', () => {
 
   describe('Method formatHours', () => {
     it('should return the original hours string when only one time segment', () => {
-      publicRestroom.hours = "8am-4pm, Open later seasonally";
+      publicRestroom.hours = '8am-4pm, Open later seasonally';
       const formattedHours1 = publicRestroom.formatHours();
       expect(formattedHours1).toBe(publicRestroom.hours);
 
-      publicRestroom.hours = "Everyday 8:00 am-10:00 pm";
+      publicRestroom.hours = 'Everyday 8:00 am-10:00 pm';
       const formattedHours2 = publicRestroom.formatHours();
       expect(formattedHours2).toBe(publicRestroom.hours);
 
-      publicRestroom.hours = "Fall, spring summer: 7am - 9pm. Winter: 7am - 5:30pm";
+      publicRestroom.hours = 'Fall, spring summer: 7am - 9pm. Winter: 7am - 5:30pm';
       const formattedHours3 = publicRestroom.formatHours();
       expect(formattedHours3).toBe(publicRestroom.hours);
     });
@@ -126,7 +126,7 @@ Saturday: 10:00 AM-05:00 PM
 Sunday: Closed`.trim();
       expect(formattedHours1).toBe(expectedOutput1);
 
-      publicRestroom.hours = "Sunday: Closed \nMonday: 11:00 am - 6:00 pm \nTuesday: 11:00 am - 6:00 pm \nWednesday: 11:00 am - 6:00 pm \nThursday: 11:00 am - 6:00 pm \nFriday: 11:00 am - 6:00 pm \nSaturday: 11:00 am - 6:00 pm";
+      publicRestroom.hours = 'Sunday: Closed \nMonday: 11:00 am - 6:00 pm \nTuesday: 11:00 am - 6:00 pm \nWednesday: 11:00 am - 6:00 pm \nThursday: 11:00 am - 6:00 pm \nFriday: 11:00 am - 6:00 pm \nSaturday: 11:00 am - 6:00 pm';
       const formattedHours2 = publicRestroom.formatHours();
       const expectedOutput2 = 
 `Sunday: Closed
@@ -138,7 +138,7 @@ Friday: 11:00 AM-06:00 PM
 Saturday: 11:00 AM-06:00 PM`.trim();
       expect(formattedHours2).toBe(expectedOutput2);
 
-      publicRestroom.hours = "Monday to Saturday: 7:00 am-11:00 pm; Sunday & holidays: 11:00 am-7:00 pm";
+      publicRestroom.hours = 'Monday to Saturday: 7:00 am-11:00 pm; Sunday & holidays: 11:00 am-7:00 pm';
       const formattedHours3 = publicRestroom.formatHours();
       const expectedOutput3 = 
 `Monday: 07:00 AM-11:00 PM
@@ -158,7 +158,7 @@ Sunday: 11:00 AM-07:00 PM`.trim();
     const hourNow = dateNow.getUTCHours();
     const dayNow = dateNow.getUTCDay();
     it('should return correctly for restrooms with same daily opening hours', () => {
-      publicRestroom.hours = "8am-4pm, Open later seasonally";
+      publicRestroom.hours = '8am-4pm, Open later seasonally';
       const isOpen1 = publicRestroom.isOpenNow();
       if (hourNow >= 8 && hourNow < 16){
         expect(isOpen1).toBe(true);
@@ -166,36 +166,36 @@ Sunday: 11:00 AM-07:00 PM`.trim();
         expect(isOpen1).toBe(false);
       }
 
-      publicRestroom.hours = "Everyday 8:00 am-10:00 pm";
+      publicRestroom.hours = 'Everyday 8:00 am-10:00 pm';
       const isOpen2 = publicRestroom.isOpenNow();
       if (hourNow >= 8 && hourNow < 22){
-        expect(isOpen1).toBe(true);
+        expect(isOpen2).toBe(true);
       } else {
-        expect(isOpen1).toBe(false);
+        expect(isOpen2).toBe(false);
       }
     });
 
     it('should return correctly for restrooms with varying daily opening hours', () => {
-      publicRestroom.hours = "Monday\t10 am - 6 pm\nTuesday\t1 pm - 8 pm\nWednesday\t10 am - 6 pm\nThursday\t10 am - 8 pm\nFriday\t10 am - 6 pm\nSaturday\t10 am - 5 pm\nSunday\tCLOSED";
+      publicRestroom.hours = 'Monday\t10 am - 6 pm\nTuesday\t1 pm - 8 pm\nWednesday\t10 am - 6 pm\nThursday\t10 am - 8 pm\nFriday\t10 am - 6 pm\nSaturday\t10 am - 5 pm\nSunday\tCLOSED';
       const isOpen3 = publicRestroom.isOpenNow();
       switch(dayNow){
-        case 0:
+      case 0:
+        expect(isOpen3).toBe(false);
+        break;
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+      case 6:
+        if (hourNow >= 11 && hourNow < 18){
+          expect(isOpen3).toBe(true);
+        } else {
           expect(isOpen3).toBe(false);
-          break;
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-          if (hourNow >= 11 && hourNow < 18){
-            expect(isOpen3).toBe(true);
-          } else {
-            expect(isOpen3).toBe(false);
-          }
-          break;
+        }
+        break;
       }
-    })
+    });
   });
 });
 

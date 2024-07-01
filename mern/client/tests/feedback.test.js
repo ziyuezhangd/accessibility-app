@@ -44,7 +44,7 @@ describe('Class Feedback', () => {
     expect(feedback4).toBeInstanceOf(Feedback);
 
     expect(console.warn).toHaveBeenCalledTimes(4);
-  })
+  });
 });
 
 describe('Function postFeedback', () => {
@@ -84,5 +84,5 @@ describe('Function postFeedback', () => {
       },
       body: JSON.stringify(feedback),
     });
-  })
-})
+  });
+});
