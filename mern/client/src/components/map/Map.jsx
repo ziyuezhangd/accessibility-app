@@ -1,13 +1,20 @@
-import { Box, useTheme } from '@mui/material';
-import * as _ from 'lodash';
-import { useState, useEffect } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
+import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
+import dayjs from 'dayjs';
+import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
+import { Control } from 'react-google-map-wrapper';
+import DateTimePicker from './DateTimePicker';
 import Dropdown from './Dropdown';
-import HelpIcon from './HelpIcon';
+import SearchBar from './SearchBar';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient, calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import PersistentDrawerLeft from '../detailsView/Drawer';
+import HelpIcon from '../helpModal/HelpIcon';
 
+const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
   { lat: 40.748817, lng: -73.985428, weight: 1 },
@@ -49,30 +56,29 @@ const odorData = [
 
 export const Map = () => {
   const [placeInfos, setPlaceInfos] = useState([]);
-
   const theme = useTheme();
+  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
+
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
-  const [mapInstance, setMapInstance] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  useEffect(() => {
-    console.log('Map instance loaded:', mapInstance);
-  }, [mapInstance]);
+  /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
+  const [selectedPlace, setSelectedPlace] = useState(null);
 
   const handleSelect = (item) => {
     switch (item.id) {
     case 'busyness':
-      console.log('Setting busyness data and gradient');
       setHeatMapData(busynessData);
       setHeatMapGradient(busynessGradient);
       break;
     case 'noise':
-      console.log('Setting noise data and gradient');
       setHeatMapData(noiseData);
       setHeatMapGradient(noiseGradient);
       break;
     case 'odor':
-      console.log('Setting odor data and gradient');
       setHeatMapData(odorData);
       setHeatMapGradient(odorGradient);
       break;
@@ -82,65 +88,173 @@ export const Map = () => {
     }
   };
 
-  const handleMapClicked = (map, e) => {
+  const handleMapClicked = async (map, e) => {
+    // Clear any existing markers
+    clearMarkers();
     const isPlaceIconClicked = e.placeId !== undefined;
-    const isLocationClicked = e.placeId === undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
+
     if (isPlaceIconClicked) {
-      console.log('Place clicked: ', e, lat, lng);
-    }
-    if (isLocationClicked) {
-      console.log('Location clicked: ', lat, lng);
+      var request = {
+        placeId: e.placeId,
+        fields: ['name']
+      };
+      placesService.getDetails(request, (place, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          setSnackbarOpen(true);
+          setLocationData(lat, lng, e.placeId, place.name, true);
+        } else {
+          console.error('Oh no!');
+        }
+      });
+    } else {
+      geocoder.geocode({location: {lat, lng}}).then((response) => {
+        if (response.results[0]) {
+          setLocationData(lat, lng, response.results[0].place_id, response.results[0].formatted_address, false);
+        } else {
+          window.alert('No results found');
+        }
+      });
     }
   };
 
+  const setLocationData = (lat, lng, placeId, name, isPlace) => {
+    const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
+    setSelectedPlace(selectedLocation);
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
+    mapInstance.setZoom(DEFAULT_ZOOM + 5);
+  };
+  
+  const handleAddToFavorites = () => {
+    if (selectedPlace) {
+      console.log('Added to favorites:', selectedPlace);
+      const event = new CustomEvent('favoriteAdded', { detail: selectedPlace });
+      window.dispatchEvent(event);
+      setSnackbarOpen(false);
+    }
+  };
+
+  const handleSearchEntered = (selected) => { 
+    var request = {
+      placeId: selected.id,
+      fields: ['name']
+    };
+    placesService.getDetails(request, (place, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        setSnackbarOpen(true);
+        setLocationData(selected.lat, selected.lng, selected.id, place.name, true);
+      } else {
+        console.error('Oh no!');
+      }
+    });
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
   const fetchData = async () => {
-    const busynessRatings = await getBusynessRatings(new Date());
+    const busynessRatings = await getBusynessRatings(selectedDate);
     console.log('busynessRatings: ', busynessRatings);
-    const noiseRatings = await getNoiseRatings(new Date());
+    const noiseRatings = await getNoiseRatings(selectedDate);
     console.log('noiseRatings: ', noiseRatings);
-    const odourRatings = await getOdourRatings(new Date());
+    const odourRatings = await getOdourRatings(selectedDate);
     console.log('odourRatings: ', odourRatings);
     getPlaceInfos().then(setPlaceInfos);
   };
 
   useEffect(() => {
-    // This is just testing the rating queries
     fetchData();
-  }, []);
+  }, [selectedDate]);
+
+  const containerStyle = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '10px',
+    width: '100%',
+    padding: '10px',
+  };
+
+  const dateTimeHelpContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+  };
 
   return (
-    <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
-      <GoogleMap
-        style={{ height: '95vh', top: '7vh' }}
-        zoom={DEFAULT_ZOOM}
-        center={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
-        onClick={handleMapClicked}
-        onLoad={(map) => setMapInstance(map)}
-        options={{
-          libraries: ['visualization'],
-        }}
-      >
-        <Dropdown onSelect={handleSelect} />
-        <HelpIcon />
-        {console.log('Rendering HeatMap Data:', heatMapData)}
-        {console.log('Rendering HeatMap Gradient:', heatMapGradient)}
-        {heatMapData.length > 0 && (
-          <HeatmapLayer
-            data={heatMapData.map(data => ({
-              location: new window.google.maps.LatLng(data.lat, data.lng),
-              weight: data.weight
-            }))}
-            gradient={heatMapGradient}
-            radius={20}
-            opacity={0.6}
-          />
-        )}
-        <Marker lat={MANHATTAN_LAT}
-          lng={MANHATTAN_LNG} />
-      </GoogleMap>
+    <Box sx={{ display: 'flex' }}>
+      <PersistentDrawerLeft selectedLocation={selectedPlace}/>
+      <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
+        <GoogleMap
+          style={{ height: '95vh', top: '7vh' }}
+          zoom={DEFAULT_ZOOM}
+          center={selectedPlace === null ? { lat: MANHATTAN_LAT, lng: MANHATTAN_LNG } : { lat: selectedPlace.lat, lng: selectedPlace.lng }}
+          onClick={handleMapClicked}
+          onLoad={onMapLoaded}
+          options={{
+            libraries: ['visualization', 'places'],
+          }}
+          mapOptions={{
+            mapId: VITE_MAP_ID,
+          }}
+        >
+          <Box sx={containerStyle}>
+            <Dropdown onSelect={handleSelect} />
+            <Control position={google.maps.ControlPosition.TOP_CENTER}>
+              <SearchBar
+                onSearchEntered={handleSearchEntered}/>
+            </Control>
+            <Control position={google.maps.ControlPosition.TOP_RIGHT}>
+              <Box sx={dateTimeHelpContainerStyle}>
+                <DateTimePicker selectedDate={selectedDate}
+                  setSelectedDate={setSelectedDate} />
+                <HelpIcon />
+              </Box>
+            </Control>
+          </Box>
+          <HelpIcon />
+          {heatMapData.length > 0 && (
+            <HeatmapLayer
+              data={heatMapData.map((data) => ({
+                location: new window.google.maps.LatLng(data.lat, data.lng),
+                weight: data.weight,
+              }))}
+              gradient={heatMapGradient}
+              radius={20}
+              opacity={0.6}
+            />
+          )}
+          {markers.map(marker => marker)}
+        </GoogleMap>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          message="Add this place to favorites?"
+          action={(
+            <>
+              <Button color="secondary"
+                size="small"
+                onClick={handleAddToFavorites}>
+              Add to Favorites
+              </Button>
+              <IconButton size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={handleSnackbarClose}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </>
+          )}
+        />
+      </Box>
     </Box>
   );
 };
