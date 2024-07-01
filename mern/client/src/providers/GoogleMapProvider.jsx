@@ -18,24 +18,24 @@ const GoogleMapProvider = ({children}) => {
   const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
-    const loadPlaces = async () => {
-      const { PlacesService } = await google.maps.importLibrary('places');
-      const service = new PlacesService(mapInstance);
-      setPlacesService(service);
-      console.log('Places service loaded successfully: ', service);
-    };
-
-    const loadGeocoder = async () => {
-      const geocoder = new google.maps.Geocoder();
-      setGeocoder(geocoder);
-      console.log('Geocoder loaded successfully: ', geocoder);
-    };
-
     if (mapInstance) {
       loadPlaces();
       loadGeocoder();
     }
   }, [mapInstance]);
+
+  const loadPlaces = async () => {
+    const { PlacesService } = await google.maps.importLibrary('places');
+    const service = new PlacesService(mapInstance);
+    setPlacesService(service);
+    console.log('Places service loaded successfully: ', service);
+  };
+
+  const loadGeocoder = async () => {
+    const geocoder = new google.maps.Geocoder();
+    setGeocoder(geocoder);
+    console.log('Geocoder loaded successfully: ', geocoder);
+  };
 
   const handleMapLoaded = (map) => {
     setMapInstance(map);
@@ -100,8 +100,8 @@ const GoogleMapProvider = ({children}) => {
   };
 
   /**
-   * Remove markers at specific latitude/longitudes
-   * @param {Array<{lat: number, lng: number}>} list of latitude and longitudes to remove markers from
+   * 
+   * @param {Array<{lat: number, lng: number}>} latLngs 
    */
   const removeMarkers = (latLngs) => {
     for (const latLng of latLngs) {
@@ -112,7 +112,7 @@ const GoogleMapProvider = ({children}) => {
   };
 
   /**
-   * Remove all markers from the map.
+   * 
    */
   const clearMarkers = () => {
     setMarkers([]);

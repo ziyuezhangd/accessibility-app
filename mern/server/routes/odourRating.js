@@ -1,5 +1,5 @@
 import express from 'express';
-import dbHandler from '../db/dbHandler.js';
+import db from '../db/connection.js';
 
 const router = express.Router();
 
@@ -11,7 +11,8 @@ router.get('/', async (req, res) => {
   }
 
   try {
-    const latestModel = await dbHandler.getLatestModel('odourModel');
+    const collection = db.collection('odourModel');
+    const latestModel = await collection.findOne({}, { sort: { date: -1 } });
 
     //this assumes a method called 'predict'
     const predictions = latestModel.predict(datetimeObj);
@@ -40,7 +41,8 @@ router.get('/location', async (req, res) => {
   const datetimeObj = new Date(datetime);
 
   try {
-    const latestModel = await dbHandler.getLatestModel('odourModel');
+    const collection = db.collection('odourModel');
+    const latestModel = await collection.findOne({}, { sort: { date: -1 } });
 
     //this assumes a method called 'predict'
     const predictions = latestModel.predict(datetimeObj, latitude, longitude);

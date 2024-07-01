@@ -2,7 +2,7 @@ import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import db from '../db/connection.js';
-import router from '../routes/busynessRating.js';
+import router from '../routes/soundRating.js';
 
 const app = express();
 app.use('/', router);
@@ -11,8 +11,8 @@ describe('GET', () => {
   beforeAll(() => {
     jest.mock('../db/connection.js');
   });
-
-  describe('/busynessRating', () => {
+  
+  describe('/soundRating', () => {
     // This test requires knowledge of how data is retrieved.
     it('should return 200 and prediction if model is retrieved and no error occurs', async () => {
       const dummyPredictions = [{ _id: '1', rating: 'A' }, { _id: '2', rating: 'C' }];
@@ -23,30 +23,30 @@ describe('GET', () => {
         findOne: jest.fn().mockResolvedValue(mockLatestModel),
       };
       jest.spyOn(db, 'collection').mockReturnValue(mockCollection);
-
+  
       const response = await request(app).get('?datetime=2024-06-18T12:34:56Z');
       expect(response.status).toBe(200);
       expect(response.body).toEqual(dummyPredictions);
     });
-
+  
     it('should return 500 if database error occurs', async () => {
       jest.spyOn(db, 'collection').mockImplementation(() => {
         throw new Error('Database error');
       });
-
+  
       const response = await request(app).get('?datetime=2024-06-18T12:34:56Z');
       expect(response.status).toBe(500);
     });
-
+  
     it('should return 400 if a datetime parameter is not provided', async () => {
       const response = await request(app).get('/');
       expect(response.status).toBe(400);
     });
   });
-
-  describe('/busynessRating/location', () => {
+  
+  describe('/soundRating/location', () => {
     // This test requires knowledge of how data is retrieved.
-    it('should return 200 and prediction if model is retrieved and no error occurs', async () => {
+    it('should return 200 and prediction if model is retrieved', async () => {
       const dummyPrediction = { rating: 'A' };
       const mockLatestModel = {
         predict: jest.fn().mockReturnValue(dummyPrediction),
@@ -55,21 +55,21 @@ describe('GET', () => {
         findOne: jest.fn().mockResolvedValue(mockLatestModel),
       };
       jest.spyOn(db, 'collection').mockReturnValue(mockCollection);
-
+  
       const response = await request(app).get('?datetime=2024-06-18T12:34:56Z&lat=40.7646&long=-73.9990');
       expect(response.status).toBe(200);
       expect(response.body).toEqual(dummyPrediction);
     });
-
+  
     it('should return 500 if database error occurs', async () => {
       jest.spyOn(db, 'collection').mockImplementation(() => {
         throw new Error('Database error');
       });
-
+  
       const response = await request(app).get('/location?datetime=2024-06-18T12:34:56Z&lat=40.7646&long=-73.9990');
       expect(response.status).toBe(500);
     });
-
+  
     it('should return 400 if any of datetime/lat/long parameter is not provided', async () => {
       const response1 = await request(app).get('/location?lat=40.7646&long=-73.9990');
       expect(response1.status).toBe(400);
@@ -85,7 +85,7 @@ describe('GET', () => {
       expect(response6.status).toBe(400);
     });
   });
-
+  
   afterAll(() => {
     jest.restoreAllMocks();
   });

@@ -1,46 +1,54 @@
-import { describe, it, expect, jest, afterEach } from '@jest/globals';
+import { describe, it, expect, jest, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
-import dbHandler from '../db/dbHandler.js';
+import db from '../db/connection.js';
 import router from '../routes/feedback.js';
 
 const app = express();
 app.use(express.json());
 app.use('/', router);
 
-jest.mock('../db/dbHandler.js');
-
-const dummyFeedback = {
-  name: 'Kate',
-  email: 'kate@gmail.com',
-  comment: 'This is test feedback.',
-  coordinates: [-73.9712, 40.7831],
-};
-
 describe('POST /feedback', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
+  const dummyFeedback = {
+    name: 'Kate',
+    email: 'kate@gmail.com',
+    comment: 'This is test feedback.',
+    coordinates: [-73.9712, 40.7831],
+  };
+
+  beforeAll(() => {
+    jest.mock('../db/connection.js');
   });
-  
-  it('should return 201 if feedback is inserted and no error occurs', async () => {
-    dbHandler.insertFeedback = jest.fn();
+
+  it('with coordinates should return 201 if feedback is inserted and no error occurs', async () => {
+    const mockCollection = {
+      insertOne: jest.fn(),
+    };
+    jest.spyOn(db, 'collection').mockReturnValue(mockCollection);
 
     const response = await request(app).post('/').send(dummyFeedback);
     expect(response.status).toBe(201);
-    expect(dbHandler.insertFeedback).toHaveBeenCalledTimes(1);
-    expect(dbHandler.insertFeedback).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockCollection.insertOne).toHaveBeenCalledTimes(1);
+    expect(mockCollection.insertOne).toHaveBeenCalledWith({
       ...dummyFeedback,
       date: expect.any(Date),
-    }));
+    });
   });
 
-  it('without coordinates should return 500', async () => {
+  it('without coordinates should return 201 if feedback is inserted and no error occurs', async () => {
     const { coordinates, ...feedbackWithoutCoordinates} = dummyFeedback;
-    jest.spyOn(dbHandler, 'insertFeedback');
+    const mockCollection = {
+      insertOne: jest.fn(),
+    };
+    jest.spyOn(db, 'collection').mockReturnValue(mockCollection);
 
     const response = await request(app).post('/').send(feedbackWithoutCoordinates);
-    expect(response.status).toBe(500);
-    expect(dbHandler.insertFeedback).toHaveBeenCalledTimes(0);
+    expect(response.status).toBe(201);
+    expect(mockCollection.insertOne).toHaveBeenCalledTimes(1);
+    expect(mockCollection.insertOne).toHaveBeenCalledWith({
+      ...feedbackWithoutCoordinates,
+      date: expect.any(Date),
+    });
   });
 
   it('should return 400 if any of name/email/comment parameter is not provided', async () => {
@@ -58,12 +66,15 @@ describe('POST /feedback', () => {
   });
 
   it('should return 500 if database error occurs', async () => {
-    jest.spyOn(dbHandler, 'insertFeedback').mockImplementation(() => {
+    jest.spyOn(db, 'collection').mockImplementation(() => {
       throw new Error('Database error');
     });
 
     const response = await request(app).post('/').send(dummyFeedback);
     expect(response.status).toBe(500);
   });
-  
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
 });

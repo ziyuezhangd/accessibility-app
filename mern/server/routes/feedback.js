@@ -1,5 +1,5 @@
 import express from 'express';
-import dbHandler from '../db/dbHandler.js';
+import db from '../db/connection.js';
 
 const router = express.Router();
 router.post('/', async (req, res) => {
@@ -10,6 +10,8 @@ router.post('/', async (req, res) => {
   }
   
   try {
+    const collection = db.collection('feedback');
+  
     const feedback = {
       name,
       email,
@@ -19,11 +21,9 @@ router.post('/', async (req, res) => {
 
     if (coordinates) {
       feedback.coordinates = coordinates;
-    } else {
-      throw new Error('Coordinates is required');
     }
   
-    await dbHandler.insertFeedback(feedback);
+    await collection.insertOne(feedback);
   
     res.status(201).send({ message: 'Thank you for your feedback!' });
   } catch (error) {

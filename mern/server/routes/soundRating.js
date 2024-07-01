@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
   }
 
   try {
-    const collection = db.collection('noiseModel');
+    const collection = db.collection('soundModel');
     const latestModel = await collection.findOne({}, { sort: { date: -1 } });
 
     //this assumes a method called 'predict'
@@ -19,7 +19,9 @@ router.get('/', async (req, res) => {
 
     res.status(200).send(predictions);
   } catch (error){
-    res.status(500).json({message: 'Failed to retrieve the noise rating', error });
+    res
+      .status(500)
+      .send({ message: 'An error occurred', error: error.message });
   }
 });
 
@@ -41,7 +43,7 @@ router.get('/location', async (req, res) => {
   const datetimeObj = new Date(datetime);
 
   try {
-    const collection = db.collection('noiseModel');
+    const collection = db.collection('soundModel');
     const latestModel = await collection.findOne({}, { sort: { date: -1 } });
 
     //this assumes a method called 'predict'
@@ -49,7 +51,9 @@ router.get('/location', async (req, res) => {
 
     res.status(200).send(predictions);
   } catch (error){
-    res.status(500).json({message: 'Failed to retrieve the noise rating', error });
+    res
+      .status(500)
+      .send({ message: 'An error occurred', error: error.message });
   }
 });
 

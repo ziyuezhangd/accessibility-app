@@ -1,5 +1,5 @@
 import express from 'express';
-import dbHandler from '../db/dbHandler.js';
+import db from '../db/connection.js';
 
 const router = express.Router();
 
@@ -11,7 +11,8 @@ router.get('/', async (req, res) => {
   }
 
   try{
-    const latestModel = await dbHandler.getLatestModel('busynessModel');
+    const collection = db.collection('busynessModel');
+    const latestModel = await collection.findOne({}, { sort: { date: -1 } });
 
     //this assumes a method called 'predict'
     const predictions = latestModel.predict(datetimeObj);
@@ -19,7 +20,7 @@ router.get('/', async (req, res) => {
     res.status(200).send(predictions);
   }
   catch (error){
-    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error: error.message });
+    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error });
   }
 });
 
@@ -37,7 +38,8 @@ router.get('/location', async (req, res) => {
   const datetimeObj = new Date(datetime);
     
   try{
-    const latestModel = await dbHandler.getLatestModel('busynessModel');
+    const collection = db.collection('busynessModel');
+    const latestModel = await collection.findOne({}, { sort: { date: -1 } });
 
     //this assumes a method called 'predict'
     const predictions = latestModel.predict(datetimeObj, latitude, longitude);
@@ -45,7 +47,7 @@ router.get('/location', async (req, res) => {
     res.status(200).send(predictions);
   }
   catch (error){
-    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error: error.message });
+    res.status(500).json({message: 'Failed to retrieve the busyness rating.', error });
   }
 });
 

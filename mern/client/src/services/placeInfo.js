@@ -6,24 +6,31 @@ import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
  * Queries the backend for all accessibility cloud place infos in Manhattan
  * which are fully wheelchair accessible.
  *
- * @returns {Promise<Array<PlaceInfo>>} placeInfos
+ * @returns Place Info object:
+ * {
+ *  category: string,
+ *  name: string,
+ *  address: string,
+ *  latitude: number,
+ *  longitude: number,
+ * }
  */
 export const getPlaceInfos = async () => {
   const response = await fetch(`/api/place-infos`);
 
-  const placeInfos = await response.json();
-  if (placeInfos.error) {
-    console.error(placeInfos.error);
+  const placeInfo = await response.json();
+  if (placeInfo.error) {
+    console.error(placeInfo.error);
     return;
   }
-  return placeInfos.map((placeInfo) => new PlaceInfo(...placeInfo));
+  return placeInfo;
 };
 
 /**
  *
  * Queries the backend for all possible placeInfo categories
  *
- * @returns {Promise<Array<string>>} list of categories
+ * @returns Array of categories (strings)
  */
 export const getCategories = async () => {
   const response = await fetch(`/api/place-infos/categories`);
@@ -36,108 +43,62 @@ export const getCategories = async () => {
   return categories;
 };
 
-/**
- * Class representing a the place info returned from the accessibility endpoint
- */
-export class PlaceInfo {
+export class PlaceInfoUtilities {
   /**
-   * Create a Location.
-   * @param {string} category - The category of the place info.
-   * @param {string} name - The name of the place info.
-   * @param {string} address - The address of the place info.
-   * @param {string} latitude - The latitude of the place info.
-   * @param {string} longitude - The longitude of the place info.
-   * @param {string} accessibility - The accessibility information of the place info.
-   * @param {string} hasWheelchairAccessibleRestroom - Indicates if the place info has a wheelchair-accessible restroom.
+   * Given a placeInfo object, gets a human-readable string of the address -
+   * if not available, returns empty string.
+   *
+   * @param {{
+   *  category: string,
+   *  name: string,
+   *  address: string,
+   *  latitude: string,
+   *  longitude: string,
+   *  accessibility: string,
+   *  hasWheelchairAccessibleRestroom: string}
+   * } placeInfo - a placeInfo object
+   * @return {string} eg: "100 S Broadway"
    */
-  constructor(category, name, address, latitude, longitude, accessibility, hasWheelchairAccessibleRestroom) {
-    this.category = category;
-    this.name = name;
-    this.address = address;
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.accessibility = accessibility;
-    this.hasWheelchairAccessibleRestroom = hasWheelchairAccessibleRestroom;
-  }
-
-  /**
-   * Gets a human-readable string of the address - if not available, returns empty string.
-   * */
-  getStreetAddressText() {
-    if (this.address && this.address.street !== null) {
-      return this.address.text;
+  static getStreetAddressText = (placeInfo) => {
+    if (placeInfo.address && placeInfo.address.street !== null) {
+      return placeInfo.address.text;
     }
     return '';
-  }
+  };
 
   /**
-   * Check is the place either is a toilet or has a wheelchair accessible restroom
+   * Given a placeInfo object, checks if it has a wheelchair accessible restroom.
    *
-   * @returns {boolean} true if restroom is accessible.
+   * @param {{
+   *  category: string,
+   *  name: string,
+   *  address: string,
+   *  latitude: string,
+   *  longitude: string,
+   *  accessibility: string,
+   *  hasWheelchairAccessibleRestroom: string}
+   * } placeInfo - a placeInfo object
+   * @return {boolean} true if restroom is accessible.
    */
-  hasWheelchairAccessibleRestrooms() {
-    return this.hasWheelchairAccessibleRestroom || this.category === 'toilets';
-  }
-  /**
-   * Check if the place is a subway station
-   *
-   * @returns {boolean} true if the place is a subway station
-   */
-  isSubwayStation() {
-    this.category === 'train_station' || this.category === 'subway_station';
-  }
+  static hasWheelchairAccessibleRestroom = (placeInfo) => {
+    return placeInfo.hasWheelchairAccessibleRestroom || placeInfo.category === 'toilets';
+  };
 
-  /**
-   *
-   * Train station placeInfo objects will have a list of the subway lines in the name field (Example: Canal Street (A,2,3)).
-   * This function extracts the subway lines and returns them as an array.
-   *
-   * @return {Array<string>} list of subway lines
-   * @throws {} Will throw an error if the placeInfo is not a station.
-   */
-  getSubwayLines() {
-    if (!this.isSubwayStation()) {
-      throw new Error(`Attempted to extract subway lines from a ${this.category} placeInfo object.`);
-    }
-    if (!this.name) {
-      console.log(`Subway station has no name`);
-      return [];
-    }
-    const openingParenIdx = this.name.indexOf('(');
-    const closingParenIdx = this.name.indexOf(')');
-    const linesString = this.name.substring(openingParenIdx + 1, closingParenIdx);
-    const linesArr = linesString.split(',');
-    return linesArr;
-  }
-
-  /**
-   *
-   * Get the subway station name from a subway station place
-   *
-   * @return {string} subway station name
-   * @throws {} Will throw an error if the placeInfo is not a station.
-   */
-  getSubwayStationName() {
-    if (!this.isSubwayStation()) {
-      throw new Error(`Attempted to extract subway lines from a ${this.category} placeInfo object.`);
-    }
-    if (!this.name) {
-      console.log(`Subway station has no name`);
-      return '';
-    }
-    const openingParenIdx = this.name.indexOf('(');
-    return this.name.substring(0, openingParenIdx);
-  }
-}
-
-export class PlaceInfoUtilities {
   /**
    * Finds the closest placeInfo to a given coordinate from a list of placeInfos. By
    * default, returns the closest. Optionally provide a qty number to get the closest
    * x places.
    *
-   * @param {PlaceInfo[]} placeInfos - a list of placeinfos to search in
-   * @return {Array<PlaceInfo>} list of places
+   * @param {{
+   *  category: string,
+   *  name: string,
+   *  address: string,
+   *  latitude: string,
+   *  longitude: string,
+   *  accessibility: string,
+   *  hasWheelchairAccessibleRestroom: string}
+   * } placeInfo - a placeInfo object
+   * @return {array} list of places
    */
   static getNearest = (placeInfos, lat, lng, qty = 1) => {
     const placesSorted = _.sortBy(placeInfos, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));

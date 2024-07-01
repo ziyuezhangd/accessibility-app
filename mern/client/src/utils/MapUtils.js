@@ -68,7 +68,7 @@ export const SUBWAY_LINE_COLORS = {
   PATH: blue[900],
 };
 
-export class MapLocation {
+export class Location {
   constructor(lat, lng, placeId, name, isPlace) {
     this.lat = lat;
     this.lng = lng;

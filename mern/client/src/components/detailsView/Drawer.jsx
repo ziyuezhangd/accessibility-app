@@ -4,27 +4,12 @@ import { useContext, useEffect, useState } from 'react';
 import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { MapLocation } from '../../utils/MapUtils';
 
 const drawerWidth = 400;
 
-/**
- * PersistentDrawerLeft component.
- * 
- * This component renders a persistent drawer on the left side of the screen. If a location
- * is selected, it will show the details for that location. Otherwise, it will show the
- * history.
- * 
- * @param {Object} props - The properties passed to the component.
- * @param {MapLocation} props.selectedLocation - The currently selected location.
- * 
- * @returns {JSX.Element} The rendered PersistentDrawerLeft component.
- */
 export default function PersistentDrawerLeft({ selectedLocation}) {
   const {clearMarkers} = useContext(GoogleMapContext);
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
-
-  /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [location, setLocation] = useState(null);
 
   useEffect(() => {
@@ -40,7 +25,7 @@ export default function PersistentDrawerLeft({ selectedLocation}) {
     setLocation(e);
   };
 
-  const handleBackClicked = () => {
+  const handleBackClicked = (e) => {
     clearMarkers();
     setSelectedDrawerContent('history');
     setLocation(null);
@@ -58,8 +43,7 @@ export default function PersistentDrawerLeft({ selectedLocation}) {
       >
         <Toolbar />
         {selectedDrawerContent === 'history' && <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
-        {selectedDrawerContent === 'location' && <DrawerLocationDetails 
-          location={location}
+        {selectedDrawerContent === 'location' && <DrawerLocationDetails location={location}
           onBackClicked={handleBackClicked} />}
       </Drawer>
     </>
