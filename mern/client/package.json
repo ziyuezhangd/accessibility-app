@@ -19,6 +19,7 @@
     "@googlemaps/extended-component-library": "^0.6.11",
     "@mui/icons-material": "^5.15.19",
     "@mui/material": "^5.15.19",
+    "@mui/x-date-pickers": "^7.7.1",
     "chrono-node": "^2.7.6",
     "dayjs": "^1.11.11",
     "lodash": "^4.17.21",
