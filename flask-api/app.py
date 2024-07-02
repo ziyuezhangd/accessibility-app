@@ -10,12 +10,12 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 # All segment IDs for Manhattan
-with open('ml/output/segment_to_lat_long.json', 'r') as f:
+with open('../ml/output/segment_to_lat_long.json', 'r') as f:
   segment_data = json.load(f)
 segment_ids = list(segment_data.keys())
 
 # All MODZCTA for Manhattan here
-with open('ml/output/MODZCTA_Centerpoints.json', 'r') as f:
+with open('../ml/output/MODZCTA_Centerpoints.json', 'r') as f:
   MODZCTA_data = json.load(f)
 MODZCTAs = list(MODZCTA_data.keys())
 
@@ -30,7 +30,7 @@ def load_model(model_path):
 
 @app.route('/noise-ratings', methods=['GET'])
 def predict_noise():
-  model = load_model('ml/models/noise_model.pkl')
+  model = load_model('../ml/models/noise_model.pkl')
   
   if model is None:
     return jsonify({'error': 'Model not found or could not be loaded'}), 500
@@ -49,7 +49,7 @@ def predict_noise():
 
 @app.route('/busyness-ratings', methods=['GET'])
 def predict_busyness():
-  model = load_model('ml/models/busyness_model.pkl')
+  model = load_model('../ml/models/busyness_model.pkl')
   
   if model is None:
     return jsonify({'error': 'Model not found or could not be loaded'}), 500
@@ -63,7 +63,7 @@ def predict_busyness():
     return jsonify({'error': 'month, day, hour and dayOfWeek parameters are required'}), 400
   
   inputs = pd.DataFrame({
-    'SegmentId': segment_ids,
+    'SegmentID': segment_ids,
     'month': [month] * len(segment_ids),
     'day': [day] * len(segment_ids),
     'hour': [hour] * len(segment_ids),
@@ -78,7 +78,7 @@ def predict_busyness():
 
 @app.route('/odour-ratings', methods=['GET'])
 def predict_odour():
-  model = load_model('ml/models/odor_model.pkl')
+  model = load_model('../ml/models/odor_model.pkl')
   
   if model is None:
     return jsonify({'error': 'Model not found or could not be loaded'}), 500
@@ -86,17 +86,16 @@ def predict_odour():
   month = request.args.get('month', type=int)
   day = request.args.get('day', type=int)
   hour = request.args.get('hour', type=int)
-  day_of_week = request.args.get('dayOfWeek', type=int)
 
-  if month is None or day is None or hour is None or day_of_week is None:
-    return jsonify({'error': 'month, day, hour and dayOfWeek parameters are required'}), 400
+  if month is None or day is None or hour is None:
+    return jsonify({'error': 'month, day, hour parameters are required'}), 400
 
   inputs = pd.DataFrame({
     'MODZCTA': MODZCTAs,
     'month': [month] * len(MODZCTAs),
     'day': [day] * len(MODZCTAs),
     'hour': [hour] * len(MODZCTAs),
-    'DayofWeek': [day_of_week] * len(MODZCTAs)
+    # 'DayofWeek': [day_of_week] * len(MODZCTAs)
   })
   
   predictions = model.predict(inputs)

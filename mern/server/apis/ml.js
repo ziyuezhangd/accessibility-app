@@ -86,9 +86,8 @@ const ml = {
     const month = date.getMonth() + 1;
     const day = date.getDate();
     const hour = date.getHours();
-    const dayOfWeek = date.getDay();
 
-    const response = await fetch(`${url}odour-ratings?month=${month}&day=${day}&hour=${hour}&dayOfWeek=${dayOfWeek}`);
+    const response = await fetch(`${url}odour-ratings?month=${month}&day=${day}&hour=${hour}`);
     if (!response.ok) {
       throw new Error(`Failed to retrieve odour ratings: ${response.statusText}`);
     }

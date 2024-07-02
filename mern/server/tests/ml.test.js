@@ -94,7 +94,7 @@ describe('getOdourPredictions', () => {
     const predictions = await ml.getOdourPredictions(datetime);
 
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch).toHaveBeenCalledWith('/flask-api/odour-ratings?month=7&day=1&hour=14&dayOfWeek=1');
+    expect(fetch).toHaveBeenCalledWith('/flask-api/odour-ratings?month=7&day=1&hour=14');
     expect(predictions).toEqual([
       { location: { lat: 40.75068819675726, lng: -73.99713787189704 }, prediction: 'D' },
       { location: { lat: 40.71578031863019, lng: -73.98617431136368 }, prediction: 'A' },
