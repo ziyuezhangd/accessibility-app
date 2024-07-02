@@ -173,41 +173,38 @@ export class PlaceInfoUtilities {
    *
 */
   static getMarkerPNG = (placeInfo) => {
-    // console.log('getMarkerPNG has been called');
     const { category } = placeInfo;
-    if (category === "undefined") {
-      console.log("no categoy:", placeInfo)
-    }
     const pngUrl = '../../public/accessibilityMarkers/';
     const parentCategory = categoryToParentCategory(category);
-    //we dont want to include all categories that accessibility cloud offers, they have been ommitted from the mapping to the parent category and will not return anything
 
     if (!parentCategory) {
       return null;
     }
-    const imgSrc = `${pngUrl}${parentCategory}.png`;
-    return imgSrc;
+    else{
+      const imgSrc = `${pngUrl}${parentCategory}.png`;
+      return imgSrc;
+    }
   };
 }
 
-const pubCategories = ['beverages', 'alcohol', 'nightlife'];
+const pubCategories = ['beverages', 'alcohol', 'nightlife', 'nightclub', 'pub'];
 const airportCategories = ['airport'];
 const booksCategories = ['books','library'];
-const educationCategories = ['college', 'education', 'kindergarten', 'music_school', 'school,university'];
+const educationCategories = ['college', 'education', 'kindergarten', 'music_school', 'school', 'university'];
 const drinkingWaterCategories = ['drinkingwater'];
-const retailCategories = ['2nd_hand', 'antiques', 'art_shop', 'bicycle_store', 'butcher', 'clothes', 'computers', 'confectionary', 'convenience_store', 'copyshop', 'department_store', 'electronics', 'furniture', 'gifts', 'greengrocer', 'hiking', 'instruments', 'jewelry', 'kiosk', 'laundry', 'mobile_phones', 'newsagent', 'shoes', 'shopping', 'sports_shop', 'stationery', 'tea_shop', 'textiles', 'tobacco', 'tools', 'toys', 'variety_store', 'video_store'];
+const retailCategories = ['2nd_hand', 'antiques', 'art_shop', 'bicycle_store', 'bread', 'butcher', 'clothes', 'computers', 'confectionary', 'convenience_store', 'copyshop', 'department_store', 'electronics', 'furniture', 'gifts', 'greengrocer', 'hiking', 'instruments', 'jewelry', 'kiosk', 'laundry', 'mobile_phones', 'newsagent', 'pet_store', 'shoes', 'shopping', 'sports_shop', 'stationery', 'tea_shop', 'textiles', 'tobacco', 'tools', 'toys', 'variety_store', 'video_store'];
 const officeCategories = ['communitycentre', 'court', 'embassy', 'employment_agency', 'government_office', 'insurance', 'lawyer', 'other', 'political_party', 'townhall', 'travel_agency'];
 const theatreCategories = ['theater'];
 const cinemaCategories = ['cinema'];
 const carCategories = ['car_dealer', 'car_rental', 'car_repair', 'car_sharing', 'driving_school', 'parking', 'parking_carports', 'taxi'];
 const accomodationCategories = ['accommodation', 'bed_breakfast', 'chalet', 'dormitory', 'guest_house', 'hostel', 'hotel', 'motel', 'shelter'];
 const policeStationCategories = ['police'];
-const healthCategories = ['abortion', 'allergology', 'alternative_medicine', 'anaesthetics', 'birthing_centre', 'blood_bank', 'blood_donation', 'cardiology', 'cardiothoracic_surgery', 'chemist', 'child_psychiatry', 'clinic', 'counselling', 'dental_oral_maxillo_facial_surgery', 'dentist', 'dermatology', 'dermatovenereology', 'diagnostic_radiology', 'doctor', 'emergency', 'endocrinology', 'ergotherapist', 'fertility', 'gastroenterology', 'geriatrics', 'gynaecology', 'haematology', 'health', 'hearing_aids', 'hepatology', 'hospice', 'infectious_diseases', 'medical_store', 'midwife', 'neonatology', 'nephrology', 'neurology', 'neuropsychiatry', 'neurosurgery', 'nursing', 'nursing_home', 'nutrition_counselling', 'occupational', 'occupational_therapist', 'oncology', 'ophthalmology', 'orthodontics', 'orthopaedics', 'paediatric_surgery', 'palliative', 'pharmacy', 'physiotherapist', 'plastic_surgery', 'podiatrist', 'psychotherapist', 'psychotherapy', 'rehabilitation', 'speech_therapist', 'therapist', 'vaccination', 'vaccination_centre'];
+const healthCategories = ['abortion', 'allergology', 'alternative_medicine', 'anaesthetics', 'birthing_centre', 'blood_bank', 'blood_donation', 'cardiology', 'cardiothoracic_surgery', 'chemist', 'child_psychiatry', 'clinic', 'counselling', 'dental_oral_maxillo_facial_surgery', 'dentist', 'dermatology', 'dermatovenereology', 'diagnostic_radiology', 'doctor', 'emergency', 'endocrinology', 'ergotherapist', 'fertility', 'gastroenterology', 'geriatrics', 'gynaecology', 'haematology', 'health', 'hearing_aids', 'hepatology', 'hospice', 'hospital', 'infectious_diseases', 'medical_store', 'midwife', 'neonatology', 'nephrology', 'neurology', 'neuropsychiatry', 'neurosurgery', 'nursing', 'nursing_home', 'nutrition_counselling', 'occupational', 'occupational_therapist', 'oncology', 'ophthalmology', 'orthodontics', 'orthopaedics', 'paediatric_surgery', 'palliative', 'pharmacy', 'physiotherapist', 'plastic_surgery', 'podiatrist', 'psychotherapist', 'psychotherapy', 'rehabilitation', 'speech_therapist', 'therapist', 'vaccination', 'vaccination_centre'];
 const restaurantCategories = ['canteen', 'deli', 'fastfood', 'food', 'icecream', 'restaurant'];
 const placeOfWorshipCategories = ['place_of_worship'];
 const attractionCategories = ['attraction', 'cablecar', 'casino', 'leisure', 'themepark', 'tourism', 'zoo'];
-const trainCategoories = ['platform', 'railway_platform', 'train', 'train_station', 'tram_crossing', 'tram_stop'];
-const artCategories = ['art_gallery', 'arts_center', 'culture'];
+const trainCategoories = ['platform', 'public_transport', 'railway_platform', 'train', 'train_station', 'tram_crossing', 'tram_stop'];
+const artCategories = ['art_gallery', 'arts_center', 'culture', 'public_art'];
 const museumCategories = ['museum'];
 const busCategories = ['bus_station', 'bus_stop'];
 const marketCategories = ['market'];
@@ -314,7 +311,7 @@ const categoryToParentCategory = (category) => {
   if( ferryCategories.includes(category)) {
     return 'ferry';
   }
-  if( campingCategories.includes(category)) {
+  if( toiletCategories.includes(category)) {
     return 'toilet';
   }
   if( parkingCategories.includes(category)) {
@@ -371,5 +368,4 @@ const categoryToParentCategory = (category) => {
   if( coffeeCategories.includes(category)) {
     return 'coffee';
   }
-  console.warn('Category not recognised: ', category)
 };

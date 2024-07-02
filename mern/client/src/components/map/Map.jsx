@@ -116,16 +116,25 @@ export const Map = () => {
   useEffect(() => {
     const showAccessibilityMarkers = (placeInfos) => {
       const markers = placeInfos.map(placeInfo => {
-        return {
-          lat: placeInfo.latitude,
-          lng: placeInfo.longitude,
-          imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
-          imgSize: '30px', 
-          imgAlt: PlaceInfoUtilities.name,
-        };
+        const imgSrc = PlaceInfoUtilities.getMarkerPNG(placeInfo);
+        if (imgSrc === null){
+          return null;
+        }
+        else{
+          return {
+            lat: placeInfo.latitude,
+            lng: placeInfo.longitude,
+            imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
+            imgSize: '30px', 
+            imgAlt: PlaceInfoUtilities.name,
+          }; 
+        }
+
       });
-      createMarkers(markers);
-      console.log(markers);
+      const filteredMarkers =markers.filter( (marker) => marker !== null); 
+
+      createMarkers(filteredMarkers);
+      console.log(filteredMarkers);
     };
 
     if (placeInfos) {
