@@ -3,7 +3,6 @@ import pickle
 import pandas as pd
 import json
 import logging
-import numpy as np
 
 app = Flask(__name__)
 
@@ -42,6 +41,8 @@ def predict_noise():
   inputs = pd.DataFrame({'Hour': [hour] * len(segment_ids), 'SegmentId': segment_ids})
   
   predictions = model.predict(inputs)
+
+  predictions = predictions.astype(int).tolist()
 
   results = [{'segment_id': segment_id, 'prediction': prediction} for segment_id, prediction in zip(segment_ids, predictions)]
   
@@ -95,7 +96,6 @@ def predict_odour():
     'month': [month] * len(MODZCTAs),
     'day': [day] * len(MODZCTAs),
     'hour': [hour] * len(MODZCTAs),
-    # 'DayofWeek': [day_of_week] * len(MODZCTAs)
   })
   
   predictions = model.predict(inputs)
