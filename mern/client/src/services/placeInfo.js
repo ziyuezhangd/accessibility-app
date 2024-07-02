@@ -59,6 +59,7 @@ export class PlaceInfo {
     this.hasWheelchairAccessibleRestroom = hasWheelchairAccessibleRestroom;
   }
 
+
   /**
    * Gets a human-readable string of the address - if not available, returns empty string.
    * */
@@ -70,18 +71,9 @@ export class PlaceInfo {
   }
 
   /**
-   * Given a placeInfo object, checks if it has a wheelchair accessible restroom.
+   * Check is the place either is a toilet or has a wheelchair accessible restroom
    *
-   * @param {{
-   *  category: string,
-   *  name: string,
-   *  address: string,
-   *  latitude: string,
-   *  longitude: string,
-   *  accessibility: string,
-   *  hasWheelchairAccessibleRestroom: string}
-   * } placeInfo - a placeInfo object
-   * @return {boolean} true if restroom is accessible.
+   * @returns {boolean} true if restroom is accessible.
    */
   hasWheelchairAccessibleRestrooms() {
     return this.hasWheelchairAccessibleRestroom || this.category === 'toilets';
@@ -144,22 +136,16 @@ export class PlaceInfo {
     }
     return this.name.substring(0, openingParenIdx).trim();
   }
+}
 
+export class PlaceInfoUtilities {
   /**
    * Finds the closest placeInfo to a given coordinate from a list of placeInfos. By
    * default, returns the closest. Optionally provide a qty number to get the closest
    * x places.
    *
-   * @param {{
-   *  category: string,
-   *  name: string,
-   *  address: string,
-   *  latitude: string,
-   *  longitude: string,
-   *  accessibility: string,
-   *  hasWheelchairAccessibleRestroom: string}
-   * } placeInfo - a placeInfo object
-   * @return {array} list of places
+   * @param {PlaceInfo[]} placeInfos - a list of placeinfos to search in
+   * @return {Array<PlaceInfo>} list of places
    */
   static getNearest = (placeInfos, lat, lng, qty = 1) => {
     if (!_.isArray(placeInfos) || !_.every(placeInfos, place => place instanceof PlaceInfo)) {
@@ -437,3 +423,4 @@ const categoryToParentCategory = (category) => {
     return 'coffee';
   }
 };
+
