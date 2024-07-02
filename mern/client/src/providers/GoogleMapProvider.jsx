@@ -65,6 +65,7 @@ const GoogleMapProvider = ({children}) => {
       lng = parseFloat(lng);
       if (imgSrc) {
         const {imgAlt, imgSize} = config;
+        // console.log(imgSrc)
         const marker = (
           <AdvancedMarker 
             lat={lat}
@@ -79,6 +80,7 @@ const GoogleMapProvider = ({children}) => {
         );
         markersToCreate.push(marker);
       } else {
+        // console.log('Imgsrc is null')
         let { scale, color} = config;
         scale = scale || 1;
         color = color || '#FF0000';

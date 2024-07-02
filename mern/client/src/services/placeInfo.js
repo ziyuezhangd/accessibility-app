@@ -173,8 +173,11 @@ export class PlaceInfoUtilities {
    *
 */
   static getMarkerPNG = (placeInfo) => {
-    console.log('getMarkerPNG has been called');
+    // console.log('getMarkerPNG has been called');
     const { category } = placeInfo;
+    if (category === "undefined") {
+      console.log("no categoy:", placeInfo)
+    }
     const pngUrl = '../../public/accessibilityMarkers/';
     const parentCategory = categoryToParentCategory(category);
     //we dont want to include all categories that accessibility cloud offers, they have been ommitted from the mapping to the parent category and will not return anything
@@ -368,4 +371,5 @@ const categoryToParentCategory = (category) => {
   if( coffeeCategories.includes(category)) {
     return 'coffee';
   }
+  console.warn('Category not recognised: ', category)
 };

@@ -5,11 +5,12 @@ import { useContext} from 'react';
 import { GoogleMap, HeatmapLayer, MarkerClusterer } from 'react-google-map-wrapper';
 import AccessibleMarkers from './accessibilityMarkers';
 import Dropdown from './Dropdown';
+import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
-
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 
@@ -54,9 +55,10 @@ const odorData = [
 
 export const Map = () => {
   const theme = useTheme();
-  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
+  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers } = useContext(GoogleMapContext);
+  const {placeInfos} = useContext(DataContext);
   
-  AccessibleMarkers();
+  // AccessibleMarkers();
 
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
@@ -113,6 +115,26 @@ export const Map = () => {
       });
     }
   };
+
+  useEffect(() => {
+    const showAccessibilityMarkers = (placeInfos) => {
+      const markers = placeInfos.map(placeInfo => {
+        return {
+          lat: placeInfo.latitude,
+          lng: placeInfo.longitude,
+          imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
+          imgSize: '30px', 
+          imgAlt: PlaceInfoUtilities.name,
+        };
+      });
+      createMarkers(markers);
+      console.log(markers);
+    };
+
+    if (placeInfos) {
+      showAccessibilityMarkers(placeInfos);
+    }
+  }, [placeInfos]);
 
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
     const selectedLocation = new Location(lat, lng, placeId, name, isPlace);
