@@ -1,9 +1,10 @@
 import { View, StyleSheet } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 
-import MapView, { Heatmap, MapMarker, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Heatmap, MapMarker, Marker, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import { MANHATTAN_LAT, MANHATTAN_LNG } from './utils/mapUtils';
 import { GoogleMapContext, GoogleMapContextType } from './providers/MapProvider';
+import * as Location from 'expo-location';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,22 +20,34 @@ const styles = StyleSheet.create({
 });
 
 export default function Map() {
-  const { onMapReady, markers } = useContext(GoogleMapContext) as GoogleMapContextType;
+  const { onMapReady, markers, region, setRegion } = useContext(GoogleMapContext) as GoogleMapContextType;
 
+  const handleLocationChanged = (e) => {
+    console.log('Location changed');
+
+    console.log(e.nativeEvent);
+  };
   const handlePoiClicked = (e) => {
-    console.log('Google only')
+    console.log('Google only');
 
-    console.log(e.nativeEvent)
-  }
+    console.log(e.nativeEvent);
+  };
   const handleMarkerClicked = (e) => {
-    console.log('Marker clicked')
-    console.log(e.nativeEvent)
-  }
+    console.log('Marker clicked');
+    console.log(e.nativeEvent);
+  };
   const handlePress = (e) => {
-    console.log('Press')
+    console.log('Press');
+    // TODO: write distance from you
+    // Location.getCurrentPositionAsync().then(e => console.log(e.coords));
+    console.log(e.nativeEvent);
+  };
 
-    console.log(e.nativeEvent)
-  }
+  const handleMapReady = (e) => {
+    onMapReady(e);
+    Location.getCurrentPositionAsync().then((p) => setRegion({ latitude: p.coords.latitude, longitude: p.coords.longitude, latitudeDelta: .01, longitudeDelta: .01 }));
+  };
+
   return (
     <View style={styles.container}>
       <MapView
@@ -45,11 +58,16 @@ export default function Map() {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
-        onMapReady={onMapReady}
+        onMapReady={handleMapReady}
         onPoiClick={handlePoiClicked}
         onMarkerSelect={handleMarkerClicked}
         onPress={handlePress}
         mapType='mutedStandard'
+        followsUserLocation={true}
+        showsUserLocation={true}
+        onUserLocationChange={handleLocationChanged}
+        userLocationCalloutEnabled={true}
+        region={region}
         // provider={PROVIDER_GOOGLE}
       >
         {markers.map((m) => m)}

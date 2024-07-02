@@ -15,6 +15,7 @@ import { BottomSheetDefaultFooterProps } from '@gorhom/bottom-sheet/lib/typescri
 import { getPlaceInfos } from './services/PlaceInfoApi';
 import { PlaceInfo } from './interfaces/PlaceInfo';
 import { GoogleMapProvider } from './providers/MapProvider';
+import { UserLocationProvider } from './providers/UserLocationProvider';
 
 // TODO: attribute: hotpot.ai/art-generator
 
@@ -74,7 +75,7 @@ export default function Index() {
     try {
       const places = await getPlaceInfos();
       setPlaceInfos(places);
-      console.log("Place info loaded");
+      console.log('Place info loaded');
     } catch (e) {
       console.error(e);
     }
@@ -113,28 +114,30 @@ export default function Index() {
 
   return (
     <SafeAreaProvider>
-      <GoogleMapProvider>
-        <View style={{ flexGrow: 1, paddingTop: insets.top }}>
-          <Map />
-        </View>
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={1}
-          snapPoints={snapPoints}
-          animateOnMount={true}
-          onChange={handleSheetChange}
-          footerComponent={(e) => renderFooterComponent(e, index)}
-          backgroundStyle={{ backgroundColor: theme.colors.background }}
-          handleIndicatorStyle={{ backgroundColor: theme.colors.secondary }}
-        >
-          <View style={styles.contentContainer}>
-            {selectedRoute === 'favorites' && <FavoritesBottomPanel />}
-            {selectedRoute === 'places' && <PlacesBottomPanel placeInfos={placeInfos} />}
-            {selectedRoute === 'recents' && <RecentsBottomPanel />}
-            {selectedRoute === 'predictions' && <PredictionsBottomPanel />}
+      <UserLocationProvider>
+        <GoogleMapProvider>
+          <View style={{ flexGrow: 1, paddingTop: insets.top }}>
+            <Map />
           </View>
-        </BottomSheet>
-      </GoogleMapProvider>
+          <BottomSheet
+            ref={bottomSheetRef}
+            index={1}
+            snapPoints={snapPoints}
+            animateOnMount={true}
+            onChange={handleSheetChange}
+            footerComponent={(e) => renderFooterComponent(e, index)}
+            backgroundStyle={{ backgroundColor: theme.colors.background }}
+            handleIndicatorStyle={{ backgroundColor: theme.colors.secondary }}
+          >
+            <View style={styles.contentContainer}>
+              {selectedRoute === 'favorites' && <FavoritesBottomPanel />}
+              {selectedRoute === 'places' && <PlacesBottomPanel placeInfos={placeInfos} />}
+              {selectedRoute === 'recents' && <RecentsBottomPanel />}
+              {selectedRoute === 'predictions' && <PredictionsBottomPanel />}
+            </View>
+          </BottomSheet>
+        </GoogleMapProvider>
+      </UserLocationProvider>
     </SafeAreaProvider>
   );
 }

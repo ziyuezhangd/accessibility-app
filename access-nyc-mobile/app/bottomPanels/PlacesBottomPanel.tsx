@@ -8,7 +8,7 @@ import { MarkerConfig } from '../interfaces/Map';
 import { GoogleMapContext, GoogleMapContextType } from '../providers/MapProvider';
 
 export default function PlacesBottomPanel({ placeInfos }: { placeInfos: PlaceInfo[] }) {
-  const { createMarkers } = useContext(GoogleMapContext) as GoogleMapContextType;
+  const { createMarkers, setRegion, region } = useContext(GoogleMapContext) as GoogleMapContextType;
   const theme = useTheme();
 
   const [filteredPlaces, setFilteredPlaces] = useState<PlaceInfo[]>([]);
@@ -18,6 +18,9 @@ export default function PlacesBottomPanel({ placeInfos }: { placeInfos: PlaceInf
     setFilteredPlaces(placeInfosInCategory);
     const markers: MarkerConfig[] = placeInfosInCategory.map((pi, idx) => ({ lat: pi.latitude, lng: pi.longitude, title: pi.name, key: `${pi.name}-${idx}`, icon: pi.hasWheelchairAccessibleRestroom ? 'toilet' : null }));
     createMarkers(markers, true);
+
+    // Zoom out a bit
+    setRegion({ latitude: region.latitude, longitude: region.longitude, latitudeDelta: 0.1, longitudeDelta: 0.1 });
   };
 
   const PlaceCategory = ({ theme, name, category }: { theme: MD3Theme; name: string; category: PLACE_CATEGORIES }) => {

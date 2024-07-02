@@ -1,9 +1,10 @@
 import _ from 'lodash';
 import React, { createContext, useState, useEffect } from 'react';
-import { Callout, LatLng, MapMarker, Marker } from 'react-native-maps';
+import { Callout, LatLng, MapMarker, Marker, Region } from 'react-native-maps';
 import { MarkerConfig } from '../interfaces/Map';
 import { Icon, Text, useTheme } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
+import * as Location from 'expo-location';
 
 interface GoogleMapContextType {
   isMapReady: boolean;
@@ -11,6 +12,8 @@ interface GoogleMapContextType {
   markers: React.JSX.Element[];
   createMarkers: (markerConfigs: MarkerConfig[], shouldOverwriteExisting?: boolean) => void;
   removeMarkers: (latLngs: LatLng[]) => void;
+  setRegion: (region: Region) => void;
+  region: Region;
 }
 
 const GoogleMapContext = createContext<GoogleMapContextType | null>(null);
@@ -20,8 +23,9 @@ const GoogleMapProvider = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
   const [isMapReady, setIsMapReady] = useState<boolean>(false);
   const [markers, setMarkers] = useState<React.JSX.Element[]>([]);
+  const [currentRegion, setCurrentRegion] = useState<Region>();
 
-  const handleMapReady = () => {
+  const handleMapReady = async () => {
     setIsMapReady(true);
   };
 
@@ -76,7 +80,11 @@ const GoogleMapProvider = ({ children }: { children: React.ReactNode }) => {
     setMarkers([]);
   };
 
-  return <GoogleMapContext.Provider value={{ isMapReady, onMapReady: handleMapReady, createMarkers, removeMarkers, markers }}>{children}</GoogleMapContext.Provider>;
+  const setRegion = (r: Region) => {
+    setCurrentRegion(r);
+  };
+
+  return <GoogleMapContext.Provider value={{ isMapReady, onMapReady: handleMapReady, createMarkers, removeMarkers, markers, setRegion, region: currentRegion }}>{children}</GoogleMapContext.Provider>;
 };
 
 const styles = StyleSheet.create({
