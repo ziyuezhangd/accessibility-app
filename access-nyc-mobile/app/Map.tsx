@@ -63,12 +63,12 @@ export default function Map() {
         onMarkerSelect={handleMarkerClicked}
         onPress={handlePress}
         mapType='mutedStandard'
-        followsUserLocation={true}
-        showsUserLocation={true}
-        onUserLocationChange={handleLocationChanged}
-        userLocationCalloutEnabled={true}
+        // followsUserLocation={true}
+        // showsUserLocation={true}
+        // onUserLocationChange={handleLocationChanged}
+        // userLocationCalloutEnabled={true}
         region={region}
-        // provider={PROVIDER_GOOGLE}
+        provider={PROVIDER_GOOGLE}
       >
         {markers.map((m) => m)}
         {/* TODO: getting heatmap to work is a very confusing process - it has taken me days and I got it work in a separate directory but i have no idea why or how. Going to save the heat map for last minute - maybe wont do it at all */}
