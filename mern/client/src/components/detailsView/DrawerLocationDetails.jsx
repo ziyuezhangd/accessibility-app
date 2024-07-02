@@ -76,10 +76,6 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     setIsFeedbackOpen(false);
   };
 
-  const handleRestroomsLoaded = (restrooms) => {
-    addMarkers(restrooms.map(restroom => ({lat: parseFloat(restroom.latitude),lng: parseFloat(restroom.longitude)})));
-  };
-
   return (
     <>
       <DrawerHeader>
