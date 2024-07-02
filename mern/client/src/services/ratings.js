@@ -1,3 +1,8 @@
+/**
+ * 
+ * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
+ * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} busynessRatings
+ */
 export const getBusynessRatings = async (datetime) => {
   const response = await fetch('/api/busyness-ratings?' + new URLSearchParams({ datetime }));
   if (!response.ok) {
@@ -9,6 +14,11 @@ export const getBusynessRatings = async (datetime) => {
   return busynessRatings;
 };
 
+/**
+ * 
+ * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
+ * @returns {Array<{location: {lat: number, lng: number}, prediction: number}>} noiseRatings
+ */
 export const getNoiseRatings = async (datetime) => {
   const response = await fetch('/api/noise-ratings?' + new URLSearchParams({ datetime }));
   if (!response.ok) {
@@ -20,6 +30,11 @@ export const getNoiseRatings = async (datetime) => {
   return noiseRatings;
 };
 
+/**
+ * 
+ * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
+ * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} odourRatings
+ */
 export const getOdourRatings = async (datetime) => {
   const response = await fetch('/api/odour-ratings?' + new URLSearchParams({ datetime }));
   if (!response.ok) {

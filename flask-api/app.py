@@ -2,30 +2,37 @@ from flask import Flask, request, jsonify
 import pickle
 import pandas as pd
 import json
+import os
+import numpy as np
 
 app = Flask(__name__)
 
 # All segment IDs for Manhattan
-with open('../ml/output/segment_to_lat_long.json', 'r') as f:
-  data = json.load(f)
-segment_ids = list(data.keys())
+with open('ml/output/segment_to_lat_long.json', 'r') as f:
+  segment_data = json.load(f)
+segment_ids = list(segment_data.keys())
 
 # All MODZCTA for Manhattan here
-MODZCTAs = ["zipcode1", "zipcode2"]
+with open('ml/output/MODZCTA_Centerpoints.json', 'r') as f:
+  MODZCTA_data = json.load(f)
+MODZCTAs = list(MODZCTA_data.keys())
 
 def load_model(model_path):
   try:
     with open(model_path, 'rb') as model_file:
       model = pickle.load(model_file)
     return model
-  except Exception:
+  except Exception as e:
+    print('Failed to load model')
+    print(e)
     return None
 
 @app.route('/noise-ratings', methods=['GET'])
 def predict_noise():
-  model = load_model('../ml/models/noise_model.pkl')
+  model = load_model('ml/models/noise_model.pkl')
   
   if model is None:
+    print('Failed')
     return jsonify({'error': 'Model not found or could not be loaded'}), 500
 
   hour = request.args.get('hour', type=int)
@@ -42,7 +49,7 @@ def predict_noise():
 
 @app.route('/busyness-ratings', methods=['GET'])
 def predict_busyness():
-  model = load_model('../ml/models/busyness_model.pkl')
+  model = load_model('ml/models/busyness_model.pkl')
   
   if model is None:
     return jsonify({'error': 'Model not found or could not be loaded'}), 500
@@ -71,7 +78,7 @@ def predict_busyness():
 
 @app.route('/odour-ratings', methods=['GET'])
 def predict_odour():
-  model = load_model('../ml/models/odor_model.pkl')
+  model = load_model('ml/models/odor_model.pkl')
   
   if model is None:
     return jsonify({'error': 'Model not found or could not be loaded'}), 500
