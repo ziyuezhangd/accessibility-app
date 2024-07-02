@@ -180,7 +180,7 @@ export class PlaceInfoUtilities {
 */
   static getMarkerPNG = (placeInfo) => {
     const { category } = placeInfo;
-    const pngUrl = '../../public/accessibilityMarkers/';
+    const pngUrl = '../../accessibilityMarkers/';
     const parentCategory = categoryToParentCategory(category);
 
     if (!parentCategory) {

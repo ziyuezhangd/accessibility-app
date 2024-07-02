@@ -24,6 +24,7 @@
     "tailwindcss": "^3.4.4"
   },
   "dependencies": {
+    "@mui/x-date-pickers": "^7.8.0",
     "axios": "^1.7.2",
     "helmet": "^7.1.0"
   }
