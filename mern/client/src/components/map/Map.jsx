@@ -10,10 +10,12 @@ import HighlightMarkers from './highlightMarkers';
 import SearchBar from './SearchBar';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { getPlaceInfos } from '../../services/placeInfo';
+import { getAccessibilityHighlightPlaces } from '../../services/highlights';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
+
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 const busynessData = [
@@ -57,17 +59,27 @@ const odorData = [
 
 export const Map = () => {
   const [placeInfos, setPlaceInfos] = useState([]);
+  const [accessibilityHighlightPlaces, setAccessibilityHighlightPlaces] = useState([]);
   const theme = useTheme();
   const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
-  HighlightMarkers();
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const fetchMarkers = async () => {
+    getAccessibilityHighlightPlaces().then(setAccessibilityHighlightPlaces)
+  };
+  
+  useEffect(() => {
+    HighlightMarkers;
+  }, [accessibilityHighlightPlaces]);
+
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
+
+  
 
   const handleSelect = (item) => {
     switch (item.id) {
@@ -88,6 +100,7 @@ export const Map = () => {
       setHeatMapGradient([]);
     }
   };
+
 
   const handleMapClicked = async (map, e) => {
     // Clear any existing markers

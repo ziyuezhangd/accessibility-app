@@ -17,7 +17,6 @@ export default function HighlightMarkers() {
         };
       });
       createMarkers(markers);
-      console.log(markers);
     };
 
     if (accessibilityHighlightPlaces) {

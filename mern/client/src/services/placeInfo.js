@@ -47,7 +47,6 @@ export class PlaceInfo {
    * @param {string} address - The address of the place info.
    * @param {string} latitude - The latitude of the place info.
    * @param {string} longitude - The longitude of the place info.
-   * @param {string} accessibility - The accessibility information of the place info.
    * @param {string} hasWheelchairAccessibleRestroom - Indicates if the place info has a wheelchair-accessible restroom.
    */
   constructor(category, name, address, latitude, longitude, accessibility, hasWheelchairAccessibleRestroom) {
