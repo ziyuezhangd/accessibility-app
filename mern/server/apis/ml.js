@@ -3,14 +3,32 @@ import path from 'path';
 
 // Get dictionary of segment ID to lat/lng
 const __dirname = path.resolve();
-const filePath = path.join(__dirname, '../../ml/output/segment_to_lat_long.json');
-const data = await fs.promises.readFile(filePath, 'utf-8');
-const dictionary = JSON.parse(data);
+const filePathSegment = path.join(__dirname, '../../ml/output/segment_to_lat_long.json');
+const dataSegment = await fs.promises.readFile(filePathSegment, 'utf-8');
+const dictionarySegment = JSON.parse(dataSegment);
 // Get dictionary of MODZCTA to lat/lng
+const filePathMODZCTA = path.join(__dirname, '../../ml/output/MODZCTA_Centerpoints.json');
+const dataMODZCTA = await fs.promises.readFile(filePathMODZCTA, 'utf-8');
+const dictionaryMODZCTA = JSON.parse(dataMODZCTA);
+
+let url;
+if (process.env.NODE_ENV === 'development') {
+  url = 'http://localhost:8000/';
+} else {
+  url = '/flask-api/';
+}
 
 const ml = {
-  async getNoisePredictions(hour) {
-    const response  = await fetch(`/flask-api/noise-ratings?hour=${hour}`);
+  /**
+   * 
+   * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
+   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} odourRatings
+   */
+  async getNoisePredictions(datetime) {
+    const date = new Date(datetime);
+    const hour = date.getHours();
+
+    const response = await fetch(`${url}noise-ratings?hour=${hour}`);
     if (!response.ok) {
       throw new Error(`Failed to retrieve noise ratings: ${response.statusText}`);
     }
@@ -19,17 +37,28 @@ const ml = {
     // Convert segment ID to lat/lng
     const predictionsWithLatLng = predictions.map(prediction => ({
       location: {
-        lat: dictionary[prediction.segment_id].lat,
-        lng: dictionary[prediction.segment_id].lng,
+        lat: dictionarySegment[prediction.segment_id].lat,
+        lng: dictionarySegment[prediction.segment_id].lng,
       },
       prediction: prediction.prediction
     }));
 
     return predictionsWithLatLng;
   },
+  
+  /**
+   * 
+   * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
+   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} odourRatings
+   */
+  async getBusynessPredictions(datetime) {
+    const date = new Date(datetime);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hour = date.getHours();
+    const dayOfWeek = date.getDay();
 
-  async getBusynessPredictions(month, day, hour, dayOfWeek) {
-    const response = await fetch(`/flask-api/busyness-ratings?month=${month}&day=${day}&hour=${hour}&dayOfWeek=${dayOfWeek}`);
+    const response = await fetch(`${url}busyness-ratings?month=${month}&day=${day}&hour=${hour}&dayOfWeek=${dayOfWeek}`);
     if (!response.ok) {
       throw new Error(`Failed to retrieve busyness ratings: ${response.statusText}`);
     }
@@ -38,8 +67,8 @@ const ml = {
     // Convert segment ID to lat/lng
     const predictionsWithLatLng = predictions.map(prediction => ({
       location: {
-        lat: dictionary[prediction.segment_id].lat,
-        lng: dictionary[prediction.segment_id].lng,
+        lat: dictionarySegment[prediction.segment_id].lat,
+        lng: dictionarySegment[prediction.segment_id].lng,
       },
       prediction: prediction.prediction
     }));
@@ -47,16 +76,34 @@ const ml = {
     return predictionsWithLatLng;
   },
 
-  async getOdourPredictions(month, day, hour, dayOfWeek) {
-    const response = await fetch(`/flask-api/odour-ratings?month=${month}&day=${day}&hour=${hour}&dayOfWeek=${dayOfWeek}`);
+  /**
+   * 
+   * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
+   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} odourRatings
+   */
+  async getOdourPredictions(datetime) {
+    const date = new Date(datetime);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hour = date.getHours();
+    const dayOfWeek = date.getDay();
+
+    const response = await fetch(`${url}odour-ratings?month=${month}&day=${day}&hour=${hour}&dayOfWeek=${dayOfWeek}`);
     if (!response.ok) {
       throw new Error(`Failed to retrieve odour ratings: ${response.statusText}`);
     }
     const predictions = await response.json();
     // Convert MODZCTA to lat/lng here
+    const predictionsWithLatLng = predictions.map(prediction => ({
+      location: {
+        lat: dictionaryMODZCTA[prediction.modzcta].lat,
+        lng: dictionaryMODZCTA[prediction.modzcta].lng,
+      },
+      prediction: prediction.prediction
+    }));
 
-    return predictions;
+    return predictionsWithLatLng;
   }
-}
+};
 
 export default ml;
