@@ -3,7 +3,6 @@ import { Box, useTheme, Snackbar, IconButton, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useContext} from 'react';
 import { GoogleMap, HeatmapLayer, MarkerClusterer } from 'react-google-map-wrapper';
-import AccessibleMarkers from './accessibilityMarkers';
 import Dropdown from './Dropdown';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
@@ -57,8 +56,6 @@ export const Map = () => {
   const theme = useTheme();
   const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers } = useContext(GoogleMapContext);
   const {placeInfos} = useContext(DataContext);
-  
-  // AccessibleMarkers();
 
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
