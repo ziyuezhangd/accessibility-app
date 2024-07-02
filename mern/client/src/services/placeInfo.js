@@ -149,8 +149,12 @@ export class PlaceInfoUtilities {
    * @return {Array<PlaceInfo>} list of places
    */
   static getNearest = (placeInfos, lat, lng, qty = 1) => {
-    if (!Array.isArray(placeInfos) || !placeInfos.every(place => place instanceof PlaceInfo)) {
+    if (!_.isArray(placeInfos) || !_.every(placeInfos, place => place instanceof PlaceInfo)) {
+      console.warn('Invalid placeInfos: must be an array of PlaceInfo instances');
       return [];
+    }
+    if (qty === 0) {
+      console.warn('Quantity is 0: returning an empty array');
     }
     const placesSorted = _.sortBy(placeInfos, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
     return placesSorted.slice(0, qty);
