@@ -70,7 +70,7 @@ export class PlaceInfoUtilities {
       return this.address.text;
     }
     return '';
-  };
+  }
 
   /**
    * Given a placeInfo object, checks if it has a wheelchair accessible restroom.

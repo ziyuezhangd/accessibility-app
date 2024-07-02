@@ -1,15 +1,14 @@
 import CloseIcon from '@mui/icons-material/Close';
-import Dropdown from './Dropdown';
-import { DataContext } from '../../providers/DataProvider';
-import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker, MarkerClusterer } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
 import DateTimePicker from './DateTimePicker';
+import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
