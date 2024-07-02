@@ -41,7 +41,7 @@ export const getDayString = (day) => {
  * @returns {chrono.en.ParsedResult[]} parsed results from time string (see chrono docs for more info)
  */
 export const parseTimeRangeFromString = (timeRangeString) => {
-  return chrono.parse(timeRangeString, { timezone: 'EST' });
+  return chrono.parse(timeRangeString);
 };
 
 /**
