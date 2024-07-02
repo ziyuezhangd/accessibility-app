@@ -45,23 +45,29 @@ export const getCategories = async () => {
 
 export class PlaceInfoUtilities {
   /**
-   * Given a placeInfo object, gets a human-readable string of the address -
-   * if not available, returns empty string.
-   *
-   * @param {{
-   *  category: string,
-   *  name: string,
-   *  address: string,
-   *  latitude: string,
-   *  longitude: string,
-   *  accessibility: string,
-   *  hasWheelchairAccessibleRestroom: string}
-   * } placeInfo - a placeInfo object
-   * @return {string} eg: "100 S Broadway"
+   * Create a Location.
+   * @param {string} category - The category of the place info.
+   * @param {string} name - The name of the place info.
+   * @param {string} address - The address of the place info.
+   * @param {string} latitude - The latitude of the place info.
+   * @param {string} longitude - The longitude of the place info.
+   * @param {string} hasWheelchairAccessibleRestroom - Indicates if the place info has a wheelchair-accessible restroom.
    */
-  static getStreetAddressText = (placeInfo) => {
-    if (placeInfo.address && placeInfo.address.street !== null) {
-      return placeInfo.address.text;
+  constructor(category, name, address, latitude, longitude, hasWheelchairAccessibleRestroom) {
+    this.category = category;
+    this.name = name;
+    this.address = address;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.hasWheelchairAccessibleRestroom = hasWheelchairAccessibleRestroom;
+  }
+
+  /**
+   * Gets a human-readable string of the address - if not available, returns empty string.
+   * */
+  getStreetAddressText() {
+    if (this.address && this.address.street !== null) {
+      return this.address.text;
     }
     return '';
   };
