@@ -56,7 +56,7 @@ const ml = {
     const month = date.getMonth() + 1;
     const day = date.getDate();
     const hour = date.getHours();
-    const dayOfWeek = date.getDay();
+    const dayOfWeek = (date.getDay() === 0) ? 6 : date.getDay() - 1;
 
     const response = await fetch(`${url}busyness-ratings?month=${month}&day=${day}&hour=${hour}&dayOfWeek=${dayOfWeek}`);
     if (!response.ok) {
