@@ -6,14 +6,7 @@ import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
  * Queries the backend for all accessibility cloud place infos in Manhattan
  * which are fully wheelchair accessible.
  *
- * @returns Place Info object:
- * {
- *  category: string,
- *  name: string,
- *  address: string,
- *  latitude: number,
- *  longitude: number,
- * }
+ * @returns {Promise<Array<PlaceInfo>>} placeInfos
  */
 export const getPlaceInfos = async () => {
   const response = await fetch(`/api/place-infos`);
@@ -31,7 +24,7 @@ export const getPlaceInfos = async () => {
  *
  * Queries the backend for all possible placeInfo categories
  *
- * @returns Array of categories (strings)
+ * @returns {Promise<Array<string>>} list of categories
  */
 export const getCategories = async () => {
   const response = await fetch(`/api/place-infos/categories`);
@@ -44,7 +37,10 @@ export const getCategories = async () => {
   return categories;
 };
 
-export class PlaceInfoUtilities {
+/**
+ * Class representing a the place info returned from the accessibility endpoint
+ */
+export class PlaceInfo {
   /**
    * Create a Location.
    * @param {string} category - The category of the place info.
