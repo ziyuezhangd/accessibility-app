@@ -24,7 +24,7 @@ export const getPlaceInfos = async () => {
   }
 
   const placeInfos = await response.json();
-  return placeInfos.map((placeInfo) => new PlaceInfo(...Object.values(placeInfo)));
+  return placeInfos.map((placeInfo) => new placeInfo(...Object.values(placeInfo)));
 };
 
 /**
@@ -148,9 +148,7 @@ export class PlaceInfoUtilities {
     }
     return this.name.substring(0, openingParenIdx).trim();
   }
-}
 
-export class PlaceInfoUtilities {
   /**
    * Finds the closest placeInfo to a given coordinate from a list of placeInfos. By
    * default, returns the closest. Optionally provide a qty number to get the closest
