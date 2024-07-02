@@ -95,13 +95,14 @@ const ml = {
     // Convert MODZCTA to lat/lng here
     const predictionsWithLatLng = predictions.map(prediction => ({
       location: {
-        lat: dictionaryMODZCTA[prediction.modzcta].lat,
-        lng: dictionaryMODZCTA[prediction.modzcta].lng,
+        lat: dictionaryMODZCTA[prediction.MODZCTA].lat,
+        lng: dictionaryMODZCTA[prediction.MODZCTA].lng,
       },
       prediction: prediction.prediction
     }));
 
     return predictionsWithLatLng;
+    // return predictions;
   }
 };
 

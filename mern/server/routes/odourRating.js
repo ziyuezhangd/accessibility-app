@@ -4,16 +4,16 @@ import ml from '../apis/ml.js';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  const { month, day, hour, dayOfWeek } = req.query;
-  if (!month || !day || !hour || !dayOfWeek) {
-    return res.status(400).send({ message: 'month, day, hour and dayOfWeek parameters are required' });
+  const { datetime } = req.query;
+  if (!datetime) {
+    return res.status(400).send({ message: 'datetime parameter is required' });
   }
 
   try {
-    const predictions = ml.getOdourPredictions(month, day, hour, dayOfWeek);
+    const predictions = await ml.getOdourPredictions(datetime);
     res.status(200).send(predictions);
   } catch (error) {
-    res.status(500).json({message: 'Failed to retrieve the odour rating.', error });
+    res.status(500).json({message: 'Failed to retrieve the odour rating.', error: error.message });
   }
 });
 
