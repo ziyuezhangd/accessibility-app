@@ -46,18 +46,16 @@ export class PlaceInfo {
    * @param {string} category - The category of the place info.
    * @param {string} name - The name of the place info.
    * @param {string} address - The address of the place info.
-   * @param {number} latitude - The latitude of the place info.
-   * @param {number} longitude - The longitude of the place info.
-   * @param {string} accessibility - The accessibility information of the place info.
+   * @param {string} latitude - The latitude of the place info.
+   * @param {string} longitude - The longitude of the place info.
    * @param {string} hasWheelchairAccessibleRestroom - Indicates if the place info has a wheelchair-accessible restroom.
    */
-  constructor(category, name, address, latitude, longitude, accessibility, hasWheelchairAccessibleRestroom) {
+  constructor(category, name, address, latitude, longitude, hasWheelchairAccessibleRestroom) {
     this.category = category;
     this.name = name;
     this.address = address;
     this.latitude = latitude;
     this.longitude = longitude;
-    this.accessibility = accessibility;
     this.hasWheelchairAccessibleRestroom = hasWheelchairAccessibleRestroom;
   }
 

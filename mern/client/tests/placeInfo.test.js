@@ -7,7 +7,6 @@ describe('Class PlaceInfo', () => {
   const testAddress = {'street':'East Broadway','city':'New York','house':'54','postalCode':'10002','text':'East Broadway 54, 10002, New York'};
   const testLatitude = 40.7134411;
   const testLongtitude = -73.9958191;
-  const testAccessibility = 'Wheelchair accessible';
   const testHasWheelchairAccessibleRestroom = true;
 
   let placeInfo;
@@ -19,7 +18,6 @@ describe('Class PlaceInfo', () => {
       testAddress,
       testLatitude,
       testLongtitude,
-      testAccessibility,
       testHasWheelchairAccessibleRestroom
     );
   });
@@ -30,7 +28,6 @@ describe('Class PlaceInfo', () => {
     expect(placeInfo.address).toEqual(testAddress);
     expect(placeInfo.latitude).toBe(testLatitude);
     expect(placeInfo.longitude).toBe(testLongtitude);
-    expect(placeInfo.accessibility).toBe(testAccessibility);
     expect(placeInfo.hasWheelchairAccessibleRestroom).toBe(testHasWheelchairAccessibleRestroom);
   });
 
