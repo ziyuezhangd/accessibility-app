@@ -148,9 +148,7 @@ export class PlaceInfoUtilities {
     }
     return this.name.substring(0, openingParenIdx).trim();
   }
-}
 
-export class PlaceInfoUtilities {
   /**
    * Finds the closest placeInfo to a given coordinate from a list of placeInfos. By
    * default, returns the closest. Optionally provide a qty number to get the closest
