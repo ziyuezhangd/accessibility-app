@@ -2,10 +2,12 @@ from flask import Flask, request, jsonify
 import pickle
 import pandas as pd
 import json
-import os
+import logging
 import numpy as np
 
 app = Flask(__name__)
+
+logging.basicConfig(level=logging.DEBUG)
 
 # All segment IDs for Manhattan
 with open('ml/output/segment_to_lat_long.json', 'r') as f:
@@ -23,8 +25,7 @@ def load_model(model_path):
       model = pickle.load(model_file)
     return model
   except Exception as e:
-    print('Failed to load model')
-    print(e)
+    logging.error(f'Failed to load model from {model_path}: {e}')
     return None
 
 @app.route('/noise-ratings', methods=['GET'])
@@ -32,7 +33,6 @@ def predict_noise():
   model = load_model('ml/models/noise_model.pkl')
   
   if model is None:
-    print('Failed')
     return jsonify({'error': 'Model not found or could not be loaded'}), 500
 
   hour = request.args.get('hour', type=int)
