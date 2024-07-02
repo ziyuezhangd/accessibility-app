@@ -21,6 +21,20 @@ const styles = StyleSheet.create({
 export default function Map() {
   const { onMapReady, markers } = useContext(GoogleMapContext) as GoogleMapContextType;
 
+  const handlePoiClicked = (e) => {
+    console.log('Google only')
+
+    console.log(e.nativeEvent)
+  }
+  const handleMarkerClicked = (e) => {
+    console.log('Marker clicked')
+    console.log(e.nativeEvent)
+  }
+  const handlePress = (e) => {
+    console.log('Press')
+
+    console.log(e.nativeEvent)
+  }
   return (
     <View style={styles.container}>
       <MapView
@@ -32,6 +46,10 @@ export default function Map() {
           longitudeDelta: 0.0421,
         }}
         onMapReady={onMapReady}
+        onPoiClick={handlePoiClicked}
+        onMarkerSelect={handleMarkerClicked}
+        onPress={handlePress}
+        mapType='mutedStandard'
         // provider={PROVIDER_GOOGLE}
       >
         {markers.map((m) => m)}
