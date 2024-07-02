@@ -17,13 +17,14 @@ import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
  */
 export const getPlaceInfos = async () => {
   const response = await fetch(`/api/place-infos`);
-
-  const placeInfo = await response.json();
-  if (placeInfo.error) {
-    console.error(placeInfo.error);
+  if (!response.ok) {
+    const message = `An error has occurred: ${response.statusText}`;
+    console.error(message);
     return;
   }
-  return placeInfo;
+
+  const placeInfos = await response.json();
+  return placeInfos.map((placeInfo) => new PlaceInfo(...Object.values(placeInfo)));
 };
 
 /**
@@ -86,10 +87,70 @@ export class PlaceInfoUtilities {
    * } placeInfo - a placeInfo object
    * @return {boolean} true if restroom is accessible.
    */
-  static hasWheelchairAccessibleRestroom = (placeInfo) => {
-    return placeInfo.hasWheelchairAccessibleRestroom || placeInfo.category === 'toilets';
-  };
+  hasWheelchairAccessibleRestrooms() {
+    return this.hasWheelchairAccessibleRestroom || this.category === 'toilets';
+  }
+  /**
+   * Check if the place is a subway station
+   *
+   * @returns {boolean} true if the place is a subway station
+   */
+  isSubwayStation() {
+    return this.category === 'train_station' || this.category === 'subway_station';
+  }
 
+  /**
+   *
+   * Train station placeInfo objects will have a list of the subway lines in the name field (Example: Canal Street (A,2,3)).
+   * This function extracts the subway lines and returns them as an array.
+   *
+   * @return {Array<string>} list of subway lines
+   * @throws {} Will throw an error if the placeInfo is not a station.
+   */
+  getSubwayLines() {
+    if (!this.isSubwayStation()) {
+      throw new Error(`Attempted to extract subway lines from a ${this.category} placeInfo object.`);
+    }
+    if (!this.name) {
+      console.log(`Subway station has no name`);
+      return [];
+    }
+
+    const openingParenIdx = this.name.indexOf('(');
+    const closingParenIdx = this.name.indexOf(')');
+    if (openingParenIdx === -1 || closingParenIdx === -1 || openingParenIdx >= closingParenIdx) {
+      console.log(`Subway station name format is incorrect`);
+      return [];
+    }
+    const linesString = this.name.substring(openingParenIdx + 1, closingParenIdx);
+    const linesArr = linesString.split(',').map(line => line.trim());
+    return linesArr;
+  }
+
+  /**
+   *
+   * Get the subway station name from a subway station place
+   *
+   * @return {string} subway station name
+   * @throws {} Will throw an error if the placeInfo is not a station.
+   */
+  getSubwayStationName() {
+    if (!this.isSubwayStation()) {
+      throw new Error(`Attempted to extract subway lines from a ${this.category} placeInfo object.`);
+    }
+    if (!this.name) {
+      console.log(`Subway station has no name`);
+      return '';
+    }
+    const openingParenIdx = this.name.indexOf('(');
+    if (openingParenIdx === -1) {
+      return this.name;
+    }
+    return this.name.substring(0, openingParenIdx).trim();
+  }
+}
+
+export class PlaceInfoUtilities {
   /**
    * Finds the closest placeInfo to a given coordinate from a list of placeInfos. By
    * default, returns the closest. Optionally provide a qty number to get the closest
@@ -107,6 +168,13 @@ export class PlaceInfoUtilities {
    * @return {array} list of places
    */
   static getNearest = (placeInfos, lat, lng, qty = 1) => {
+    if (!_.isArray(placeInfos) || !_.every(placeInfos, place => place instanceof PlaceInfo)) {
+      console.warn('Invalid placeInfos: must be an array of PlaceInfo instances');
+      return [];
+    }
+    if (qty === 0) {
+      console.warn('Quantity is 0: returning an empty array');
+    }
     const placesSorted = _.sortBy(placeInfos, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
     return placesSorted.slice(0, qty);
   };
