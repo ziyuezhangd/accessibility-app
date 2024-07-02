@@ -1,18 +1,9 @@
-const dummyFeedbacks = [
-  {
-    name: 'April',
-    email: 'april.polubiec@ucdconnect.ie',
-    comment: 'This place is no longer open.',
-    coordinates: [-73.9712, 40.7831],
-  },
-  {
-    name: 'Ellen',
-    email: 'ellen.doherty2@ucdconnect.ie',
-    comment: 'This place was not loud at all.',
-    coordinates: [-73.9712, 40.7831],
-  },
-];
+import { MANHATTAN_LAT, MANHATTAN_LNG } from '../utils/MapUtils';
 
+/**
+ * Send feedback to be stored in our database
+ * @param {Feedback} feedback
+ */
 export const postFeedback = async (feedback) => {
   // Call the API here
   const response = await fetch('/api/feedback', {
