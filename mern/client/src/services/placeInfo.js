@@ -158,68 +158,6 @@ export class PlaceInfoUtilities {
     return placesSorted.slice(0, qty);
   };
 
-  static isSubwayStation = (placeInfo) => placeInfo.category === 'train_station' || placeInfo.category === 'subway_station';
-  /**
-   *
-   * Train station placeInfo objects will have a list of the subway lines in the name field.
-   * This function extracts the subway lines and returns them as an array.
-   *
-   * @param {{
-   *  category: string,
-   *  name: string,
-   *  address: string,
-   *  latitude: string,
-   *  longitude: string,
-   *  accessibility: string,
-   *  hasWheelchairAccessibleRestroom: string}
-   * } placeInfo - a placeInfo object
-   * @return {array} list of subway lines
-   * /**
-   * @throws {} Will throw an error if the placeInfo is not a station.
-   */
-  static getSubwayLines = (placeInfo) => {
-    if (!this.isSubwayStation(placeInfo)) {
-      throw new Error(`Attempted to extract subway lines from a ${placeInfo.category} placeInfo object.`);
-    }
-    if (!placeInfo.name) {
-      console.warn(`Subway station has no name: `, placeInfo);
-      return [];
-    }
-    const openingParenIdx = placeInfo.name.indexOf('(');
-    const closingParenIdx = placeInfo.name.indexOf(')');
-    const linesString = placeInfo.name.substring(openingParenIdx + 1, closingParenIdx);
-    const linesArr = linesString.split(',');
-    return linesArr;
-  };
-
-  /**
-   *
-   * Given a plaaceInfo object, extracts the name of the subway station.
-   *
-   * @param {{
-   *  category: string,
-   *  name: string,
-   *  address: string,
-   *  latitude: string,
-   *  longitude: string,
-   *  accessibility: string,
-   *  hasWheelchairAccessibleRestroom: string}
-   * } placeInfo - a placeInfo object
-   * @return {string} subway station name
-   * /**
-   * @throws {} Will throw an error if the placeInfo is not a station.
-   */
-  static getSubwayStationName = (placeInfo) => {
-    if (!this.isSubwayStation(placeInfo)) {
-      throw new Error(`Attempted to extract subway lines from a ${placeInfo.category} placeInfo object.`);
-    }
-    if (!placeInfo.name) {
-      console.warn(`Subway station has no name: `, placeInfo);
-      return [];
-    }
-    const openingParenIdx = placeInfo.name.indexOf('(');
-    return placeInfo.name.substring(0, openingParenIdx);
-  };
   /**
    *
    * function to return the marker image of a place info object .

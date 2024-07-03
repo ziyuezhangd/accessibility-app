@@ -12,7 +12,7 @@ import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import { DEFAULT_ZOOM, Location, MANHATTAN_LAT, MANHATTAN_LNG, busynessGradient, noiseGradient, odorGradient, MapLocation } from '../../utils/MapUtils';
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
@@ -60,7 +60,7 @@ const odorData = [
 export const Map = () => {
   // const [placeInfos, setPlaceInfos] = useState([]);
   const theme = useTheme();
-  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers } = useContext(GoogleMapContext);
+  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
   const {placeInfos} = useContext(DataContext);
 
   const [heatMapData, setHeatMapData] = useState([]);
@@ -153,7 +153,7 @@ export const Map = () => {
   }, [placeInfos]);
 
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
-    const selectedLocation = new Location(lat, lng, placeId, name, isPlace);
+    const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
     createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
