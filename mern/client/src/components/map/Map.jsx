@@ -7,7 +7,7 @@ import { Control } from 'react-google-map-wrapper';
 import DateTimePicker from './DateTimePicker';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
-import { DataContext } from '../../providers/DataProvider';
+import { DataContext, DataProvider } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { getPlaceInfos } from '../../services/placeInfo';
@@ -58,9 +58,10 @@ const odorData = [
 ];
 
 export const Map = () => {
-  const [placeInfos, setPlaceInfos] = useState([]);
+  // const [placeInfos, setPlaceInfos] = useState([]);
   const theme = useTheme();
   const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers } = useContext(GoogleMapContext);
+  const {placeInfos} = useContext(DataContext);
 
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
@@ -196,7 +197,7 @@ export const Map = () => {
     // console.log('noiseRatings: ', noiseRatings);
     // const odourRatings = await getOdourRatings(selectedDate);
     // console.log('odourRatings: ', odourRatings);
-    getPlaceInfos().then(setPlaceInfos);
+    // getPlaceInfos().then(setPlaceInfos);
   };
 
   useEffect(() => {
