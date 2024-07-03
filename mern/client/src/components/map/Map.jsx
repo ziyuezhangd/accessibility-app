@@ -190,12 +190,12 @@ export const Map = () => {
   };
 
   const fetchData = async () => {
-    const busynessRatings = await getBusynessRatings(selectedDate);
-    console.log('busynessRatings: ', busynessRatings);
-    const noiseRatings = await getNoiseRatings(selectedDate);
-    console.log('noiseRatings: ', noiseRatings);
-    const odourRatings = await getOdourRatings(selectedDate);
-    console.log('odourRatings: ', odourRatings);
+    // const busynessRatings = await getBusynessRatings(selectedDate);
+    // console.log('busynessRatings: ', busynessRatings);
+    // const noiseRatings = await getNoiseRatings(selectedDate);
+    // console.log('noiseRatings: ', noiseRatings);
+    // const odourRatings = await getOdourRatings(selectedDate);
+    // console.log('odourRatings: ', odourRatings);
     getPlaceInfos().then(setPlaceInfos);
   };
 

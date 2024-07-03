@@ -17,7 +17,7 @@ export const getPlaceInfos = async () => {
   }
 
   const placeInfos = await response.json();
-  return placeInfos.map((placeInfo) => new PlaceInfo(...Object.values(placeInfo)));
+  return placeInfos;
 };
 
 /**
