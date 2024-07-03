@@ -51,7 +51,7 @@ const GoogleMapProvider = ({children}) => {
    * imgAlt: string, 
    * scale: number, 
    * color: string}>} markerConfigs 
-   * @param {booleam} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
+   * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
    */
   const createMarkers = (markerConfigs, shouldOverwriteExisting) => {
     if (shouldOverwriteExisting) {

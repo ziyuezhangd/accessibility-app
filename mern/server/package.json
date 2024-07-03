@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^8.57.0",
+    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",

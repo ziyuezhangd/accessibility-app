@@ -6,31 +6,25 @@ import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
  * Queries the backend for all accessibility cloud place infos in Manhattan
  * which are fully wheelchair accessible.
  *
- * @returns Place Info object:
- * {
- *  category: string,
- *  name: string,
- *  address: string,
- *  latitude: number,
- *  longitude: number,
- * }
+ * @returns {Promise<Array<PlaceInfo>>} placeInfos
  */
 export const getPlaceInfos = async () => {
   const response = await fetch(`/api/place-infos`);
-
-  const placeInfo = await response.json();
-  if (placeInfo.error) {
-    console.error(placeInfo.error);
+  if (!response.ok) {
+    const message = `An error has occurred: ${response.statusText}`;
+    console.error(message);
     return;
   }
-  return placeInfo;
+
+  const placeInfos = await response.json();
+  return placeInfos;
 };
 
 /**
  *
  * Queries the backend for all possible placeInfo categories
  *
- * @returns Array of categories (strings)
+ * @returns {Promise<Array<string>>} list of categories
  */
 export const getCategories = async () => {
   const response = await fetch(`/api/place-infos/categories`);
@@ -43,64 +37,124 @@ export const getCategories = async () => {
   return categories;
 };
 
-export class PlaceInfoUtilities {
+/**
+ * Class representing a the place info returned from the accessibility endpoint
+ */
+export class PlaceInfo {
   /**
-   * Given a placeInfo object, gets a human-readable string of the address -
-   * if not available, returns empty string.
-   *
-   * @param {{
-   *  category: string,
-   *  name: string,
-   *  address: string,
-   *  latitude: string,
-   *  longitude: string,
-   *  accessibility: string,
-   *  hasWheelchairAccessibleRestroom: string}
-   * } placeInfo - a placeInfo object
-   * @return {string} eg: "100 S Broadway"
+   * Create a Location.
+   * @param {string} category - The category of the place info.
+   * @param {string} name - The name of the place info.
+   * @param {string} address - The address of the place info.
+   * @param {string} latitude - The latitude of the place info.
+   * @param {string} longitude - The longitude of the place info.
+   * @param {string} hasWheelchairAccessibleRestroom - Indicates if the place info has a wheelchair-accessible restroom.
    */
-  static getStreetAddressText = (placeInfo) => {
-    if (placeInfo.address && placeInfo.address.street !== null) {
-      return placeInfo.address.text;
+  constructor(category, name, address, latitude, longitude, hasWheelchairAccessibleRestroom) {
+    this.category = category;
+    this.name = name;
+    this.address = address;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.hasWheelchairAccessibleRestroom = hasWheelchairAccessibleRestroom;
+  }
+
+
+  /**
+   * Gets a human-readable string of the address - if not available, returns empty string.
+   * */
+  getStreetAddressText() {
+    if (this.address && this.address.street !== null) {
+      return this.address.text;
     }
     return '';
-  };
+  }
 
   /**
-   * Given a placeInfo object, checks if it has a wheelchair accessible restroom.
+   * Check is the place either is a toilet or has a wheelchair accessible restroom
    *
-   * @param {{
-   *  category: string,
-   *  name: string,
-   *  address: string,
-   *  latitude: string,
-   *  longitude: string,
-   *  accessibility: string,
-   *  hasWheelchairAccessibleRestroom: string}
-   * } placeInfo - a placeInfo object
-   * @return {boolean} true if restroom is accessible.
+   * @returns {boolean} true if restroom is accessible.
    */
-  static hasWheelchairAccessibleRestroom = (placeInfo) => {
-    return placeInfo.hasWheelchairAccessibleRestroom || placeInfo.category === 'toilets';
-  };
+  hasWheelchairAccessibleRestrooms() {
+    return this.hasWheelchairAccessibleRestroom || this.category === 'toilets';
+  }
+  /**
+   * Check if the place is a subway station
+   *
+   * @returns {boolean} true if the place is a subway station
+   */
+  isSubwayStation() {
+    return this.category === 'train_station' || this.category === 'subway_station';
+  }
 
+  /**
+   *
+   * Train station placeInfo objects will have a list of the subway lines in the name field (Example: Canal Street (A,2,3)).
+   * This function extracts the subway lines and returns them as an array.
+   *
+   * @return {Array<string>} list of subway lines
+   * @throws {} Will throw an error if the placeInfo is not a station.
+   */
+  getSubwayLines() {
+    if (!this.isSubwayStation()) {
+      throw new Error(`Attempted to extract subway lines from a ${this.category} placeInfo object.`);
+    }
+    if (!this.name) {
+      console.log(`Subway station has no name`);
+      return [];
+    }
+
+    const openingParenIdx = this.name.indexOf('(');
+    const closingParenIdx = this.name.indexOf(')');
+    if (openingParenIdx === -1 || closingParenIdx === -1 || openingParenIdx >= closingParenIdx) {
+      console.log(`Subway station name format is incorrect`);
+      return [];
+    }
+    const linesString = this.name.substring(openingParenIdx + 1, closingParenIdx);
+    const linesArr = linesString.split(',').map(line => line.trim());
+    return linesArr;
+  }
+
+  /**
+   *
+   * Get the subway station name from a subway station place
+   *
+   * @return {string} subway station name
+   * @throws {} Will throw an error if the placeInfo is not a station.
+   */
+  getSubwayStationName() {
+    if (!this.isSubwayStation()) {
+      throw new Error(`Attempted to extract subway lines from a ${this.category} placeInfo object.`);
+    }
+    if (!this.name) {
+      console.log(`Subway station has no name`);
+      return '';
+    }
+    const openingParenIdx = this.name.indexOf('(');
+    if (openingParenIdx === -1) {
+      return this.name;
+    }
+    return this.name.substring(0, openingParenIdx).trim();
+  }
+}
+
+export class PlaceInfoUtilities {
   /**
    * Finds the closest placeInfo to a given coordinate from a list of placeInfos. By
    * default, returns the closest. Optionally provide a qty number to get the closest
    * x places.
    *
-   * @param {{
-   *  category: string,
-   *  name: string,
-   *  address: string,
-   *  latitude: string,
-   *  longitude: string,
-   *  accessibility: string,
-   *  hasWheelchairAccessibleRestroom: string}
-   * } placeInfo - a placeInfo object
-   * @return {array} list of places
+   * @param {PlaceInfo[]} placeInfos - a list of placeinfos to search in
+   * @return {Array<PlaceInfo>} list of places
    */
   static getNearest = (placeInfos, lat, lng, qty = 1) => {
+    if (!_.isArray(placeInfos) || !_.every(placeInfos, place => place instanceof PlaceInfo)) {
+      console.warn('Invalid placeInfos: must be an array of PlaceInfo instances');
+      return [];
+    }
+    if (qty === 0) {
+      console.warn('Quantity is 0: returning an empty array');
+    }
     const placesSorted = _.sortBy(placeInfos, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
     return placesSorted.slice(0, qty);
   };
@@ -173,41 +227,38 @@ export class PlaceInfoUtilities {
    *
 */
   static getMarkerPNG = (placeInfo) => {
-    // console.log('getMarkerPNG has been called');
     const { category } = placeInfo;
-    if (category === "undefined") {
-      console.log("no categoy:", placeInfo)
-    }
-    const pngUrl = '../../public/accessibilityMarkers/';
+    const pngUrl = '../../accessibilityMarkers/';
     const parentCategory = categoryToParentCategory(category);
-    //we dont want to include all categories that accessibility cloud offers, they have been ommitted from the mapping to the parent category and will not return anything
 
     if (!parentCategory) {
       return null;
     }
-    const imgSrc = `${pngUrl}${parentCategory}.png`;
-    return imgSrc;
+    else{
+      const imgSrc = `${pngUrl}${parentCategory}.png`;
+      return imgSrc;
+    }
   };
 }
 
-const pubCategories = ['beverages', 'alcohol', 'nightlife'];
+const pubCategories = ['beverages', 'alcohol', 'nightlife', 'nightclub', 'pub'];
 const airportCategories = ['airport'];
 const booksCategories = ['books','library'];
-const educationCategories = ['college', 'education', 'kindergarten', 'music_school', 'school,university'];
+const educationCategories = ['college', 'education', 'kindergarten', 'music_school', 'school', 'university'];
 const drinkingWaterCategories = ['drinkingwater'];
-const retailCategories = ['2nd_hand', 'antiques', 'art_shop', 'bicycle_store', 'butcher', 'clothes', 'computers', 'confectionary', 'convenience_store', 'copyshop', 'department_store', 'electronics', 'furniture', 'gifts', 'greengrocer', 'hiking', 'instruments', 'jewelry', 'kiosk', 'laundry', 'mobile_phones', 'newsagent', 'shoes', 'shopping', 'sports_shop', 'stationery', 'tea_shop', 'textiles', 'tobacco', 'tools', 'toys', 'variety_store', 'video_store'];
+const retailCategories = ['2nd_hand', 'antiques', 'art_shop', 'bicycle_store', 'bread', 'butcher', 'clothes', 'computers', 'confectionary', 'convenience_store', 'copyshop', 'department_store', 'electronics', 'furniture', 'gifts', 'greengrocer', 'hiking', 'instruments', 'jewelry', 'kiosk', 'laundry', 'mobile_phones', 'newsagent', 'pet_store', 'shoes', 'shopping', 'sports_shop', 'stationery', 'tea_shop', 'textiles', 'tobacco', 'tools', 'toys', 'variety_store', 'video_store'];
 const officeCategories = ['communitycentre', 'court', 'embassy', 'employment_agency', 'government_office', 'insurance', 'lawyer', 'other', 'political_party', 'townhall', 'travel_agency'];
 const theatreCategories = ['theater'];
 const cinemaCategories = ['cinema'];
 const carCategories = ['car_dealer', 'car_rental', 'car_repair', 'car_sharing', 'driving_school', 'parking', 'parking_carports', 'taxi'];
 const accomodationCategories = ['accommodation', 'bed_breakfast', 'chalet', 'dormitory', 'guest_house', 'hostel', 'hotel', 'motel', 'shelter'];
 const policeStationCategories = ['police'];
-const healthCategories = ['abortion', 'allergology', 'alternative_medicine', 'anaesthetics', 'birthing_centre', 'blood_bank', 'blood_donation', 'cardiology', 'cardiothoracic_surgery', 'chemist', 'child_psychiatry', 'clinic', 'counselling', 'dental_oral_maxillo_facial_surgery', 'dentist', 'dermatology', 'dermatovenereology', 'diagnostic_radiology', 'doctor', 'emergency', 'endocrinology', 'ergotherapist', 'fertility', 'gastroenterology', 'geriatrics', 'gynaecology', 'haematology', 'health', 'hearing_aids', 'hepatology', 'hospice', 'infectious_diseases', 'medical_store', 'midwife', 'neonatology', 'nephrology', 'neurology', 'neuropsychiatry', 'neurosurgery', 'nursing', 'nursing_home', 'nutrition_counselling', 'occupational', 'occupational_therapist', 'oncology', 'ophthalmology', 'orthodontics', 'orthopaedics', 'paediatric_surgery', 'palliative', 'pharmacy', 'physiotherapist', 'plastic_surgery', 'podiatrist', 'psychotherapist', 'psychotherapy', 'rehabilitation', 'speech_therapist', 'therapist', 'vaccination', 'vaccination_centre'];
+const healthCategories = ['abortion', 'allergology', 'alternative_medicine', 'anaesthetics', 'birthing_centre', 'blood_bank', 'blood_donation', 'cardiology', 'cardiothoracic_surgery', 'chemist', 'child_psychiatry', 'clinic', 'counselling', 'dental_oral_maxillo_facial_surgery', 'dentist', 'dermatology', 'dermatovenereology', 'diagnostic_radiology', 'doctor', 'emergency', 'endocrinology', 'ergotherapist', 'fertility', 'gastroenterology', 'geriatrics', 'gynaecology', 'haematology', 'health', 'hearing_aids', 'hepatology', 'hospice', 'hospital', 'infectious_diseases', 'medical_store', 'midwife', 'neonatology', 'nephrology', 'neurology', 'neuropsychiatry', 'neurosurgery', 'nursing', 'nursing_home', 'nutrition_counselling', 'occupational', 'occupational_therapist', 'oncology', 'ophthalmology', 'orthodontics', 'orthopaedics', 'paediatric_surgery', 'palliative', 'pharmacy', 'physiotherapist', 'plastic_surgery', 'podiatrist', 'psychotherapist', 'psychotherapy', 'rehabilitation', 'speech_therapist', 'therapist', 'vaccination', 'vaccination_centre'];
 const restaurantCategories = ['canteen', 'deli', 'fastfood', 'food', 'icecream', 'restaurant'];
 const placeOfWorshipCategories = ['place_of_worship'];
 const attractionCategories = ['attraction', 'cablecar', 'casino', 'leisure', 'themepark', 'tourism', 'zoo'];
-const trainCategoories = ['platform', 'railway_platform', 'train', 'train_station', 'tram_crossing', 'tram_stop'];
-const artCategories = ['art_gallery', 'arts_center', 'culture'];
+const trainCategoories = ['platform', 'public_transport', 'railway_platform', 'train', 'train_station', 'tram_crossing', 'tram_stop'];
+const artCategories = ['art_gallery', 'arts_center', 'culture', 'public_art'];
 const museumCategories = ['museum'];
 const busCategories = ['bus_station', 'bus_stop'];
 const marketCategories = ['market'];
@@ -314,7 +365,7 @@ const categoryToParentCategory = (category) => {
   if( ferryCategories.includes(category)) {
     return 'ferry';
   }
-  if( campingCategories.includes(category)) {
+  if( toiletCategories.includes(category)) {
     return 'toilet';
   }
   if( parkingCategories.includes(category)) {
@@ -371,5 +422,5 @@ const categoryToParentCategory = (category) => {
   if( coffeeCategories.includes(category)) {
     return 'coffee';
   }
-  console.warn('Category not recognised: ', category)
 };
+

@@ -4,9 +4,8 @@ import os
 import fiona
 import geopandas as gpd
 from shapely.geometry import Point
-from prophet import Prophet
 
-GDB_FILE = r"./input_data/lion/lion.gdb"
+GDB_FILE = r"input_data/lion/lion.gdb"
 lion_gdf = gpd.read_file(GDB_FILE, engine='pyogrio', layer='lion')
 
 def get_segment_id_from_coords(lat: int, lng: int):
@@ -22,3 +21,4 @@ def get_segment_id_from_coords(lat: int, lng: int):
     print("SegmentID: ", segment_id)
     return segment_id
 
+lion_gdf.head()
