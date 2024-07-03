@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
+import FeedbackForm from './FeedbackForm';
 import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
@@ -19,6 +20,18 @@ import { MapLocation } from '../../utils/MapUtils';
  * @param {MapLocation} props.location - The location object to show details about.
  * @returns {JSX.Element} The rendered DrawerLocationDetails component.
  */
+const modalStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const formStyle = {
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+};
 
 export default function DrawerLocationDetails({ location }) {
   const [error, setError] = useState('');
@@ -49,21 +62,12 @@ export default function DrawerLocationDetails({ location }) {
     localStorage.setItem('searchHistory', JSON.stringify(history));
   };
 
-  const handleButtonClicked = async () => {
-    // TODO: these alerts need to disappear, like toasts
-    setError('');
-    try {
-      await postFeedback({
-        name: 'April',
-        email: 'april.polubiec@ucdconnect.ie',
-        comment: 'This place is no longer open.',
-        coordinates: [-73.9712, 40.7831],
-      });
-    } catch (e) {
-      setError(e.toString());
-    }
-    console.log('Complete!');
-    setIsFeedbackComplete(true);
+  const handleButtonClicked = () => {
+    setIsFeedbackOpen(true);
+  };
+
+  const handleFeedbackClose = () => {
+    setIsFeedbackOpen(false);
   };
 
   return (
@@ -77,14 +81,15 @@ export default function DrawerLocationDetails({ location }) {
         <NearestRestrooms 
           lat={location.lat}
           lng={location.lng} />
-        <NearestStations
+        <NearestStations 
           lat={location.lat}
           lng={location.lng} />
 
         <Button onClick={handleButtonClicked}>Submit Feedback</Button>
       </Box>
-      {error && <Alert severity='error'>{error}</Alert>}
-      {isFeedbackComplete && <Alert severity='success'>Feedback submitted!</Alert>}
+      <FeedbackForm location={location}
+        isOpen={isFeedbackOpen}
+        onClose={handleFeedbackClose} />
     </>
   );
 }

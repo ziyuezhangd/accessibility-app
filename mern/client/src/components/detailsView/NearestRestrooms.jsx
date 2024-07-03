@@ -43,7 +43,7 @@ export default function NearestRestrooms({ lat, lng }) {
     };
 
     getNearestRestrooms();
-  }, [lat, lng, restrooms, createMarkers]);
+  }, [lat, lng, restrooms]);
 
   return (
     <Box display='flex'
