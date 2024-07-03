@@ -14,7 +14,7 @@ export default function HelpIcon() {
   useEffect(() => {
     const shouldnotshowhowhelp = localStorage.getItem('dontShowAgain');
     setIsModalVisible(!shouldnotshowhowhelp);
-  }, [])
+  }, []);
 
   return (
     <>

@@ -52,35 +52,35 @@ const SearchBar = ({ onSearchEntered }) => {
 
   return (
     <>
-        <TextField
-          inputRef={searchInputRef}
-          placeholder="Search for places"
-          variant="outlined"
-          size="small"
-          sx={{
-            position: 'absolute',
-            zIndex: 1000,
-            top: '10px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '300px',
-            backgroundColor: 'white',
-            boxShadow: 3,
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '50px',
-            },
-            '& .MuiOutlinedInput-input': {
-              padding: '10px 20px',
-            },
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
+      <TextField
+        inputRef={searchInputRef}
+        placeholder="Search for places"
+        variant="outlined"
+        size="small"
+        sx={{
+          position: 'absolute',
+          zIndex: 1000,
+          top: '10px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '300px',
+          backgroundColor: 'white',
+          boxShadow: 3,
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '50px',
+          },
+          '& .MuiOutlinedInput-input': {
+            padding: '10px 20px',
+          },
+        }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+        }}
+      />
     </>
   );
 };

@@ -16,24 +16,22 @@ const style = {
   p: 4,
 };
 
-
-
 export default function HelpModal({ isOpen, onClose }) {
   const handleButtonClicked = () => {
     onClose();
   };
 
   // Add this function
-const handleDontShowAgain = () => {
+  const handleDontShowAgain = () => {
   // localStorage "dontShowAgain" = true
-  let shouldNotShowHelpModal = localStorage.getItem('dontShowAgain');
-  if (shouldNotShowHelpModal === undefined) {
-    localStorage.setItem('dontShowAgain', false);
-  }
-  shouldNotShowHelpModal = localStorage.getItem('dontShowAgain');
-  localStorage.setItem('dontShowAgain', true);
-  onClose();
-}
+    let shouldNotShowHelpModal = localStorage.getItem('dontShowAgain');
+    if (shouldNotShowHelpModal === undefined) {
+      localStorage.setItem('dontShowAgain', false);
+    }
+    shouldNotShowHelpModal = localStorage.getItem('dontShowAgain');
+    localStorage.setItem('dontShowAgain', true);
+    onClose();
+  };
 
   return (
     <Modal open={isOpen}
@@ -181,7 +179,6 @@ const handleDontShowAgain = () => {
         <Button variant='contained'
           onClick={handleDontShowAgain}>Dont show this again</Button>
       </Box>
-      
 
     </Modal>
   );
