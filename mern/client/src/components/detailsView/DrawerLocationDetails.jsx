@@ -34,8 +34,7 @@ const formStyle = {
 };
 
 export default function DrawerLocationDetails({ location }) {
-  const [error, setError] = useState('');
-  const [isFeedbackComplete, setIsFeedbackComplete] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   useEffect(() => {
     addLocationToHistory();
