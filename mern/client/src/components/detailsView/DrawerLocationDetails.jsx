@@ -1,5 +1,8 @@
+// DrawerLocationDetails.jsx
 import { PlaceOverview } from '@googlemaps/extended-component-library/react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import Favorite from '@mui/icons-material/Favorite';
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import { Button, Box, IconButton, styled } from '@mui/material';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
@@ -12,10 +15,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
-  justifyContent: 'start',
+  justifyContent: 'space-between',
 }));
+
 /**
  * DrawerLocationDetails component.
  * 
@@ -42,10 +45,32 @@ const formStyle = {
 
 export default function DrawerLocationDetails({ location, onBackClicked }) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     addLocationToHistory();
-  }, []);
+    checkIfFavorite();
+    
+    const handleFavoriteAdded = (event) => {
+      if (event.detail.placeId === location.placeId) {
+        setIsFavorite(true);
+      }
+    };
+
+    const handleFavoriteRemoved = (event) => {
+      if (event.detail.placeId === location.placeId) {
+        setIsFavorite(false);
+      }
+    };
+
+    window.addEventListener('favoriteAdded', handleFavoriteAdded);
+    window.addEventListener('favoriteRemoved', handleFavoriteRemoved);
+
+    return () => {
+      window.removeEventListener('favoriteAdded', handleFavoriteAdded);
+      window.removeEventListener('favoriteRemoved', handleFavoriteRemoved);
+    };
+  }, [location]);
 
   const addLocationToHistory = () => {
     let history = localStorage.getItem('searchHistory');
@@ -55,17 +80,22 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     history = JSON.parse(localStorage.getItem('searchHistory'));
 
     if (_.isEqual(history[0], location)) {
-      // Do nothing
       return;
     }
 
     if (_.find(history, (h) => h.name === location.name)) {
-      // Remove and we will put it back to the start
       _.remove(history, (h) => h.name === location.name);
     }
     history = [location, ...history];
 
     localStorage.setItem('searchHistory', JSON.stringify(history));
+  };
+
+  const checkIfFavorite = () => {
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    if (_.find(favorites, (f) => f.placeId === location.placeId)) {
+      setIsFavorite(true);
+    }
   };
 
   const handleButtonClicked = () => {
@@ -76,18 +106,31 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     setIsFeedbackOpen(false);
   };
 
+  const handleToggleFavorite = () => {
+    if (isFavorite) {
+      const event = new CustomEvent('favoriteRemoved', { detail: location });
+      window.dispatchEvent(event);
+      setIsFavorite(false);
+    } else {
+      const event = new CustomEvent('favoriteAdded', { detail: location });
+      window.dispatchEvent(event);
+      setIsFavorite(true);
+    }
+  };
+
   return (
     <>
       <DrawerHeader>
         <IconButton onClick={onBackClicked}>
           <ChevronLeftIcon />
         </IconButton>
+        <IconButton onClick={handleToggleFavorite}>
+          {isFavorite ? <Favorite sx={{ color: 'red' }} /> : <FavoriteBorder />}
+        </IconButton>
       </DrawerHeader>
       <Box sx={{ overflow: 'auto', px: 5 }}>
-        {/* TODO: move the google logo elsewhere */}
         <PlaceOverview place={location.placeId}
           size='medium'></PlaceOverview>
-
         <Grades />
         <NearestRestrooms 
           lat={location.lat}

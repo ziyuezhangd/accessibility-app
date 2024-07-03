@@ -2,7 +2,7 @@ import { Accessibility, Menu as MenuIcon } from '@mui/icons-material';
 import { AppBar, Box, Button, Container, Menu, MenuItem, Toolbar, Typography, IconButton, Snackbar } from '@mui/material';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Favorites from './map/Favorites';
+import Favorites from './detailsView/Favorites';
 
 const pages = ['Map', 'About us'];
 

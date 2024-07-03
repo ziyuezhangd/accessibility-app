@@ -1,3 +1,4 @@
+// Favorites.jsx
 import { FavoriteBorder, Delete } from '@mui/icons-material';
 import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Menu, Snackbar } from '@mui/material';
 import _ from 'lodash';
@@ -43,6 +44,8 @@ export const Favorites = () => {
     setFavorites(favorites.filter(favorite => favorite.placeId !== placeId));
     setSnackbarMessage('Removed from favorites');
     setSnackbarOpen(true);
+    const event = new CustomEvent('favoriteRemoved', { detail: { placeId } });
+    window.dispatchEvent(event);
   };
 
   const handleSnackbarClose = (event, reason) => {
@@ -94,10 +97,20 @@ export const Favorites = () => {
       setSnackbarOpen(true);
     };
 
+    const handleFavoriteRemoved = (event) => {
+      const removedFavorite = event.detail;
+      console.log('Removing favorite:', removedFavorite);
+      setFavorites(prevFavorites => prevFavorites.filter(favorite => favorite.placeId !== removedFavorite.placeId));
+      setSnackbarMessage('Removed from favorites');
+      setSnackbarOpen(true);
+    };
+
     window.addEventListener('favoriteAdded', handleFavoriteAdded);
+    window.addEventListener('favoriteRemoved', handleFavoriteRemoved);
 
     return () => {
       window.removeEventListener('favoriteAdded', handleFavoriteAdded);
+      window.removeEventListener('favoriteRemoved', handleFavoriteRemoved);
     };
   }, []);
 
