@@ -180,10 +180,10 @@ const GoogleMapProvider = ({children}) => {
   };
 
   return (
-    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, createInfoWindows, removeMarkers, clearMarkers}}>
+    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, createInfoWindows removeMarkers, clearMarkers}}>
       {children}
     </GoogleMapContext.Provider>
   );
-
+};
   
 export { GoogleMapContext, GoogleMapProvider };
