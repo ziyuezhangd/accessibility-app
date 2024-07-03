@@ -17,7 +17,7 @@ export const getPlaceInfos = async () => {
   }
 
   const placeInfos = await response.json();
-  return placeInfos.map((placeInfo) => new PlaceInfo(...Object.values(placeInfo)));
+  return placeInfos;
 };
 
 /**
@@ -157,4 +157,207 @@ export class PlaceInfoUtilities {
     const placesSorted = _.sortBy(placeInfos, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
     return placesSorted.slice(0, qty);
   };
+
+  /**
+   *
+   * function to return the marker image of a place info object .
+   *
+*/
+  static getMarkerPNG = (placeInfo) => {
+    const { category } = placeInfo;
+    const pngUrl = '../../accessibilityMarkers/';
+    const parentCategory = categoryToParentCategory(category);
+
+    if (!parentCategory) {
+      return null;
+    }
+    else{
+      const imgSrc = `${pngUrl}${parentCategory}.png`;
+      return imgSrc;
+    }
+  };
 }
+
+const pubCategories = ['beverages', 'alcohol', 'nightlife', 'nightclub', 'pub'];
+const airportCategories = ['airport'];
+const booksCategories = ['books','library'];
+const educationCategories = ['college', 'education', 'kindergarten', 'music_school', 'school', 'university'];
+const drinkingWaterCategories = ['drinkingwater'];
+const retailCategories = ['2nd_hand', 'antiques', 'art_shop', 'bicycle_store', 'bread', 'butcher', 'clothes', 'computers', 'confectionary', 'convenience_store', 'copyshop', 'department_store', 'electronics', 'furniture', 'gifts', 'greengrocer', 'hiking', 'instruments', 'jewelry', 'kiosk', 'laundry', 'mobile_phones', 'newsagent', 'pet_store', 'shoes', 'shopping', 'sports_shop', 'stationery', 'tea_shop', 'textiles', 'tobacco', 'tools', 'toys', 'variety_store', 'video_store'];
+const officeCategories = ['communitycentre', 'court', 'embassy', 'employment_agency', 'government_office', 'insurance', 'lawyer', 'other', 'political_party', 'townhall', 'travel_agency'];
+const theatreCategories = ['theater'];
+const cinemaCategories = ['cinema'];
+const carCategories = ['car_dealer', 'car_rental', 'car_repair', 'car_sharing', 'driving_school', 'parking', 'parking_carports', 'taxi'];
+const accomodationCategories = ['accommodation', 'bed_breakfast', 'chalet', 'dormitory', 'guest_house', 'hostel', 'hotel', 'motel', 'shelter'];
+const policeStationCategories = ['police'];
+const healthCategories = ['abortion', 'allergology', 'alternative_medicine', 'anaesthetics', 'birthing_centre', 'blood_bank', 'blood_donation', 'cardiology', 'cardiothoracic_surgery', 'chemist', 'child_psychiatry', 'clinic', 'counselling', 'dental_oral_maxillo_facial_surgery', 'dentist', 'dermatology', 'dermatovenereology', 'diagnostic_radiology', 'doctor', 'emergency', 'endocrinology', 'ergotherapist', 'fertility', 'gastroenterology', 'geriatrics', 'gynaecology', 'haematology', 'health', 'hearing_aids', 'hepatology', 'hospice', 'hospital', 'infectious_diseases', 'medical_store', 'midwife', 'neonatology', 'nephrology', 'neurology', 'neuropsychiatry', 'neurosurgery', 'nursing', 'nursing_home', 'nutrition_counselling', 'occupational', 'occupational_therapist', 'oncology', 'ophthalmology', 'orthodontics', 'orthopaedics', 'paediatric_surgery', 'palliative', 'pharmacy', 'physiotherapist', 'plastic_surgery', 'podiatrist', 'psychotherapist', 'psychotherapy', 'rehabilitation', 'speech_therapist', 'therapist', 'vaccination', 'vaccination_centre'];
+const restaurantCategories = ['canteen', 'deli', 'fastfood', 'food', 'icecream', 'restaurant'];
+const placeOfWorshipCategories = ['place_of_worship'];
+const attractionCategories = ['attraction', 'cablecar', 'casino', 'leisure', 'themepark', 'tourism', 'zoo'];
+const trainCategoories = ['platform', 'public_transport', 'railway_platform', 'train', 'train_station', 'tram_crossing', 'tram_stop'];
+const artCategories = ['art_gallery', 'arts_center', 'culture', 'public_art'];
+const museumCategories = ['museum'];
+const busCategories = ['bus_station', 'bus_stop'];
+const marketCategories = ['market'];
+const toiletCategories = ['toilets'];
+const atmCategories = ['atm', 'currencyexchange'];
+const coffeeCategories = ['coffee'];
+const flowersCategories = ['garden_centre', 'flowers', 'allotments'];
+const parkCategories = ['park', 'dog_park'];
+const veterinaryCategories = ['veterinary'];
+const waterCategories = ['beach', 'marina', 'pier', 'swimming'];
+const historicCategories = ['archaeological_site', 'castle', 'memorial'];
+const ferryCategories = ['ferry'];
+const campingCategories = ['camping', 'caravan_site'];
+const parkingCategories = ['parking,parking_carports,parking_half_on_kerb,parking_layby,parking_multi_storey,parking_on_kerb,parking_rooftop,parking_street_side,parking_surface,parking_underground'];
+const playgroundCategories = ['playground'];
+const subwayCategories = ['subway_station', 'subway_entrance'];
+const beautyCategories = ['barber', 'beautysalon', 'massage', 'sauna'];
+const postCategories = ['post_box', 'post_office'];
+const sportsCategories = ['soccer', 'sport', 'sports_center', 'stadium'];
+const bikeCategories = ['bicycle_rental', 'bicycle_repair'];
+const supermarketCategories = ['organic_food', 'supermarket'];
+const serviceCategories = ['charging_station', 'dry_cleaning', 'funeral_home', 'information', 'nursing_home', 'parcel_locker', 'recycling', 'retirement_home', 'shower', 'social_facility', 'tailor'];
+const phoneCategories = ['telephone'];
+const bankCategories = ['bank'];
+const picnicTableCategories = ['picnic_table'];
+const cemeteryCategories = ['cemetery'];
+
+const categoryToParentCategory = (category) => {
+  if( pubCategories.includes(category)) {
+    return 'pub';
+  }
+  if( campingCategories.includes(category)) {
+    return 'camping';
+  }
+  if( airportCategories.includes(category)) {
+    return 'airport';
+  }
+  if( booksCategories.includes(category)) {
+    return 'books';
+  }
+  if( educationCategories.includes(category)) {
+    return 'education';
+  }
+  if( drinkingWaterCategories.includes(category)) {
+    return 'drinkingWater';
+  }
+  if( retailCategories.includes(category)) {
+    return 'retail';
+  }
+  if( officeCategories.includes(category)) {
+    return 'office';
+  }
+  if( theatreCategories.includes(category)) {
+    return 'theatre';
+  }
+  if( cinemaCategories.includes(category)) {
+    return 'cinema';
+  }
+  if( carCategories.includes(category)) {
+    return 'car';
+  }
+  if( accomodationCategories.includes(category)) {
+    return 'accomodation';
+  }
+  if( policeStationCategories.includes(category)) {
+    return 'police';
+  }
+  if( healthCategories.includes(category)) {
+    return 'health';
+  }
+  if( restaurantCategories.includes(category)) {
+    return 'restaurant';
+  }
+  if( trainCategoories.includes(category)) {
+    return 'train';
+  }
+  if( artCategories.includes(category)) {
+    return 'art';
+  }
+  if( busCategories.includes(category)) {
+    return 'bus';
+  }
+  if( marketCategories.includes(category)) {
+    return 'market';
+  }
+  if( toiletCategories.includes(category)) {
+    return 'toilets';
+  }
+  if( flowersCategories.includes(category)) {
+    return 'flowers';
+  }
+  if( parkCategories.includes(category)) {
+    return 'park';
+  }
+  if( veterinaryCategories.includes(category)) {
+    return 'veterinary';
+  }
+  if( waterCategories.includes(category)) {
+    return 'water';
+  }
+  if( historicCategories.includes(category)) {
+    return 'historic';
+  }
+  if( ferryCategories.includes(category)) {
+    return 'ferry';
+  }
+  if( toiletCategories.includes(category)) {
+    return 'toilet';
+  }
+  if( parkingCategories.includes(category)) {
+    return 'parking';
+  }
+  if( playgroundCategories.includes(category)) {
+    return 'playground';
+  }
+  if( subwayCategories.includes(category)) {
+    return 'subway';
+  }
+  if( beautyCategories.includes(category)) {
+    return 'beauty';
+  }
+  if( postCategories.includes(category)) {
+    return 'post';
+  }
+  if( bikeCategories.includes(category)) {
+    return 'bike';
+  }
+  if( supermarketCategories.includes(category)) {
+    return 'supermarket';
+  }
+  if( serviceCategories.includes(category)) {
+    return 'service';
+  }
+  if( phoneCategories.includes(category)) {
+    return 'phone';
+  }
+  if( picnicTableCategories.includes(category)) {
+    return 'picnicTable';
+  }
+  if( bankCategories.includes(category)) {
+    return 'bank';
+  }
+  if( cemeteryCategories.includes(category)) {
+    return 'cemetery';
+  }
+  if( sportsCategories.includes(category)) {
+    return 'sports';
+  }
+  if( atmCategories.includes(category)) {
+    return 'atm';
+  }
+  if( placeOfWorshipCategories.includes(category)) {
+    return 'placeOfWorship';
+  }
+  if( museumCategories.includes(category)) {
+    return 'museum';
+  }
+  if( attractionCategories.includes(category)) {
+    return 'attraction';
+  }
+  if( coffeeCategories.includes(category)) {
+    return 'coffee';
+  }
+};
+

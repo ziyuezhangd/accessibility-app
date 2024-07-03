@@ -28,14 +28,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  * 
  * @returns {JSX.Element} The rendered DrawerHistoryList component.
  */
-
 export default function DrawerHistoryList({ onLocationSelected }) {
   const [history, setHistory] = useState([]);
-
   useEffect(() => {
     getHistory();
   }, []);
-
   // TODO: maybe we want to show the date/time?
   const getHistory = () => {
     const history = localStorage.getItem('searchHistory');
