@@ -6,9 +6,11 @@ import { StyleSheet } from 'react-native';
 import { PLACE_CATEGORIES, PlaceInfo, categoryToParentCategory } from '../interfaces/PlaceInfo';
 import { MarkerConfig } from '../interfaces/Map';
 import { GoogleMapContext, GoogleMapContextType } from '../providers/MapProvider';
+import { DataContext, DataContextType } from '../providers/DataProvider';
 
-export default function PlacesBottomPanel({ placeInfos }: { placeInfos: PlaceInfo[] }) {
+export default function PlacesBottomPanel() {
   const { createMarkers, setRegion, region } = useContext(GoogleMapContext) as GoogleMapContextType;
+  const { placeInfos } = useContext(DataContext) as DataContextType;
   const theme = useTheme();
 
   const [filteredPlaces, setFilteredPlaces] = useState<PlaceInfo[]>([]);
@@ -20,8 +22,8 @@ export default function PlacesBottomPanel({ placeInfos }: { placeInfos: PlaceInf
     createMarkers(markers, true);
 
     // Zoom out a bit
-    if(!region) {
-      console.log('No region')
+    if (!region) {
+      console.log('No region');
     }
     setRegion({ latitude: region.latitude, longitude: region.longitude, latitudeDelta: 0.1, longitudeDelta: 0.1 });
   };

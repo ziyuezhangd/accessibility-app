@@ -16,6 +16,7 @@ import { getPlaceInfos } from './services/PlaceInfoApi';
 import { PlaceInfo } from './interfaces/PlaceInfo';
 import { GoogleMapProvider } from './providers/MapProvider';
 import { UserDataProvider } from './providers/UserDataProvider';
+import { DataProvider } from './providers/DataProvider';
 
 // TODO: attribute: hotpot.ai/art-generator
 
@@ -65,21 +66,6 @@ export default function Index() {
     { key: 'recents', title: 'Recents', focusedIcon: 'history' },
     { key: 'predictions', title: 'Predictions', focusedIcon: 'crystal-ball' },
   ]);
-  const [placeInfos, setPlaceInfos] = useState<PlaceInfo[]>([]);
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      const places = await getPlaceInfos();
-      setPlaceInfos(places);
-      console.log('Place info loaded');
-    } catch (e) {
-      console.error(e);
-    }
-  };
 
   useEffect(() => {
     const selectedRoute = routes[index];
@@ -114,30 +100,32 @@ export default function Index() {
 
   return (
     <SafeAreaProvider>
-      <UserDataProvider>
-        <GoogleMapProvider>
-          <View style={{ flexGrow: 1, paddingTop: insets.top }}>
-            <Map />
-          </View>
-          <BottomSheet
-            ref={bottomSheetRef}
-            index={1}
-            snapPoints={snapPoints}
-            animateOnMount={true}
-            onChange={handleSheetChange}
-            footerComponent={(e) => renderFooterComponent(e, index)}
-            backgroundStyle={{ backgroundColor: theme.colors.background }}
-            handleIndicatorStyle={{ backgroundColor: theme.colors.secondary }}
-          >
-            <View style={styles.contentContainer}>
-              {selectedRoute === 'favorites' && <FavoritesBottomPanel />}
-              {selectedRoute === 'places' && <PlacesBottomPanel placeInfos={placeInfos} />}
-              {selectedRoute === 'recents' && <RecentsBottomPanel />}
-              {selectedRoute === 'predictions' && <PredictionsBottomPanel />}
+      <DataProvider>
+        <UserDataProvider>
+          <GoogleMapProvider>
+            <View style={{ flexGrow: 1, paddingTop: insets.top }}>
+              <Map />
             </View>
-          </BottomSheet>
-        </GoogleMapProvider>
-      </UserDataProvider>
+            <BottomSheet
+              ref={bottomSheetRef}
+              index={1}
+              snapPoints={snapPoints}
+              animateOnMount={true}
+              onChange={handleSheetChange}
+              footerComponent={(e) => renderFooterComponent(e, index)}
+              backgroundStyle={{ backgroundColor: theme.colors.background }}
+              handleIndicatorStyle={{ backgroundColor: theme.colors.secondary }}
+            >
+              <View style={styles.contentContainer}>
+                {selectedRoute === 'favorites' && <FavoritesBottomPanel />}
+                {selectedRoute === 'places' && <PlacesBottomPanel />}
+                {selectedRoute === 'recents' && <RecentsBottomPanel />}
+                {selectedRoute === 'predictions' && <PredictionsBottomPanel />}
+              </View>
+            </BottomSheet>
+          </GoogleMapProvider>
+        </UserDataProvider>
+      </DataProvider>
     </SafeAreaProvider>
   );
 }

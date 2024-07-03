@@ -3,7 +3,7 @@ import { PlaceInfo } from '../interfaces/PlaceInfo';
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-export const getPlaceInfos = async () => {
+export const getPlaceInfos = async (): Promise<PlaceInfo[]> => {
   try {
     const response = await fetch(`${apiUrl}/place-infos`);
     const placeInfos: PlaceInfo[] = await response.json();
@@ -14,5 +14,6 @@ export const getPlaceInfos = async () => {
     return placeInfos;
   } catch (e) {
     console.log('Ahhh!', e);
+    throw e;
   }
 };
