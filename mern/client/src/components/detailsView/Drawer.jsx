@@ -55,7 +55,7 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
     setLocation(e);
   };
 
-  const handleBackClicked = () => {
+  const handleBackClicked = (e) => {
     clearMarkers();
     setSelectedDrawerContent('history');
     setLocation(null);

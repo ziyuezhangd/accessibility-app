@@ -18,24 +18,24 @@ const GoogleMapProvider = ({children}) => {
   const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
-    const loadPlaces = async () => {
-      const { PlacesService } = await google.maps.importLibrary('places');
-      const service = new PlacesService(mapInstance);
-      setPlacesService(service);
-      console.log('Places service loaded successfully: ', service);
-    };
-
-    const loadGeocoder = async () => {
-      const geocoder = new google.maps.Geocoder();
-      setGeocoder(geocoder);
-      console.log('Geocoder loaded successfully: ', geocoder);
-    };
-
     if (mapInstance) {
       loadPlaces();
       loadGeocoder();
     }
   }, [mapInstance]);
+
+  const loadPlaces = async () => {
+    const { PlacesService } = await google.maps.importLibrary('places');
+    const service = new PlacesService(mapInstance);
+    setPlacesService(service);
+    console.log('Places service loaded successfully: ', service);
+  };
+
+  const loadGeocoder = async () => {
+    const geocoder = new google.maps.Geocoder();
+    setGeocoder(geocoder);
+    console.log('Geocoder loaded successfully: ', geocoder);
+  };
 
   const handleMapLoaded = (map) => {
     setMapInstance(map);
@@ -51,7 +51,7 @@ const GoogleMapProvider = ({children}) => {
    * imgAlt: string, 
    * scale: number, 
    * color: string}>} markerConfigs 
-   * @param {booleam} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
+   * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
    */
   const createMarkers = (markerConfigs, shouldOverwriteExisting) => {
     if (shouldOverwriteExisting) {
@@ -65,6 +65,7 @@ const GoogleMapProvider = ({children}) => {
       lng = parseFloat(lng);
       if (imgSrc) {
         const {imgAlt, imgSize} = config;
+        // console.log(imgSrc)
         const marker = (
           <AdvancedMarker 
             lat={lat}
@@ -79,6 +80,7 @@ const GoogleMapProvider = ({children}) => {
         );
         markersToCreate.push(marker);
       } else {
+        // console.log('Imgsrc is null')
         let { scale, color} = config;
         scale = scale || 1;
         color = color || '#FF0000';
@@ -100,8 +102,8 @@ const GoogleMapProvider = ({children}) => {
   };
 
   /**
-   * Remove markers at specific latitude/longitudes
-   * @param {Array<{lat: number, lng: number}>} list of latitude and longitudes to remove markers from
+   * 
+   * @param {Array<{lat: number, lng: number}>} latLngs 
    */
   const removeMarkers = (latLngs) => {
     for (const latLng of latLngs) {
@@ -112,7 +114,7 @@ const GoogleMapProvider = ({children}) => {
   };
 
   /**
-   * Remove all markers from the map.
+   * 
    */
   const clearMarkers = () => {
     setMarkers([]);
