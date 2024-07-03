@@ -1,3 +1,4 @@
+import { getCurrentTimeInNewYork } from '../utils/dateTime';
 import { MANHATTAN_LAT, MANHATTAN_LNG } from '../utils/MapUtils';
 
 /**
@@ -33,6 +34,7 @@ export class Feedback {
    * @param {string} gender - The gender of the user providing feedback.
    * @param {string} conditions - The conditions mentioned in the feedback.
    * @param {Array<number>|null} coordinates [latitude, longitude] - The latitude and longitude of the feedback location.
+   * @param {Date} date - The date and time when user provides the feedback.
    */
   constructor(name, email, comment, age, gender, conditions, coordinates = null) {
     this.name = name;
@@ -50,5 +52,6 @@ export class Feedback {
       }
     }
     this.coordinates = coordinates;
+    this.date = getCurrentTimeInNewYork();
   }
 }
