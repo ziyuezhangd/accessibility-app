@@ -40,10 +40,20 @@
     <true/>
     <key>NSAppTransportSecurity</key>
     <dict>
-      <key>NSAllowsArbitraryLoads</key>
-      <false/>
-      <key>NSAllowsLocalNetworking</key>
-      <true/>
+          <key>NSAllowsArbitraryLoads</key> 
+          <false/>
+          <key>NSExceptionDomains</key>
+          <dict>
+                <key>137.43.49.23</key> <!--Include your domain at this line -->
+                <dict>
+                    <key>NSIncludesSubdomains</key>
+                    <true/>
+                    <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+                    <true/>
+                    <key>NSTemporaryExceptionMinimumTLSVersion</key>
+                    <string>TLSv1.1</string>
+                </dict>
+          </dict>
     </dict>
     <key>NSHealthClinicalHealthRecordsShareUsageDescription</key>
     <string>Custom health share permission for clinical data</string>
