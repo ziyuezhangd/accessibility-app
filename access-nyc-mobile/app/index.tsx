@@ -15,7 +15,7 @@ import { BottomSheetDefaultFooterProps } from '@gorhom/bottom-sheet/lib/typescri
 import { getPlaceInfos } from './services/PlaceInfoApi';
 import { PlaceInfo } from './interfaces/PlaceInfo';
 import { GoogleMapProvider } from './providers/MapProvider';
-import { UserLocationProvider } from './providers/UserLocationProvider';
+import { UserDataProvider } from './providers/UserDataProvider';
 
 // TODO: attribute: hotpot.ai/art-generator
 
@@ -114,7 +114,7 @@ export default function Index() {
 
   return (
     <SafeAreaProvider>
-      <UserLocationProvider>
+      <UserDataProvider>
         <GoogleMapProvider>
           <View style={{ flexGrow: 1, paddingTop: insets.top }}>
             <Map />
@@ -137,7 +137,7 @@ export default function Index() {
             </View>
           </BottomSheet>
         </GoogleMapProvider>
-      </UserLocationProvider>
+      </UserDataProvider>
     </SafeAreaProvider>
   );
 }

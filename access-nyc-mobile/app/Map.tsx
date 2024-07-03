@@ -44,6 +44,7 @@ export default function Map() {
   };
 
   const handleMapReady = (e) => {
+    // TODO: is this working?
     onMapReady(e);
     Location.getCurrentPositionAsync().then((p) => setRegion({ latitude: p.coords.latitude, longitude: p.coords.longitude, latitudeDelta: .01, longitudeDelta: .01 }));
   };
@@ -64,8 +65,8 @@ export default function Map() {
         onPress={handlePress}
         mapType='mutedStandard'
         // followsUserLocation={true}
-        // showsUserLocation={true}
-        // onUserLocationChange={handleLocationChanged}
+        showsUserLocation={true}
+        onUserLocationChange={handleLocationChanged}
         // userLocationCalloutEnabled={true}
         region={region}
         provider={PROVIDER_GOOGLE}

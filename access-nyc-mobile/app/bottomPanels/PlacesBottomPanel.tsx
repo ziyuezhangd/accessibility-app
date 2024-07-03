@@ -20,6 +20,9 @@ export default function PlacesBottomPanel({ placeInfos }: { placeInfos: PlaceInf
     createMarkers(markers, true);
 
     // Zoom out a bit
+    if(!region) {
+      console.log('No region')
+    }
     setRegion({ latitude: region.latitude, longitude: region.longitude, latitudeDelta: 0.1, longitudeDelta: 0.1 });
   };
 
