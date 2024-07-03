@@ -84,7 +84,7 @@ const GoogleMapProvider = ({ children }: { children: React.ReactNode }) => {
     setCurrentRegion(r);
   };
 
-  return <GoogleMapContext.Provider value={{ isMapReady, onMapReady: handleMapReady, createMarkers, removeMarkers, markers, setRegion, region: currentRegion }}>{children}</GoogleMapContext.Provider>;
+  return <GoogleMapContext.Provider value={{ isMapReady, onMapReady: handleMapReady, createMarkers, removeMarkers, markers, setRegion, region: currentRegion as Region }}>{children}</GoogleMapContext.Provider>;
 };
 
 const styles = StyleSheet.create({
