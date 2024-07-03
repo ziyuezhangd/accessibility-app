@@ -1,23 +1,18 @@
 // DrawerLocationDetails.jsx
-import { PlaceOverview } from '@googlemaps/extended-component-library/react';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import {PlaceOverview} from '@googlemaps/extended-component-library/react';
+import { Button, Alert } from '@mui/material';
+import Box from '@mui/material/Box';
 import Favorite from '@mui/icons-material/Favorite';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import { Button, Box, IconButton, styled } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import FeedbackForm from './FeedbackForm';
 import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-  justifyContent: 'space-between',
-}));
+import { postFeedback } from '../../services/feedback';
+import { MapLocation } from '../../utils/MapUtils';
 
 /**
  * DrawerLocationDetails component.
@@ -26,8 +21,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  * 
  * @param {Object} props - The properties passed to the component.
  * @param {MapLocation} props.location - The location object to show details about.
- * @param {function} props.onBackClicked - The function to call when the back button is clicked.
- * 
  * @returns {JSX.Element} The rendered DrawerLocationDetails component.
  */
 const modalStyle = {
@@ -43,7 +36,7 @@ const formStyle = {
   p: 4,
 };
 
-export default function DrawerLocationDetails({ location, onBackClicked }) {
+export default function DrawerLocationDetails({ location }) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 

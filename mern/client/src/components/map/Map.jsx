@@ -1,19 +1,21 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Snackbar, IconButton, Button,useTheme, useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
-import React, { useState, useEffect, useContext } from 'react';
-import { GoogleMap, Marker, HeatmapLayer, Control } from 'react-google-map-wrapper';
-import DateTimePicker from './DateTimePicker';
+import { useState, useEffect, useContext } from 'react';
+import { GoogleMap, HeatmapLayer, Marker, MarkerClusterer } from 'react-google-map-wrapper';
+import { Control } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
+import { DataContext, DataProvider } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
-import PersistentDrawerLeft from '../detailsView/Drawer';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
+
 const busynessData = [
   { lat: 40.7831, lng: -73.9712, weight: 2 },
   { lat: 40.748817, lng: -73.985428, weight: 1 },
@@ -54,9 +56,10 @@ const odorData = [
 ];
 
 export const Map = () => {
-  const [placeInfos, setPlaceInfos] = useState([]);
+  // const [placeInfos, setPlaceInfos] = useState([]);
   const theme = useTheme();
   const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
+  const {placeInfos} = useContext(DataContext);
 
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
@@ -66,7 +69,6 @@ export const Map = () => {
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
-
   const handleSelect = (item) => {
     switch (item.id) {
     case 'busyness':
@@ -119,6 +121,35 @@ export const Map = () => {
     }
   };
 
+  useEffect(() => {
+    const showAccessibilityMarkers = (placeInfos) => {
+      const markers = placeInfos.map(placeInfo => {
+        const imgSrc = PlaceInfoUtilities.getMarkerPNG(placeInfo);
+        if (imgSrc === null){
+          return null;
+        }
+        else{
+          return {
+            lat: placeInfo.latitude,
+            lng: placeInfo.longitude,
+            imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
+            imgSize: '30px', 
+            imgAlt: PlaceInfoUtilities.name,
+          }; 
+        }
+
+      });
+      const filteredMarkers =markers.filter( (marker) => marker !== null); 
+
+      createMarkers(filteredMarkers);
+      console.log(filteredMarkers);
+    };
+
+    if (placeInfos) {
+      showAccessibilityMarkers(placeInfos);
+    }
+  }, [placeInfos]);
+
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
@@ -158,13 +189,13 @@ export const Map = () => {
   };
 
   const fetchData = async () => {
-    const busynessRatings = await getBusynessRatings(selectedDate);
-    console.log('busynessRatings: ', busynessRatings);
-    const noiseRatings = await getNoiseRatings(selectedDate);
-    console.log('noiseRatings: ', noiseRatings);
-    const odourRatings = await getOdourRatings(selectedDate);
-    console.log('odourRatings: ', odourRatings);
-    getPlaceInfos().then(setPlaceInfos);
+    // const busynessRatings = await getBusynessRatings(selectedDate);
+    // console.log('busynessRatings: ', busynessRatings);
+    // const noiseRatings = await getNoiseRatings(selectedDate);
+    // console.log('noiseRatings: ', noiseRatings);
+    // const odourRatings = await getOdourRatings(selectedDate);
+    // console.log('odourRatings: ', odourRatings);
+    // getPlaceInfos().then(setPlaceInfos);
   };
 
   useEffect(() => {
@@ -211,14 +242,9 @@ export const Map = () => {
                 onSearchEntered={handleSearchEntered}/>
             </Control>
             <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-              <Box sx={dateTimeHelpContainerStyle}>
-                <DateTimePicker selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate} />
-                <HelpIcon />
-              </Box>
+              <HelpIcon />
             </Control>
           </Box>
-          <HelpIcon />
           {heatMapData.length > 0 && (
             <HeatmapLayer
               data={heatMapData.map((data) => ({
@@ -259,3 +285,5 @@ export const Map = () => {
 };
 
 export default Map;
+//https://stackoverflow.com/questions/25496625/add-local-image-as-custom-marker-in-google-maps
+//https://developers.google.com/maps/documentation/javascript/custom-markers
