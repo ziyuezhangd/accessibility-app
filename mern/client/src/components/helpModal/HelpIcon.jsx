@@ -1,6 +1,6 @@
 import { Help } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Control } from 'react-google-map-wrapper';
 import HelpModal from './HelpModal';
 
@@ -9,6 +9,12 @@ export default function HelpIcon() {
   const handleButtonClick = () => {
     setIsModalVisible(!isModalVisible);
   };
+
+  // Add this useEffect to get the localStorage value
+  useEffect(() => {
+    const shouldnotshowhowhelp = localStorage.getItem('dontShowAgain');
+    setIsModalVisible(!shouldnotshowhowhelp);
+  }, [])
 
   return (
     <>

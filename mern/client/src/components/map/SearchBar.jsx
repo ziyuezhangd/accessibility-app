@@ -52,7 +52,6 @@ const SearchBar = ({ onSearchEntered }) => {
 
   return (
     <>
-      <Control position={window.google.maps.ControlPosition.TOP_LEFT}>
         <TextField
           inputRef={searchInputRef}
           placeholder="Search for places"
@@ -82,7 +81,6 @@ const SearchBar = ({ onSearchEntered }) => {
             ),
           }}
         />
-      </Control>
     </>
   );
 };

@@ -1,16 +1,16 @@
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Drawer from '@mui/material/Drawer';
-import Toolbar from '@mui/material/Toolbar';
-import { useContext, useEffect, useState } from 'react';
-import DrawerHistoryList from './DrawerHistoryList';
+import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import dayjs from 'dayjs';
+import { useContext, useEffect, useState } from 'react';
+import DateTimePickerComponent from './DateTimePicker';
+import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { MapLocation } from '../../utils/MapUtils';
-import Typography from '@mui/material/Typography';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import IconButton from '@mui/material/IconButton';
-import DateTimePickerComponent from './DateTimePicker';
-import dayjs from 'dayjs';
 
 const drawerWidth = 350;
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -21,6 +21,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
   justifyContent: 'start',
 }));
+
 /**
  * PersistentDrawerLeft component.
  * 
@@ -77,10 +78,10 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
           {selectedDrawerContent === 'location' && <IconButton onClick={handleBackClicked}>
             <ChevronLeftIcon />
           </IconButton>}
-          <div><DateTimePickerComponent selectedDate={selectedDate} setSelectedDate={setSelectedDate} /></div>
+          <div><DateTimePickerComponent selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate} /></div>
 
         </DrawerHeader>
-
 
         {selectedDrawerContent === 'history' &&
           <DrawerHistoryList onLocationSelected={handleLocationSelected} />}

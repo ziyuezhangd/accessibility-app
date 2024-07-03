@@ -9,7 +9,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { useEffect, useState } from 'react';
 
-
 /**
  * DrawerHistoryList function component.
  * 
