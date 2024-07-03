@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved, import/order, import/named */
 import {PlaceOverview} from '@googlemaps/extended-component-library/react';
 import { Button, Alert } from '@mui/material';
 import Box from '@mui/material/Box';
