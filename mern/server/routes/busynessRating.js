@@ -50,4 +50,3 @@ router.get('/location', async (req, res) => {
 });
 
 export default router;
-
