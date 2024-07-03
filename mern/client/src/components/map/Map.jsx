@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
-import DateTimePicker from './DateTimePicker';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
@@ -212,14 +211,9 @@ export const Map = () => {
                 onSearchEntered={handleSearchEntered}/>
             </Control>
             <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-              <Box sx={dateTimeHelpContainerStyle}>
-                <DateTimePicker selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate} />
-                <HelpIcon />
-              </Box>
+              <HelpIcon />
             </Control>
           </Box>
-          <HelpIcon />
           {heatMapData.length > 0 && (
             <HeatmapLayer
               data={heatMapData.map((data) => ({

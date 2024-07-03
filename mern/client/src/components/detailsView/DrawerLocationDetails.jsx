@@ -1,9 +1,7 @@
 /* eslint-disable import/no-unresolved, import/order, import/named */
 import {PlaceOverview} from '@googlemaps/extended-component-library/react';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Button, Alert } from '@mui/material';
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
@@ -13,15 +11,6 @@ import NearestStations from './NearestStations';
 import { postFeedback } from '../../services/feedback';
 import { MapLocation } from '../../utils/MapUtils';
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: 'start',
-}));
-
 /**
  * DrawerLocationDetails component.
  * 
@@ -29,12 +18,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  * 
  * @param {Object} props - The properties passed to the component.
  * @param {MapLocation} props.location - The location object to show details about.
- * @param {function} props.onBackClicked - The function to call when the back button is clicked.
- * 
  * @returns {JSX.Element} The rendered DrawerLocationDetails component.
  */
 
-export default function DrawerLocationDetails({ location, onBackClicked }) {
+export default function DrawerLocationDetails({ location }) {
   const [error, setError] = useState('');
   const [isFeedbackComplete, setIsFeedbackComplete] = useState(false);
 
@@ -82,11 +69,6 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
 
   return (
     <>
-      <DrawerHeader>
-        <IconButton onClick={onBackClicked}>
-          <ChevronLeftIcon />
-        </IconButton>
-      </DrawerHeader>
       <Box sx={{ overflow: 'auto', px: 5 }}>
         {/* TODO: move the google logo elsewhere */}
         <PlaceOverview place={location.placeId}
