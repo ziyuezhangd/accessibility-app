@@ -1,6 +1,6 @@
 /**
  * 
- * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
+ * @param {string} datetime - The date-time string in ISO 8601 format without timezone (e.g., '2024-07-01T14:30:00') 
  * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} busynessRatings
  */
 export const getBusynessRatings = async (datetime) => {
@@ -16,7 +16,7 @@ export const getBusynessRatings = async (datetime) => {
 
 /**
  * 
- * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
+ * @param {string} datetime - The date-time string in ISO 8601 format without timezone (e.g., '2024-07-01T14:30:00') 
  * @returns {Array<{location: {lat: number, lng: number}, prediction: number}>} noiseRatings
  */
 export const getNoiseRatings = async (datetime) => {
@@ -32,7 +32,7 @@ export const getNoiseRatings = async (datetime) => {
 
 /**
  * 
- * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
+ * @param {string} datetime - The date-time string in ISO 8601 format without timezone (e.g., '2024-07-01T14:30:00') 
  * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} odourRatings
  */
 export const getOdourRatings = async (datetime) => {
