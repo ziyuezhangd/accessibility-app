@@ -1,6 +1,7 @@
+import { List } from '@mui/material';
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
-import { AdvancedMarker, PinElement } from 'react-google-map-wrapper';
+import { AdvancedMarker, InfoWindow, PinElement } from 'react-google-map-wrapper';
 
 const GoogleMapContext = createContext();
 
@@ -101,6 +102,64 @@ const GoogleMapProvider = ({children}) => {
     console.log(`Created ${markers.length} markers`);
   };
 
+  const createInfoWindows = (markerConfigs, shouldOverwriteExisting) => {
+    if (shouldOverwriteExisting) {
+      clearMarkers();
+    }
+    const markersToCreate = [];
+    for (const config of markerConfigs) {
+      let { lat, lng, eventName, locationName, url, additionalInfo, lightAdjustments, soundAdjustments, designatedBreakAreas, closedToGeneralPublic } = config;
+      lat = parseFloat(lat);
+      lng = parseFloat(lng);
+      if ({lightAdjustments}){
+        const lightAdjustmentsString = 'Light Adjustments'
+      }
+      if ({soundAdjustments}){
+        const soundAdjustmentsString = 'Sound Adjustments'
+      }
+      if ({designatedBreakAreas}){
+        const designatedBreakAreaString = 'Designated Break Area'
+      }
+      if ({closedToGeneralPublic}){
+        const closedToGeneralPublicString = 'Closed to General Public'
+      }
+      function Content() {
+        return (
+        <div id='content'>
+          <div id='POI'></div>
+          <h1 id='firstHeading' className='firstHeading'>{eventName}</h1>
+          <h2 id='secondHeading' className='secondHeading'>{locationName}</h2>
+          <h3 id='url' className='url'>{url}</h3>
+          <div id='bodyContent'>
+              <p>{additionalInfo}.</p>
+              <p> Visit the site: <a href={url}>{url}</a></p>
+          </div>
+          <br></br>
+          <br></br>
+          <h3>Special Accomodations: </h3>
+          <ul id='sensoryFeatures'>
+            <li>{lightAdjustmentsString}</li>
+            <li>{soundAdjustmentsString}</li>
+            <li>{designatedBreakAreasString}</li>
+            <li>{closedToGeneralPublicString}</li>
+          </ul>
+        </div>
+      );
+    }
+
+    scale = scale || 1;
+    color = color || '#FF0000';
+    const infoWindow= (
+      <InfoWindow ariaLabel='POI' content={<Content />} onCloseClick={() => setOpen(false)} open={isOpen}>
+          <Marker {...POI} title='POI' onClick={() => setOpen(true)} />
+      </InfoWindow>
+      )
+      markersToCreate.push(marker);
+      }
+      setMarkers([...markers, ...markersToCreate]);
+      console.log(`Created ${markers.length} markers`);
+  };
+
   /**
    * 
    * @param {Array<{lat: number, lng: number}>} latLngs 
@@ -121,10 +180,10 @@ const GoogleMapProvider = ({children}) => {
   };
 
   return (
-    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, removeMarkers, clearMarkers}}>
+    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, createInfoWindows, removeMarkers, clearMarkers}}>
       {children}
     </GoogleMapContext.Provider>
   );
-};
+
   
 export { GoogleMapContext, GoogleMapProvider };

@@ -2,7 +2,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState, useEffect, useContext } from 'react';
-import { GoogleMap, HeatmapLayer, Marker, MarkerClusterer } from 'react-google-map-wrapper';
+import { GoogleMap, HeatmapLayer, InfoWindow, Marker, MarkerClusterer } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
 import DateTimePicker from './DateTimePicker';
 import Dropdown from './Dropdown';
@@ -59,8 +59,9 @@ const odorData = [
 export const Map = () => {
   // const [placeInfos, setPlaceInfos] = useState([]);
   const theme = useTheme();
-  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
+  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers, createInfoWindows} = useContext(GoogleMapContext);
   const {placeInfos} = useContext(DataContext);
+  const {accessibilityHighlightPlaces} = useContext(DataContext);
 
   const [heatMapData, setHeatMapData] = useState([]);
   const [heatMapGradient, setHeatMapGradient] = useState([]);
@@ -121,7 +122,7 @@ export const Map = () => {
       });
     }
   };
-
+  //These are the wheelchair accessible markers from the accessibility cloud
   useEffect(() => {
     const showAccessibilityMarkers = (placeInfos) => {
       const markers = placeInfos.map(placeInfo => {
@@ -150,6 +151,41 @@ export const Map = () => {
       showAccessibilityMarkers(placeInfos);
     }
   }, [placeInfos]);
+
+  //These are the AccessibilityHighlightPlaces markers, the special sensory friendly places/events
+  useEffect(() => {
+    const showHighlightMarkers = (accessibilityHighlightPlaces) => {
+      const markers = accessibilityHighlightPlaces.map(accessibilityHighlightPlace => {
+        const imgSrc = PlaceInfoUtilities.getMarkerPNG(accessibilityHighlightPlace);
+        if (imgSrc === null){
+          return null;
+        }
+        else{
+          return {
+            eventName: accessibilityHighlightPlace.eventName,
+            locationName: accessibilityHighlightPlace.locationName,
+            lat: accessibilityHighlightPlace.location.coordinates[0],
+            lng: accessibilityHighlightPlace.location.coordinates[1],
+            url: accessibilityHighlightPlace.url,
+            lightAdjustments: accessibilityHighlightPlace.lightAdjustments,
+            soundAdjustments: accessibilityHighlightPlace.soundAdjustments,
+            designatedBreakArea: accessibilityHighlightPlace.designatedBreakArea,
+            additionalInfo: accessibilityHighlightPlace.additionalInfo,
+            closedToGeneralPublic: accessibilityHighlightPlace.closedToGeneralPublic,
+            date: accessibilityHighlightPlace.date,
+          }; 
+        }
+      });
+      const filteredMarkers =markers.filter( (marker) => marker !== null); 
+
+      createInfoWindows(filteredMarkers);
+      console.log(filteredMarkers);
+    };
+
+    if (accessibilityHighlightPlaces) {
+      showHighlightMarkers(accessibilityHighlightPlaces);
+    }
+  }, [accessibilityHighlightPlaces]);
 
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
