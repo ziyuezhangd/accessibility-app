@@ -59,7 +59,6 @@ export class PlaceInfo {
     this.hasWheelchairAccessibleRestroom = hasWheelchairAccessibleRestroom;
   }
 
-
   /**
    * Gets a human-readable string of the address - if not available, returns empty string.
    * */
