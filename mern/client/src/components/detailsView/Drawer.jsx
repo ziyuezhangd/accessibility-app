@@ -40,7 +40,7 @@ export default function PersistentDrawerLeft({ selectedLocation}) {
     setLocation(e);
   };
 
-  const handleBackClicked = () => {
+  const handleBackClicked = (e) => {
     clearMarkers();
     setSelectedDrawerContent('history');
     setLocation(null);
@@ -58,8 +58,7 @@ export default function PersistentDrawerLeft({ selectedLocation}) {
       >
         <Toolbar />
         {selectedDrawerContent === 'history' && <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
-        {selectedDrawerContent === 'location' && <DrawerLocationDetails 
-          location={location}
+        {selectedDrawerContent === 'location' && <DrawerLocationDetails location={location}
           onBackClicked={handleBackClicked} />}
       </Drawer>
     </>
