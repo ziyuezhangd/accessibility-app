@@ -18,6 +18,16 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
+/**
+ * DrawerHistoryList function component.
+ * 
+ * This component renders a list of location history items in a drawer.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {function} props.onLocationSelected - Function to call when a location item is selected. Takes a MapLocation as a parameter
+ * 
+ * @returns {JSX.Element} The rendered DrawerHistoryList component.
+ */
 export default function DrawerHistoryList({ onLocationSelected }) {
   const [history, setHistory] = useState([]);
   useEffect(() => {
