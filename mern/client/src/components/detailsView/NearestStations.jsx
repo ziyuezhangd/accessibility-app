@@ -15,19 +15,19 @@ import { SUBWAY_LINE_COLORS } from '../../utils/MapUtils';
  * @returns {JSX.Element} The rendered NearestStations component.
  */
 export default function NearestStations({ lat, lng }) {
-  const {placeInfos} = useContext(DataContext);
+  const { placeInfos } = useContext(DataContext);
   const [nearestStations, setNearestStations] = useState([]);
 
   useEffect(() => {
     // TODO: merge stations like Fulton Street
     const getNearestSubwayStations = async () => {
-      const stations = placeInfos.filter((place) => new PlaceInfo(place).isSubwayStation() && place.name !== '');
+      const placeInfosObj = placeInfos.map(pi => new PlaceInfo(pi.category, pi.name, pi.address, pi.latitude, pi.longitude, pi.hasWheelchairAccessibleRestroom));
+      const stations = placeInfosObj.filter((place) => place.isSubwayStation() && place.name !== '');
       const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
       setNearestStations(nearestStations);
     };
-
     getNearestSubwayStations();
-  }, []);
+  }, [placeInfos]);
 
   return (
     <Box display='flex'
