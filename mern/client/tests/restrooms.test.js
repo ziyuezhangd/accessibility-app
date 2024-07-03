@@ -115,6 +115,10 @@ describe('Class PublicRestroom', () => {
       publicRestroom.hours = 'Fall, spring summer: 7am - 9pm. Winter: 7am - 5:30pm';
       const formattedHours3 = publicRestroom.formatHours();
       expect(formattedHours3).toBe(publicRestroom.hours);
+
+      publicRestroom.hours = 'Monday to Friday: 8:00 am-7:00 pm';
+      const formattedHours4 = publicRestroom.formatHours();
+      expect(formattedHours4).toBe(publicRestroom.hours);
     });
 
     it('should format correctly for multiple time segments', () => {

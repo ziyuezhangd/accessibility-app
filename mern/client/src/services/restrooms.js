@@ -129,7 +129,6 @@ export class PublicRestroom {
     try {
       const hoursString = this.hours;
       const now = getCurrentTimeInNewYork();
-      console.log(now.toISOString());
       let openingTime, closingTime;
 
       const parsedHours = parseTimeRangeFromString(hoursString);
