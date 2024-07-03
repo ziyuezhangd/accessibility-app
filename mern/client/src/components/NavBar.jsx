@@ -1,3 +1,4 @@
+// NavBar.jsx
 import { Accessibility, Menu as MenuIcon } from '@mui/icons-material';
 import { AppBar, Box, Button, Container, Menu, MenuItem, Toolbar, Typography, IconButton, Snackbar } from '@mui/material';
 import * as React from 'react';

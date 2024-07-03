@@ -48,6 +48,12 @@ export const Favorites = () => {
     window.dispatchEvent(event);
   };
 
+  const handleFavoriteClick = (favorite) => {
+    const event = new CustomEvent('favoriteSelected', { detail: favorite });
+    window.dispatchEvent(event);
+    handleCloseFavorites();
+  };
+
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -71,9 +77,7 @@ export const Favorites = () => {
       let storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
       console.log('Current stored favorites:', storedFavorites);
 
-      // Check if the favorite already exists
       const isAlreadyAdded = storedFavorites.some(favorite => {
-        console.log('Checking favorite placeId:', favorite.placeId);
         return favorite.placeId === newFavorite.placeId;
       });
       if (isAlreadyAdded) {
@@ -83,7 +87,6 @@ export const Favorites = () => {
         return;
       }
 
-      // Check if the favorites list has less than 5 items
       if (storedFavorites.length < 5) {
         storedFavorites = [newFavorite, ...storedFavorites];
         setFavorites(storedFavorites);
@@ -140,8 +143,12 @@ export const Favorites = () => {
         >
           <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
             {favorites.map((favorite, index) => (
-              <ListItem key={index}
-                alignItems='flex-start'>
+              <ListItem
+                key={index}
+                alignItems='flex-start'
+                onClick={() => handleFavoriteClick(favorite)}
+                sx={{ cursor: 'pointer' }} // Add this line
+              >
                 <ListItemText primary={favorite.name} />
                 <ListItemSecondaryAction>
                   <IconButton edge="end"
