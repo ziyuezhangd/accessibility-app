@@ -19,8 +19,24 @@ export const getBusynessRatings = async (datetime) => {
  * @param {string} datetime - The date-time string in ISO 8601 format without timezone (e.g., '2024-07-01T14:30:00') 
  * @returns {Array<{location: {lat: number, lng: number}, prediction: number}>} noiseRatings
  */
-export const getNoiseRatings = async (datetime) => {
-  const response = await fetch('/api/noise-ratings?' + new URLSearchParams({ datetime }));
+export const getNoiseRatingsHourly = async (datetime) => {
+  const response = await fetch('/api/noise-ratings/hourly?' + new URLSearchParams({ datetime }));
+  if (!response.ok) {
+    const message = `An error has occurred: ${response.statusText}`;
+    console.error(message);
+    return;
+  }
+  const noiseRatings = await response.json();
+  return noiseRatings;
+};
+
+/**
+ * 
+ * @param {string} datetime - The date-time string in ISO 8601 format without timezone (e.g., '2024-07-01T14:30:00') 
+ * @returns {Array<{location: {lat: number, lng: number}, prediction: number}>} noiseRatings
+ */
+export const getNoiseRatingsDaily = async (datetime) => {
+  const response = await fetch('/api/noise-ratings/daily?' + new URLSearchParams({ datetime }));
   if (!response.ok) {
     const message = `An error has occurred: ${response.statusText}`;
     console.error(message);
