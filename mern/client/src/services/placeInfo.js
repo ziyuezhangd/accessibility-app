@@ -17,7 +17,13 @@ export const getPlaceInfos = async () => {
   }
 
   const placeInfos = await response.json();
-  return placeInfos;
+  return placeInfos.map((placeInfo) => {
+    return new PlaceInfo({
+      placeInfo,
+      latitude: parseFloat(placeInfo.latitude),
+      longitude: parseFloat(placeInfo.longitude)
+    });
+  });
 };
 
 /**
@@ -43,14 +49,15 @@ export const getCategories = async () => {
 export class PlaceInfo {
   /**
    * Create a Location.
-   * @param {string} category - The category of the place info.
-   * @param {string} name - The name of the place info.
-   * @param {string} address - The address of the place info.
-   * @param {string} latitude - The latitude of the place info.
-   * @param {string} longitude - The longitude of the place info.
-   * @param {string} hasWheelchairAccessibleRestroom - Indicates if the place info has a wheelchair-accessible restroom.
+   * @param {Object} options - The options for the restroom.
+   * @param {string} options.category - The category of the place info.
+   * @param {string} options.name - The name of the place info.
+   * @param {string} options.address - The address of the place info.
+   * @param {number} options.latitude - The latitude of the place info.
+   * @param {number} options.longitude - The longitude of the place info.
+   * @param {string} options.hasWheelchairAccessibleRestroom - Indicates if the place info has a wheelchair-accessible restroom.
    */
-  constructor(category, name, address, latitude, longitude, hasWheelchairAccessibleRestroom) {
+  constructor({ category, name, address, latitude, longitude, hasWheelchairAccessibleRestroom }) {
     this.category = category;
     this.name = name;
     this.address = address;

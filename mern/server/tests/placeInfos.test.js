@@ -9,8 +9,8 @@ app.use('/', router);
 
 describe('GET', () => {
   const dummyPlaces = [
-    {'category':'police','name':'New York City Police Headquarters','latitude':40.7119414,'longitude':-74.0020911},
-    {'category':'library','name':'Chatham Square Library','latitude':40.7133126,'longitude':-73.9963202}
+    {'category':'police','name':'New York City Police Headquarters','latitude':40.7119414,'longitude':-74.0020911, 'hasWheelchairAccessibleRestroom': false},
+    {'category':'library','name':'Chatham Square Library','latitude':40.7133126,'longitude':-73.9963202, 'hasWheelchairAccessibleRestroom': true}
   ];
   const dummyCategories = ['airport','biergarten','books'];
 

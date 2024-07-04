@@ -20,7 +20,7 @@ export const getPublicRestrooms = async (accessibility = 'all') => {
 
   return restrooms.map((restroom) => {
     return new PublicRestroom({
-      ...restroom,
+      restroom,
       latitude: parseFloat(restroom.latitude),
       longitude: parseFloat(restroom.longitude)
     });
