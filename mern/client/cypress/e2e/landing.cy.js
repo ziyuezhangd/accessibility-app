@@ -2,7 +2,6 @@
 describe('Landing page', () => {
   beforeEach(() => {
     cy.visit('http://localhost:5173');
-    // cy.contains('Discover Accessible Areas in NYC').should('be.visible');
   });
 
   it('renders correctly', () => {

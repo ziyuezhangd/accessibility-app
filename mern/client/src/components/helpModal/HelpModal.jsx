@@ -34,7 +34,8 @@ export default function HelpModal({ isOpen, onClose }) {
   };
 
   return (
-    <Modal open={isOpen}
+    <Modal id='help-modal'
+      open={isOpen}
       onClose={onClose}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'>

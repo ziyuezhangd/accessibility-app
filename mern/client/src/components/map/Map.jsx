@@ -221,7 +221,8 @@ export const Map = () => {
   return (
     <Box sx={{ display: 'flex' }}>
       <PersistentDrawerLeft selectedLocation={selectedPlace}/>
-      <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
+      <Box id="google-map"
+        sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
           zoom={DEFAULT_ZOOM}

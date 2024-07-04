@@ -63,7 +63,7 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
 
   return (
     <>
-      <Drawer
+      <Drawer id='drawer'
         variant='permanent'
         sx={{
           width: drawerWidth,
