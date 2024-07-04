@@ -125,9 +125,7 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
   return (
     <>
       <DrawerHeader>
-        <IconButton onClick={onBackClicked}>
-          <ChevronLeftIcon />
-        </IconButton>
+        <Box></Box>
         <IconButton onClick={handleToggleFavorite}>
           {isFavorite ? <Favorite sx={{ color: 'red' }} /> : <FavoriteBorder />}
         </IconButton>

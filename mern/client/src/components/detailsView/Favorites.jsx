@@ -1,7 +1,5 @@
-// Favorites.jsx
 import { FavoriteBorder, Delete } from '@mui/icons-material';
 import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Menu, Snackbar } from '@mui/material';
-import _ from 'lodash';
 import * as React from 'react';
 
 export const Favorites = () => {
@@ -10,20 +8,21 @@ export const Favorites = () => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
 
+  // Load favorites from localStorage on component mount
   React.useEffect(() => {
-    console.log('Fetching favorites from localStorage');
     const storedFavorites = localStorage.getItem('favorites');
     if (storedFavorites) {
       setFavorites(JSON.parse(storedFavorites));
-      console.log('Favorites loaded:', JSON.parse(storedFavorites));
-    } else {
-      console.log('No favorites found in localStorage');
     }
   }, []);
 
+  // Update localStorage whenever the favorites state changes
   React.useEffect(() => {
-    console.log('Updating localStorage with new favorites:', favorites);
-    localStorage.setItem('favorites', JSON.stringify(favorites));
+    if (favorites.length > 0) {
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    } else {
+      localStorage.removeItem('favorites');
+    }
   }, [favorites]);
 
   const handleOpenFavorites = (event) => {
@@ -40,12 +39,10 @@ export const Favorites = () => {
   };
 
   const handleRemoveFavorite = (placeId) => {
-    console.log('Removing favorite with placeId:', placeId);
-    setFavorites(favorites.filter(favorite => favorite.placeId !== placeId));
+    const updatedFavorites = favorites.filter(favorite => favorite.placeId !== placeId);
+    setFavorites(updatedFavorites);
     setSnackbarMessage('Removed from favorites');
     setSnackbarOpen(true);
-    const event = new CustomEvent('favoriteRemoved', { detail: { placeId } });
-    window.dispatchEvent(event);
   };
 
   const handleFavoriteClick = (favorite) => {
@@ -64,45 +61,27 @@ export const Favorites = () => {
   React.useEffect(() => {
     const handleFavoriteAdded = (event) => {
       const newFavorite = event.detail;
-      console.log('Adding new favorite:', newFavorite);
-      console.log('New favorite placeId:', newFavorite.placeId);
-      
-      if (!newFavorite.placeId) {
-        console.error('New favorite does not have a placeId:', newFavorite);
-        setSnackbarMessage('Failed to add favorite, missing placeId');
-        setSnackbarOpen(true);
-        return;
-      }
-      
       let storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
-      console.log('Current stored favorites:', storedFavorites);
 
-      const isAlreadyAdded = storedFavorites.some(favorite => {
-        return favorite.placeId === newFavorite.placeId;
-      });
+      const isAlreadyAdded = storedFavorites.some(favorite => favorite.placeId === newFavorite.placeId);
       if (isAlreadyAdded) {
         setSnackbarMessage('This place is already in your favorites');
         setSnackbarOpen(true);
-        console.log('Favorite already exists:', newFavorite);
         return;
       }
 
       if (storedFavorites.length < 5) {
         storedFavorites = [newFavorite, ...storedFavorites];
         setFavorites(storedFavorites);
-        localStorage.setItem('favorites', JSON.stringify(storedFavorites));
         setSnackbarMessage('Added to favorites');
-        console.log('Added to favorites:', newFavorite);
       } else {
         setSnackbarMessage('Maximum of 5 favorites allowed');
-        console.log('Cannot add more than 5 favorites');
       }
       setSnackbarOpen(true);
     };
 
     const handleFavoriteRemoved = (event) => {
       const removedFavorite = event.detail;
-      console.log('Removing favorite:', removedFavorite);
       setFavorites(prevFavorites => prevFavorites.filter(favorite => favorite.placeId !== removedFavorite.placeId));
       setSnackbarMessage('Removed from favorites');
       setSnackbarOpen(true);
@@ -143,12 +122,10 @@ export const Favorites = () => {
         >
           <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
             {favorites.map((favorite, index) => (
-              <ListItem
-                key={index}
+              <ListItem key={index}
                 alignItems='flex-start'
                 onClick={() => handleFavoriteClick(favorite)}
-                sx={{ cursor: 'pointer' }} // Add this line
-              >
+                sx={{ cursor: 'pointer' }}>
                 <ListItemText primary={favorite.name} />
                 <ListItemSecondaryAction>
                   <IconButton edge="end"
