@@ -1,11 +1,11 @@
-import { List } from '@mui/material';
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
-import { AdvancedMarker, InfoWindow, PinElement } from 'react-google-map-wrapper';
+import { AdvancedMarker, Marker, InfoWindow, PinElement } from 'react-google-map-wrapper';
 
 const GoogleMapContext = createContext();
 
 const GoogleMapProvider = ({children}) => {
+  
   /** @type {[google.maps.Map, React.Dispatch<React.SetStateAction<google.maps.Map>>]} */
   const [mapInstance, setMapInstance] = useState();
 
@@ -102,62 +102,74 @@ const GoogleMapProvider = ({children}) => {
     console.log(`Created ${markers.length} markers`);
   };
 
+  function Content({ eventName, locationName, url, additionalInfo, lightAdjustmentsString, soundAdjustmentsString, designatedBreakAreaString, closedToGeneralPublicString }) {
+    const [isOpen, setOpen] = useState(false);
+    return (
+      <div id='content'>
+        <div id='POI'></div>
+        <h1 id='firstHeading'
+          className='firstHeading'>{eventName}</h1>
+        <h2 id='secondHeading' 
+          className='secondHeading'>{locationName}</h2>
+        <h3 id='url' 
+          className='url'>{url}</h3>
+        <div id='bodyContent'>
+          <p>{additionalInfo}.</p>
+          <p> Visit the site: <a href={url}>{url}</a></p>
+        </div>
+        <br></br>
+        <br></br>
+        <h3>Special Accomodations: </h3>
+        <ul id='sensoryFeatures'>
+          <li>{lightAdjustmentsString}</li>
+          <li>{soundAdjustmentsString}</li>
+          <li>{designatedBreakAreaString}</li>
+          <li>{closedToGeneralPublicString}</li>
+        </ul>
+      </div>
+    );
+  }
   const createInfoWindows = (markerConfigs, shouldOverwriteExisting) => {
     if (shouldOverwriteExisting) {
       clearMarkers();
     }
     const markersToCreate = [];
+    
     for (const config of markerConfigs) {
-      let { lat, lng, eventName, locationName, url, additionalInfo, lightAdjustments, soundAdjustments, designatedBreakAreas, closedToGeneralPublic } = config;
+      let { lat, lng, lightAdjustments, eventName, url, locationName, additionalInfo, soundAdjustments, designatedBreakAreas, closedToGeneralPublic } = config;
       lat = parseFloat(lat);
       lng = parseFloat(lng);
-      if ({lightAdjustments}){
-        const lightAdjustmentsString = 'Light Adjustments'
+      if (lightAdjustments !== null) {
+        const lightAdjustmentsString = 'Light Adjustments';
       }
-      if ({soundAdjustments}){
-        const soundAdjustmentsString = 'Sound Adjustments'
+      if (soundAdjustments !== null){
+        const soundAdjustmentsString = 'Sound Adjustments';
       }
-      if ({designatedBreakAreas}){
-        const designatedBreakAreaString = 'Designated Break Area'
+      if (designatedBreakAreas !== null){
+        const designatedBreakAreaString = 'Designated Break Area';
       }
-      if ({closedToGeneralPublic}){
-        const closedToGeneralPublicString = 'Closed to General Public'
+      if (closedToGeneralPublic !== null){
+        const closedToGeneralPublicString = 'Closed to General Public';
       }
-      function Content() {
-        return (
-        <div id='content'>
-          <div id='POI'></div>
-          <h1 id='firstHeading' className='firstHeading'>{eventName}</h1>
-          <h2 id='secondHeading' className='secondHeading'>{locationName}</h2>
-          <h3 id='url' className='url'>{url}</h3>
-          <div id='bodyContent'>
-              <p>{additionalInfo}.</p>
-              <p> Visit the site: <a href={url}>{url}</a></p>
-          </div>
-          <br></br>
-          <br></br>
-          <h3>Special Accomodations: </h3>
-          <ul id='sensoryFeatures'>
-            <li>{lightAdjustmentsString}</li>
-            <li>{soundAdjustmentsString}</li>
-            <li>{designatedBreakAreasString}</li>
-            <li>{closedToGeneralPublicString}</li>
-          </ul>
-        </div>
-      );
-    }
 
-    scale = scale || 1;
-    color = color || '#FF0000';
-    const infoWindow= (
-      <InfoWindow ariaLabel='POI' content={<Content />} onCloseClick={() => setOpen(false)} open={isOpen}>
-          <Marker {...POI} title='POI' onClick={() => setOpen(true)} />
-      </InfoWindow>
-      )
-      markersToCreate.push(marker);
-      }
-      setMarkers([...markers, ...markersToCreate]);
-      console.log(`Created ${markers.length} markers`);
+      const infoWindow = (
+        
+        <InfoWindow ariaLabel='POI'
+          content={<Content />} 
+          onCloseClick={() => setOpen(false)} 
+          open={isOpen}>
+          <Marker
+            lat={lat}
+            lng={lng}
+            title='POI'
+            onClick={() => setOpen(true)}
+          />
+        </InfoWindow>
+      );
+      markersToCreate.push(infoWindow);
+    }
+    setMarkers([...markers, ...markersToCreate]);
+    console.log(`Created ${markers.length} markers`);
   };
 
   /**

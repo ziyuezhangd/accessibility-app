@@ -7,8 +7,11 @@ import { getPublicRestrooms } from '../services/restrooms';
 const DataContext = createContext();
 
 const DataProvider = ({children}) => {
+  /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
   const [restrooms, setRestrooms] = useState([]);
+  /** @type {[PlaceInfo[], React.Dispatch<React.SetStateAction<PlaceInfo[]>>]} */
   const [placeInfos, setPlaceInfos] = useState([]);
+  /** @type {[AccessibilityHighlightPlace[], React.Dispatch<React.SetStateAction<AccessibilityHighlightPlace]>>]} */
   const [accessibilityHighlightPlaces, setAccessibilityHighlightPlaces] = useState([]);
     
   useEffect(() => {
@@ -38,3 +41,5 @@ const DataProvider = ({children}) => {
     </DataContext.Provider>
   );
 };
+
+export { DataContext, DataProvider };

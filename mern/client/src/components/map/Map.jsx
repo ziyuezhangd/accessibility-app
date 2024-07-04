@@ -7,7 +7,7 @@ import { Control } from 'react-google-map-wrapper';
 import DateTimePicker from './DateTimePicker';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
-import { DataContext, DataProvider } from '../../providers/DataProvider';
+import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { getPlaceInfos } from '../../services/placeInfo';
