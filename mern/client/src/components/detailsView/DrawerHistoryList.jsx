@@ -7,16 +7,7 @@ import Divider from '@mui/material/Divider';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-}));
 
 /**
  * DrawerHistoryList function component.
@@ -28,27 +19,22 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  * 
  * @returns {JSX.Element} The rendered DrawerHistoryList component.
  */
-
 export default function DrawerHistoryList({ onLocationSelected }) {
   const [history, setHistory] = useState([]);
-
   useEffect(() => {
     getHistory();
   }, []);
-
   // TODO: maybe we want to show the date/time?
   const getHistory = () => {
     const history = localStorage.getItem('searchHistory');
     if (history) {
-      setHistory(JSON.parse(history));
+      const parsedHistory = JSON.parse(history);
+      const recentHistory = parsedHistory.slice(0, 10); // Get the 10 most recent items
+      setHistory(recentHistory);
     }
   };
-
   return (
     <>
-      <DrawerHeader>
-        <Typography variant='h5'>Last viewed</Typography>
-      </DrawerHeader>
       <Box sx={{ overflow: 'auto' }}>
         <List>
           {history.map((location, index) => (

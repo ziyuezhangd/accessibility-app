@@ -75,6 +75,7 @@ export default function MeetTheTeam() {
         <Grid item
           sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Avatar alt='Abishek B'
+            src={abishekImage}
             sx={{ width: 300, height: 300, filter: 'grayscale(100%)' }} />
           <Typography sx={nameStyles}>Abishek B</Typography>
           <Typography sx={titleStyles}>Frontend Lead</Typography>

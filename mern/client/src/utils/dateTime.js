@@ -1,6 +1,7 @@
 /**
  * @file Utility functions for doing operations on dates/times. Leverages the chrono and dayjs libraries.
  */
+
 import * as chrono from 'chrono-node';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
@@ -41,13 +42,12 @@ export const getDayString = (day) => {
  * @returns {chrono.en.ParsedResult[]} parsed results from time string (see chrono docs for more info)
  */
 export const parseTimeRangeFromString = (timeRangeString) => {
-  return chrono.parse(timeRangeString, { timezone: 'EST' });
+  return chrono.parse(timeRangeString);
 };
 
 /**
  *
  * Check if a date/time is between two date/times
- *
  * @param {Date} target date to check
  * @param {Date} date1 start date
  * @param {Date} date2 end date

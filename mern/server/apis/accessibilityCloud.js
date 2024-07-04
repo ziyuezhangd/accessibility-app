@@ -101,8 +101,8 @@ const accessibilityCloud = {
   ],
   
   /**
-   * @returns {Promise<Array<{category: string, name: string, latitude: number, longitude: number}>>} 
-   */
+   * @returns{Promise<Array<{category: string, name: string, latitude: number, longitude: number}>>} 
+  */
   async getPlaceInfos() {
     const results = [];
     const placeInfos = [];
@@ -125,12 +125,17 @@ const accessibilityCloud = {
       const places = result.features;
       for (const place of places) {
         const { properties } = place;
+        let hasWheelchairAccessibleRestroom = properties.category === 'toilets';
+        if (properties.accessibility.areas) {
+          hasWheelchairAccessibleRestroom = properties.accessibility.areas[0].restrooms[0].isAccessibleWithWheelchair;
+        }
         const placeInfo = {
           category: properties.category,
           name: properties.name?.en,
           address: properties.address,
           latitude: place.geometry.coordinates[1],
           longitude: place.geometry.coordinates[0],
+          hasWheelchairAccessibleRestroom: hasWheelchairAccessibleRestroom,
         };
         placeInfos.push(placeInfo);
       }
@@ -140,8 +145,8 @@ const accessibilityCloud = {
   },
   
   /**
-   * @returns {Promise<Array<string>>} 
-   */
+   * @returns{Promise<Array<string>>} 
+  */
   async getCategories() {
     const categories = [];
     const result = await axios.get(`${this.ACCESSIBILITY_CLOUD_URL}categories.json`, {

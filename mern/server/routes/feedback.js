@@ -3,7 +3,7 @@ import dbHandler from '../db/dbHandler.js';
 
 const router = express.Router();
 router.post('/', async (req, res) => {
-  const { name, email, comment, age, gender, conditions, coordinates } = req.body;
+  const { name, email, comment, age, gender, conditions, coordinates, date } = req.body;
   
   if (!name || !email || !comment) {
     return res.status(400).send({ message: 'The following fields are required: name, email, comment.' });
@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
       age,
       gender,
       conditions, 
-      date: new Date(),
+      date,
     };
 
     if (coordinates) {
