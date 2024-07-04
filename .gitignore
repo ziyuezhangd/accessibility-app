@@ -130,3 +130,5 @@ out/
 # ML file
 ml/input_data
 ml/models
+
+*mobile*
