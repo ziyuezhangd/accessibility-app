@@ -19,7 +19,7 @@ export const getPlaceInfos = async () => {
   const placeInfos = await response.json();
   return placeInfos.map((placeInfo) => {
     return new PlaceInfo({
-      placeInfo,
+      ...placeInfo,
       latitude: parseFloat(placeInfo.latitude),
       longitude: parseFloat(placeInfo.longitude)
     });

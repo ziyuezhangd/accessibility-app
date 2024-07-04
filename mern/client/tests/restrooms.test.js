@@ -37,9 +37,9 @@ describe('Function getPublicRestrooms', () => {
   it('should fetch publicRestrooms and return PublicRestroom instances', async () => {
     fetch.mockResponseOnce(JSON.stringify(dummyRestrooms));
 
-    const restrooms = await getPublicRestrooms('incl-partial');
+    const restrooms = await getPublicRestrooms('all');
 
-    expect(fetch).toHaveBeenCalledWith('/api/restrooms?' + new URLSearchParams({ accessibility: 'incl-partial' }));
+    expect(fetch).toHaveBeenCalledWith('/api/restrooms?' + new URLSearchParams({ accessibility: 'all' }));
     expect(restrooms).toHaveLength(2);
     expect(restrooms[0]).toBeInstanceOf(PublicRestroom);
     expect(restrooms[1]).toBeInstanceOf(PublicRestroom);
