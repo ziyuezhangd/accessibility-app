@@ -2,7 +2,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState, useEffect, useContext } from 'react';
-import { GoogleMap, HeatmapLayer, Marker, MarkerClusterer } from 'react-google-map-wrapper';
+import { GoogleMap, HeatmapLayer, InfoWindow, Marker, MarkerClusterer } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
 import DateTimePicker from './DateTimePicker';
 import Dropdown from './Dropdown';
@@ -262,7 +262,9 @@ export const Map = () => {
               opacity={0.6}
             />
           )}
-          {markers.map(marker => marker)}
+          {markers.map(marker => 
+            <InfoWindow>{marker}</InfoWindow>
+          )}
         </GoogleMap>
         <Snackbar
           open={snackbarOpen}

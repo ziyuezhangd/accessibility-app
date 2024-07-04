@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
 import * as Location from 'expo-location';
-import AppleHealthKit, { HealthValue, HealthKitPermissions } from 'react-native-health';
+import AppleHealthKit, { HealthValue, HealthKitPermissions, HealthInputOptions, HealthStatusResult, HealthUnit } from 'react-native-health';
 import * as TaskManager from 'expo-task-manager';
+import { EnvironmentalAudioExposureResponse } from '../interfaces/AppleHealthKit';
 
 export interface UserDataContextType {
   location: Location.LocationObject | undefined;
@@ -19,7 +20,19 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
   }
   if (data) {
     const { locations } = data;
-    console.log('Got some locations: ', locations);
+    const { coords, timestamp } = locations[0];
+    const { latitude, longitude, accuracy, altitude, speed } = coords;
+    AppleHealthKit.isAvailable((err: Object, available: boolean) => {
+      if (err) {
+        console.log('error initializing Healthkit: ', err);
+        return;
+      }
+      if (!available) {
+        console.log('Healthkit data not available for user');
+        return;
+      }
+    });
+    console.log('User data updated: ');
   }
 });
 
@@ -45,9 +58,55 @@ const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const getEnvironmentalAudioExposure = () => {
+    const environmentalAudioOptions: HealthInputOptions = {
+      startDate: new Date(2018, 10, 1).toISOString(), // required
+      endDate: new Date().toISOString(), // optional; default now
+      ascending: false, // optional; default false
+      limit: 10, // optional; default no limit
+    };
+    AppleHealthKit.getEnvironmentalAudioExposure(environmentalAudioOptions, (err: string, results: HealthValue[]) => {});
+  };
+
+  const getAuthStatus = () => {
+    const permissions: HealthKitPermissions = {
+      permissions: {
+        read: [AppleHealthKit.Constants.Permissions.StepCount],
+        write: [AppleHealthKit.Constants.Permissions.StepCount],
+      },
+    };
+
+    AppleHealthKit.getAuthStatus(permissions, (err: string, results: HealthStatusResult) => {
+      console.log(err, results);
+    });
+  };
+
+  const getHeartRateVariability = () => {
+    let options: HealthInputOptions = {
+      unit: 'second' as HealthUnit, // optional; default 'second'
+      startDate: new Date(2021, 0, 0).toISOString(), // required
+      endDate: new Date().toISOString(), // optional; default now
+      ascending: false, // optional; default false
+      limit: 10, // optional; default no limit
+    }
+    AppleHealthKit.getHeartRateVariabilitySamples(
+      options,
+      (err: Object, results: Array<HealthValue>) => {
+        if (err) {
+          return
+        }
+        console.log(results)
+      },
+    )
+  }
+
   useEffect(() => {
     requestPermissions();
   }, []);
+
+  useEffect(() => {
+    AppleHealthKit.getAuthStatus;
+  }, [permissionsLoaded]);
 
   useEffect(() => {
     getUserLocation();
@@ -90,7 +149,6 @@ const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
       });
     });
   }, [permissionsLoaded]);
-
 
   return <UserDataContext.Provider value={{ location }}>{children}</UserDataContext.Provider>;
 };

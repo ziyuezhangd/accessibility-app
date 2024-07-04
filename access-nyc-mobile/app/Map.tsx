@@ -64,6 +64,7 @@ export default function Map() {
         onMarkerSelect={handleMarkerClicked}
         onPress={handlePress}
         mapType='mutedStandard'
+        // KEEP THIS FALSE - you will enter an infinite loop if you turn true!!!!
         showsUserLocation={false}
         onUserLocationChange={handleLocationChanged}
         region={region}
