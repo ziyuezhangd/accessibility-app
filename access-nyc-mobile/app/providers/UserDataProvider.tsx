@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import AppleHealthKit, { HealthValue, HealthKitPermissions } from 'react-native-health';
+import * as TaskManager from 'expo-task-manager';
 
 export interface UserDataContextType {
   location: Location.LocationObject | undefined;
@@ -9,20 +10,48 @@ export interface UserDataContextType {
 
 const UserDataContext = createContext<UserDataContextType | null>(null);
 
+const LOCATION_TASK_NAME = 'background-location-task';
+TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+  if (error) {
+    // Error occurred - check `error.message` for more details.
+    console.error('Failed to define task: ', error.message);
+    return;
+  }
+  if (data) {
+    const { locations } = data;
+    console.log('Got some locations: ', locations);
+  }
+});
+
 const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState(null);
+  const [permissionsLoaded, setPermissionsLoaded] = useState(false);
+
+  const requestPermissions = async () => {
+    const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
+    if (foregroundStatus === 'granted') {
+      const { status: backgroundStatus } = await Location.requestBackgroundPermissionsAsync();
+      if (backgroundStatus === 'granted') {
+        if (await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME)) {
+          await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+        }
+
+        Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+          accuracy: Location.Accuracy.Balanced,
+          distanceInterval: 50,
+        });
+      }
+    }
+  };
 
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-      getUserLocation();
-    })();
+    requestPermissions();
   }, []);
+
+  useEffect(() => {
+    getUserLocation();
+  }, [permissionsLoaded]);
 
   const getUserLocation = async () => {
     let location = await Location.getCurrentPositionAsync({});
@@ -60,7 +89,8 @@ const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
         /* Samples are now collected from HealthKit */
       });
     });
-  }, []);
+  }, [permissionsLoaded]);
+
 
   return <UserDataContext.Provider value={{ location }}>{children}</UserDataContext.Provider>;
 };

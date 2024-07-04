@@ -46,12 +46,12 @@ export default function Map() {
   const handleMapReady = (e) => {
     // TODO: is this working?
     onMapReady(e);
-    Location.getCurrentPositionAsync().then((p) => setRegion({ latitude: p.coords.latitude, longitude: p.coords.longitude, latitudeDelta: .01, longitudeDelta: .01 }));
+    Location.getCurrentPositionAsync().then((p) => setRegion({ latitude: p.coords.latitude, longitude: p.coords.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }));
   };
 
   return (
     <View style={styles.container}>
-      <MapView
+        <MapView
         style={styles.map}
         initialRegion={{
           latitude: MANHATTAN_LAT,
@@ -64,10 +64,8 @@ export default function Map() {
         onMarkerSelect={handleMarkerClicked}
         onPress={handlePress}
         mapType='mutedStandard'
-        // followsUserLocation={true}
-        showsUserLocation={true}
+        showsUserLocation={false}
         onUserLocationChange={handleLocationChanged}
-        // userLocationCalloutEnabled={true}
         region={region}
         provider={PROVIDER_GOOGLE}
       >

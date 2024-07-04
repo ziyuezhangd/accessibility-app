@@ -10,16 +10,23 @@ import { DataContext, DataContextType } from '../providers/DataProvider';
 
 export default function PlacesBottomPanel() {
   const { createMarkers, setRegion, region } = useContext(GoogleMapContext) as GoogleMapContextType;
-  const { placeInfos } = useContext(DataContext) as DataContextType;
+  const { placeInfos, restrooms } = useContext(DataContext) as DataContextType;
   const theme = useTheme();
 
   const [filteredPlaces, setFilteredPlaces] = useState<PlaceInfo[]>([]);
 
   const handleCategoryPressed = (category: PLACE_CATEGORIES) => {
-    const placeInfosInCategory = placeInfos.filter((pi) => categoryToParentCategory(pi.category) === category);
-    setFilteredPlaces(placeInfosInCategory);
-    const markers: MarkerConfig[] = placeInfosInCategory.map((pi, idx) => ({ lat: pi.latitude, lng: pi.longitude, title: pi.name, key: `${pi.name}-${idx}`, icon: pi.hasWheelchairAccessibleRestroom ? 'toilet' : null }));
-    createMarkers(markers, true);
+    if (category === PLACE_CATEGORIES.TOILETS) {
+      // TODO: fix
+      setFilteredPlaces([]);
+      const markers: MarkerConfig[] = restrooms.map((r, idx) => ({ lat: r.latitude, lng: r.longitude, title: r.name, key: `${r.name}-${idx}`, description: r.restroomType }));
+      createMarkers(markers, true);
+    } else {
+      const placeInfosInCategory = placeInfos.filter((pi) => categoryToParentCategory(pi.category) === category);
+      setFilteredPlaces(placeInfosInCategory);
+      const markers: MarkerConfig[] = placeInfosInCategory.map((pi, idx) => ({ lat: pi.latitude, lng: pi.longitude, title: pi.name, key: `${pi.name}-${idx}`, icon: pi.hasWheelchairAccessibleRestroom ? 'toilet' : null }));
+      createMarkers(markers, true);
+    }
 
     // Zoom out a bit
     if (!region) {
