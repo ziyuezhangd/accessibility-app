@@ -152,40 +152,65 @@ export const Map = () => {
     }
   }, [placeInfos]);
 
-  //These are the AccessibilityHighlightPlaces markers, the special sensory friendly places/events
-  useEffect(() => {
-    const showHighlightMarkers = (accessibilityHighlightPlaces) => {
-      const markers = accessibilityHighlightPlaces.map(accessibilityHighlightPlace => {
-        const imgSrc = PlaceInfoUtilities.getMarkerPNG(accessibilityHighlightPlace);
-        if (imgSrc === null){
-          return null;
-        }
-        else{
-          return {
-            eventName: accessibilityHighlightPlace.eventName,
-            locationName: accessibilityHighlightPlace.locationName,
-            lat: accessibilityHighlightPlace.location.coordinates[0],
-            lng: accessibilityHighlightPlace.location.coordinates[1],
-            url: accessibilityHighlightPlace.url,
-            lightAdjustments: accessibilityHighlightPlace.lightAdjustments,
-            soundAdjustments: accessibilityHighlightPlace.soundAdjustments,
-            designatedBreakArea: accessibilityHighlightPlace.designatedBreakArea,
-            additionalInfo: accessibilityHighlightPlace.additionalInfo,
-            closedToGeneralPublic: accessibilityHighlightPlace.closedToGeneralPublic,
-            date: accessibilityHighlightPlace.date,
-          }; 
-        }
-      });
-      const filteredMarkers =markers.filter( (marker) => marker !== null); 
 
-      createInfoWindows(filteredMarkers);
-      console.log(filteredMarkers);
-    };
-
-    if (accessibilityHighlightPlaces) {
-      showHighlightMarkers(accessibilityHighlightPlaces);
+    
+  const highlightMarkers = accessibilityHighlightPlaces.map(accessibilityHighlightPlace => {
+      lat = parseFloat(lat);
+      lng = parseFloat(lng);
+      if (accessibilityHighlightPlace.lightAdjustments !== null) {
+        const lightAdjustmentsString = 'Light Adjustments';
+      }
+      if (accessibilityHighlightPlace.soundAdjustments !== null){
+        const soundAdjustmentsString = 'Sound Adjustments';
+      }
+      if (accessibilityHighlightPlace.designatedBreakArea !== null){
+        const designatedBreakAreaString = 'Designated Break Area';
+      }
+      if (accessibilityHighlightPlace.closedToGeneralPublic !== null){
+        const closedToGeneralPublicString = 'Closed to General Public';
+      }
+    return {
+      eventName: accessibilityHighlightPlace.eventName,
+      locationName: accessibilityHighlightPlace.locationName,
+      lat: parseFloat(accessibilityHighlightPlace.location.coordinates[0]),
+      lng: parseFloat(accessibilityHighlightPlace.location.coordinates[1]),
+      url: accessibilityHighlightPlace.url,
+      lightAdjustmentsString: lightAdjustmentsString,
+      soundAdjustmentsString: soundAdjustmentsString,
+      designatedBreakAreaString: designatedBreakAreaString,
+      additionalInfo: accessibilityHighlightPlace.additionalInfo,
+      closedToGeneralPublicString: closedToGeneralPublicString,
+      date: accessibilityHighlightPlace.date,
     }
-  }, [accessibilityHighlightPlaces]);
+  }
+  function Content({ eventName, locationName, url, additionalInfo, lightAdjustmentsString, soundAdjustmentsString, designatedBreakAreaString, closedToGeneralPublicString }) {
+    const [isOpen, setOpen] = useState(false);
+    return (
+      <div id='content'>
+        <div id='POI'></div>
+        <h1 id='firstHeading'
+          className='firstHeading'>{eventName}</h1>
+        <h2 id='secondHeading' 
+          className='secondHeading'>{locationName}</h2>
+        <h3 id='url' 
+          className='url'>{url}</h3>
+        <div id='bodyContent'>
+          <p>{additionalInfo}.</p>
+          <p> Visit the site: <a href={url}>{url}</a></p>
+        </div>
+        <br></br>
+        <br></br>
+        <h3>Special Accomodations: </h3>
+        <ul id='sensoryFeatures'>
+          <li>{lightAdjustmentsString}</li>
+          <li>{soundAdjustmentsString}</li>
+          <li>{designatedBreakAreaString}</li>
+          <li>{closedToGeneralPublicString}</li>
+        </ul>
+      </div>
+    );
+  };
+
 
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
@@ -299,6 +324,12 @@ export const Map = () => {
             />
           )}
           {markers.map(marker => marker)}
+          {highlightMarkers.map(highlightMarker => 
+          <InfoWindow ariaLabel='POI'content={<Content />} >
+            <Marker
+            lat={lat} lng={lng}/>
+            </InfoWindow>
+          )}
         </GoogleMap>
         <Snackbar
           open={snackbarOpen}
