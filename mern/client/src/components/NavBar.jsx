@@ -98,6 +98,7 @@ export const NavBar = () => {
 
   return (
     <AppBar position='fixed'
+      id='app-bar'
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>

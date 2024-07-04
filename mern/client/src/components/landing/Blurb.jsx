@@ -3,7 +3,7 @@ import { Container, Typography } from '@mui/material';
 export default function Blurb() {
   return (
     <Container
-      id='features'
+      id='blurb'
       maxWidth={false}
       sx={{
         pt: { xs: 4, sm: 12 },

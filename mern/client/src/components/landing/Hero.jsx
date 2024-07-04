@@ -9,7 +9,7 @@ export default function Hero() {
 
   return (
     <Container
-      id='features'
+      id='hero'
       maxWidth={false}
       sx={{
         pt: { xs: 4, sm: 12 },
