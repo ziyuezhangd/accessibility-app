@@ -15,7 +15,8 @@ describe('Map page', () => {
     cy.get('#drawer').should('be.visible');
   });
 
-  it('do not show help again', () => {
+  it('does not show help again', () => {
+    // visible at the begining
     cy.get('#help-modal').should('be.visible');
     cy.get('#help-modal')
       .find('Button')
@@ -23,6 +24,7 @@ describe('Map page', () => {
       .click();
     cy.get('#help-modal').should('not.exist');
 
+    // visible if not click dont show this again
     cy.get('#app-bar').contains('ACCESS').click();
     cy.get('#app-bar').contains('Map').click();
     cy.get('#help-modal').should('be.visible');
@@ -32,17 +34,33 @@ describe('Map page', () => {
       .click();
     cy.get('#help-modal').should('not.exist');
 
+    // invisible when click dont show this again
     cy.get('#app-bar').contains('ACCESSNYC').click();
     cy.get('#help-modal').should('not.exist');
   });
 
-  // it('navigates back to home page', () => {
-  //   cy.get('#app-bar').contains('ACCESSNYC').click();
-  //   cy.url().should('eq', 'http://localhost:5173/');
-  // });
-  // it('displays the map correctly', () => {
-  // });
+  it('navigates back to landing page', () => {
+    cy.get('#app-bar').contains('ACCESS').click();
+    cy.url().should('eq', 'http://localhost:5173/');
+  });
+});
 
-  // it('allows interaction with markers or controls', () => {
+describe('Map page started', () => {
+  beforeEach(() => {
+    cy.visit('http://localhost:5173/map');
+    cy.get('#help-modal')
+      .find('Button')
+      .contains('Get started')
+      .click();
+  });
+
+  it('displays the drawer correctly', () => {
+    cy.get('#drawer').should('be.visible');
+    cy.get('#picker').should('be.visible');
+  });
+  // it('displays the map correctly', () => {
+    
+  // });
+  // it('allows interaction with markers', () => {
   // });
 });

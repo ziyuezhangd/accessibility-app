@@ -78,7 +78,7 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
           {selectedDrawerContent === 'location' && <IconButton onClick={handleBackClicked}>
             <ChevronLeftIcon />
           </IconButton>}
-          <div><DateTimePickerComponent selectedDate={selectedDate}
+          <div id='picker'><DateTimePickerComponent selectedDate={selectedDate}
             setSelectedDate={setSelectedDate} /></div>
 
         </DrawerHeader>

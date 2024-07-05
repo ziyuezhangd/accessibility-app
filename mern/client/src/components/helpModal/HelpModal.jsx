@@ -34,12 +34,13 @@ export default function HelpModal({ isOpen, onClose }) {
   };
 
   return (
-    <Modal id='help-modal'
+    <Modal
       open={isOpen}
       onClose={onClose}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'>
-      <Box sx={style}>
+      <Box id='help-modal'
+        sx={style}>
         <Typography id='modal-modal-title'
           variant='h4'
           component='h2'>

@@ -237,7 +237,8 @@ export const Map = () => {
           }}
         >
           <Box sx={containerStyle}>
-            <Dropdown onSelect={handleSelect} />
+            <Dropdown id='heatmap-dropdown' 
+              onSelect={handleSelect} />
             <Control position={google.maps.ControlPosition.TOP_CENTER}>
               <SearchBar
                 onSearchEntered={handleSearchEntered}/>

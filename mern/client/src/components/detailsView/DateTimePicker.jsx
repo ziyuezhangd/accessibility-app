@@ -11,8 +11,7 @@ const DateTimePickerComponent = ({ selectedDate, setSelectedDate }) => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DateTimePicker
-        label="Date & Time picker"
+      <DateTimePicker label="Date & Time picker"
         value={selectedDate}
         onChange={handleDateChange}
         renderInput={(params) => (
