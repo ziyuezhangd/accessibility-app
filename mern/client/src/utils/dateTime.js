@@ -14,6 +14,125 @@ dayjs.extend(isBetween);
 dayjs.tz.setDefault('America/New_York');
 
 /**
+ * 
+ * @param {string} timeRangeString 
+ * @returns {string|null} the formatted time range string or null if the string is too complex to format
+ */
+function formatTimeRangeString (timeRangeString){
+  if (timeRangeString && !/\d/.test(timeRangeString)) {
+    return null;
+  }
+  if (timeRangeString.includes('dusk') || timeRangeString.includes('spring summer')) {
+    return null;
+  }
+  if (timeRangeString.includes('\n')) {
+    return timeRangeString;
+  }
+  if (chrono.parse(timeRangeString).length === 1) {
+    return timeRangeString;
+  }
+
+  const openingHours = {
+    'Monday': 'Closed', 
+    'Tuesday': 'Closed', 
+    'Wednesday': 'Closed', 
+    'Thursday': 'Closed', 
+    'Friday': 'Closed', 
+    'Saturday': 'Closed',
+    'Sunday': 'Closed'
+  };
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  if (timeRangeString === 'Bathrooms are open from 7 a.m.-7 p.m., with a one-hour closure for cleaning from 12 noon-1 p.m.') {
+    Object.keys(openingHours).forEach(day => {
+      openingHours[day] = '7am - 7pm';
+    });
+  }
+
+  if (timeRangeString.includes('Monday to Friday:')) {
+    const startIndex = timeRangeString.indexOf('Monday to Friday:');
+    const endIndex = timeRangeString.indexOf(';', startIndex);
+    let result;
+    if (endIndex !== -1) {
+      result = timeRangeString.substring(startIndex + 'Monday to Friday:'.length, endIndex).trim();
+    } else {
+      result = timeRangeString.substring(startIndex + 'Monday to Friday:'.length);
+    }
+    Object.keys(openingHours).forEach(day => {
+      if (days.slice(0, 5).includes(day)) {
+        openingHours[day] = result;
+      }
+    });
+  }
+  if (timeRangeString.includes('Saturday & Sunday:')) {
+    const startIndex = timeRangeString.indexOf('Saturday & Sunday:');
+    const endIndex = timeRangeString.indexOf(';', startIndex);
+    let result;
+    if (endIndex !== -1) {
+      result = timeRangeString.substring(startIndex + 'Saturday & Sunday:'.length, endIndex).trim();
+    } else {
+      result = timeRangeString.substring(startIndex + 'Saturday & Sunday:'.length);
+    }
+    Object.keys(openingHours).forEach(day => {
+      if (days.slice(5).includes(day)) {
+        openingHours[day] = result;
+      }
+    });
+  }
+  if (timeRangeString.includes('Monday to Saturday:')) {
+    const startIndex = timeRangeString.indexOf('Monday to Saturday:');
+    const endIndex = timeRangeString.indexOf(';', startIndex);
+    let result;
+    if (endIndex !== -1) {
+      result = timeRangeString.substring(startIndex + 'Monday to Saturday:'.length, endIndex).trim();
+    } else {
+      result = timeRangeString.substring(startIndex + 'Monday to Saturday:'.length);
+    }
+    Object.keys(openingHours).forEach(day => {
+      if (days.slice(0, 6).includes(day)) {
+        openingHours[day] = result;
+      }
+    });
+    if (timeRangeString.includes('Sunday:')) {
+      const startIndex = timeRangeString.indexOf('Sunday:');
+      const endIndex = timeRangeString.indexOf(';', startIndex);
+      let result;
+      if (endIndex !== -1) {
+        result = timeRangeString.substring(startIndex + 'Sunday:'.length, endIndex).trim();
+      } else {
+        result = timeRangeString.substring(startIndex + 'Sunday:'.length);
+      }
+      openingHours.Sunday = result;
+    } else if (timeRangeString.includes('Sundays:')) {
+      const startIndex = timeRangeString.indexOf('Sundays:');
+      const endIndex = timeRangeString.indexOf(';', startIndex);
+      let result;
+      if (endIndex !== -1) {
+        result = timeRangeString.substring(startIndex + 'Sundays:'.length, endIndex).trim();
+      } else {
+        result = timeRangeString.substring(startIndex + 'Sundays:'.length);
+      }
+      openingHours.Sunday = result;
+    } else if (timeRangeString.includes('Sunday & holidays:')) {
+      const startIndex = timeRangeString.indexOf('Sunday & holidays:');
+      const endIndex = timeRangeString.indexOf(';', startIndex);
+      let result;
+      if (endIndex !== -1) {
+        result = timeRangeString.substring(startIndex + 'Sunday & holidays:'.length, endIndex).trim();
+      } else {
+        result = timeRangeString.substring(startIndex + 'Sunday & holidays:'.length);
+      }
+      openingHours.Sunday = result;
+    }
+  }
+
+  let formattedString = '';
+  for (const day in openingHours) {
+    formattedString += `${day}: ${openingHours[day]} \n`;
+  }
+  return formattedString;
+}
+
+/**
  *
  * Get the current time in New York
  *
@@ -39,10 +158,16 @@ export const getDayString = (day) => {
  * using the chrono library.
  *
  * @param {string} timeRangeString a human-readable string representing a time range (eg: "10am-4pm")
- * @returns {chrono.en.ParsedResult[]} parsed results from time string (see chrono docs for more info)
+ * @returns {chrono.en.ParsedResult[]|null} parsed results from time string (see chrono docs for more info), returns null if the string cannot be parsed
  */
 export const parseTimeRangeFromString = (timeRangeString) => {
-  return chrono.parse(timeRangeString);
+  const formattedString = formatTimeRangeString(timeRangeString);
+  
+  if (formattedString !== null) {
+    return chrono.parse(formattedString);
+  } else {
+    return null;
+  }
 };
 
 /**

@@ -106,6 +106,9 @@ export class PublicRestroom {
    */
   formatHours() {
     const parsedHours = parseTimeRangeFromString(this.hours);
+    if (parsedHours === null) {
+      return this.hours;
+    }
     if (parsedHours.length === 1) {
       return this.hours;
     }
@@ -130,43 +133,36 @@ export class PublicRestroom {
   /**
    * Checks if a restroom is open right now (in NYC timezone)
    *
-   * @return {boolean} true if open
+   * @return {boolean} true if open, null if unsure
    */
   isOpenNow() {
     try {
       const hoursString = this.hours;
       const now = getCurrentTimeInNewYork();
-      console.log(now);
       let openingTime, closingTime;
 
       const parsedHours = parseTimeRangeFromString(hoursString);
-      console.log(parsedHours);
+      if (parsedHours === null) {
+        return null;
+      }
       if (parsedHours.length === 1) {
         // Hours are the same daily
         openingTime = parsedHours[0].start.date();
         closingTime = parsedHours[0].end.date();
-        console.log(parsedHours[0].start);
-        console.log(parsedHours[0].end);
       } else if (parsedHours.length > 1) {
         // Varying hours by day
         const today = getDayString(now);
         const todaysHours = parsedHours.find((h) => h.text.includes(today));
         openingTime = todaysHours.start.date();
         closingTime = todaysHours.end.date();
-      } else {
-        // TODO: unknown - handle this
-        return;
       }
 
       const isDST = isDSTNow();
-      console.log(isDST);
       if (isDST) {
         openingTime = dayjs.tz(`${openingTime}`, 'America/New_York').add(1, 'hour');
         closingTime = dayjs.tz(`${closingTime}`, 'America/New_York').add(1, 'hour');
       }
-      console.log(openingTime, closingTime, now);
       const isOpen = isTimeInRange(now, openingTime, closingTime);
-      console.log(isOpen);
       return isOpen;
     } catch (e) {
       console.error(e);
