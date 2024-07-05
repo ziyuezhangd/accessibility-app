@@ -133,6 +133,7 @@ export default function FeedbackForm({ location, isOpen, onClose }) {
             />
             <TextField
               label="Email"
+              aria-label='Email'
               value={email}
               onChange={handleEmailChange}
               variant="outlined"

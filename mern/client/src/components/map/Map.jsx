@@ -134,7 +134,7 @@ export const Map = () => {
             lng: placeInfo.longitude,
             imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
             imgSize: '30px', 
-            imgAlt: PlaceInfoUtilities.name,
+            imgAlt: placeInfo.name,
           }; 
         }
 
@@ -153,7 +153,7 @@ export const Map = () => {
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
-    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
   };
 

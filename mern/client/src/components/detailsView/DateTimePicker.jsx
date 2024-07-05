@@ -12,12 +12,12 @@ const DateTimePickerComponent = ({ selectedDate, setSelectedDate }) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DateTimePicker
-        label="Date & Time picker"
         value={selectedDate}
         onChange={handleDateChange}
         renderInput={(params) => (
           <TextField
             {...params}
+            aria-hidden='true'
             sx={{ width: '150px', fontSize: '0.1rem', '.MuiInputBase-input': { padding: '8px' } }}
           />
         )}

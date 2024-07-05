@@ -54,12 +54,13 @@ export default function NearestRestrooms({ lat, lng }) {
         Wheelchair accessible restrooms
       </Typography>
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-        aria-label='contacts'>
+        aria-label='restrooms'>
         {nearestRestrooms.map((restroom, i) => (
           <ListItem key={i}
             disablePadding>
-            <ListItemButton>
+            <ListItemButton aria-label={restroom.name}>
               <ListItemText
+                aria-label='Restroom information'
                 primary={restroom.name}
                 secondary={(
                   <>
@@ -70,9 +71,10 @@ export default function NearestRestrooms({ lat, lng }) {
                       color="text.primary"
                     >
                       {/* TODO: would be nice if we could make today's day bold */}
-                      {restroom.formatHours().split('\n').map(h => <p key={h}>{h}</p>)}
+                      {restroom.formatHours().split('\n').map(h => (<p aria-label={`Hours of operation ${h}`}
+                        key={h}>{h}</p>))}
                     </Typography>
-                    <div>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</div>
+                    <p aria-label={`Distance from selected location ${Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} meters`}>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</p>
                   </>
                 )}
                 

@@ -50,6 +50,7 @@ const GoogleMapProvider = ({children}) => {
    * imgSize: number, 
    * imgAlt: string, 
    * scale: number, 
+   * title: string,
    * color: string}>} markerConfigs 
    * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
    */
@@ -59,7 +60,7 @@ const GoogleMapProvider = ({children}) => {
     }
     const markersToCreate = [];
     for (const config of markerConfigs) {
-      const {imgSrc} = config;
+      const {imgSrc, title} = config;
       let {lat, lng} = config;
       lat = parseFloat(lat);
       lng = parseFloat(lng);
@@ -70,11 +71,12 @@ const GoogleMapProvider = ({children}) => {
           <AdvancedMarker 
             lat={lat}
             lng={lng}
+            title={title}
+            gmpClickable={true}
           >
             <img 
               src={imgSrc}
               style={{height: imgSize}}
-              alt={imgAlt}
             />
           </AdvancedMarker>
         );
@@ -88,6 +90,8 @@ const GoogleMapProvider = ({children}) => {
           <AdvancedMarker 
             lat={lat}
             lng={lng}
+            title={title}
+            gmpClickable={true}
           >
             <PinElement 
               scale={scale}
