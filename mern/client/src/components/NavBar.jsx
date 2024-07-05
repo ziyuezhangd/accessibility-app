@@ -3,7 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import {AccessBarNoRouter} from 'aditum';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Favorites from './detailsView/Favorites';
+import Favorites from './navBar/Favorites';
 import Logo from './navBar/Logo';
 
 const pages = ['Map', 'About us'];
