@@ -37,9 +37,9 @@ describe('Function getPublicRestrooms', () => {
   it('should fetch publicRestrooms and return PublicRestroom instances', async () => {
     fetch.mockResponseOnce(JSON.stringify(dummyRestrooms));
 
-    const restrooms = await getPublicRestrooms('incl-partial');
+    const restrooms = await getPublicRestrooms('all');
 
-    expect(fetch).toHaveBeenCalledWith('/api/restrooms?' + new URLSearchParams({ accessibility: 'incl-partial' }));
+    expect(fetch).toHaveBeenCalledWith('/api/restrooms?' + new URLSearchParams({ accessibility: 'all' }));
     expect(restrooms).toHaveLength(2);
     expect(restrooms[0]).toBeInstanceOf(PublicRestroom);
     expect(restrooms[1]).toBeInstanceOf(PublicRestroom);
@@ -115,6 +115,10 @@ describe('Class PublicRestroom', () => {
       publicRestroom.hours = 'Fall, spring summer: 7am - 9pm. Winter: 7am - 5:30pm';
       const formattedHours3 = publicRestroom.formatHours();
       expect(formattedHours3).toBe(publicRestroom.hours);
+
+      publicRestroom.hours = 'Monday to Friday: 8:00 am-7:00 pm';
+      const formattedHours4 = publicRestroom.formatHours();
+      expect(formattedHours4).toBe(publicRestroom.hours);
     });
 
     it('should format correctly for multiple time segments', () => {
