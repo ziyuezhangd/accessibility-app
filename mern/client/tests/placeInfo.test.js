@@ -2,38 +2,33 @@ import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { PlaceInfo, getPlaceInfos, getCategories, PlaceInfoUtilities } from '../src/services/placeInfo.js';
 
 describe('Class PlaceInfo', () => {
-  const testCategory = 'restaurant';
-  const testName = 'Yung Sun Seafood Restaurant';
-  const testAddress = {'street':'East Broadway','city':'New York','house':'54','postalCode':'10002','text':'East Broadway 54, 10002, New York'};
-  const testLatitude = 40.7134411;
-  const testLongtitude = -73.9958191;
-  const testHasWheelchairAccessibleRestroom = true;
+  const testPlaceInfo = {
+    'category': 'restaurant',
+    'name': 'Yung Sun Seafood Restaurant',
+    'address': {'street':'East Broadway','city':'New York','house':'54','postalCode':'10002','text':'East Broadway 54, 10002, New York'},
+    'latitude': 40.7134411,
+    'longitude': -73.9958191,
+    'hasWheelchairAccessibleRestroom': true
+  };
 
   let placeInfo;
 
   beforeEach(() => {
-    placeInfo = new PlaceInfo(
-      testCategory,
-      testName,
-      testAddress,
-      testLatitude,
-      testLongtitude,
-      testHasWheelchairAccessibleRestroom
-    );
+    placeInfo = new PlaceInfo(testPlaceInfo);
   });
 
   it('should initialize with correct properties', () => {
-    expect(placeInfo.category).toBe(testCategory);
-    expect(placeInfo.name).toBe(testName);
-    expect(placeInfo.address).toEqual(testAddress);
-    expect(placeInfo.latitude).toBe(testLatitude);
-    expect(placeInfo.longitude).toBe(testLongtitude);
-    expect(placeInfo.hasWheelchairAccessibleRestroom).toBe(testHasWheelchairAccessibleRestroom);
+    expect(placeInfo.category).toBe(testPlaceInfo.category);
+    expect(placeInfo.name).toBe(testPlaceInfo.name);
+    expect(placeInfo.address).toEqual(testPlaceInfo.address);
+    expect(placeInfo.latitude).toBe(testPlaceInfo.latitude);
+    expect(placeInfo.longitude).toBe(testPlaceInfo.longitude);
+    expect(placeInfo.hasWheelchairAccessibleRestroom).toBe(testPlaceInfo.hasWheelchairAccessibleRestroom);
   });
 
   describe('Method getStreetAddressText', () => {
     it('should return street address if it has the properties', () => {
-      expect(placeInfo.getStreetAddressText()).toBe(testAddress.text);
+      expect(placeInfo.getStreetAddressText()).toBe(testPlaceInfo.address.text);
     });
     it('should return empty string if it does not have address property', () => {
       placeInfo.address.street = null;
@@ -48,7 +43,7 @@ describe('Class PlaceInfo', () => {
   describe('Method hasWheelchairAccessibleRestrooms', () => {
     it('should return property hasWheelchairAccessibleRestrooms if it is not a toilet', () => {
       placeInfo.category = 'restaurant';
-      expect(placeInfo.hasWheelchairAccessibleRestrooms()).toBe(testHasWheelchairAccessibleRestroom);
+      expect(placeInfo.hasWheelchairAccessibleRestrooms()).toBe(testPlaceInfo.hasWheelchairAccessibleRestroom);
 
       placeInfo.hasWheelchairAccessibleRestroom = false;
       expect(placeInfo.hasWheelchairAccessibleRestrooms()).toBe(false);
@@ -202,10 +197,10 @@ describe('Function getCategories', () => {
 describe('Class PlaceInfoUtilities', () => {
   describe('Method getNearest', () => {
     const testPlaceInfos = [
-      new PlaceInfo('test', 'Place A', 'test address', 41, -71),
-      new PlaceInfo('test', 'Place B', 'test address', 40, -70),
-      new PlaceInfo('test', 'Place C', 'test address', 39, -70),
-      new PlaceInfo('test', 'Place D', 'test address', 41, -70),
+      new PlaceInfo({ 'category':'test', 'name': 'Place A', 'address': 'test address', 'latitude': 41, 'longitude': -71, 'hasWheelchairAccessibleRestroom': true }),
+      new PlaceInfo({ 'category':'test', 'name': 'Place B', 'address': 'test address', 'latitude': 40, 'longitude': -70, 'hasWheelchairAccessibleRestroom': true }),
+      new PlaceInfo({ 'category':'test', 'name': 'Place C', 'address': 'test address', 'latitude': 39, 'longitude': -70, 'hasWheelchairAccessibleRestroom': true }),
+      new PlaceInfo({ 'category':'test', 'name': 'Place D', 'address': 'test address', 'latitude': 41, 'longitude': -70, 'hasWheelchairAccessibleRestroom': true }),
     ];
     const testLat = 40;
     const testLon = -71;
