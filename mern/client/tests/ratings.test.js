@@ -1,7 +1,7 @@
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../src/services/ratings.js';
 
-const testDateTime = '2024-06-18T12:34:56.000Z';
+const testDateTime = '2024-06-18T12:34:56';
 const dummyRatings = [{ _id: '1', rating: 'A' }, { _id: '2', rating: 'C' }];
 
 describe('Function getBusynessRatings', () => {
@@ -33,6 +33,18 @@ describe('Function getBusynessRatings', () => {
     expect(fetch).toHaveBeenCalledWith('/api/busyness-ratings?' + new URLSearchParams({ datetime: testDateTime }));
     expect(ratings).toBeUndefined();
     expect(console.error).toHaveBeenCalledTimes(1);
+  });
+
+  it('should handle inconsistent datetime format', async () => {
+    jest.spyOn(console, 'error');
+
+    const ratings1 = await getBusynessRatings('?datetime=2024-06-18T12:34:56.000');
+    expect(ratings1).toBeUndefined();
+
+    const ratings2 = await getBusynessRatings('?datetime=2024-06-18T12:34:56Z');
+    expect(ratings2).toBeUndefined();
+    expect(fetch).toHaveBeenCalledTimes(0);
+    expect(console.error).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -66,6 +78,18 @@ describe('Function getNoiseRatings', () => {
     expect(ratings).toBeUndefined();
     expect(console.error).toHaveBeenCalledTimes(1);
   });
+
+  it('should handle inconsistent datetime format', async () => {
+    jest.spyOn(console, 'error');
+
+    const ratings1 = await getNoiseRatings('?datetime=2024-06-18T12:34:56.000');
+    expect(ratings1).toBeUndefined();
+
+    const ratings2 = await getNoiseRatings('?datetime=2024-06-18T12:34:56Z');
+    expect(ratings2).toBeUndefined();
+    expect(fetch).toHaveBeenCalledTimes(0);
+    expect(console.error).toHaveBeenCalledTimes(2);
+  });
 });
 
 describe('Function getOdourRatings', () => {
@@ -97,5 +121,17 @@ describe('Function getOdourRatings', () => {
     expect(fetch).toHaveBeenCalledWith('/api/odour-ratings?' + new URLSearchParams({ datetime: testDateTime }));
     expect(ratings).toBeUndefined();
     expect(console.error).toHaveBeenCalledTimes(1);
+  });
+
+  it('should handle inconsistent datetime format', async () => {
+    jest.spyOn(console, 'error');
+
+    const ratings1 = await getOdourRatings('?datetime=2024-06-18T12:34:56.000');
+    expect(ratings1).toBeUndefined();
+
+    const ratings2 = await getOdourRatings('?datetime=2024-06-18T12:34:56Z');
+    expect(ratings2).toBeUndefined();
+    expect(fetch).toHaveBeenCalledTimes(0);
+    expect(console.error).toHaveBeenCalledTimes(2);
   });
 });
