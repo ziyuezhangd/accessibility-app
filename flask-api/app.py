@@ -30,13 +30,15 @@ def load_model(model_path):
     return None
 
 @app.route('/noise-ratings/hourly', methods=['GET'])
-def predict_noise():
+def predict_noise_hourly():
   model = load_model('../ml/models/noise_model_hourly.pkl')
   
   if model is None:
     return jsonify({'error': 'Model not found or could not be loaded'}), 500
 
   hour = request.args.get('hour', type=int)
+  if hour < 0 or hour > 23:
+    return jsonify({f'error': 'hour parameter ${hour} is invalid'}), 400
   if hour is None:
     return jsonify({'error': 'hour parameter is required'}), 400
   
@@ -51,7 +53,7 @@ def predict_noise():
   return jsonify(results)
 
 @app.route('/noise-ratings/daily', methods=['GET'])
-def predict_noise():
+def predict_noise_daily():
   model = load_model('../ml/models/noise_model_daily.pkl')
   
   if model is None:
@@ -60,7 +62,11 @@ def predict_noise():
   hour = request.args.get('hour', type=int)
   day_of_week = request.args.get('dayOfWeek', type=int)
 
-  if hour is None:
+  if hour < 0 or hour > 23:
+    return jsonify({f'error': 'hour parameter ${hour} is invalid'}), 400
+  if day_of_week < 0 or day_of_week > 6:
+    return jsonify({f'error': 'day_of_week parameter ${day_of_week} is invalid'}), 400
+  if hour is None or day_of_week is None:
     return jsonify({'error': 'hour and dayOfWeek parameters are required'}), 400
   
   inputs = pd.DataFrame({
@@ -89,6 +95,14 @@ def predict_busyness():
   hour = request.args.get('hour', type=int)
   day_of_week = request.args.get('dayOfWeek', type=int)
 
+  if hour < 0 or hour > 23:
+    return jsonify({f'error': 'hour parameter ${hour} is invalid'}), 400
+  if day_of_week < 0 or day_of_week > 6:
+    return jsonify({f'error': 'day_of_week parameter ${day_of_week} is invalid'}), 400
+  if day < 0 or day > 31:
+    return jsonify({f'error': 'hour parameter ${day} is invalid'}), 400
+  if month < 1 or month > 12:
+    return jsonify({f'error': 'hour parameter ${month} is invalid'}), 400
   if month is None or day is None or hour is None or day_of_week is None:
     return jsonify({'error': 'month, day, hour and dayOfWeek parameters are required'}), 400
   
@@ -117,6 +131,12 @@ def predict_odour():
   day = request.args.get('day', type=int)
   hour = request.args.get('hour', type=int)
 
+  if hour < 0 or hour > 23:
+    return jsonify({f'error': 'hour parameter ${hour} is invalid'}), 400
+  if day < 0 or day > 31:
+    return jsonify({f'error': 'hour parameter ${day} is invalid'}), 400
+  if month < 1 or month > 12:
+    return jsonify({f'error': 'hour parameter ${month} is invalid'}), 400
   if month is None or day is None or hour is None:
     return jsonify({'error': 'month, day and hour parameters are required'}), 400
 
