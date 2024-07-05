@@ -43,6 +43,9 @@ export const Favorites = () => {
     setFavorites(updatedFavorites);
     setSnackbarMessage('Removed from favorites');
     setSnackbarOpen(true);
+
+    const event = new CustomEvent('favoriteRemoved', { detail: { placeId } });
+    window.dispatchEvent(event);
   };
 
   const handleFavoriteClick = (favorite) => {

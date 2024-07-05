@@ -54,7 +54,9 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
   useEffect(() => {
     addLocationToHistory();
     checkIfFavorite();
-    
+  }, [location]);
+
+  useEffect(() => {
     const handleFavoriteAdded = (event) => {
       if (event.detail.placeId === location.placeId) {
         setIsFavorite(true);
@@ -99,6 +101,8 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
     if (_.find(favorites, (f) => f.placeId === location.placeId)) {
       setIsFavorite(true);
+    } else {
+      setIsFavorite(false); // Ensure the favorite status is reset correctly
     }
   };
 
