@@ -19,19 +19,23 @@ dayjs.tz.setDefault('America/New_York');
  * @returns {string|null} the formatted time range string or null if the string is too complex to format
  */
 function formatTimeRangeString (timeRangeString){
+  // Too complex to format
   if (timeRangeString && !/\d/.test(timeRangeString)) {
     return null;
   }
   if (timeRangeString.includes('dusk') || timeRangeString.includes('spring summer')) {
     return null;
   }
+
+  //The string is already in expected format
   if (timeRangeString.includes('\n')) {
     return timeRangeString;
   }
   if (chrono.parse(timeRangeString).length === 1) {
     return timeRangeString;
   }
-
+  
+  // Format the string
   const openingHours = {
     'Monday': 'Closed', 
     'Tuesday': 'Closed', 
