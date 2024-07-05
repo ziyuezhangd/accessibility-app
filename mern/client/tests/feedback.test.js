@@ -30,7 +30,7 @@ describe('Class Feedback', () => {
       new Feedback(testName, testEmail, testComment, testAge, testGender, testConditions, invalidCoordinates);
     }).toThrow(Error);
 
-    invalidCoordinates = {latitude: 41, longtitude: -73};
+    invalidCoordinates = {latitude: 41, longitude: -73};
     expect(() => {
       new Feedback(testName, testEmail, testComment, testAge, testGender, testConditions, invalidCoordinates);
     }).toThrow(Error);
