@@ -40,6 +40,7 @@ export default function Features() {
         backgroundColor: cyan[100],
         height: '85vh',
       }}
+      aria-labelledby='List of features'
     >
       <Box
         sx={{

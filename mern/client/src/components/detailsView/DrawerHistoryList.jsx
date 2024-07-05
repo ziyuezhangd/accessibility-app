@@ -35,8 +35,9 @@ export default function DrawerHistoryList({ onLocationSelected }) {
   };
   return (
     <>
-      <Box sx={{ overflow: 'auto' }}>
-        <List>
+      <Box sx={{ overflow: 'auto' }}
+        aria-labelledby='Side bar with information'>
+        <List aria-labelledby='List of recently viewed locations'>
           {history.map((location, index) => (
             <ListItem key={location.name} 
               disablePadding>

@@ -9,6 +9,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import {AccessBarNoRouter} from 'aditum';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -99,6 +100,7 @@ export const NavBar = () => {
   return (
     <AppBar position='fixed'
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <AccessBarNoRouter/>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
           <Accessibility sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
