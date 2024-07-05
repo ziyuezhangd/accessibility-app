@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pickle
 import pandas as pd
 import json
 import logging
 
 app = Flask(__name__)
+CORS(app)
 
 logging.basicConfig(level=logging.DEBUG)
 

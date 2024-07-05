@@ -22,7 +22,7 @@ const ml = {
   /**
    * 
    * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
-   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} odourRatings
+   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} noiseRatings
    */
   async getNoisePredictionsHourly(datetime) {
     const date = new Date(datetime);
@@ -77,7 +77,7 @@ const ml = {
   /**
    * 
    * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
-   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} odourRatings
+   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} busynessRatings
    */
   async getBusynessPredictions(datetime) {
     const date = new Date(datetime);
@@ -130,7 +130,6 @@ const ml = {
     }));
 
     return predictionsWithLatLng;
-    // return predictions;
   }
 };
 
