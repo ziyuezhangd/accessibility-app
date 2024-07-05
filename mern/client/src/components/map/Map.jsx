@@ -2,19 +2,34 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState, useEffect, useContext } from 'react';
-import { GoogleMap, HeatmapLayer, Marker, MarkerClusterer } from 'react-google-map-wrapper';
+import { GoogleMap, Polyline } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
 import { DataContext, DataProvider } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
-import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';import PersistentDrawerLeft from '../detailsView/Drawer';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
+
+const PREDICTION_COLORS = {
+  'A': '#44ce1b',
+  0: '#44ce1b',
+  'B': '#44ce1b',
+  1: '#44ce1b',
+  'C':'#bbdb44',
+  2: '#bbdb44',
+  'D':'#f7e379',
+  3:'#f7e379',
+  'E': '#f2a134',
+  4:'#f2a134',
+  'F':'#e51f1f',
+  5:'#e51f1f',
+
+};
 
 export const Map = () => {
   // const [placeInfos, setPlaceInfos] = useState([]);
@@ -24,8 +39,7 @@ export const Map = () => {
   const [busynessData, setBusynessData] = useState([]);
   const [noiseData, setNoiseData] = useState([]);
   const [odorData, setOdorData] = useState([]);
-  const [heatMapData, setHeatMapData] = useState([]);
-  const [heatMapGradient, setHeatMapGradient] = useState([]);
+  const [polylineData, setHeatMapData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -36,19 +50,15 @@ export const Map = () => {
     switch (item.id) {
     case 'busyness':
       setHeatMapData(busynessData);
-      setHeatMapGradient(busynessGradient);
       break;
     case 'noise':
       setHeatMapData(noiseData);
-      setHeatMapGradient(noiseGradient);
       break;
     case 'odor':
       setHeatMapData(odorData);
-      setHeatMapGradient(odorGradient);
       break;
     default:
       setHeatMapData([]);
-      setHeatMapGradient([]);
     }
   };
 
@@ -152,27 +162,16 @@ export const Map = () => {
   };
 
   const fetchData = async () => {
-    const gradeToInt = {
-      'A': 0,
-      'B': 1,
-      'C': 3,
-      'D': 6,
-      'F': 10,
-    };
+    // TODO: move to provider
     const busynessRatings = await getBusynessRatings(selectedDate);
     console.log('busynessRatings: ', busynessRatings);
-    setBusynessData(busynessRatings.map(br => ({
-      lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
-    })));
+    setBusynessData(busynessRatings);
     const noiseRatings = await getNoiseRatings(selectedDate);
-    setNoiseData(noiseRatings.map(br => ({
-      lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: parseFloat(br.prediction) ,
-    })));
-    console.log('noiseRatings: ', noiseRatings);
+    setNoiseData(noiseRatings);
+
+    // TODO: odour ratings not currently supported because they aren't at segment level - should maybe be a heat map?
     const odourRatings = await getOdourRatings(selectedDate);
-    setOdorData(odourRatings.map(br => ({
-      lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
-    })));
+    setOdorData(odourRatings);
     console.log('odourRatings: ', odourRatings);
   };
 
@@ -188,12 +187,6 @@ export const Map = () => {
     gap: '10px',
     width: '100%',
     padding: '10px',
-  };
-
-  const dateTimeHelpContainerStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
   };
 
   return (
@@ -223,16 +216,16 @@ export const Map = () => {
               <HelpIcon />
             </Control>
           </Box>
-          {heatMapData.length > 0 && (
-            <HeatmapLayer
-              data={heatMapData.map((data) => ({
-                location: new window.google.maps.LatLng(data.lat, data.lng),
-                weight: data.weight,
-              }))}
-              gradient={heatMapGradient}
-              radius={20}
-              opacity={1}
-            />
+          {polylineData.map(({location, prediction}, i) => 
+          // TODO: Need to have a different gradient for red-green color blindness
+            (<Polyline
+              key={i}
+              path={[{lat: location.start.lat, lng: location.start.lng}, {lat: location.end.lat, lng: location.end.lng}, ]}
+              strokeColor={PREDICTION_COLORS[prediction]}
+              strokeOpacity={prediction === 0 || prediction === 'A' ? 0.5 : 1.0}
+              strokeWeight={prediction === 0 || prediction === 'A' ? 2 : 5.0}
+              geodesic
+            />)
           )}
           {markers.map(marker => marker)}
         </GoogleMap>
