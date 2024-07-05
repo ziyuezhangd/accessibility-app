@@ -54,5 +54,26 @@ export const parseTimeRangeFromString = (timeRangeString) => {
  * @returns {boolean}
  */
 export const isTimeInRange = (target, date1, date2) => {
-  return target.isBetween(date1, date2);
+  return target.isBetween(date1, date2, null, '[]');
+};
+
+/**
+ * Check if NY is in DST now: DST begins on the second Sunday of March and ends on the first Sunday of November
+ * @returns {boolean}
+ */
+export const isDSTNow = () => {
+  const now = getCurrentTimeInNewYork();
+
+  const year = now.year();
+  let dstStart = dayjs.tz(`${year}-03-01 00:00:00`, 'America/New_York').add(1, 'week').day(0);
+  if (dstStart < dayjs.tz(`${year}-03-08 00:00:00`, 'America/New_York')) {
+    dstStart = dstStart.add(1, 'week');
+  }
+  let dstEnd = dayjs.tz(`${year}-11-01 00:00:00`, 'America/New_York').day(0);
+  if (dstEnd < dayjs.tz(`${year}-11-01 00:00:00`, 'America/New_York')) {
+    dstEnd = dstEnd.add(1, 'week');
+  }
+  const isDST = now.isBetween(dstStart, dstEnd, null, '[]');
+
+  return isDST;
 };

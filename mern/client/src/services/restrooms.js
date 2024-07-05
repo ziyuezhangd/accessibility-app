@@ -1,6 +1,13 @@
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import _ from 'lodash';
-import { getCurrentTimeInNewYork, getDayString, isTimeInRange, parseTimeRangeFromString } from '../utils/dateTime';
+import { getCurrentTimeInNewYork, getDayString, isTimeInRange, parseTimeRangeFromString, isDSTNow } from '../utils/dateTime';
 import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
+
+// dayjs.extend(utc);
+// dayjs.extend(timezone);
+// dayjs.tz.setDefault('America/New_York');
 
 /**
  *
@@ -129,13 +136,17 @@ export class PublicRestroom {
     try {
       const hoursString = this.hours;
       const now = getCurrentTimeInNewYork();
+      console.log(now);
       let openingTime, closingTime;
 
       const parsedHours = parseTimeRangeFromString(hoursString);
+      console.log(parsedHours);
       if (parsedHours.length === 1) {
         // Hours are the same daily
         openingTime = parsedHours[0].start.date();
         closingTime = parsedHours[0].end.date();
+        console.log(parsedHours[0].start);
+        console.log(parsedHours[0].end);
       } else if (parsedHours.length > 1) {
         // Varying hours by day
         const today = getDayString(now);
@@ -146,7 +157,16 @@ export class PublicRestroom {
         // TODO: unknown - handle this
         return;
       }
+
+      const isDST = isDSTNow();
+      console.log(isDST);
+      if (isDST) {
+        openingTime = dayjs.tz(`${openingTime}`, 'America/New_York').add(1, 'hour');
+        closingTime = dayjs.tz(`${closingTime}`, 'America/New_York').add(1, 'hour');
+      }
+      console.log(openingTime, closingTime, now);
       const isOpen = isTimeInRange(now, openingTime, closingTime);
+      console.log(isOpen);
       return isOpen;
     } catch (e) {
       console.error(e);
