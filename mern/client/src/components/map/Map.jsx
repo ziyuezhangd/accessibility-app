@@ -2,7 +2,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState, useEffect, useContext } from 'react';
-import { GoogleMap, Polyline } from 'react-google-map-wrapper';
+import { GoogleMap, HeatmapLayer, Polyline } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
@@ -39,7 +39,8 @@ export const Map = () => {
   const [busynessData, setBusynessData] = useState([]);
   const [noiseData, setNoiseData] = useState([]);
   const [odorData, setOdorData] = useState([]);
-  const [polylineData, setHeatMapData] = useState([]);
+  const [polylineData, setPolylineData] = useState([]);
+  const [heatmapData, setHeatmapData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -49,16 +50,20 @@ export const Map = () => {
   const handleSelect = (item) => {
     switch (item.id) {
     case 'busyness':
-      setHeatMapData(busynessData);
+      setPolylineData(busynessData);
+      setHeatmapData([]);
       break;
     case 'noise':
-      setHeatMapData(noiseData);
+      setPolylineData(noiseData);
+      setHeatmapData([]);
       break;
     case 'odor':
-      setHeatMapData(odorData);
+      setHeatmapData(odorData);
+      setPolylineData([]);
       break;
     default:
-      setHeatMapData([]);
+      setHeatmapData([]);
+      setPolylineData([]);
     }
   };
 
@@ -162,16 +167,23 @@ export const Map = () => {
   };
 
   const fetchData = async () => {
-    // TODO: move to provider
+    const gradeToInt = {
+      'A': 0,
+      'B': 5,
+      'C': 10,
+      'D': 15,
+      'F': 20,
+    };
     const busynessRatings = await getBusynessRatings(selectedDate);
     console.log('busynessRatings: ', busynessRatings);
     setBusynessData(busynessRatings);
     const noiseRatings = await getNoiseRatings(selectedDate);
     setNoiseData(noiseRatings);
 
-    // TODO: odour ratings not currently supported because they aren't at segment level - should maybe be a heat map?
     const odourRatings = await getOdourRatings(selectedDate);
-    setOdorData(odourRatings);
+    setOdorData(odourRatings.map(br => ({
+      lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
+    })));
     console.log('odourRatings: ', odourRatings);
   };
 
@@ -216,7 +228,23 @@ export const Map = () => {
               <HelpIcon />
             </Control>
           </Box>
-          {polylineData.map(({location, prediction}, i) => 
+          {heatmapData.length > 0 && (
+            <HeatmapLayer
+              data={heatmapData.filter(d => d.weight > 0).map((data) => ({
+                location: new window.google.maps.LatLng(data.lat, data.lng),
+                weight: data.weight,
+              }))}
+              gradient={[
+                'rgba(0, 255, 0, 0)',// green
+                'rgba(0, 255, 0, 1)',
+                'rgba(255, 255, 0, 1)',// yellow
+                'rgba(128, 0, 128, 1)'// purple
+              ]}
+              radius={90}
+              opacity={0.6}
+            />
+          )}
+          {polylineData.length > 0 && polylineData.map(({location, prediction}, i) => 
           // TODO: Need to have a different gradient for red-green color blindness
             (<Polyline
               key={i}
