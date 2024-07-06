@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach, afterAll } from '@jest/globals';
+import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
 import cityofNY from '../apis/cityofNY.js';
