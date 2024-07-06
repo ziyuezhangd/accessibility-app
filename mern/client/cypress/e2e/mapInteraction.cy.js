@@ -48,6 +48,8 @@ describe('Map page started', () => {
   });
   
   it('allows interaction with history drawer', () => {
-
+    cy.get('[data-test="markers"]').eq(1).click();
+    cy.get('[data-test="markers"]').eq(2).click();
+    cy.get('[data-test="markers"]').eq(3).click();
   });
 });
