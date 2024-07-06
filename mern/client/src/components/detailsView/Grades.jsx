@@ -73,7 +73,6 @@ export default function Grades({lat, lng}) {
 
     // TODO: these take a while to calculate - what if we just change the code such that users can only click on segments?
     const closestBusynessGrade = findClosestSegment({lat, lng}, busynessData);
-    createMarkers([{lat: closestBusynessGrade.location.start.lat, lng: closestBusynessGrade.location.start.lng},{lat: closestBusynessGrade.location.end.lat, lng: closestBusynessGrade.location.end.lng}], true);
     setBusynessGrade(letterGradeToValue[closestBusynessGrade.prediction]);
     
     /// TODO: not great
