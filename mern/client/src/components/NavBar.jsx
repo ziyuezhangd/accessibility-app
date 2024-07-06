@@ -14,6 +14,7 @@ import axios from 'axios';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserHistory, postUserHistory } from '../services/userHistory';
 
 const pages = ['Map', 'About us'];
 
@@ -78,6 +79,13 @@ export const NavBar = () => {
       // Check if the favorites list has less than 5 items
       if (favorites.length < 5) {
         setFavorites([...favorites, newFavorite]);
+        //here add to userHistoryDB
+        if (profile){
+          const name = profile.name;
+          const email = profile.email;
+          const favorites = newFavorite;
+          postUserHistory(name, email, favorites);
+        }
         setSnackbarMessage('Added to favorites');
       } else {
         setSnackbarMessage('Maximum of 5 favorites allowed');
@@ -98,7 +106,7 @@ export const NavBar = () => {
     }
     setSnackbarOpen(false);
   };
-//google login
+  //google login
   const [ user, setUser ] = useState([]);
   const [ profile, setProfile ] = useState([]);
 
@@ -239,7 +247,7 @@ export const NavBar = () => {
             <div style={{ margin: '20px' }}>
               {profile ? (
                 <div>
-                  <button onClick={logOut}>Log Out</button>
+                  <button onClick={logOut}>Log out</button>
                 </div>
               ) : (
                 <button onClick={login}>Sign in with Google </button>

@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { name, email, favourites, searchHistory } = req.body;
+  const { name, email, favorites, searchHistory } = req.body;
     
   if (!email) {
     return res.status(400).send({ message: 'Email address is required' });
@@ -23,17 +23,17 @@ router.post('/', async (req, res) => {
     const userHistory = {
       name,
       email,
-      favourites,
+      favorites,
       searchHistory
     };
 
-    if (userHistory.favourites && userHistory.searchHistory){
+    if (userHistory.favorites && userHistory.searchHistory){
       await dbHandler.insertUserHistory(userHistory);
     }else if (userHistory.searchHistory){
-      await dbHandler.insertSearchHistory(userHistory);
+      await dbHandler.insertSearchHistory(userHistory.searchHistory);
     }
-    if (userHistory.searchHistory){
-      await dbHandler.insertSearchHistory(userHistory);
+    if (userHistory.favorites){
+      await dbHandler.insertfavorites(userHistory.favorites);
     }
     
     res.status(201).send({ message: 'Thank you for your feedback!' });

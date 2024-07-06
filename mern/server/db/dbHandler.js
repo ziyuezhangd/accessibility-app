@@ -64,14 +64,14 @@ const dbHandler = {
     }
   },
   
-  async insertFavourites(userHistory){
+  async insertFavorites(userHistory){
     const db = await getDB();
     const collection = db.collection('userHistory');
     if (collection.find({email: userHistory.email})) {
-      await collection.insertOne(userHistory.favourites);
+      await collection.insertOne(userHistory.favorites);
     }
     else {
-      await collection.insertOne(userHistory.favourites);
+      await collection.insertOne(userHistory.favorites);
     }
   },
 
