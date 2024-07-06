@@ -203,7 +203,8 @@ export const NavBar = () => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={handleOpenFavorites}
+            <IconButton data-test='favorites'
+              onClick={handleOpenFavorites}
               sx={{ p: 0 }}>
               <FavoriteBorder alt='Favorites'
                 sx={{ color: 'white' }} />

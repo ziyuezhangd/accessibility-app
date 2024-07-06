@@ -221,7 +221,7 @@ export const Map = () => {
   return (
     <Box sx={{ display: 'flex' }}>
       <PersistentDrawerLeft selectedLocation={selectedPlace}/>
-      <Box date-test='google-map'
+      <Box data-test='google-map'
         id='google-map'
         sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
