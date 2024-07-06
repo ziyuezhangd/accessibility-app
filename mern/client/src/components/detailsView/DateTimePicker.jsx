@@ -2,11 +2,10 @@ import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import React from 'react';
 
-const DateTimePickerComponent = ({ selectedDate, setSelectedDate }) => {
+const DateTimePickerComponent = ({ selectedDate, onDateSelected }) => {
   const handleDateChange = (newValue) => {
-    setSelectedDate(newValue);
+    onDateSelected(newValue);
   };
 
   return (
@@ -14,6 +13,7 @@ const DateTimePickerComponent = ({ selectedDate, setSelectedDate }) => {
       <DateTimePicker
         label="Date & Time picker"
         value={selectedDate}
+        timezone="America/New_York"
         onChange={handleDateChange}
         renderInput={(params) => (
           <TextField

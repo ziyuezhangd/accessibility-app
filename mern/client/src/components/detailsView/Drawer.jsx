@@ -11,6 +11,7 @@ import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { MapLocation } from '../../utils/MapUtils';
+import { DataContext } from '../../providers/DataProvider';
 
 const drawerWidth = 350;
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -36,6 +37,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  */
 export default function PersistentDrawerLeft({ selectedLocation }) {
   const { clearMarkers } = useContext(GoogleMapContext);
+  const { getPredictions } = useContext(DataContext);
+
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
   const [selectedDate, setSelectedDate] = useState(dayjs());
 
@@ -74,6 +77,12 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
     setLocation(null);
   };
 
+  const handleDateSelected = (e) => {
+    console.log('Date selected: ', e);
+    setSelectedDate(e);
+    getPredictions(selectedDate);
+  };
+
   return (
     <>
       <Drawer
@@ -92,7 +101,7 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
             <ChevronLeftIcon />
           </IconButton>}
           <div><DateTimePickerComponent selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate} /></div>
+            onDateSelected={handleDateSelected} /></div>
 
         </DrawerHeader>
 
