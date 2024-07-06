@@ -168,6 +168,7 @@ export const Map = () => {
   };
 
   const fetchData = async () => {
+    const predictionDate = dayjs(selectedDate).format('YYYY-MM-DD[T]HH:mm:ss');
     const gradeToInt = {
       'A': 0,
       'B': 5,
@@ -175,13 +176,13 @@ export const Map = () => {
       'D': 15,
       'F': 20,
     };
-    const busynessRatings = await getBusynessRatings(selectedDate);
+    const busynessRatings = await getBusynessRatings(predictionDate);
     console.log('busynessRatings: ', busynessRatings);
     setBusynessData(busynessRatings);
-    const noiseRatings = await getNoiseRatingsDaily(selectedDate);
+    const noiseRatings = await getNoiseRatingsDaily(predictionDate);
     setNoiseData(noiseRatings);
 
-    const odourRatings = await getOdourRatings(selectedDate);
+    const odourRatings = await getOdourRatings(predictionDate);
     setOdorData(odourRatings.map(br => ({
       lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
     })));
