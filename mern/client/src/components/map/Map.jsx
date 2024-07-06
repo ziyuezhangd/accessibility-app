@@ -1,16 +1,17 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
+import { Box, Snackbar, IconButton, Button,useTheme, useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Polyline } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
-import { DataContext, DataProvider } from '../../providers/DataProvider';
+import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
-import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';import PersistentDrawerLeft from '../detailsView/Drawer';
+import { getBusynessRatings, getNoiseRatingsHourly, getNoiseRatingsDaily, getOdourRatings } from '../../services/ratings';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';
+import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
@@ -134,7 +135,7 @@ export const Map = () => {
     createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
   };
-  
+
   const handleAddToFavorites = () => {
     if (selectedPlace) {
       console.log('Added to favorites:', selectedPlace);
@@ -144,7 +145,7 @@ export const Map = () => {
     }
   };
 
-  const handleSearchEntered = (selected) => { 
+  const handleSearchEntered = (selected) => {
     var request = {
       placeId: selected.id,
       fields: ['name']
@@ -177,7 +178,7 @@ export const Map = () => {
     const busynessRatings = await getBusynessRatings(selectedDate);
     console.log('busynessRatings: ', busynessRatings);
     setBusynessData(busynessRatings);
-    const noiseRatings = await getNoiseRatings(selectedDate);
+    const noiseRatings = await getNoiseRatingsDaily(selectedDate);
     setNoiseData(noiseRatings);
 
     const odourRatings = await getOdourRatings(selectedDate);
@@ -221,7 +222,7 @@ export const Map = () => {
           <Box sx={containerStyle}>
             <Dropdown onSelect={handleSelect} />
             <Control position={google.maps.ControlPosition.TOP_CENTER}>
-              <SearchBar
+              <SearchBar 
                 onSearchEntered={handleSearchEntered}/>
             </Control>
             <Control position={google.maps.ControlPosition.TOP_RIGHT}>
@@ -267,7 +268,7 @@ export const Map = () => {
               <Button color="secondary"
                 size="small"
                 onClick={handleAddToFavorites}>
-              Add to Favorites
+                Add to Favorites
               </Button>
               <IconButton size="small"
                 aria-label="close"

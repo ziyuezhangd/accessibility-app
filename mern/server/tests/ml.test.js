@@ -57,7 +57,7 @@ describe('getBusynessPredictions', () => {
     const predictions = await ml.getBusynessPredictions(datetime);
 
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch).toHaveBeenCalledWith('/flask-api/busyness-ratings?month=7&day=1&hour=14&dayOfWeek=1');
+    expect(fetch).toHaveBeenCalledWith('/flask-api/busyness-ratings?month=7&day=1&hour=14&dayOfWeek=0');
     expect(predictions).toEqual([
       { location: { lat: 40.70691998879576, lng: -74.01869812608821 }, prediction: 'B' },
       { location: { lat: 40.70651443884558, lng: -74.01777528922824 }, prediction: 'F' },
@@ -86,8 +86,8 @@ describe('getOdourPredictions', () => {
 
   it('should return predictions with lat/lng', async () => {
     fetch.mockResponseOnce(JSON.stringify([
-      { modzcta: '10001', prediction: 'D' },
-      { modzcta: '10002', prediction: 'A' },
+      { MODZCTA: '10001', prediction: 'D' },
+      { MODZCTA: '10002', prediction: 'A' },
     ]));
 
     const datetime = '2024-07-01T14:30:00';
