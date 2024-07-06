@@ -27,7 +27,7 @@ function formatTimeRangeString (timeRangeString){
     return null;
   }
 
-  //The string is already in expected format
+  // Already in expected format
   if (timeRangeString.includes('\n')) {
     return timeRangeString;
   }
@@ -35,7 +35,8 @@ function formatTimeRangeString (timeRangeString){
     return timeRangeString;
   }
   
-  // Format the string
+  // Otherwise, format the string
+  let flag = false;
   const openingHours = {
     'Monday': 'Closed', 
     'Tuesday': 'Closed', 
@@ -50,6 +51,7 @@ function formatTimeRangeString (timeRangeString){
     Object.keys(openingHours).forEach(day => {
       openingHours[day] = '7am - 7pm';
     });
+    flag = true;
   }
 
   if (timeRangeString.includes('Monday to Friday:')) {
@@ -66,22 +68,25 @@ function formatTimeRangeString (timeRangeString){
         openingHours[day] = result;
       }
     });
-  }
-  if (timeRangeString.includes('Saturday & Sunday:')) {
-    const startIndex = timeRangeString.indexOf('Saturday & Sunday:');
-    const endIndex = timeRangeString.indexOf(';', startIndex);
-    let result;
-    if (endIndex !== -1) {
-      result = timeRangeString.substring(startIndex + 'Saturday & Sunday:'.length, endIndex).trim();
-    } else {
-      result = timeRangeString.substring(startIndex + 'Saturday & Sunday:'.length);
-    }
-    Object.keys(openingHours).forEach(day => {
-      if (days.slice(5).includes(day)) {
-        openingHours[day] = result;
+    flag = true;
+    if (timeRangeString.includes('Saturday & Sunday:')) {
+      const startIndex = timeRangeString.indexOf('Saturday & Sunday:');
+      const endIndex = timeRangeString.indexOf(';', startIndex);
+      let result;
+      if (endIndex !== -1) {
+        result = timeRangeString.substring(startIndex + 'Saturday & Sunday:'.length, endIndex).trim();
+      } else {
+        result = timeRangeString.substring(startIndex + 'Saturday & Sunday:'.length);
       }
-    });
+      Object.keys(openingHours).forEach(day => {
+        if (days.slice(5).includes(day)) {
+          openingHours[day] = result;
+        }
+      });
+      flag = true;
+    }
   }
+  
   if (timeRangeString.includes('Monday to Saturday:')) {
     const startIndex = timeRangeString.indexOf('Monday to Saturday:');
     const endIndex = timeRangeString.indexOf(';', startIndex);
@@ -96,6 +101,7 @@ function formatTimeRangeString (timeRangeString){
         openingHours[day] = result;
       }
     });
+    flag = true;
     if (timeRangeString.includes('Sunday:')) {
       const startIndex = timeRangeString.indexOf('Sunday:');
       const endIndex = timeRangeString.indexOf(';', startIndex);
@@ -106,6 +112,7 @@ function formatTimeRangeString (timeRangeString){
         result = timeRangeString.substring(startIndex + 'Sunday:'.length);
       }
       openingHours.Sunday = result;
+      flag = true;
     } else if (timeRangeString.includes('Sundays:')) {
       const startIndex = timeRangeString.indexOf('Sundays:');
       const endIndex = timeRangeString.indexOf(';', startIndex);
@@ -116,6 +123,7 @@ function formatTimeRangeString (timeRangeString){
         result = timeRangeString.substring(startIndex + 'Sundays:'.length);
       }
       openingHours.Sunday = result;
+      flag = true;
     } else if (timeRangeString.includes('Sunday & holidays:')) {
       const startIndex = timeRangeString.indexOf('Sunday & holidays:');
       const endIndex = timeRangeString.indexOf(';', startIndex);
@@ -126,14 +134,19 @@ function formatTimeRangeString (timeRangeString){
         result = timeRangeString.substring(startIndex + 'Sunday & holidays:'.length);
       }
       openingHours.Sunday = result;
+      flag = true;
     }
   }
 
-  let formattedString = '';
-  for (const day in openingHours) {
-    formattedString += `${day}: ${openingHours[day]} \n`;
+  if (flag) {
+    let formattedString = '';
+    for (const day in openingHours) {
+      formattedString += `${day}: ${openingHours[day]} \n`;
+    }
+    return formattedString;
+  } else {
+    return null;
   }
-  return formattedString;
 }
 
 /**
