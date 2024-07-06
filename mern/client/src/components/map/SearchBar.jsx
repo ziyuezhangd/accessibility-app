@@ -52,7 +52,7 @@ const SearchBar = ({ onSearchEntered }) => {
 
   return (
     <>
-      <TextField
+      <TextField data-test='search-bar'
         inputRef={searchInputRef}
         placeholder="Search for places"
         variant="outlined"

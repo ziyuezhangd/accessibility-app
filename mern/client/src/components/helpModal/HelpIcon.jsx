@@ -19,7 +19,8 @@ export default function HelpIcon() {
   return (
     <>
       <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-        <IconButton aria-label='help'
+        <IconButton data-test='help-icon'
+          aria-label='help'
           aria-controls='help-button'
           aria-haspopup='true'
           onClick={handleButtonClick}

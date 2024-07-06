@@ -67,11 +67,11 @@ const GoogleMapProvider = ({children}) => {
         const {imgAlt, imgSize} = config;
         // console.log(imgSrc)
         const marker = (
-          <AdvancedMarker 
+          <AdvancedMarker
             lat={lat}
             lng={lng}
           >
-            <img 
+            <img data-test='markers'
               src={imgSrc}
               style={{height: imgSize}}
               alt={imgAlt}
@@ -85,11 +85,11 @@ const GoogleMapProvider = ({children}) => {
         scale = scale || 1;
         color = color || '#FF0000';
         const marker = (
-          <AdvancedMarker 
+          <AdvancedMarker
             lat={lat}
             lng={lng}
           >
-            <PinElement 
+            <PinElement data-test='markers'
               scale={scale}
               color={color} />
           </AdvancedMarker>

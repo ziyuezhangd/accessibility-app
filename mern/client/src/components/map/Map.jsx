@@ -221,7 +221,8 @@ export const Map = () => {
   return (
     <Box sx={{ display: 'flex' }}>
       <PersistentDrawerLeft selectedLocation={selectedPlace}/>
-      <Box id="google-map"
+      <Box date-test='google-map'
+        id='google-map'
         sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
@@ -237,7 +238,7 @@ export const Map = () => {
           }}
         >
           <Box sx={containerStyle}>
-            <Dropdown id='heatmap-dropdown' 
+            <Dropdown
               onSelect={handleSelect} />
             <Control position={google.maps.ControlPosition.TOP_CENTER}>
               <SearchBar

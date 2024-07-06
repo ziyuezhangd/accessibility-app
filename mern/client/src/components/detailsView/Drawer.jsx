@@ -63,7 +63,8 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
 
   return (
     <>
-      <Drawer id='drawer'
+      <Drawer data-test='drawer'
+        id='drawer'
         variant='permanent'
         sx={{
           width: drawerWidth,
@@ -78,7 +79,7 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
           {selectedDrawerContent === 'location' && <IconButton onClick={handleBackClicked}>
             <ChevronLeftIcon />
           </IconButton>}
-          <div id='picker'><DateTimePickerComponent selectedDate={selectedDate}
+          <div data-test='picker'><DateTimePickerComponent selectedDate={selectedDate}
             setSelectedDate={setSelectedDate} /></div>
 
         </DrawerHeader>

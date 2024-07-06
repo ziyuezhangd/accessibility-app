@@ -39,7 +39,7 @@ export default function HelpModal({ isOpen, onClose }) {
       onClose={onClose}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'>
-      <Box id='help-modal'
+      <Box data-test='help-modal'
         sx={style}>
         <Typography id='modal-modal-title'
           variant='h4'

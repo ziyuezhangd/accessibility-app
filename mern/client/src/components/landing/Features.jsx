@@ -26,7 +26,7 @@ export default function Features() {
     },
   ];
   return (
-    <Container
+    <Container data-test='features'
       id='features'
       maxWidth={false}
       sx={{

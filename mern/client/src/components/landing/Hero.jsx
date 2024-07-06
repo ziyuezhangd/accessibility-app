@@ -8,7 +8,7 @@ export default function Hero() {
   };
 
   return (
-    <Container
+    <Container data-test='hero'
       id='hero'
       maxWidth={false}
       sx={{
