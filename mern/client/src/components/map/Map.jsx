@@ -1,5 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
+import { Box, Snackbar, IconButton, Button,useTheme, useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Marker, MarkerClusterer } from 'react-google-map-wrapper';
@@ -10,7 +10,7 @@ import { DataContext, DataProvider } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { getPlaceInfos } from '../../services/placeInfo';
-import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
+import { getBusynessRatings, getNoiseRatingsHourly, getNoiseRatingsDaily, getOdourRatings } from '../../services/ratings';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
@@ -156,7 +156,7 @@ export const Map = () => {
     createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
   };
-  
+
   const handleAddToFavorites = () => {
     if (selectedPlace) {
       console.log('Added to favorites:', selectedPlace);
@@ -166,7 +166,7 @@ export const Map = () => {
     }
   };
 
-  const handleSearchEntered = (selected) => { 
+  const handleSearchEntered = (selected) => {
     var request = {
       placeId: selected.id,
       fields: ['name']
@@ -241,7 +241,7 @@ export const Map = () => {
             <Dropdown
               onSelect={handleSelect} />
             <Control position={google.maps.ControlPosition.TOP_CENTER}>
-              <SearchBar
+              <SearchBar 
                 onSearchEntered={handleSearchEntered}/>
             </Control>
             <Control position={google.maps.ControlPosition.TOP_RIGHT}>
@@ -271,7 +271,7 @@ export const Map = () => {
               <Button color="secondary"
                 size="small"
                 onClick={handleAddToFavorites}>
-              Add to Favorites
+                Add to Favorites
               </Button>
               <IconButton size="small"
                 aria-label="close"

@@ -49,6 +49,19 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
     }
   }, [selectedLocation]);
 
+  useEffect(() => {
+    const handleFavoriteSelected = (event) => {
+      setSelectedDrawerContent('location');
+      setLocation(event.detail);
+    };
+
+    window.addEventListener('favoriteSelected', handleFavoriteSelected);
+
+    return () => {
+      window.removeEventListener('favoriteSelected', handleFavoriteSelected);
+    };
+  }, []);
+
   const handleLocationSelected = (e) => {
     clearMarkers();
     setSelectedDrawerContent('location');

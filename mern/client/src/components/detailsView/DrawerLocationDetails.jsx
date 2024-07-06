@@ -1,5 +1,9 @@
+// DrawerLocationDetails.jsx
 import {PlaceOverview} from '@googlemaps/extended-component-library/react';
-import { Button, Alert } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import Favorite from '@mui/icons-material/Favorite';
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import { Button, Alert,IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import _ from 'lodash';
@@ -11,6 +15,14 @@ import NearestStations from './NearestStations';
 import { postFeedback } from '../../services/feedback';
 import { MapLocation } from '../../utils/MapUtils';
 
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0, 1),
+  ...theme.mixins.toolbar,
+  justifyContent: 'space-between',
+}));
+
 /**
  * DrawerLocationDetails component.
  * 
@@ -18,6 +30,8 @@ import { MapLocation } from '../../utils/MapUtils';
  * 
  * @param {Object} props - The properties passed to the component.
  * @param {MapLocation} props.location - The location object to show details about.
+ * @param {function} props.onBackClicked - The function to call when the back button is clicked.
+ * 
  * @returns {JSX.Element} The rendered DrawerLocationDetails component.
  */
 const modalStyle = {
@@ -33,12 +47,36 @@ const formStyle = {
   p: 4,
 };
 
-export default function DrawerLocationDetails({ location }) {
+export default function DrawerLocationDetails({ location, onBackClicked }) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     addLocationToHistory();
-  }, []);
+    checkIfFavorite();
+  }, [location]);
+
+  useEffect(() => {
+    const handleFavoriteAdded = (event) => {
+      if (event.detail.placeId === location.placeId) {
+        setIsFavorite(true);
+      }
+    };
+
+    const handleFavoriteRemoved = (event) => {
+      if (event.detail.placeId === location.placeId) {
+        setIsFavorite(false);
+      }
+    };
+
+    window.addEventListener('favoriteAdded', handleFavoriteAdded);
+    window.addEventListener('favoriteRemoved', handleFavoriteRemoved);
+
+    return () => {
+      window.removeEventListener('favoriteAdded', handleFavoriteAdded);
+      window.removeEventListener('favoriteRemoved', handleFavoriteRemoved);
+    };
+  }, [location]);
 
   const addLocationToHistory = () => {
     let history = localStorage.getItem('searchHistory');
@@ -48,17 +86,24 @@ export default function DrawerLocationDetails({ location }) {
     history = JSON.parse(localStorage.getItem('searchHistory'));
 
     if (_.isEqual(history[0], location)) {
-      // Do nothing
       return;
     }
 
     if (_.find(history, (h) => h.name === location.name)) {
-      // Remove and we will put it back to the start
       _.remove(history, (h) => h.name === location.name);
     }
     history = [location, ...history];
 
     localStorage.setItem('searchHistory', JSON.stringify(history));
+  };
+
+  const checkIfFavorite = () => {
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    if (_.find(favorites, (f) => f.placeId === location.placeId)) {
+      setIsFavorite(true);
+    } else {
+      setIsFavorite(false); // Ensure the favorite status is reset correctly
+    }
   };
 
   const handleButtonClicked = () => {
@@ -69,13 +114,29 @@ export default function DrawerLocationDetails({ location }) {
     setIsFeedbackOpen(false);
   };
 
+  const handleToggleFavorite = () => {
+    if (isFavorite) {
+      const event = new CustomEvent('favoriteRemoved', { detail: location });
+      window.dispatchEvent(event);
+      setIsFavorite(false);
+    } else {
+      const event = new CustomEvent('favoriteAdded', { detail: location });
+      window.dispatchEvent(event);
+      setIsFavorite(true);
+    }
+  };
+
   return (
     <>
+      <DrawerHeader>
+        <Box></Box>
+        <IconButton onClick={handleToggleFavorite}>
+          {isFavorite ? <Favorite sx={{ color: 'red' }} /> : <FavoriteBorder />}
+        </IconButton>
+      </DrawerHeader>
       <Box sx={{ overflow: 'auto', px: 5 }}>
-        {/* TODO: move the google logo elsewhere */}
         <PlaceOverview place={location.placeId}
           size='medium'></PlaceOverview>
-
         <Grades />
         <NearestRestrooms 
           lat={location.lat}
