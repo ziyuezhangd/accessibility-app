@@ -35,20 +35,34 @@ export const Map = () => {
   // const [placeInfos, setPlaceInfos] = useState([]);
   const theme = useTheme();
   const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
-  const {placeInfos} = useContext(DataContext);
-  const [busynessData, setBusynessData] = useState([]);
-  const [noiseData, setNoiseData] = useState([]);
-  const [odorData, setOdorData] = useState([]);
+  const {placeInfos, getPredictions} = useContext(DataContext);
+  const [selectedPredictionType, setSelectedPredictionType] = useState(null);
   const [polylineData, setPolylineData] = useState([]);
   const [heatmapData, setHeatmapData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [selectedDate, setSelectedDate] = useState(null);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
-  const handleSelect = (item) => {
-    switch (item.id) {
+  
+  // When a prediction type is selected, change the selected prediction type
+  const handleVisualizationSelected = (item) => {
+    setSelectedPredictionType(item.id);
+    setPredictionVisualization(item.id);
+  };
+
+  // Based on our selected visualization type, render visualiztion
+  const setPredictionVisualization = async (type) => {
+    const {busynessData, noiseData, odorData} = await getPredictions(selectedDate);
+    const gradeToInt = {
+      'A': 0,
+      'B': 5,
+      'C': 10,
+      'D': 15,
+      'F': 20,
+    };
+    switch (type) {
     case 'busyness':
       setPolylineData(busynessData);
       setHeatmapData([]);
@@ -58,7 +72,9 @@ export const Map = () => {
       setHeatmapData([]);
       break;
     case 'odor':
-      setHeatmapData(odorData);
+      setHeatmapData(odorData.map(br => ({
+        lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
+      })));
       setPolylineData([]);
       break;
     default:
@@ -166,31 +182,6 @@ export const Map = () => {
     setSnackbarOpen(false);
   };
 
-  const fetchData = async () => {
-    const gradeToInt = {
-      'A': 0,
-      'B': 5,
-      'C': 10,
-      'D': 15,
-      'F': 20,
-    };
-    const busynessRatings = await getBusynessRatings(selectedDate);
-    console.log('busynessRatings: ', busynessRatings);
-    setBusynessData(busynessRatings);
-    const noiseRatings = await getNoiseRatings(selectedDate);
-    setNoiseData(noiseRatings);
-
-    const odourRatings = await getOdourRatings(selectedDate);
-    setOdorData(odourRatings.map(br => ({
-      lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
-    })));
-    console.log('odourRatings: ', odourRatings);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const containerStyle = {
     display: 'flex',
     flexDirection: isMobile ? 'column' : 'row',
@@ -219,7 +210,7 @@ export const Map = () => {
           }}
         >
           <Box sx={containerStyle}>
-            <Dropdown onSelect={handleSelect} />
+            <Dropdown onSelect={handleVisualizationSelected} />
             <Control position={google.maps.ControlPosition.TOP_CENTER}>
               <SearchBar 
                 onSearchEntered={handleSearchEntered}/>
@@ -228,7 +219,7 @@ export const Map = () => {
               <HelpIcon />
             </Control>
           </Box>
-          {heatmapData.length > 0 && (
+          {heatmapData?.length > 0 && (
             <HeatmapLayer
               data={heatmapData.filter(d => d.weight > 0).map((data) => ({
                 location: new window.google.maps.LatLng(data.lat, data.lng),
@@ -244,7 +235,7 @@ export const Map = () => {
               opacity={0.6}
             />
           )}
-          {polylineData.length > 0 && polylineData.map(({location, prediction}, i) => 
+          {polylineData?.length > 0 && polylineData.map(({location, prediction}, i) => 
           // TODO: Need to have a different gradient for red-green color blindness
             (<Polyline
               key={i}
