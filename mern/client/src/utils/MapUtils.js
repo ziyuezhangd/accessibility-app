@@ -19,6 +19,33 @@ export const calculateDistanceBetweenTwoCoordinates = (lat1, lon1, lat2, lon2) =
   return d * 1000; // Meters
 };
 
+// Checks if a lat/long is between two lat longs
+export const isBetween = (targetCoordinates, coordinates1, coordinates2, precision = 9) => {
+  const target = new google.maps.LatLng(targetCoordinates.lat, targetCoordinates.lng);
+  const lineToCheck = new google.maps.Polyline({
+    path: [new google.maps.LatLng(coordinates1.lat, coordinates1.lng), new google.maps.LatLng(coordinates2.lat, coordinates2.lng)],
+  });
+  if (google.maps.geometry.poly.isLocationOnEdge(target, lineToCheck, Math.pow(10, precision * -1))) {
+    return true;
+  }
+  return false;
+};
+
+export const findClosestSegment = ({ lat, lng }, segmentCoordsList) => {
+  let validSegments = [];
+  let precision = 9;
+  while (validSegments.length === 0 && precision > 0) {
+    validSegments = _.filter(segmentCoordsList, (bd) => isBetween({ lat, lng }, { lat: bd.location.start.lat, lng: bd.location.start.lng }, { lat: bd.location.end.lat, lng: bd.location.end.lng }, precision));
+    // console.log(validSegments);
+    precision -= 1;
+  }
+  if (validSegments.length === 0) {
+    console.error('Could not find nearest segment');
+  }
+  const closestSegment = _.minBy(validSegments, segment => calculateDistanceBetweenTwoCoordinates(segment.location.start.lat, segment.location.start.lng, lat, lng) + calculateDistanceBetweenTwoCoordinates(segment.location.end.lat, segment.location.end.lng, lat, lng));
+  return closestSegment;
+};
+
 // https://en.wikipedia.org/wiki/List_of_New_York_City_Subway_lines
 export const SUBWAY_LINE_COLORS = {
   A: blue[900],

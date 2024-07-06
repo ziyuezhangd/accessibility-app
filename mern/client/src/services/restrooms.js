@@ -134,8 +134,8 @@ export class PublicRestroom {
       const parsedHours = parseTimeRangeFromString(hoursString);
       if (parsedHours.length === 1) {
         // Hours are the same daily
-        openingTime = parsedHours[0].start.date();
-        closingTime = parsedHours[0].end.date();
+        openingTime = parsedHours[0].start?.date();
+        closingTime = parsedHours[0].end?.date();
       } else if (parsedHours.length > 1) {
         // Varying hours by day
         const today = getDayString(now);

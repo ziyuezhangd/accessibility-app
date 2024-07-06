@@ -17,6 +17,7 @@ const DataProvider = ({children}) => {
   const [predictionDateTime, setPredictionDateTime] = useState(null);
     
   useEffect(() => {
+    console.log('useEffect');
     loadRestrooms();
     loadPlaceInfo();
     getPredictions();
@@ -33,8 +34,14 @@ const DataProvider = ({children}) => {
   };
 
   const getPredictions = async (selectedDate) => {
+    console.log('Getting predictions');
+    const isFirstPrediction = !predictionDateTime;
     if (selectedDate === null || selectedDate === undefined) {
-      selectedDate = getCurrentTimeInNewYork();
+      if (isFirstPrediction) {
+        selectedDate = getCurrentTimeInNewYork();
+      } else {
+        selectedDate = predictionDateTime;
+      }
     }
 
     // Convert to ISO string
@@ -42,7 +49,6 @@ const DataProvider = ({children}) => {
     console.log('Getting predictions for', selectedDate);
 
     const isNewDayAndHour = (dayjs(selectedDate).day() !== dayjs(predictionDateTime).day() && dayjs(selectedDate).hour() !== dayjs(predictionDateTime).hour());
-    const isFirstPrediction = !predictionDateTime;
     // Re-load with the new selected date
     if (isFirstPrediction || isNewDayAndHour) {
       console.log('Reloading from server');

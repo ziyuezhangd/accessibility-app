@@ -117,7 +117,7 @@ export const Map = () => {
 
   useEffect(() => {
     const showAccessibilityMarkers = (placeInfos) => {
-      const markers = placeInfos.map(placeInfo => {
+      const markers = placeInfos.map((placeInfo, i) => {
         const imgSrc = PlaceInfoUtilities.getMarkerPNG(placeInfo);
         if (imgSrc === null){
           return null;
@@ -129,6 +129,7 @@ export const Map = () => {
             imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
             imgSize: '30px', 
             imgAlt: PlaceInfoUtilities.name,
+            key: i,
           }; 
         }
 
