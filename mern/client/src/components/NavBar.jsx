@@ -1,4 +1,4 @@
-import { Accessibility, FavoriteBorder, Delete } from '@mui/icons-material';
+import { Accessibility, FavoriteBorder, Delete, Margin } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Snackbar } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
@@ -9,7 +9,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { googleLogout, useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const pages = ['Map', 'About us'];
@@ -95,7 +98,39 @@ export const NavBar = () => {
     }
     setSnackbarOpen(false);
   };
+//google login
+  const [ user, setUser ] = useState([]);
+  const [ profile, setProfile ] = useState([]);
 
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => setUser(codeResponse),
+    onError: (error) => console.log('Login Failed:', error)
+  });
+
+  const logOut = () => {
+    googleLogout();
+    setProfile(null);
+  };
+
+  useEffect(
+    () => {
+      if (user) {
+        axios
+          .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+            headers: {
+              Authorization: `Bearer ${user.access_token}`,
+              Accept: 'application/json'
+            }
+          })
+          .then((res) => {
+            setProfile(res.data);
+          })
+          .catch((err) => console.log(err));
+      }
+    },
+    [ user ]
+  );
+  
   return (
     <AppBar position='fixed'
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -198,6 +233,18 @@ export const NavBar = () => {
                 {page}
               </Button>
             ))}
+          </Box>
+
+          <Box>
+            <div style={{ margin: '20px' }}>
+              {profile ? (
+                <div>
+                  <button onClick={logOut}>Log Out</button>
+                </div>
+              ) : (
+                <button onClick={login}>Sign in with Google </button>
+              )}
+            </div>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
