@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pickle
 import pandas as pd
 import json
 import logging
 
 app = Flask(__name__)
+CORS(app)
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -27,18 +29,51 @@ def load_model(model_path):
     logging.error(f'Failed to load model from {model_path}: {e}')
     return None
 
-@app.route('/noise-ratings', methods=['GET'])
-def predict_noise():
-  model = load_model('../ml/models/noise_model.pkl')
+@app.route('/noise-ratings/hourly', methods=['GET'])
+def predict_noise_hourly():
+  model = load_model('../ml/models/noise_model_hourly.pkl')
   
   if model is None:
     return jsonify({'error': 'Model not found or could not be loaded'}), 500
 
   hour = request.args.get('hour', type=int)
+  if hour < 0 or hour > 23:
+    return jsonify({f'error': 'hour parameter ${hour} is invalid'}), 400
   if hour is None:
     return jsonify({'error': 'hour parameter is required'}), 400
   
   inputs = pd.DataFrame({'Hour': [hour] * len(segment_ids), 'SegmentId': segment_ids})
+  
+  predictions = model.predict(inputs)
+
+  predictions = predictions.astype(int).tolist()
+
+  results = [{'segment_id': segment_id, 'prediction': prediction} for segment_id, prediction in zip(segment_ids, predictions)]
+  
+  return jsonify(results)
+
+@app.route('/noise-ratings/daily', methods=['GET'])
+def predict_noise_daily():
+  model = load_model('../ml/models/noise_model_daily.pkl')
+  
+  if model is None:
+    return jsonify({'error': 'Model not found or could not be loaded'}), 500
+
+  hour = request.args.get('hour', type=int)
+  day_of_week = request.args.get('dayOfWeek', type=int)
+
+  if hour < 0 or hour > 23:
+    return jsonify({f'error': 'hour parameter ${hour} is invalid'}), 400
+  if day_of_week < 0 or day_of_week > 6:
+    return jsonify({f'error': 'day_of_week parameter ${day_of_week} is invalid'}), 400
+  if hour is None or day_of_week is None:
+    return jsonify({'error': 'hour and dayOfWeek parameters are required'}), 400
+  
+  inputs = pd.DataFrame({
+    'Hour': [hour] * len(segment_ids),
+    'DayOfWeek': [day_of_week] * len(segment_ids),
+    'SegmentId': segment_ids
+    })
   
   predictions = model.predict(inputs)
 
@@ -60,6 +95,14 @@ def predict_busyness():
   hour = request.args.get('hour', type=int)
   day_of_week = request.args.get('dayOfWeek', type=int)
 
+  if hour < 0 or hour > 23:
+    return jsonify({f'error': 'hour parameter ${hour} is invalid'}), 400
+  if day_of_week < 0 or day_of_week > 6:
+    return jsonify({f'error': 'day_of_week parameter ${day_of_week} is invalid'}), 400
+  if day < 0 or day > 31:
+    return jsonify({f'error': 'hour parameter ${day} is invalid'}), 400
+  if month < 1 or month > 12:
+    return jsonify({f'error': 'hour parameter ${month} is invalid'}), 400
   if month is None or day is None or hour is None or day_of_week is None:
     return jsonify({'error': 'month, day, hour and dayOfWeek parameters are required'}), 400
   
@@ -88,8 +131,14 @@ def predict_odour():
   day = request.args.get('day', type=int)
   hour = request.args.get('hour', type=int)
 
+  if hour < 0 or hour > 23:
+    return jsonify({f'error': 'hour parameter ${hour} is invalid'}), 400
+  if day < 0 or day > 31:
+    return jsonify({f'error': 'hour parameter ${day} is invalid'}), 400
+  if month < 1 or month > 12:
+    return jsonify({f'error': 'hour parameter ${month} is invalid'}), 400
   if month is None or day is None or hour is None:
-    return jsonify({'error': 'month, day, hour parameters are required'}), 400
+    return jsonify({'error': 'month, day and hour parameters are required'}), 400
 
   inputs = pd.DataFrame({
     'MODZCTA': MODZCTAs,
@@ -105,4 +154,4 @@ def predict_odour():
   return jsonify(results)
 
 if __name__ == '__main__':
-  app.run(debug=True, host='0.0.0.0', port=8000)
+  app.run(debug=True, host='0.0.0.0', port=5000)

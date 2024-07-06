@@ -14,7 +14,11 @@ const dummyFeedback = {
   name: 'Kate',
   email: 'kate@gmail.com',
   comment: 'This is test feedback.',
-  coordinates: [-73.9712, 40.7831],
+  age: 26,
+  gender: 'female',
+  conditions: 'test',
+  coordinates: [40.7831, -73.9712],
+  date: '2024-07-01T14:30:00-04:00'
 };
 
 describe('POST /feedback', () => {
@@ -28,10 +32,7 @@ describe('POST /feedback', () => {
     const response = await request(app).post('/').send(dummyFeedback);
     expect(response.status).toBe(201);
     expect(dbHandler.insertFeedback).toHaveBeenCalledTimes(1);
-    expect(dbHandler.insertFeedback).toHaveBeenCalledWith(expect.objectContaining({
-      ...dummyFeedback,
-      date: expect.any(Date),
-    }));
+    expect(dbHandler.insertFeedback).toHaveBeenCalledWith(dummyFeedback);
   });
 
   it('without coordinates should return 500', async () => {

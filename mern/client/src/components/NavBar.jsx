@@ -11,17 +11,19 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+// NavBar.jsx
+import { Accessibility, Menu as MenuIcon } from '@mui/icons-material';
+import { AppBar, Box, Button, Container, Menu, MenuItem, Toolbar, Typography, IconButton, Snackbar } from '@mui/material';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserHistory, postUserHistory } from '../services/userHistory';
+import Favorites from './detailsView/Favorites';
 
 const pages = ['Map', 'About us'];
 
 export const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElFavorites, setAnchorElFavorites] = React.useState(null);
-  const [favorites, setFavorites] = React.useState([]);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
 
@@ -29,15 +31,6 @@ export const NavBar = () => {
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
-  };
-
-  const handleOpenFavorites = (event) => {
-    if (favorites.length > 0) {
-      setAnchorElFavorites(event.currentTarget);
-    } else {
-      setSnackbarMessage('No favorite places added yet');
-      setSnackbarOpen(true);
-    }
   };
 
   const handleCloseNavMenu = (e) => {
@@ -256,45 +249,7 @@ export const NavBar = () => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={handleOpenFavorites}
-              sx={{ p: 0 }}>
-              <FavoriteBorder alt='Favorites'
-                sx={{ color: 'white' }} />
-            </IconButton>
-            {favorites.length > 0 && (
-              <Menu
-                sx={{ mt: '45px' }}
-                id='menu-appbar'
-                anchorEl={anchorElFavorites}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorElFavorites)}
-                onClose={handleCloseFavorites}
-              >
-                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                  {favorites.map((favorite, index) => (
-                    <ListItem key={index}
-                      alignItems='flex-start'>
-                      <ListItemText primary={favorite.name} />
-                      <ListItemSecondaryAction>
-                        <IconButton edge="end"
-                          aria-label="delete"
-                          onClick={() => handleRemoveFavorite(favorite.id)}>
-                          <Delete />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  ))}
-                </List>
-              </Menu>
-            )}
+            <Favorites />
           </Box>
         </Toolbar>
       </Container>
