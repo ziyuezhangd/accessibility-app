@@ -59,7 +59,7 @@ describe('Function getNoiseRatings', () => {
 
     const ratings = await getNoiseRatingsHourly(testDateTime);
 
-    expect(fetch).toHaveBeenCalledWith('/api/noise-ratings?' + new URLSearchParams({ datetime: testDateTime }));
+    expect(fetch).toHaveBeenCalledWith('/api/noise-ratings/hourly?' + new URLSearchParams({ datetime: testDateTime }));
     expect(ratings).toEqual(dummyRatings);
   });
 
@@ -74,7 +74,7 @@ describe('Function getNoiseRatings', () => {
     
     const ratings = await getNoiseRatingsHourly(testDateTime);
 
-    expect(fetch).toHaveBeenCalledWith('/api/noise-ratings?' + new URLSearchParams({ datetime: testDateTime }));
+    expect(fetch).toHaveBeenCalledWith('/api/noise-ratings/hourly?' + new URLSearchParams({ datetime: testDateTime }));
     expect(ratings).toBeUndefined();
     expect(console.error).toHaveBeenCalledTimes(1);
   });

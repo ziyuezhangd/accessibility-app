@@ -23,8 +23,21 @@ function formatTimeRangeString (timeRangeString){
   if (timeRangeString && !/\d/.test(timeRangeString)) {
     return null;
   }
-  if (timeRangeString.includes('dusk') || timeRangeString.includes('spring summer')) {
-    return null;
+
+  // Small adjustment
+  if (timeRangeString.includes('dusk')) {
+    return timeRangeString.replace('dusk', '8pm');
+  }
+  if (timeRangeString === 'Bathrooms are open from 7 a.m.-7 p.m., with a one-hour closure for cleaning from 12 noon-1 p.m.') {
+    return '7am - 7pm';
+  }
+  if (timeRangeString === 'Fall, spring summer: 7am - 9pm. Winter: 7am - 5:30pm') {
+    const month = getCurrentTimeInNewYork().month();
+    if (month === 11 || month === 0 || month === 1) {
+      return '7am - 5:30pm';
+    } else {
+      return '7am - 9pm';
+    }
   }
 
   // Already in expected format
@@ -47,12 +60,6 @@ function formatTimeRangeString (timeRangeString){
     'Sunday': 'Closed'
   };
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  if (timeRangeString === 'Bathrooms are open from 7 a.m.-7 p.m., with a one-hour closure for cleaning from 12 noon-1 p.m.') {
-    Object.keys(openingHours).forEach(day => {
-      openingHours[day] = '7am - 7pm';
-    });
-    flag = true;
-  }
 
   if (timeRangeString.includes('Monday to Friday:')) {
     const startIndex = timeRangeString.indexOf('Monday to Friday:');
