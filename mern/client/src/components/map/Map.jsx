@@ -132,7 +132,7 @@ export const Map = () => {
             lng: placeInfo.longitude,
             imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
             imgSize: '30px', 
-            imgAlt: PlaceInfoUtilities.name,
+            imgAlt: placeInfo.name,
             key: i,
           }; 
         }
@@ -152,7 +152,7 @@ export const Map = () => {
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
-    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
     mapInstance.setCenter({lat: selectedLocation.lat, lng: selectedLocation.lng});
   };
@@ -199,7 +199,8 @@ export const Map = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex' }}
+      role='main'>
       <PersistentDrawerLeft selectedLocation={selectedPlace}/>
       <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap

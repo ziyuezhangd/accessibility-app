@@ -86,7 +86,8 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
 
         <DrawerHeader>
           {selectedDrawerContent === 'history' && <Typography variant='h6'>Last viewed </Typography>}
-          {selectedDrawerContent === 'location' && <IconButton onClick={handleBackClicked}>
+          {selectedDrawerContent === 'location' && <IconButton aria-label='Back to recently viewed'
+            onClick={handleBackClicked}>
             <ChevronLeftIcon />
           </IconButton>}
           <div><DateTimePickerComponent /></div>
