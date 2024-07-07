@@ -137,7 +137,8 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
       <Box sx={{ overflow: 'auto', px: 5 }}>
         <PlaceOverview place={location.placeId}
           size='medium'></PlaceOverview>
-        <Grades />
+        <Grades lat={location.lat}
+          lng={location.lng}/>
         <NearestRestrooms 
           lat={location.lat}
           lng={location.lng} />

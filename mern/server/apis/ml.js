@@ -65,8 +65,8 @@ const ml = {
     // Convert segment ID to lat/lng
     const predictionsWithLatLng = predictions.map(prediction => ({
       location: {
-        lat: dictionarySegment[prediction.segment_id].lat,
-        lng: dictionarySegment[prediction.segment_id].lng,
+        start: dictionarySegment[prediction.segment_id].start,
+        end: dictionarySegment[prediction.segment_id].end,
       },
       prediction: prediction.prediction
     }));
@@ -95,8 +95,8 @@ const ml = {
     // Convert segment ID to lat/lng
     const predictionsWithLatLng = predictions.map(prediction => ({
       location: {
-        lat: dictionarySegment[prediction.segment_id].lat,
-        lng: dictionarySegment[prediction.segment_id].lng,
+        start: dictionarySegment[prediction.segment_id].start,
+        end: dictionarySegment[prediction.segment_id].end,
       },
       prediction: prediction.prediction
     }));

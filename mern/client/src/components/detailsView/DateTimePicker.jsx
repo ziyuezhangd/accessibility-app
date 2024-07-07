@@ -2,18 +2,24 @@ import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import React from 'react';
+import { useContext } from 'react';
+import { DataContext } from '../../providers/DataProvider';
+import { getCurrentTimeInNewYork } from '../../utils/dateTime';
 
-const DateTimePickerComponent = ({ selectedDate, setSelectedDate }) => {
+const INITIAL_TIME = getCurrentTimeInNewYork();
+const DateTimePickerComponent = () => {
+  const { getPredictions } = useContext(DataContext);
+
   const handleDateChange = (newValue) => {
-    setSelectedDate(newValue);
+    getPredictions(newValue);
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DateTimePicker
         label="Date & Time picker"
-        value={selectedDate}
+        timezone="America/New_York"
+        value={INITIAL_TIME}
         onChange={handleDateChange}
         renderInput={(params) => (
           <TextField
