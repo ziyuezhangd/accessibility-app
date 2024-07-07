@@ -24,6 +24,7 @@ const DateTimePickerComponent = () => {
         renderInput={(params) => (
           <TextField
             {...params}
+            aria-hidden='true'
             sx={{ width: '150px', fontSize: '0.1rem', '.MuiInputBase-input': { padding: '8px' } }}
           />
         )}

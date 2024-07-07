@@ -14,6 +14,7 @@ export default function Faq() {
         display: 'flex',
         alignItems: 'center',
       }}
+      aria-labelledby='Frequently asked questions'
     >
       <Grid container
         spacing={3}>
