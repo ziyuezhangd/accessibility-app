@@ -1,7 +1,9 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import Autocomplete from '@mui/material/Autocomplete';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
@@ -10,6 +12,7 @@ import DateTimePickerComponent from './DateTimePicker';
 import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { getCategories } from '../../services/placeInfo';
 import { MapLocation } from '../../utils/MapUtils';
 
 const drawerWidth = 350;
@@ -34,10 +37,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  * 
  * @returns {JSX.Element} The rendered PersistentDrawerLeft component.
  */
-export default function PersistentDrawerLeft({ selectedLocation }) {
+export default function PersistentDrawerLeft({ selectedLocation, onCategorySelected, placeInfos }) { // Receive placeInfos as prop
   const { clearMarkers } = useContext(GoogleMapContext);
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
   const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [categories, setCategories] = useState([]);
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [location, setLocation] = useState(null);
@@ -61,6 +65,19 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
       window.removeEventListener('favoriteSelected', handleFavoriteSelected);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await getCategories();
+      // Filter out categories with no markers
+      const filteredCategories = categories.filter(category =>
+        placeInfos.some(place => place.category === category)
+      );
+      setCategories(['All', ...filteredCategories]); // Add 'All' option
+    };
+
+    fetchCategories();
+  }, [placeInfos]);
 
   const handleLocationSelected = (e) => {
     clearMarkers();
@@ -93,7 +110,6 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
           </IconButton>}
           <div><DateTimePickerComponent selectedDate={selectedDate}
             setSelectedDate={setSelectedDate} /></div>
-
         </DrawerHeader>
 
         {selectedDrawerContent === 'history' &&
@@ -103,6 +119,27 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
             location={location}
             onBackClicked={handleBackClicked} />
         }
+
+        {/* Add the dropdown box */}
+        {selectedDrawerContent === 'history' && (
+          <Autocomplete
+            multiple
+            id="filter-selected-options"
+            options={categories}
+            getOptionLabel={(option) => option}
+            filterSelectedOptions
+            onChange={(event, value) => onCategorySelected(value)} // Call onCategorySelected on change
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="standard"
+                label="Filter by Category"
+                placeholder="Categories"
+              />
+            )}
+            sx={{ margin: 2 }} // Add some margin for better spacing
+          />
+        )}
       </Drawer>
     </>
   );

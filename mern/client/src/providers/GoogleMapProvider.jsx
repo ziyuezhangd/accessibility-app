@@ -10,7 +10,7 @@ const GoogleMapProvider = ({children}) => {
 
   /** @type {[google.maps.PlacesLibrary, React.Dispatch<React.SetStateAction<google.maps.PlacesLibrary>>]} */
   const [placesService, setPlacesService] = useState();
-  
+
   /** @type {[google.maps.Geocoder, React.Dispatch<React.SetStateAction<google.maps.Geocoder>>]} */
   const [geocoder, setGeocoder] = useState();
 
@@ -53,7 +53,7 @@ const GoogleMapProvider = ({children}) => {
    * color: string}>} markerConfigs 
    * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
    */
-  const createMarkers = (markerConfigs, shouldOverwriteExisting) => {
+  const createMarkers = (markerConfigs, shouldOverwriteExisting = false) => {
     if (shouldOverwriteExisting) {
       clearMarkers();
     }
@@ -97,10 +97,10 @@ const GoogleMapProvider = ({children}) => {
         markersToCreate.push(marker);
       }
     }
-    setMarkers([...markers, ...markersToCreate]);
-    console.log(`Created ${markers.length} markers`);
+    setMarkers(markersToCreate); // Overwrite markers directly
+    console.log(`Created ${markersToCreate.length} markers`);
   };
-
+  
   /**
    * 
    * @param {Array<{lat: number, lng: number}>} latLngs 
@@ -114,14 +114,14 @@ const GoogleMapProvider = ({children}) => {
   };
 
   /**
-   * 
-   */
+ * 
+ */
   const clearMarkers = () => {
     setMarkers([]);
   };
 
   return (
-    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, removeMarkers, clearMarkers}}>
+    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, clearMarkers}}>
       {children}
     </GoogleMapContext.Provider>
   );

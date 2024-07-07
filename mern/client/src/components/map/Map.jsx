@@ -11,7 +11,8 @@ import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { getPlaceInfos } from '../../services/placeInfo';
 import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';import PersistentDrawerLeft from '../detailsView/Drawer';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
@@ -69,6 +70,8 @@ export const Map = () => {
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState([]); // State to manage selected categories
+
   const handleSelect = (item) => {
     switch (item.id) {
     case 'busyness':
@@ -88,6 +91,46 @@ export const Map = () => {
       setHeatMapGradient([]);
     }
   };
+
+  const handleCategorySelected = (categories) => {
+    setSelectedCategories(categories); // Update selected categories
+  };
+
+  useEffect(() => {
+    if (!mapInstance) return;
+
+    clearMarkers(); // Clear existing markers
+
+    if (selectedCategories.includes('All')) {
+      const allMarkers = placeInfos.map(placeInfo => ({
+        lat: placeInfo.latitude,
+        lng: placeInfo.longitude,
+        imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
+        imgSize: '30px',
+        imgAlt: PlaceInfoUtilities.name,
+      })).filter(marker => marker.imgSrc !== null);
+
+      createMarkers(allMarkers, true); // Create all markers
+      return;
+    }
+
+    if (!selectedCategories.length) {
+      return; // No categories selected, don't display any markers
+    }
+
+    const filteredMarkers = placeInfos
+      .filter(placeInfo => selectedCategories.includes(placeInfo.category))
+      .map(placeInfo => ({
+        lat: placeInfo.latitude,
+        lng: placeInfo.longitude,
+        imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
+        imgSize: '30px',
+        imgAlt: PlaceInfoUtilities.name,
+      }))
+      .filter(marker => marker.imgSrc !== null);
+
+    createMarkers(filteredMarkers, true); // Create markers based on filtered categories and overwrite existing markers
+  }, [selectedCategories, placeInfos, mapInstance]); // Run effect when selectedCategories, placeInfos or mapInstance change
 
   const handleMapClicked = async (map, e) => {
     // Clear any existing markers
@@ -122,32 +165,7 @@ export const Map = () => {
   };
 
   useEffect(() => {
-    const showAccessibilityMarkers = (placeInfos) => {
-      const markers = placeInfos.map(placeInfo => {
-        const imgSrc = PlaceInfoUtilities.getMarkerPNG(placeInfo);
-        if (imgSrc === null){
-          return null;
-        }
-        else{
-          return {
-            lat: placeInfo.latitude,
-            lng: placeInfo.longitude,
-            imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
-            imgSize: '30px', 
-            imgAlt: PlaceInfoUtilities.name,
-          }; 
-        }
-
-      });
-      const filteredMarkers =markers.filter( (marker) => marker !== null); 
-
-      createMarkers(filteredMarkers);
-      console.log(filteredMarkers);
-    };
-
-    if (placeInfos) {
-      showAccessibilityMarkers(placeInfos);
-    }
+    // Initially, no markers are displayed
   }, [placeInfos]);
 
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
@@ -220,7 +238,9 @@ export const Map = () => {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <PersistentDrawerLeft selectedLocation={selectedPlace}/>
+      <PersistentDrawerLeft selectedLocation={selectedPlace}
+        onCategorySelected={handleCategorySelected}
+        placeInfos={placeInfos} /> {/* Pass placeInfos as prop */}
       <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
@@ -238,7 +258,7 @@ export const Map = () => {
           <Box sx={containerStyle}>
             <Dropdown onSelect={handleSelect} />
             <Control position={google.maps.ControlPosition.TOP_CENTER}>
-              <SearchBar 
+              <SearchBar
                 onSearchEntered={handleSearchEntered}/>
             </Control>
             <Control position={google.maps.ControlPosition.TOP_RIGHT}>
