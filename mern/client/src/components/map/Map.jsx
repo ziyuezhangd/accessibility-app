@@ -178,11 +178,15 @@ export const Map = () => {
     };
     const busynessRatings = await getBusynessRatings(predictionDate);
     console.log('busynessRatings: ', busynessRatings);
-    setBusynessData(busynessRatings);
-    const noiseRatings = await getNoiseRatingsDaily(predictionDate);
-    setNoiseData(noiseRatings);
-
-    const odourRatings = await getOdourRatings(predictionDate);
+    setBusynessData(busynessRatings.map(br => ({
+      lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
+    })));
+    const noiseRatings = await getNoiseRatingsDaily(selectedDate);
+    setNoiseData(noiseRatings.map(br => ({
+      lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: parseFloat(br.prediction) ,
+    })));
+    console.log('noiseRatings: ', noiseRatings);
+    const odourRatings = await getOdourRatings(selectedDate);
     setOdorData(odourRatings.map(br => ({
       lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
     })));
