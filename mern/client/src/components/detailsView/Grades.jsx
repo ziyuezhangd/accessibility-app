@@ -42,15 +42,14 @@ function IconContainer(props) {
 }
 
 export default function Grades({lat, lng}) {
-  const {getPredictions} = useContext(DataContext);
-  const {createMarkers} = useContext(GoogleMapContext);
+  const { busynessData, odorData, noiseData} = useContext(DataContext);
   const [busynessGrade, setBusynessGrade] = useState(1);
   const [odorGrade, setOdorGrade] = useState(1);
   const [noiseGrade, setNoiseGrade] = useState(1);
   
   useEffect(() => {
     getGrades();
-  }, [lat, lng]);
+  }, [lat, lng, busynessData, odorData, noiseData]);
 
   const getGrades = async () => {
     const letterGradeToValue = {
@@ -69,7 +68,6 @@ export default function Grades({lat, lng}) {
       4: 2,
       5: 1,
     };
-    const {busynessData, odorData, noiseData} = await getPredictions();
 
     // TODO: these take a while to calculate - what if we just change the code such that users can only click on segments?
     const closestBusynessGrade = findClosestSegment({lat, lng}, busynessData);

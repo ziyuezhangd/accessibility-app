@@ -146,7 +146,6 @@ export const Map = () => {
     };
 
     if (placeInfos) {
-      console.log('New placeinfos: ', placeInfos)
       showAccessibilityMarkers(placeInfos);
     }
   }, [placeInfos]);
@@ -156,6 +155,7 @@ export const Map = () => {
     setSelectedPlace(selectedLocation);
     createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
+    mapInstance.setCenter({lat: selectedLocation.lat, lng: selectedLocation.lng});
   };
 
   const handleAddToFavorites = () => {
@@ -207,7 +207,7 @@ export const Map = () => {
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
           zoom={DEFAULT_ZOOM}
-          center={selectedPlace === null ? { lat: MANHATTAN_LAT, lng: MANHATTAN_LNG } : { lat: selectedPlace.lat, lng: selectedPlace.lng }}
+          initialCenter={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
           onClick={handleMapClicked}
           onLoad={onMapLoaded}
           options={{

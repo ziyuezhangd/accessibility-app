@@ -149,7 +149,7 @@ export class PublicRestroom {
       const isOpen = isTimeInRange(now, openingTime, closingTime);
       return isOpen;
     } catch (e) {
-      console.error(e);
+      console.log(e);
       return false; // Return false for now
     }
   }

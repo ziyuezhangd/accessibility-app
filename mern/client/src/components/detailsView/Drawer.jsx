@@ -4,14 +4,11 @@ import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import DateTimePickerComponent from './DateTimePicker';
 import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { MapLocation } from '../../utils/MapUtils';
-import { DataContext } from '../../providers/DataProvider';
 
 const drawerWidth = 350;
 const DrawerHeader = styled('div')(({ theme }) => ({
