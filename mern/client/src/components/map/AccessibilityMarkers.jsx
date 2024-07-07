@@ -1,11 +1,49 @@
-import { Card, Box, Typography, CardContent, Tooltip } from '@mui/material';
+import { Card, Box, Typography, CardContent, Tooltip, Switch, styled, alpha, FormControlLabel, FormGroup } from '@mui/material';
+import { blue, green, orange, pink, purple, yellow } from '@mui/material/colors';
 import React, { useContext, useEffect, useState } from 'react';
 import { Circle,AdvancedMarker, Control } from 'react-google-map-wrapper';
 import { DataContext } from '../../providers/DataProvider';
 
+const PurpleSwitch = styled(Switch)(({ theme }) => ({
+  '& .MuiSwitch-switchBase.Mui-checked': {
+    color: purple[600],
+    '&:hover': {
+      backgroundColor: alpha(purple[600], theme.palette.action.hoverOpacity),
+    },
+  },
+  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+    backgroundColor: purple[600],
+  },
+}));
+const BlueSwitch = styled(Switch)(({ theme }) => ({
+  '& .MuiSwitch-switchBase.Mui-checked': {
+    color: blue[600],
+    '&:hover': {
+      backgroundColor: alpha(blue[600], theme.palette.action.hoverOpacity),
+    },
+  },
+  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+    backgroundColor: blue[600],
+  },
+}));
+const OrangeSwitch = styled(Switch)(({ theme }) => ({
+  '& .MuiSwitch-switchBase.Mui-checked': {
+    color: orange[600],
+    '&:hover': {
+      backgroundColor: alpha(orange[600], theme.palette.action.hoverOpacity),
+    },
+  },
+  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+    backgroundColor: orange[600],
+  },
+}));
+
 export default function AccessibilityMarkers() {
   const {pedestrianRamps, pedestrianSignals, seatingAreas} = useContext(DataContext);
   const [hoveredElement, setHoveredElement] = useState(null);
+  const [showPedestrianRamps, setShowPedestrianRamps] = useState(true);
+  const [showPedestrianSignals, setShowPedestrianSignals] = useState(true);
+  const [showSeatingAreas, setShowSeatingAreas] = useState(true);
 
   useEffect(() => {
     if (pedestrianRamps) {
@@ -27,14 +65,14 @@ export default function AccessibilityMarkers() {
   
   return (
     <div>
-      {pedestrianRamps.map(({ width, latitude, longitude },i) => (
+      {showPedestrianRamps && pedestrianRamps.map(({ width, latitude, longitude },i) => (
         <>
           <Circle
             key={`${latitude}${longitude}-${i}`}
-            strokeColor="#C54BB9"
+            strokeColor={orange[600]}
             strokeOpacity={0.8}
             strokeWeight={2}
-            fillColor="#C54BB9"
+            fillColor={orange[600]}
             fillOpacity={0.35}
             center={{lat: latitude, lng: longitude}}
             radius={10}
@@ -49,25 +87,25 @@ export default function AccessibilityMarkers() {
           </AdvancedMarker>}
         </>
       ))}
-      {pedestrianSignals.map(({ latitude, longitude }, i) => (
+      {showPedestrianSignals && pedestrianSignals.map(({ latitude, longitude }, i) => (
         <Circle
           key={`${latitude}${longitude}-${i}`}
-          strokeColor="#3EA5A1"
+          strokeColor={blue[600]}
           strokeOpacity={0.8}
           strokeWeight={2}
-          fillColor="#3EA5A1"
+          fillColor={blue[600]}
           fillOpacity={0.35}
           center={{lat: latitude, lng: longitude}}
           radius={10}
         />
       ))}
-      {seatingAreas.map(({ latitude, longitude, seatType, category }, i) => (
+      {showSeatingAreas && seatingAreas.map(({ latitude, longitude, seatType, category }, i) => (
         <Circle
           key={`${latitude}${longitude}-${i}`}
-          strokeColor="#FF0000"
+          strokeColor={purple[600]}
           strokeOpacity={0.8}
           strokeWeight={2}
-          fillColor="#FF0000"
+          fillColor={purple[600]}
           fillOpacity={0.35}
           center={{lat: latitude, lng: longitude}}
           radius={10}
@@ -78,26 +116,54 @@ export default function AccessibilityMarkers() {
           <Card variant='outlined'>
             <CardContent>
               <Typography variant='subtitle1'>Key</Typography>
-              <Tooltip title='Represents a bench or leaning bar'
-                placement='right'>
-                <div className='flex flex-row space-x-2 items-center'>
-                  <div style={{backgroundColor: '#FF0000', borderColor: '#FF0000', borderWidth: 4, opacity: 0.35, width: 15, height: 15, borderRadius: 10}}></div>
-                  <Typography variant='subtitle1'>Seating Area</Typography>
-                </div>
-              </Tooltip>
-              <Tooltip placement='right'
-                title="NYC DOT's Accessible Pedestrian Signals (APS) are devices affixed to pedestrian signal poles to assist blind or low vision pedestrians in crossing the street. APS are wired to a pedestrian signal and send audible and vibrotactile indications when pedestrians push a botton installed at a crosswalk.">
-                <div className='flex flex-row space-x-2 items-center'>
-                  <div style={{backgroundColor: '#3EA5A1', borderColor: '#3EA5A1', borderWidth: 4, opacity: 0.35, width: 15, height: 15, borderRadius: 10}}></div>
-                  <Typography variant='subtitle1'>Pedestrian Signal</Typography>
-                </div>
-              </Tooltip>
-              <Tooltip placement='right'
-                title="Represents a sidewalk ramp - hover over to see the width in inches.">
-                <div className='flex flex-row space-x-2 items-center'>
-                  <div style={{backgroundColor: '#C54BB9', borderColor: '#C54BB9', borderWidth: 4, opacity: 0.35, width: 15, height: 15, borderRadius: 10}}></div>
-                  <Typography variant='subtitle1'>Pedestrian Ramp</Typography>
-                </div></Tooltip>
+              <FormGroup>
+                <Tooltip title='Represents a bench or leaning bar'
+                  placement='right'>
+                  <FormControlLabel
+                    value="seatingAreas"
+                    control={(
+                      <PurpleSwitch
+                        checked={showSeatingAreas}
+                        onChange={(e) => setShowSeatingAreas(e.target.checked)}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                      />
+                    )}
+                    label="Seating Areas"
+                    labelPlacement="end"
+                  />
+                </Tooltip>
+             
+                <Tooltip placement='right'
+                  title="NYC DOT's Accessible Pedestrian Signals (APS) are devices affixed to pedestrian signal poles to assist blind or low vision pedestrians in crossing the street. APS are wired to a pedestrian signal and send audible and vibrotactile indications when pedestrians push a botton installed at a crosswalk.">
+                  <FormControlLabel
+                    value="pedestrianSignals"
+                    control={(
+                      <BlueSwitch
+                        checked={showPedestrianSignals}
+                        onChange={(e) => setShowPedestrianSignals(e.target.checked)}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                      />
+                    )}
+                    label="Pedestrian Signals"
+                    labelPlacement="end"
+                  />
+                </Tooltip>
+                <Tooltip placement='right'
+                  title="Represents a sidewalk ramp - hover over to see the width in inches.">
+                  <FormControlLabel
+                    value="seatingAreas"
+                    control={(
+                      <OrangeSwitch
+                        checked={showPedestrianRamps}
+                        onChange={(e) => setShowPedestrianRamps(e.target.checked)}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                      />
+                    )}
+                    label="Pedestrian Ramps"
+                    labelPlacement="end"
+                  />
+                </Tooltip>
+              </FormGroup>
             </CardContent>
           </Card>
         </Box>
