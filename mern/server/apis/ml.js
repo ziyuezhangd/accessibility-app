@@ -13,7 +13,7 @@ const dictionaryMODZCTA = JSON.parse(dataMODZCTA);
 
 let url;
 if (process.env.NODE_ENV === 'development') {
-  url = 'http://localhost:8000/';
+  url = 'http://127.0.0.1:5000/';
 } else {
   url = '/flask-api/';
 }
@@ -24,11 +24,39 @@ const ml = {
    * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
    * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} noiseRatings
    */
-  async getNoisePredictions(datetime) {
+  async getNoisePredictionsHourly(datetime) {
     const date = new Date(datetime);
     const hour = date.getHours();
 
-    const response = await fetch(`${url}noise-ratings?hour=${hour}`);
+    const response = await fetch(`${url}noise-ratings/hourly?hour=${hour}`);
+    if (!response.ok) {
+      throw new Error(`Failed to retrieve noise ratings: ${response.statusText}`);
+    }
+    const predictions = await response.json();
+
+    // Convert segment ID to lat/lng
+    const predictionsWithLatLng = predictions.map(prediction => ({
+      location: {
+        lat: dictionarySegment[prediction.segment_id].lat,
+        lng: dictionarySegment[prediction.segment_id].lng,
+      },
+      prediction: prediction.prediction
+    }));
+
+    return predictionsWithLatLng;
+  },
+
+  /**
+   * 
+   * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
+   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} odourRatings
+   */
+  async getNoisePredictionsDaily(datetime) {
+    const date = new Date(datetime);
+    const hour = date.getHours();
+    const dayOfWeek = (date.getDay() === 0) ? 6 : date.getDay() - 1;
+
+    const response = await fetch(`${url}noise-ratings/daily?hour=${hour}&dayOfWeek=${dayOfWeek}`);
     if (!response.ok) {
       throw new Error(`Failed to retrieve noise ratings: ${response.statusText}`);
     }
