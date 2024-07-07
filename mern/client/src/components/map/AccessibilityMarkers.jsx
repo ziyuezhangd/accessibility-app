@@ -100,16 +100,30 @@ export default function AccessibilityMarkers() {
         />
       ))}
       {showSeatingAreas && seatingAreas.map(({ latitude, longitude, seatType, category }, i) => (
-        <Circle
-          key={`${latitude}${longitude}-${i}`}
-          strokeColor={purple[600]}
-          strokeOpacity={0.8}
-          strokeWeight={2}
-          fillColor={purple[600]}
-          fillOpacity={0.35}
-          center={{lat: latitude, lng: longitude}}
-          radius={10}
-        />
+        <>
+          <Circle
+            key={`${latitude}${longitude}-${i}`}
+            strokeColor={purple[600]}
+            strokeOpacity={0.8}
+            strokeWeight={2}
+            fillColor={purple[600]}
+            fillOpacity={0.35}
+            center={{lat: latitude, lng: longitude}}
+            radius={10}
+            onMouseOver={() => setHoveredElement(`${latitude}${longitude}-${i}`)}
+            onMouseOut={() => setHoveredElement(null)}
+          />
+          {hoveredElement === `${latitude}${longitude}-${i}` && <AdvancedMarker lat={latitude}
+            lng={longitude}>
+            <Card>
+              <CardContent>
+                <p className='font-bold'>Seating Area</p>
+                <p>Location Type: {category}</p>
+                <p>Seat Type: {seatType}</p>
+              </CardContent>
+            </Card>
+          </AdvancedMarker>}
+        </>
       ))}
       <Control position={google.maps.ControlPosition.LEFT_BOTTOM}>
         <Box sx={{ minWidth: 275 }}>
