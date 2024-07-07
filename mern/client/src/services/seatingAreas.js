@@ -20,8 +20,8 @@ export const getSeatingAreas = async () => {
 
 export class SeatingArea {
   constructor({ latitude, longitude, seatType, category }) {
-    this.latitude = latitude;
-    this.longitude = longitude;
+    this.latitude = parseFloat(latitude);
+    this.longitude = parseFloat(longitude);
     this.seatType = seatType;
     this.category = category;
   }

@@ -14,18 +14,14 @@ export const getPedestrianRamps = async () => {
   const ramps = await response.json();
 
   return ramps.map((ramp) => {
-    return new PedestrianRamp({
-      ...ramp,
-      latitude: parseFloat(ramp.latitude),
-      longitude: parseFloat(ramp.longitude),
-    });
+    return new PedestrianRamp(ramp);
   });
 };
 
 export class PedestrianRamp {
   constructor({ latitude, longitude, width }) {
-    this.latitude = latitude;
-    this.longitude = longitude;
+    this.latitude = parseFloat(latitude);
+    this.longitude = parseFloat(longitude);
     this.width = width;
   }
 }
