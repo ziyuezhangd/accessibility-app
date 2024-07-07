@@ -15,7 +15,7 @@ let url;
 if (process.env.NODE_ENV === 'development') {
   url = 'http://127.0.0.1:5000/';
 } else {
-  url = '/flask-api/';
+  url = 'http://137.43.49.23/flask-api/';
 }
 
 const ml = {
