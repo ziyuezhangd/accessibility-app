@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Favorites from './detailsView/Favorites';
 
-const pages = ['Map', 'About us'];
+const pages = ['Map', 'About us', 'Resources'];
 
 export const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -26,6 +26,9 @@ export const NavBar = () => {
       break;
     case 'about us':
       navigate('/about');
+      break;
+    case 'resources':
+      navigate('/resources');
       break;
     default:
       break;
