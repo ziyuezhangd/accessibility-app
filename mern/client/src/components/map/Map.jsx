@@ -181,12 +181,12 @@ export const Map = () => {
     setBusynessData(busynessRatings.map(br => ({
       lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
     })));
-    const noiseRatings = await getNoiseRatingsDaily(selectedDate);
+    const noiseRatings = await getNoiseRatingsDaily(predictionDate);
     setNoiseData(noiseRatings.map(br => ({
       lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: parseFloat(br.prediction) ,
     })));
     console.log('noiseRatings: ', noiseRatings);
-    const odourRatings = await getOdourRatings(selectedDate);
+    const odourRatings = await getOdourRatings(predictionDate);
     setOdorData(odourRatings.map(br => ({
       lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
     })));
