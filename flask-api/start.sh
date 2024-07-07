@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Activate virtual environment
 source /home/student/miniconda3/etc/profile.d/conda.sh
 conda activate accapp
