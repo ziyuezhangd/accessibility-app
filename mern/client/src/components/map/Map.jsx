@@ -35,12 +35,11 @@ export const Map = () => {
   // const [placeInfos, setPlaceInfos] = useState([]);
   const theme = useTheme();
   const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
-  const {placeInfos, getPredictions} = useContext(DataContext);
+  const {placeInfos, busynessData, noiseData, odorData} = useContext(DataContext);
   const [selectedPredictionType, setSelectedPredictionType] = useState(null);
   const [polylineData, setPolylineData] = useState([]);
   const [heatmapData, setHeatmapData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
@@ -49,39 +48,44 @@ export const Map = () => {
   // When a prediction type is selected, change the selected prediction type
   const handleVisualizationSelected = (item) => {
     setSelectedPredictionType(item.id);
-    setPredictionVisualization(item.id);
   };
 
-  // Based on our selected visualization type, render visualiztion
-  const setPredictionVisualization = async (type) => {
-    const {busynessData, noiseData, odorData} = await getPredictions(selectedDate);
-    const gradeToInt = {
-      'A': 0,
-      'B': 5,
-      'C': 10,
-      'D': 15,
-      'F': 20,
+  // Update our polyine and heatmap data anytime:
+  // 1. The selected prediction type changes
+  // 2. New prediction data has been loaded
+  useEffect(() => {
+    // Based on our selected visualization type, render visualiztion
+    const setPredictionVisualization = async (type) => {
+      const gradeToInt = {
+        'A': 0,
+        'B': 5,
+        'C': 10,
+        'D': 15,
+        'F': 20,
+      };
+      switch (type) {
+      case 'busyness':
+        setPolylineData(busynessData);
+        setHeatmapData([]);
+        break;
+      case 'noise':
+        setPolylineData(noiseData);
+        setHeatmapData([]);
+        break;
+      case 'odor':
+        setHeatmapData(odorData.map(br => ({
+          lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
+        })));
+        setPolylineData([]);
+        break;
+      default:
+        setHeatmapData([]);
+        setPolylineData([]);
+      }
     };
-    switch (type) {
-    case 'busyness':
-      setPolylineData(busynessData);
-      setHeatmapData([]);
-      break;
-    case 'noise':
-      setPolylineData(noiseData);
-      setHeatmapData([]);
-      break;
-    case 'odor':
-      setHeatmapData(odorData.map(br => ({
-        lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
-      })));
-      setPolylineData([]);
-      break;
-    default:
-      setHeatmapData([]);
-      setPolylineData([]);
-    }
-  };
+
+    setPredictionVisualization(selectedPredictionType);
+  }, [selectedPredictionType, busynessData, noiseData, odorData]);
 
   const handleMapClicked = async (map, e) => {
     // Clear any existing markers
@@ -115,6 +119,7 @@ export const Map = () => {
     }
   };
 
+  // When place infos are loaded, render accessibility markers
   useEffect(() => {
     const showAccessibilityMarkers = (placeInfos) => {
       const markers = placeInfos.map((placeInfo, i) => {
@@ -141,6 +146,7 @@ export const Map = () => {
     };
 
     if (placeInfos) {
+      console.log('New placeinfos: ', placeInfos)
       showAccessibilityMarkers(placeInfos);
     }
   }, [placeInfos]);

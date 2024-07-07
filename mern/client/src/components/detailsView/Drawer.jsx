@@ -37,10 +37,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  */
 export default function PersistentDrawerLeft({ selectedLocation }) {
   const { clearMarkers } = useContext(GoogleMapContext);
-  const { getPredictions } = useContext(DataContext);
 
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
-  const [selectedDate, setSelectedDate] = useState(dayjs());
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [location, setLocation] = useState(null);
@@ -77,12 +75,6 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
     setLocation(null);
   };
 
-  const handleDateSelected = (e) => {
-    console.log('Date selected: ', e);
-    setSelectedDate(e);
-    getPredictions(selectedDate);
-  };
-
   return (
     <>
       <Drawer
@@ -100,8 +92,7 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
           {selectedDrawerContent === 'location' && <IconButton onClick={handleBackClicked}>
             <ChevronLeftIcon />
           </IconButton>}
-          <div><DateTimePickerComponent selectedDate={selectedDate}
-            onDateSelected={handleDateSelected} /></div>
+          <div><DateTimePickerComponent /></div>
 
         </DrawerHeader>
 

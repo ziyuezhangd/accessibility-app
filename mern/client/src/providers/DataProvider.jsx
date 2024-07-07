@@ -46,13 +46,11 @@ const DataProvider = ({children}) => {
 
     // Convert to ISO string
     selectedDate = dayjs(selectedDate).format('YYYY-MM-DD[T]HH:mm:ss');
-    console.log('Getting predictions for', selectedDate);
 
-    const isNewDayAndHour = (dayjs(selectedDate).day() !== dayjs(predictionDateTime).day() && dayjs(selectedDate).hour() !== dayjs(predictionDateTime).hour());
+    const isNewDayAndHour = (dayjs(selectedDate).day() !== dayjs(predictionDateTime).day() || dayjs(selectedDate).hour() !== dayjs(predictionDateTime).hour());
     // Re-load with the new selected date
     if (isFirstPrediction || isNewDayAndHour) {
       console.log('Reloading from server');
-      console.log('predictionDateTime ', predictionDateTime);
       console.log('selectedDate ', selectedDate);
       await loadBusynessRatings(selectedDate);
       await loadNoiseRatings(selectedDate);
@@ -64,21 +62,18 @@ const DataProvider = ({children}) => {
 
   const loadBusynessRatings = async (selectedDate) => {
     const busynessRatings = await getBusynessRatings(selectedDate);
-    console.log('busynessRatings: ', busynessRatings);
     setBusynessData(busynessRatings);
     return busynessRatings;
   };
   
   const loadNoiseRatings = async (selectedDate) => {
     const noiseRatings = await getNoiseRatings(selectedDate);
-    console.log('noiseRatings: ', noiseRatings);
     setNoiseData(noiseRatings);
     return noiseRatings;
   };
   
   const loadOdourRatings = async (selectedDate) => {
     const odorRatings = await getOdourRatings(selectedDate);
-    console.log('OdorRatings: ', odorRatings);
     setOdorData(odorRatings);
     return odorRatings;
   };
