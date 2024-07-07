@@ -71,8 +71,8 @@ export default function NearestRestrooms({ lat, lng }) {
                     >
                       {/* TODO: would be nice if we could make today's day bold */}
                       {restroom.formatHours().split('\n').map(h => <p key={h}>{h}</p>)}
+                      <p>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</p>
                     </Typography>
-                    <div>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</div>
                   </>
                 )}
                 
