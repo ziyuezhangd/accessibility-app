@@ -9,8 +9,8 @@ import SearchBar from './SearchBar';
 import { DataContext, DataProvider } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
-import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';import PersistentDrawerLeft from '../detailsView/Drawer';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';
+import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;

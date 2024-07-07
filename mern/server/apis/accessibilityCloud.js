@@ -1,4 +1,5 @@
 import axios from 'axios';
+import logger from '../logger.js';
 
 const accessibilityCloud = {
   ACCESSIBILITY_CLOUD_API_KEY: process.env.ACCESSIBILITY_CLOUD_API_KEY,
@@ -106,19 +107,27 @@ const accessibilityCloud = {
   async getPlaceInfos() {
     const results = [];
     const placeInfos = [];
+    let failedNumber = 0;
     
     for (const tile of this.TILES) {
-      const { x, y, z } = tile;
-      const result = await axios.get(`${this.ACCESSIBILITY_CLOUD_URL}place-infos.json`, {
-        params: {
-          appToken: this.ACCESSIBILITY_CLOUD_API_KEY,
-          x,
-          y,
-          z,
-          filter: 'fully-accessible-by-wheelchair'
-        },
-      });
-      results.push(result.data);
+      try {
+        const { x, y, z } = tile;
+        const result = await axios.get(`${this.ACCESSIBILITY_CLOUD_URL}place-infos.json`, {
+          params: {
+            appToken: this.ACCESSIBILITY_CLOUD_API_KEY,
+            x,
+            y,
+            z,
+            filter: 'fully-accessible-by-wheelchair'
+          },
+        });
+        results.push(result.data);
+      } catch (error) {
+        failedNumber += 1;
+      }
+    }
+    if (failedNumber > 0) {
+      logger.warn(`Fail to get placeInfo for ${failedNumber} tile(s)`);
     }
     
     for (const result of results) {
