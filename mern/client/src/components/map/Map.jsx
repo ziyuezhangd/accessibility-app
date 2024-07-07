@@ -201,7 +201,6 @@ export const Map = () => {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      {/* TODO: listen to selected date change */}
       <PersistentDrawerLeft selectedLocation={selectedPlace}/>
       <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap

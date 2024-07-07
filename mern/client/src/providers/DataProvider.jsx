@@ -17,7 +17,6 @@ const DataProvider = ({children}) => {
   const [predictionDateTime, setPredictionDateTime] = useState(null);
     
   useEffect(() => {
-    console.log('useEffect');
     loadRestrooms();
     loadPlaceInfo();
     getPredictions();
