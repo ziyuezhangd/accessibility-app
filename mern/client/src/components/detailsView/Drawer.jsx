@@ -4,13 +4,11 @@ import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import DateTimePickerComponent from './DateTimePicker';
 import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { MapLocation } from '../../utils/MapUtils';
 
 const drawerWidth = 350;
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -36,8 +34,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  */
 export default function PersistentDrawerLeft({ selectedLocation }) {
   const { clearMarkers } = useContext(GoogleMapContext);
+
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
-  const [selectedDate, setSelectedDate] = useState(dayjs());
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [location, setLocation] = useState(null);
@@ -88,11 +86,11 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
 
         <DrawerHeader>
           {selectedDrawerContent === 'history' && <Typography variant='h6'>Last viewed </Typography>}
-          {selectedDrawerContent === 'location' && <IconButton onClick={handleBackClicked}>
+          {selectedDrawerContent === 'location' && <IconButton aria-label='Back to recently viewed'
+            onClick={handleBackClicked}>
             <ChevronLeftIcon />
           </IconButton>}
-          <div><DateTimePickerComponent selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate} /></div>
+          <div><DateTimePickerComponent /></div>
 
         </DrawerHeader>
 

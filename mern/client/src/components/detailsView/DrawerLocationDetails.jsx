@@ -130,14 +130,16 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     <>
       <DrawerHeader>
         <Box></Box>
-        <IconButton onClick={handleToggleFavorite}>
+        <IconButton aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          onClick={handleToggleFavorite}>
           {isFavorite ? <Favorite sx={{ color: 'red' }} /> : <FavoriteBorder />}
         </IconButton>
       </DrawerHeader>
       <Box sx={{ overflow: 'auto', px: 5 }}>
         <PlaceOverview place={location.placeId}
           size='medium'></PlaceOverview>
-        <Grades />
+        <Grades lat={location.lat}
+          lng={location.lng}/>
         <NearestRestrooms 
           lat={location.lat}
           lng={location.lng} />
