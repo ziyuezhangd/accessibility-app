@@ -2,7 +2,7 @@
 describe('Landing page', () => {
   beforeEach(() => {
     cy.visit('http://localhost:5173');
-    cy.wait(6000);
+    cy.wait(3000);
   });
 
   it('renders correctly', () => {

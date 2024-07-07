@@ -130,7 +130,8 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
     <>
       <DrawerHeader>
         <Box></Box>
-        <IconButton aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+        <IconButton data-test='favorites-inside'
+          aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
           onClick={handleToggleFavorite}>
           {isFavorite ? <Favorite sx={{ color: 'red' }} /> : <FavoriteBorder />}
         </IconButton>

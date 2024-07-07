@@ -101,7 +101,7 @@ export const Favorites = () => {
 
   return (
     <>
-      <IconButton 
+      <IconButton data-test='favorites'
         aria-label='Favorited locations'
         onClick={handleOpenFavorites}
         sx={{ p: 0 }}>

@@ -37,19 +37,37 @@ describe('Map page started', () => {
     cy.get('[data-test="help-modal"]').should('be.visible');
   });
 
-  it('allows interaction with markers', () => {
-    cy.get('[data-test="markers"]').eq(0).click();
-  });
-
-  it.only('allows interaction with favorites', () => {
+  // it('allows interaction with markers', () => {
+  //   cy.get('[data-test="markers"]').eq(200).click();
+  // });
+  
+  it.only('allows interaction with history and favorites', () => {
     cy.get('[data-test="favorites"]').click();
     cy.contains('No favorite places added yet');
-    // cy.get('[data-test="snack-bar"]').should('exist');
-  });
-  
-  it('allows interaction with history drawer', () => {
-    cy.get('[data-test="markers"]').eq(1).click();
-    cy.get('[data-test="markers"]').eq(2).click();
-    cy.get('[data-test="markers"]').eq(3).click();
+
+    cy.contains('Last viewed').should('be.visible');
+    cy.get('[data-test="google-map"]').should('be.visible');
+    cy.contains('[data-test="list"]').should('not.exist');
+    cy.get('[data-test="google-map"]').then($map => {
+      for (let i = 0; i < 3; i++) {
+        const mapWidth = $map.width();
+        const mapHeight = $map.height();
+
+        const randomX = Math.floor(mapWidth * 0.3 + Math.random() * mapWidth * 0.4);
+        const randomY = Math.floor(mapHeight * 0.3 + Math.random() * mapHeight * 0.4);
+
+        cy.get('[data-test="google-map"]').click(randomX, randomY);
+        if (i === 0) {
+          cy.contains('Last viewed').should('not.exist');
+          cy.contains('Busyness').should('be.visible');
+          cy.contains('Wheelchair accessible restrooms').should('exist');
+          cy.contains('Submit Feedback').should('exist');
+        }
+        cy.get('[data-test="favorites-inside"]').click();
+        cy.contains('Add to favorites').should('be.visible');
+        cy.get('[data-test="back"]').click();
+      }
+      cy.contains('[data-test="list"]').should('exist');
+    });
   });
 });
