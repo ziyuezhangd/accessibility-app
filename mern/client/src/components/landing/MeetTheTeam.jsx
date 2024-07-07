@@ -28,6 +28,7 @@ export default function MeetTheTeam() {
         gap: { xs: 3, sm: 6 },
         height: '85vh',
       }}
+      aria-labelledby='Meet the team'
     >
       <Typography component='h2'
         variant='h4'

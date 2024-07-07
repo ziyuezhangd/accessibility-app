@@ -147,8 +147,8 @@ export class PublicRestroom {
       }
       if (parsedHours.length === 1) {
         // Hours are the same daily
-        openingTime = parsedHours[0].start.date();
-        closingTime = parsedHours[0].end.date();
+        openingTime = parsedHours[0].start?.date();
+        closingTime = parsedHours[0].end?.date();
       } else if (parsedHours.length > 1) {
         // Varying hours by day
         const today = getDayString(now);
@@ -165,7 +165,7 @@ export class PublicRestroom {
       const isOpen = isTimeInRange(now, openingTime, closingTime);
       return isOpen;
     } catch (e) {
-      console.error(e);
+      console.log(e);
       return false; // Return false for now
     }
   }

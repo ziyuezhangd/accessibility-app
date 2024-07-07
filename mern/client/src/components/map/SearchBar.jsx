@@ -57,6 +57,7 @@ const SearchBar = ({ onSearchEntered }) => {
         placeholder="Search for places"
         variant="outlined"
         size="small"
+        aria-label='Search for places'
         sx={{
           position: 'absolute',
           zIndex: 1000,

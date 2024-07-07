@@ -13,9 +13,9 @@ const dictionaryMODZCTA = JSON.parse(dataMODZCTA);
 
 let url;
 if (process.env.NODE_ENV === 'development') {
-  url = 'http://localhost:5000/';
+  url = 'http://127.0.0.1:5000/';
 } else {
-  url = '/flask-api/';
+  url = 'http://137.43.49.23/flask-api/';
 }
 
 const ml = {
@@ -65,8 +65,8 @@ const ml = {
     // Convert segment ID to lat/lng
     const predictionsWithLatLng = predictions.map(prediction => ({
       location: {
-        lat: dictionarySegment[prediction.segment_id].lat,
-        lng: dictionarySegment[prediction.segment_id].lng,
+        start: dictionarySegment[prediction.segment_id].start,
+        end: dictionarySegment[prediction.segment_id].end,
       },
       prediction: prediction.prediction
     }));
@@ -95,8 +95,8 @@ const ml = {
     // Convert segment ID to lat/lng
     const predictionsWithLatLng = predictions.map(prediction => ({
       location: {
-        lat: dictionarySegment[prediction.segment_id].lat,
-        lng: dictionarySegment[prediction.segment_id].lng,
+        start: dictionarySegment[prediction.segment_id].start,
+        end: dictionarySegment[prediction.segment_id].end,
       },
       prediction: prediction.prediction
     }));

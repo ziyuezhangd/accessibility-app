@@ -11,7 +11,8 @@ export default function MapPage() {
     <Suspense>
       {/* TODO: add fallback */}
       {/* Load the google map api */}
-      <GoogleMapApiLoader apiKey={googleMapConfig} 
+      <GoogleMapApiLoader apiKey={googleMapConfig}
+        v='beta'
         suspense>
         {/* TODO: put back our drawer! */}
         <DataProvider>

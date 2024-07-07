@@ -13,6 +13,9 @@ const GoogleMapProvider = ({children}) => {
   
   /** @type {[google.maps.Geocoder, React.Dispatch<React.SetStateAction<google.maps.Geocoder>>]} */
   const [geocoder, setGeocoder] = useState();
+  
+  /** @type {[google.maps.GeometryLibrary, React.Dispatch<React.SetStateAction<google.maps.GeometryLibrary>>]} */
+  const [geometry, setGeometry] = useState();
 
   /** @type {[google.maps.AdvancedMarker[], React.Dispatch<React.SetStateAction<google.maps.AdvancedMarker[]>>]} */
   const [markers, setMarkers] = useState([]);
@@ -21,6 +24,7 @@ const GoogleMapProvider = ({children}) => {
     if (mapInstance) {
       loadPlaces();
       loadGeocoder();
+      loadGeometry();
     }
   }, [mapInstance]);
 
@@ -36,6 +40,11 @@ const GoogleMapProvider = ({children}) => {
     setGeocoder(geocoder);
     console.log('Geocoder loaded successfully: ', geocoder);
   };
+  const loadGeometry = async () => {
+    const geometry = await google.maps.importLibrary('geometry');
+    setGeometry(geometry);
+    console.log('Geometry loaded successfully: ', geometry);
+  };
 
   const handleMapLoaded = (map) => {
     setMapInstance(map);
@@ -50,16 +59,19 @@ const GoogleMapProvider = ({children}) => {
    * imgSize: number, 
    * imgAlt: string, 
    * scale: number, 
+   * title: string,
+   * key: num,
    * color: string}>} markerConfigs 
    * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
    */
   const createMarkers = (markerConfigs, shouldOverwriteExisting) => {
+    // TODO: I think double markers are being added?
     if (shouldOverwriteExisting) {
       clearMarkers();
     }
     const markersToCreate = [];
     for (const config of markerConfigs) {
-      const {imgSrc} = config;
+      const {imgSrc, key, title} = config;
       let {lat, lng} = config;
       lat = parseFloat(lat);
       lng = parseFloat(lng);
@@ -70,11 +82,13 @@ const GoogleMapProvider = ({children}) => {
           <AdvancedMarker
             lat={lat}
             lng={lng}
+            title={title}
+            gmpClickable={true}
+            // key={key}
           >
             <img data-test='markers'
               src={imgSrc}
               style={{height: imgSize}}
-              alt={imgAlt}
             />
           </AdvancedMarker>
         );
@@ -88,6 +102,9 @@ const GoogleMapProvider = ({children}) => {
           <AdvancedMarker
             lat={lat}
             lng={lng}
+            title={title}
+            gmpClickable={true}
+            // key={key}
           >
             <PinElement data-test='markers'
               scale={scale}
