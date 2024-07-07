@@ -164,7 +164,7 @@ export const Map = () => {
     setBusynessData(busynessRatings.map(br => ({
       lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
     })));
-    const noiseRatings = await getNoiseRatings(selectedDate);
+    const noiseRatings = await getNoiseRatingsDaily(selectedDate);
     setNoiseData(noiseRatings.map(br => ({
       lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: parseFloat(br.prediction) ,
     })));
