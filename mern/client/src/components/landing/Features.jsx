@@ -69,7 +69,7 @@ export default function Features() {
             sx={{ display: 'flex' }}>
             <Paper
               elevation={0}
-              square='false'
+              square={false}
               sx={{
                 display: 'flex',
                 justifyContent: 'flex-start',

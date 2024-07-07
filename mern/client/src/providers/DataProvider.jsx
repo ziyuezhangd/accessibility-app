@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
 import { getPlaceInfos } from '../services/placeInfo';
-import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../services/ratings';
+import { getBusynessRatings, getNoiseRatingsDaily, getOdourRatings } from '../services/ratings';
 import { getPublicRestrooms } from '../services/restrooms';
 import { getCurrentTimeInNewYork } from '../utils/dateTime';
 
@@ -66,7 +66,7 @@ const DataProvider = ({children}) => {
   };
   
   const loadNoiseRatings = async (selectedDate) => {
-    const noiseRatings = await getNoiseRatings(selectedDate);
+    const noiseRatings = await getNoiseRatingsDaily(selectedDate);
     setNoiseData(noiseRatings);
     return noiseRatings;
   };

@@ -86,7 +86,7 @@ export default function HelpModal({ isOpen, onClose }) {
             sx={{ display: 'flex' }}>
             <Paper
               elevation={0}
-              square='false'
+              square={false}
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
