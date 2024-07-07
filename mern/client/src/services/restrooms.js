@@ -1,6 +1,13 @@
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import _ from 'lodash';
-import { getCurrentTimeInNewYork, getDayString, isTimeInRange, parseTimeRangeFromString } from '../utils/dateTime';
+import { getCurrentTimeInNewYork, getDayString, isTimeInRange, parseTimeRangeFromString, isDSTNow } from '../utils/dateTime';
 import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
+
+// dayjs.extend(utc);
+// dayjs.extend(timezone);
+// dayjs.tz.setDefault('America/New_York');
 
 /**
  *
@@ -99,6 +106,9 @@ export class PublicRestroom {
    */
   formatHours() {
     const parsedHours = parseTimeRangeFromString(this.hours);
+    if (parsedHours === null) {
+      return this.hours;
+    }
     if (parsedHours.length === 1) {
       return this.hours;
     }
@@ -123,7 +133,7 @@ export class PublicRestroom {
   /**
    * Checks if a restroom is open right now (in NYC timezone)
    *
-   * @return {boolean} true if open
+   * @return {boolean} true if open, null if unsure
    */
   isOpenNow() {
     try {
@@ -132,24 +142,30 @@ export class PublicRestroom {
       let openingTime, closingTime;
 
       const parsedHours = parseTimeRangeFromString(hoursString);
+      if (parsedHours === null) {
+        return null;
+      }
       if (parsedHours.length === 1) {
         // Hours are the same daily
-        openingTime = parsedHours[0].start.date();
-        closingTime = parsedHours[0].end.date();
+        openingTime = parsedHours[0].start?.date();
+        closingTime = parsedHours[0].end?.date();
       } else if (parsedHours.length > 1) {
         // Varying hours by day
         const today = getDayString(now);
         const todaysHours = parsedHours.find((h) => h.text.includes(today));
         openingTime = todaysHours.start.date();
         closingTime = todaysHours.end.date();
-      } else {
-        // TODO: unknown - handle this
-        return;
+      }
+
+      const isDST = isDSTNow();
+      if (isDST) {
+        openingTime = dayjs.tz(`${openingTime}`, 'America/New_York').add(1, 'hour');
+        closingTime = dayjs.tz(`${closingTime}`, 'America/New_York').add(1, 'hour');
       }
       const isOpen = isTimeInRange(now, openingTime, closingTime);
       return isOpen;
     } catch (e) {
-      console.error(e);
+      console.log(e);
       return false; // Return false for now
     }
   }

@@ -37,9 +37,9 @@ describe('Function getPublicRestrooms', () => {
   it('should fetch publicRestrooms and return PublicRestroom instances', async () => {
     fetch.mockResponseOnce(JSON.stringify(dummyRestrooms));
 
-    const restrooms = await getPublicRestrooms('incl-partial');
+    const restrooms = await getPublicRestrooms('all');
 
-    expect(fetch).toHaveBeenCalledWith('/api/restrooms?' + new URLSearchParams({ accessibility: 'incl-partial' }));
+    expect(fetch).toHaveBeenCalledWith('/api/restrooms?' + new URLSearchParams({ accessibility: 'all' }));
     expect(restrooms).toHaveLength(2);
     expect(restrooms[0]).toBeInstanceOf(PublicRestroom);
     expect(restrooms[1]).toBeInstanceOf(PublicRestroom);
@@ -111,10 +111,18 @@ describe('Class PublicRestroom', () => {
       const formattedHours2 = publicRestroom.formatHours();
       expect(formattedHours2).toBe(publicRestroom.hours);
 
-      // To be determined on how to display opening hours like this
       publicRestroom.hours = 'Fall, spring summer: 7am - 9pm. Winter: 7am - 5:30pm';
       const formattedHours3 = publicRestroom.formatHours();
       expect(formattedHours3).toBe(publicRestroom.hours);
+
+      publicRestroom.hours = '8am - dusk';
+      const formattedHours4 = publicRestroom.formatHours();
+      expect(formattedHours4).toBe(publicRestroom.hours);
+
+      publicRestroom.hours = 'Open by permit';
+      const formattedHours5 = publicRestroom.formatHours();
+      expect(formattedHours5).toBe(publicRestroom.hours);
+
     });
 
     it('should format correctly for multiple time segments', () => {
@@ -152,13 +160,27 @@ Friday: 07:00 AM-11:00 PM
 Saturday: 07:00 AM-11:00 PM
 Sunday: 11:00 AM-07:00 PM`.trim();
       expect(formattedHours3).toBe(expectedOutput3);
+
+      publicRestroom.hours = 'Monday to Friday: 8:00 am-7:00 pm';
+      const formattedHours4 = publicRestroom.formatHours();
+      const expectedOutput4 = 
+`Monday: 08:00 AM-07:00 PM
+Tuesday: 08:00 AM-07:00 PM
+Wednesday: 08:00 AM-07:00 PM
+Thursday: 08:00 AM-07:00 PM
+Friday: 08:00 AM-07:00 PM
+Saturday: Closed
+Sunday: Closed`.trim();
+      console.log(formattedHours4);
+      expect(formattedHours4).toBe(expectedOutput4);
     });
   });
 
   describe('Method isOpenNow', () => {
     const now = getCurrentTimeInNewYork();
-    const hourNow = now.hour();
+    const hourNow = now.hour(); // hour in NY time with DST
     const dayNow = now.day();
+    const minNow = now.minute();
     it('should return correctly for restrooms with same daily opening hours', () => {
       publicRestroom.hours = '8am-4pm, Open later seasonally';
       const isOpen1 = publicRestroom.isOpenNow();
@@ -168,9 +190,9 @@ Sunday: 11:00 AM-07:00 PM`.trim();
         expect(isOpen1).toBe(false);
       }
 
-      publicRestroom.hours = 'Everyday 8:00 am-10:00 pm';
+      publicRestroom.hours = 'Bathrooms are open from 7 a.m.-7 p.m., with a one-hour closure for cleaning from 12 noon-1 p.m.';
       const isOpen2 = publicRestroom.isOpenNow();
-      if (hourNow >= 8 && hourNow < 22){
+      if (hourNow >= 7 && hourNow < 19){
         expect(isOpen2).toBe(true);
       } else {
         expect(isOpen2).toBe(false);
@@ -185,15 +207,71 @@ Sunday: 11:00 AM-07:00 PM`.trim();
         expect(isOpen3).toBe(false);
         break;
       case 1:
+        if (hourNow >= 10 && hourNow < 18){
+          expect(isOpen3).toBe(true);
+        } else {
+          expect(isOpen3).toBe(false);
+        }
+        break;
+      case 2:
+        if (hourNow >= 13 && hourNow < 20){
+          expect(isOpen3).toBe(true);
+        } else {
+          expect(isOpen3).toBe(false);
+        }
+        break;
+      case 3:
+        if (hourNow >= 10 && hourNow < 18){
+          expect(isOpen3).toBe(true);
+        } else {
+          expect(isOpen3).toBe(false);
+        }
+        break;
+      case 4:
+        if (hourNow >= 11 && hourNow < 20){
+          expect(isOpen3).toBe(true);
+        } else {
+          expect(isOpen3).toBe(false);
+        }
+        break;
+      case 5:
+        if (hourNow >= 10 && hourNow < 18){
+          expect(isOpen3).toBe(true);
+        } else {
+          expect(isOpen3).toBe(false);
+        }
+        break;
+      case 6:
+        if (hourNow >= 10 && hourNow < 17){
+          expect(isOpen3).toBe(true);
+        } else {
+          expect(isOpen3).toBe(false);
+        }
+        break;
+      }
+
+      publicRestroom.hours = 'Monday to Saturday:  8:30 am-10:00 pm; Sundays: 10:00 am-7:00 pm.';
+      const isOpen4 = publicRestroom.isOpenNow();
+      switch(dayNow){
+      case 0:
+        if (hourNow >= 10 && hourNow < 19){
+          expect(isOpen4).toBe(true);
+        } else {
+          expect(isOpen4).toBe(false);
+        }
+        break;
+      case 1:
       case 2:
       case 3:
       case 4:
       case 5:
       case 6:
-        if (hourNow >= 11 && hourNow < 18){
-          expect(isOpen3).toBe(true);
+        if (hourNow === 8 && minNow < 30){
+          expect(isOpen4).toBe(false);
+        } else if (hourNow >= 8 && hourNow < 22) {
+          expect(isOpen4).toBe(true);
         } else {
-          expect(isOpen3).toBe(false);
+          expect(isOpen4).toBe(false);
         }
         break;
       }
