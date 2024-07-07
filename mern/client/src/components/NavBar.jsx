@@ -1,23 +1,12 @@
 import { Accessibility, FavoriteBorder, Delete, Margin } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Snackbar } from '@mui/material';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import { AppBar, Box, Button, Container, Menu, MenuItem, Toolbar, Typography, IconButton, Snackbar } from '@mui/material';
 import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 // NavBar.jsx
-import { Accessibility, Menu as MenuIcon } from '@mui/icons-material';
-import { AppBar, Box, Button, Container, Menu, MenuItem, Toolbar, Typography, IconButton, Snackbar } from '@mui/material';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserHistory, postUserHistory } from '../services/userHistory';
 import Favorites from './detailsView/Favorites';
 
 const pages = ['Map', 'About us'];
@@ -46,52 +35,6 @@ export const NavBar = () => {
       break;
     }
   };
-
-  const handleCloseFavorites = () => {
-    setAnchorElFavorites(null);
-  };
-
-  const handleRemoveFavorite = (id) => {
-    setFavorites(favorites.filter(favorite => favorite.id !== id));
-    setSnackbarMessage('Removed from favorites');
-    setSnackbarOpen(true);
-  };
-
-  React.useEffect(() => {
-    const handleFavoriteAdded = (event) => {
-      const newFavorite = event.detail;
-
-      // Check if the favorite already exists
-      const isAlreadyAdded = favorites.some(favorite => favorite.id === newFavorite.id);
-      if (isAlreadyAdded) {
-        setSnackbarMessage('This place is already in your favorites');
-        setSnackbarOpen(true);
-        return;
-      }
-
-      // Check if the favorites list has less than 5 items
-      if (favorites.length < 5) {
-        setFavorites([...favorites, newFavorite]);
-        //here add to userHistoryDB
-        if (profile){
-          const name = profile.name;
-          const email = profile.email;
-          const favorites = newFavorite;
-          postUserHistory(name, email, favorites);
-        }
-        setSnackbarMessage('Added to favorites');
-      } else {
-        setSnackbarMessage('Maximum of 5 favorites allowed');
-      }
-      setSnackbarOpen(true);
-    };
-
-    window.addEventListener('favoriteAdded', handleFavoriteAdded);
-
-    return () => {
-      window.removeEventListener('favoriteAdded', handleFavoriteAdded);
-    };
-  }, [favorites]);
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -235,7 +178,6 @@ export const NavBar = () => {
               </Button>
             ))}
           </Box>
-
           <Box>
             <div style={{ margin: '20px' }}>
               {profile ? (

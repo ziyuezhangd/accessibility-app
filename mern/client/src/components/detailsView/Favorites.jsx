@@ -1,6 +1,7 @@
 import { FavoriteBorder, Delete } from '@mui/icons-material';
 import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Menu, Snackbar } from '@mui/material';
 import * as React from 'react';
+import { UserHistory, postUserHistory } from '../../services/userHistory';
 
 export const Favorites = () => {
   const [anchorElFavorites, setAnchorElFavorites] = React.useState(null);
@@ -69,6 +70,12 @@ export const Favorites = () => {
       const isAlreadyAdded = storedFavorites.some(favorite => favorite.placeId === newFavorite.placeId);
       if (isAlreadyAdded) {
         setSnackbarMessage('This place is already in your favorites');
+        if (profile){
+          const name = profile.name;
+          const email = profile.email;
+          const favorites = newFavorite;
+          postUserHistory(name, email, favorites);
+        }
         setSnackbarOpen(true);
         return;
       }
