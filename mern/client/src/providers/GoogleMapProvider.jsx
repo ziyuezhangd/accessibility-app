@@ -4,12 +4,16 @@ import { AdvancedMarker, PinElement } from 'react-google-map-wrapper';
 
 const GoogleMapContext = createContext();
 
+// List of available libraries: https://developers.google.com/maps/documentation/javascript/libraries
 const GoogleMapProvider = ({children}) => {
   /** @type {[google.maps.Map, React.Dispatch<React.SetStateAction<google.maps.Map>>]} */
   const [mapInstance, setMapInstance] = useState();
 
   /** @type {[google.maps.PlacesLibrary, React.Dispatch<React.SetStateAction<google.maps.PlacesLibrary>>]} */
   const [placesService, setPlacesService] = useState();
+
+  /** @type {[google.maps.RoutesLibrary, React.Dispatch<React.SetStateAction<google.maps.RoutesLibrary>>]} */
+  const [directionsService, setDirectionsService] = useState();
   
   /** @type {[google.maps.Geocoder, React.Dispatch<React.SetStateAction<google.maps.Geocoder>>]} */
   const [geocoder, setGeocoder] = useState();
@@ -25,6 +29,7 @@ const GoogleMapProvider = ({children}) => {
       loadPlaces();
       loadGeocoder();
       loadGeometry();
+      loadDirectionsService();
     }
   }, [mapInstance]);
 
@@ -40,10 +45,18 @@ const GoogleMapProvider = ({children}) => {
     setGeocoder(geocoder);
     console.log('Geocoder loaded successfully: ', geocoder);
   };
+
   const loadGeometry = async () => {
     const geometry = await google.maps.importLibrary('geometry');
     setGeometry(geometry);
     console.log('Geometry loaded successfully: ', geometry);
+  };
+
+  const loadDirectionsService = async () => {
+    const {DirectionsService} = await google.maps.importLibrary('routes');
+    const service = new DirectionsService(mapInstance);
+    setDirectionsService(service);
+    console.log('Directions service loaded successfully: ', service);
   };
 
   const handleMapLoaded = (map) => {
