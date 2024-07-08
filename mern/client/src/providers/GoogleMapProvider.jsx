@@ -12,8 +12,11 @@ const GoogleMapProvider = ({children}) => {
   /** @type {[google.maps.PlacesLibrary, React.Dispatch<React.SetStateAction<google.maps.PlacesLibrary>>]} */
   const [placesService, setPlacesService] = useState();
 
-  /** @type {[google.maps.RoutesLibrary, React.Dispatch<React.SetStateAction<google.maps.RoutesLibrary>>]} */
+  /** @type {[google.maps.DirectionsService, React.Dispatch<React.SetStateAction<google.maps.DirectionsService>>]} */
   const [directionsService, setDirectionsService] = useState();
+
+  /** @type {[google.maps.DirectionsRenderer, React.Dispatch<React.SetStateAction<google.maps.DirectionsRenderer>>]} */
+  const [directionsRenderer, setDirectionsRenderer] = useState();
   
   /** @type {[google.maps.Geocoder, React.Dispatch<React.SetStateAction<google.maps.Geocoder>>]} */
   const [geocoder, setGeocoder] = useState();
@@ -53,9 +56,12 @@ const GoogleMapProvider = ({children}) => {
   };
 
   const loadDirectionsService = async () => {
-    const {DirectionsService} = await google.maps.importLibrary('routes');
+    const {DirectionsService, DirectionsRenderer } = await google.maps.importLibrary('routes');
     const service = new DirectionsService(mapInstance);
+    const renderer = new DirectionsRenderer({map: mapInstance, draggable: true});
+    // renderer.setMap(mapInstance);
     setDirectionsService(service);
+    setDirectionsRenderer(renderer);
     console.log('Directions service loaded successfully: ', service);
   };
 
@@ -150,8 +156,21 @@ const GoogleMapProvider = ({children}) => {
     setMarkers([]);
   };
 
+  const getDirections = (start, end) => {
+    var request = {
+      origin: start,
+      destination: end,
+      travelMode: google.maps.TravelMode['WALKING']
+    };
+    directionsService.route(request, function(result, status) {
+      if (status === 'OK') {
+        directionsRenderer.setDirections(result);
+      }
+    });
+  };
+
   return (
-    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, removeMarkers, clearMarkers}}>
+    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, removeMarkers, clearMarkers, getDirections}}>
       {children}
     </GoogleMapContext.Provider>
   );
