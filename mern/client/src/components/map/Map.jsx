@@ -1,5 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
-import {Box, Snackbar, IconButton, Button,useTheme, useMediaQuery} from '@mui/material';
+import { Box, Snackbar, IconButton, Button, useTheme, useMediaQuery } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Polyline } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
@@ -7,7 +7,6 @@ import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { PlaceInfoUtilities, categoryToParentCategory } from '../../services/placeInfo';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
@@ -19,19 +18,25 @@ const PREDICTION_COLORS = {
   0: '#44ce1b',
   'B': '#44ce1b',
   1: '#44ce1b',
-  'C':'#bbdb44',
+  'C': '#bbdb44',
   2: '#bbdb44',
-  'D':'#f7e379',
-  3:'#f7e379',
+  'D': '#f7e379',
+  3: '#f7e379',
   'E': '#f2a134',
-  4:'#f2a134',
-  'F':'#e51f1f',
-  5:'#e51f1f',
+  4: '#f2a134',
+  'F': '#e51f1f',
+  5: '#e51f1f',
+};
 
+const gradeToInt = {
+  'A': 0,
+  'B': 5,
+  'C': 10,
+  'D': 15,
+  'F': 20,
 };
 
 export const Map = () => {
-  // const [placeInfos, setPlaceInfos] = useState([]);
   const theme = useTheme();
   const { placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers } = useContext(GoogleMapContext);
   const { placeInfos, busynessData, noiseData, odorData } = useContext(DataContext);
@@ -43,53 +48,13 @@ export const Map = () => {
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
-  const [selectedCategories, setSelectedCategories] = useState([]); // State to manage selected categories
 
-  // When a prediction type is selected, change the selected prediction type
   const handleVisualizationSelected = (item) => {
     setSelectedPredictionType(item.id);
   };
 
-  // Update our polyine and heatmap data anytime:
-  // 1. The selected prediction type changes
-  // 2. New prediction data has been loaded
-
-  const handleCategorySelected = (categories) => {
-    setSelectedCategories(categories); // Update selected categories
-  };
-
   useEffect(() => {
-    if (!mapInstance) return;
-
-    if (selectedCategories.length === 0) {
-      clearMarkers();
-      return; // No categories selected, don't display any markers
-    }
-
-    const filteredMarkers = placeInfos
-      .filter(placeInfo => selectedCategories.includes('All') || selectedCategories.includes(categoryToParentCategory(placeInfo.category)))
-      .map(placeInfo => ({
-        lat: placeInfo.latitude,
-        lng: placeInfo.longitude,
-        imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
-        imgSize: '30px',
-        imgAlt: placeInfo.name,
-      }))
-      .filter(marker => marker.imgSrc !== null);
-
-    createMarkers(filteredMarkers, true); // Create markers based on filtered categories and overwrite existing markers
-  }, [selectedCategories, placeInfos, mapInstance]); // Run effect when selectedCategories, placeInfos or mapInstance change
-
-  useEffect(() => {
-    // Based on our selected visualization type, render visualiztion
-    const setPredictionVisualization = async (type) => {      
-      const gradeToInt = {
-        'A': 0,
-        'B': 5,
-        'C': 10,
-        'D': 15,
-        'F': 20,
-      };
+    const setPredictionVisualization = (type) => {
       switch (type) {
       case 'busyness':
         setPolylineData(busynessData);
@@ -101,7 +66,7 @@ export const Map = () => {
         break;
       case 'odor':
         setHeatmapData(odorData.map(br => ({
-          lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
+          lat: parseFloat(br.location.lat), lng: parseFloat(br.location.lng), weight: gradeToInt[br.prediction],
         })));
         setPolylineData([]);
         break;
@@ -115,7 +80,6 @@ export const Map = () => {
   }, [selectedPredictionType, busynessData, noiseData, odorData]);
 
   const handleMapClicked = async (map, e) => {
-    // Clear any existing markers
     clearMarkers();
     const isPlaceIconClicked = e.placeId !== undefined;
     const latLng = e.latLng;
@@ -136,7 +100,7 @@ export const Map = () => {
         }
       });
     } else {
-      geocoder.geocode({location: {lat, lng}}).then((response) => {
+      geocoder.geocode({ location: { lat, lng } }).then((response) => {
         if (response.results[0]) {
           setLocationData(lat, lng, response.results[0].place_id, response.results[0].formatted_address, false);
         } else {
@@ -149,9 +113,9 @@ export const Map = () => {
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
-    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}],true);
+    createMarkers([{ lat: selectedLocation.lat, lng: selectedLocation.lng, title: name }], true);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
-    mapInstance.setCenter({lat: selectedLocation.lat, lng: selectedLocation.lng});
+    mapInstance.setCenter({ lat: selectedLocation.lat, lng: selectedLocation.lng });
   };
 
   const handleAddToFavorites = () => {
@@ -199,8 +163,7 @@ export const Map = () => {
     <Box sx={{ display: 'flex' }}
       role='main'>
       <PersistentDrawerLeft selectedLocation={selectedPlace}
-        onCategorySelected={handleCategorySelected}
-        placeInfos={placeInfos} /> {/* Pass placeInfos and handleCategorySelected */}
+        placeInfos={placeInfos} />
       <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
@@ -219,7 +182,7 @@ export const Map = () => {
             <Dropdown onSelect={handleVisualizationSelected} />
             <Control position={google.maps.ControlPosition.TOP_CENTER}>
               <SearchBar
-                onSearchEntered={handleSearchEntered}/>
+                onSearchEntered={handleSearchEntered} />
             </Control>
             <Control position={google.maps.ControlPosition.TOP_RIGHT}>
               <HelpIcon />
@@ -241,11 +204,10 @@ export const Map = () => {
               opacity={0.6}
             />
           )}
-          {polylineData?.length > 0 && polylineData.map(({location, prediction}, i) =>
-            // TODO: Need to have a different gradient for red-green color blindness
+          {polylineData?.length > 0 && polylineData.map(({ location, prediction }, i) =>
             (<Polyline
               key={i}
-              path={[{lat: location.start.lat, lng: location.start.lng}, {lat: location.end.lat, lng: location.end.lng}, ]}
+              path={[{ lat: location.start.lat, lng: location.start.lng }, { lat: location.end.lat, lng: location.end.lng }]}
               strokeColor={PREDICTION_COLORS[prediction]}
               strokeOpacity={prediction === 0 || prediction === 'A' ? 0.5 : 1.0}
               strokeWeight={prediction === 0 || prediction === 'A' ? 2 : 5.0}
@@ -281,5 +243,3 @@ export const Map = () => {
 };
 
 export default Map;
-//https://stackoverflow.com/questions/25496625/add-local-image-as-custom-marker-in-google-maps
-//https://developers.google.com/maps/documentation/javascript/custom-markers

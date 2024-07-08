@@ -64,7 +64,7 @@ const GoogleMapProvider = ({children}) => {
    * color: string}>} markerConfigs 
    * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
    */
-  const createMarkers = (markerConfigs, shouldOverwriteExisting) => {
+  const createMarkers = (markerConfigs, shouldOverwriteExisting=true) => {
     // TODO: I think double markers are being added?
     if (shouldOverwriteExisting) {
       clearMarkers();
@@ -89,7 +89,6 @@ const GoogleMapProvider = ({children}) => {
             <img 
               src={imgSrc}
               style={{height: imgSize}}
-              alt={imgAlt}
             />
           </AdvancedMarker>
         );
@@ -115,8 +114,8 @@ const GoogleMapProvider = ({children}) => {
         markersToCreate.push(marker);
       }
     }
-    setMarkers(markersToCreate);
-    console.log(`Created ${markersToCreate.length} markers`);
+    setMarkers([markersToCreate,true]);
+    console.log(`Created ${markers.length} markers`);
   };
 
   /**
