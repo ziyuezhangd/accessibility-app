@@ -41,7 +41,6 @@ export const Map = () => {
   const [heatmapData, setHeatmapData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [isDirectionsModalVisible, setIsDirectionsModalVisible] = useState(false);
-  const [isPendingDirections, setIsPendingDirections] = useState(false);
   const [directionsModalPosition, setDirectionsModalPosition] = useState(null);
   const [directionsFrom, setDirectionsFrom] = useState(null);
   const [directionsTo, setDirectionsTo] = useState(null);
@@ -56,15 +55,26 @@ export const Map = () => {
     setDirectionsModalPosition({lat: e.latLng.lat(), lng: e.latLng.lng()});
   };
 
-  const handleDirectionsPositionSelected = (type) => {
-    // Do something
+  const handleDirectionsPositionSelected = async (type) => {
     if (type === 'from') {
       setDirectionsFrom(directionsModalPosition);
+      if (directionsTo !== null) {
+        getDirections(directionsModalPosition, directionsTo);
+        resetDirectionsValues();
+      }
     }
     if (type === 'to') {
       setDirectionsTo(directionsModalPosition);
+      if (directionsFrom !== null) {
+        getDirections(directionsFrom, directionsModalPosition);
+        resetDirectionsValues();
+      }
     }
-    setIsPendingDirections(true);
+  };
+
+  const resetDirectionsValues = () => {
+    setDirectionsFrom(null);
+    setDirectionsTo(null);
   };
 
   // When a prediction type is selected, change the selected prediction type
@@ -116,23 +126,6 @@ export const Map = () => {
       //Just exit the modal
       setDirectionsModalPosition(null);
       setIsDirectionsModalVisible(false);
-      return;
-    }
-
-    // If directions from or to is set, this click is selecting the second point
-    if (isPendingDirections) {
-      // The user is selecting the start/end point for directions
-      if (directionsFrom === null) {
-        setDirectionsFrom({lat: e.latLng.lat(), lng: e.latLng.lng()});
-      }
-      if (directionsTo === null) {
-        setDirectionsTo({lat: e.latLng.lat(), lng: e.latLng.lng()});
-      }
-
-      getDirections(directionsFrom, directionsTo);
-      setDirectionsModalPosition(null);
-      setIsDirectionsModalVisible(false);
-      setIsPendingDirections(false);
       return;
     }
 
