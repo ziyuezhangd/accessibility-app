@@ -29,9 +29,6 @@ export const postUserHistory = async (userHistory) => {
   return data; // Ensure to return the data
 };
 
-/**
- * Class for representing a piece of feedback
- */
 export class UserHistory {
   /**
    * @param {string} userHistory.email

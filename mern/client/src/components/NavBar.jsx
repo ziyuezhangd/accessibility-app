@@ -5,9 +5,10 @@ import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 // NavBar.jsx
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Favorites from './detailsView/Favorites';
+import { UserContext } from '../providers/UserProvider';
 
 const pages = ['Map', 'About us'];
 
@@ -15,6 +16,7 @@ export const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
+  const { UserHistory } = useContext(UserContext);
 
   const navigate = useNavigate();
 
@@ -49,6 +51,7 @@ export const NavBar = () => {
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
     onError: (error) => console.log('Login Failed:', error)
+
   });
 
   const logOut = () => {
@@ -68,6 +71,8 @@ export const NavBar = () => {
           })
           .then((res) => {
             setProfile(res.data);
+            UserHistory.name = res.data.name;
+            UserHistory.email = res.data.email;
           })
           .catch((err) => console.log(err));
       }

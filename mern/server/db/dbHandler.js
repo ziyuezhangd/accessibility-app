@@ -40,7 +40,7 @@ const dbHandler = {
    * @param {array} userHistory.searchHistory
    */
 
-  async getUserData(){
+  async getUserHistories(){
     const db = await getDB();
     const collection = db.collection('userHistory');
     const results = await collection.find({}).toArray();

@@ -1,13 +1,16 @@
 import { FavoriteBorder, Delete } from '@mui/icons-material';
 import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Menu, Snackbar } from '@mui/material';
 import * as React from 'react';
-import { UserHistory, postUserHistory } from '../../services/userHistory';
+import { useContext, useEffect, useState } from 'react';
+import { UserContext} from '../../providers/UserProvider';
+import { postUserHistory } from '../../services/userHistory';
 
 export const Favorites = () => {
   const [anchorElFavorites, setAnchorElFavorites] = React.useState(null);
   const [favorites, setFavorites] = React.useState([]);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
+  const {UserHistory} = useContext(UserContext);
 
   // Load favorites from localStorage on component mount
   React.useEffect(() => {
@@ -70,9 +73,9 @@ export const Favorites = () => {
       const isAlreadyAdded = storedFavorites.some(favorite => favorite.placeId === newFavorite.placeId);
       if (isAlreadyAdded) {
         setSnackbarMessage('This place is already in your favorites');
-        if (profile){
-          const name = profile.name;
-          const email = profile.email;
+        if (UserHistory){
+          const name = UserHistory.name;
+          const email = UserHistory.email;
           const favorites = newFavorite;
           postUserHistory(name, email, favorites);
         }

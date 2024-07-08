@@ -3,6 +3,7 @@ import { GoogleMapApiLoader } from 'react-google-map-wrapper';
 import { Map as MapComponent } from '../components/map/Map';
 import { DataProvider } from '../providers/DataProvider';
 import { GoogleMapProvider } from '../providers/GoogleMapProvider';
+import { UserProvider } from '../providers/UserProvider';
 
 export default function MapPage() {
   const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY;
@@ -14,11 +15,13 @@ export default function MapPage() {
       <GoogleMapApiLoader apiKey={googleMapConfig} 
         suspense>
         {/* TODO: put back our drawer! */}
-        <DataProvider>
-          <GoogleMapProvider>
-            <MapComponent/>
-          </GoogleMapProvider>
-        </DataProvider>
+        <UserProvider>
+          <DataProvider>
+            <GoogleMapProvider>
+              <MapComponent/>
+            </GoogleMapProvider>
+          </DataProvider>
+        </UserProvider>
       </GoogleMapApiLoader>
     </Suspense>
   );
