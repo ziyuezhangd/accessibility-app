@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Favorites from './navBar/Favorites';
 import Logo from './navBar/Logo';
 
-const pages = ['Map', 'About us'];
+const pages = ['Map', 'About us', 'Resources'];
 
 export const NavBar = () => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -21,6 +21,9 @@ export const NavBar = () => {
       break;
     case 'about us':
       navigate('/about');
+      break;
+    case 'resources':
+      navigate('/resources');
       break;
     default:
       break;

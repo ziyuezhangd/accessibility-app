@@ -3,6 +3,7 @@ import { Box, Snackbar, IconButton, Button,useTheme, useMediaQuery } from '@mui/
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Polyline } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
+import AccessibilityMarkers from './AccessibilityMarkers';
 import DirectionsModal from './DirectionsModal';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
@@ -299,6 +300,7 @@ export const Map = () => {
           {markers.map(marker => marker)}
           {isDirectionsModalVisible && directionsModalPosition !== null && <DirectionsModal position={directionsModalPosition}
             onDirectionsPositionSelected={handleDirectionsPositionSelected}/>}
+          <AccessibilityMarkers/>
         </GoogleMap>
         <Snackbar
           open={snackbarOpen}

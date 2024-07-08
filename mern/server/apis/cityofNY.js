@@ -4,6 +4,7 @@ const cityofNY = {
 
   /**
    * @returns{Promise<Array<{latitude: number, longitude: number, width: string}>>}
+   * API documentation: https://dev.socrata.com/foundry/data.cityofnewyork.us/ufzp-rrqu
    */
   async getPedestrianRamps() {
     const result = await fetch(`${this.CITYOFNEWYORK_URL}ufzp-rrqu.json?borough=1&$$app_token=${this.SOCRATA_APP_KEY}`);
