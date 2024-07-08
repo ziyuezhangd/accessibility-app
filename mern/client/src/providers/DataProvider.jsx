@@ -8,6 +8,7 @@ import { getBusynessRatings, getNoiseRatingsDaily, getOdourRatings } from '../se
 import { getPublicRestrooms } from '../services/restrooms';
 import { getSeatingAreas } from '../services/seatingAreas';
 import { getCurrentTimeInNewYork } from '../utils/dateTime';
+import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
 
 const DataContext = createContext();
 
@@ -20,6 +21,7 @@ const DataProvider = ({children}) => {
   const [busynessData, setBusynessData] = useState([]);
   const [noiseData, setNoiseData] = useState([]);
   const [odorData, setOdorData] = useState([]);
+  const [polylineData, setPolylineData] = useState(null);
   const [predictionDateTime, setPredictionDateTime] = useState(null);
     
   useEffect(() => {
@@ -58,6 +60,9 @@ const DataProvider = ({children}) => {
 
   const getPredictions = async (selectedDate) => {
     console.log('Getting predictions');
+    let busynessPredictions = busynessData;
+    let noisePredictions = noiseData;
+    let odorPredictions = odorData;
     const isFirstPrediction = !predictionDateTime;
     if (selectedDate === null || selectedDate === undefined) {
       if (isFirstPrediction) {
@@ -75,12 +80,28 @@ const DataProvider = ({children}) => {
     if (isFirstPrediction || isNewDayAndHour) {
       console.log('Reloading from server');
       console.log('selectedDate ', selectedDate);
-      await loadBusynessRatings(selectedDate);
-      await loadNoiseRatings(selectedDate);
-      await loadOdourRatings(selectedDate);
+      busynessPredictions = await loadBusynessRatings(selectedDate);
+      noisePredictions = await loadNoiseRatings(selectedDate);
+      odorPredictions = await loadOdourRatings(selectedDate);
+      // Set polyline data
+      const polylineData = [];
+      for (const bp of busynessPredictions) {
+        const location = bp.location;
+        const busynessPrediction = bp.prediction;
+        const noisePrediction = _.find(noisePredictions, np => 
+          np.location.start.lat === bp.location.start.lat && 
+          np.location.start.lng === bp.location.start.lng && 
+          np.location.end.lat === bp.location.end.lat && 
+          np.location.end.lng === bp.location.end.lng
+        ).prediction;
+        const odorPrediction = _.minBy(odorPredictions, op => calculateDistanceBetweenTwoCoordinates(op.location.lat, op.location.lng, bp.location.start.lat, bp.location.start.lng)).prediction;
+        polylineData.push({location, busyness: busynessPrediction, noise: noisePrediction, odor: odorPrediction});
+      }
+      setPolylineData(polylineData);
     }
     setPredictionDateTime(selectedDate);
-    return {busynessData, noiseData, odorData};
+
+    return {busynessPredictions, noisePredictions, odorPredictions};
   };
 
   const loadBusynessRatings = async (selectedDate) => {
@@ -102,7 +123,7 @@ const DataProvider = ({children}) => {
   };
   
   return (
-    <DataContext.Provider value={{restrooms, placeInfos, getPredictions, busynessData, noiseData, odorData, seatingAreas, pedestrianRamps, pedestrianSignals}}>
+    <DataContext.Provider value={{restrooms, placeInfos, getPredictions, busynessData, noiseData, odorData, seatingAreas, pedestrianRamps, pedestrianSignals, polylineData}}>
       {children}
     </DataContext.Provider>
   );
