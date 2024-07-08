@@ -3,6 +3,7 @@ import { Box, Snackbar, IconButton, Button,useTheme, useMediaQuery } from '@mui/
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Polyline } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
+import AccessibilityMarkers from './AccessibilityMarkers';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
 import { DataContext } from '../../providers/DataProvider';
@@ -254,6 +255,7 @@ export const Map = () => {
             />)
           )}
           {markers.map(marker => marker)}
+          <AccessibilityMarkers/>
         </GoogleMap>
         <Snackbar
           open={snackbarOpen}
