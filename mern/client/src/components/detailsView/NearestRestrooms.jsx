@@ -48,16 +48,25 @@ export default function NearestRestrooms({ lat, lng }) {
       </Typography>
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }} aria-label='restrooms'>
         {nearestRestrooms.map((restroom, i) => (
-          <ListItem key={i} disablePadding>
-            <ListItemButton onClick={() => handleRestroomClick(restroom)}>
+          <ListItem key={i}
+            disablePadding>
+            <ListItemButton aria-label={restroom.name}>
               <ListItemText
+                aria-label='Restroom information'
                 primary={restroom.name}
                 secondary={
                   <>
-                    <Typography sx={{ display: 'inline' }} component="span" variant="body2" color="text.primary">
-                      {restroom.formatHours().split('\n').map((h, index) => <p key={index}>{h}</p>)}
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {/* TODO: would be nice if we could make today's day bold */}
+                      {restroom.formatHours().split('\n').map(h => (<p aria-label={`Hours of operation ${h}`}
+                        key={h}>{h}</p>))}
                     </Typography>
-                    <div>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</div>
+                    <p aria-label={`Distance from selected location ${Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} meters`}>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</p>
                   </>
                 }
               />
