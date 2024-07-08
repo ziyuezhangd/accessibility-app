@@ -39,6 +39,7 @@ export default function NearestRestrooms({ lat, lng }) {
 
   const handleClosePopup = () => {
     setPopupOpen(false);
+    setSelectedRestroom(null); // Clear the selected restroom when popup is closed
   };
 
   return (
@@ -48,9 +49,8 @@ export default function NearestRestrooms({ lat, lng }) {
       </Typography>
       <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }} aria-label='restrooms'>
         {nearestRestrooms.map((restroom, i) => (
-          <ListItem key={i}
-            disablePadding>
-            <ListItemButton aria-label={restroom.name}>
+          <ListItem key={i} disablePadding>
+            <ListItemButton aria-label={restroom.name} onClick={() => handleRestroomClick(restroom)}>
               <ListItemText
                 aria-label='Restroom information'
                 primary={restroom.name}
@@ -63,10 +63,13 @@ export default function NearestRestrooms({ lat, lng }) {
                       color="text.primary"
                     >
                       {/* TODO: would be nice if we could make today's day bold */}
-                      {restroom.formatHours().split('\n').map(h => (<p aria-label={`Hours of operation ${h}`}
-                        key={h}>{h}</p>))}
+                      {restroom.formatHours().split('\n').map(h => (
+                        <p aria-label={`Hours of operation ${h}`} key={h}>{h}</p>
+                      ))}
                     </Typography>
-                    <p aria-label={`Distance from selected location ${Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} meters`}>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</p>
+                    <p aria-label={`Distance from selected location ${Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} meters`}>
+                      {Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m
+                    </p>
                   </>
                 }
               />
