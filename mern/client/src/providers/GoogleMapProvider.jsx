@@ -36,6 +36,16 @@ const GoogleMapProvider = ({children}) => {
     }
   }, [mapInstance]);
 
+  useEffect(() => {
+    if (directionsRenderer) {
+      window.addEventListener('keydown', (keyEvent) => {
+        if (keyEvent.code === 'KeyC') {
+          clearDirections();
+        }
+      });
+    }
+  }, [directionsRenderer]);
+
   const loadPlaces = async () => {
     const { PlacesService } = await google.maps.importLibrary('places');
     const service = new PlacesService(mapInstance);
@@ -56,13 +66,22 @@ const GoogleMapProvider = ({children}) => {
   };
 
   const loadDirectionsService = async () => {
-    const {DirectionsService, DirectionsRenderer } = await google.maps.importLibrary('routes');
+    const { DirectionsService, DirectionsRenderer } = await google.maps.importLibrary('routes');
     const service = new DirectionsService(mapInstance);
     const renderer = new DirectionsRenderer({map: mapInstance, draggable: true});
     // renderer.setMap(mapInstance);
     setDirectionsService(service);
     setDirectionsRenderer(renderer);
     console.log('Directions service loaded successfully: ', service);
+  };
+
+  const clearDirections = () => {
+    if (directionsRenderer !== null && directionsRenderer !== undefined) {
+      directionsRenderer.setMap(null);
+      const start = directionsRenderer.getDirections().routes[0].legs[0].start_location;
+      const end = directionsRenderer.getDirections().routes[0].legs[0].end_location;
+      removeMarkers([{lat: start.lat(), lng: start.lng()}, {lat: end.lat(), lng: end.lng()}]);
+    }
   };
 
   const handleMapLoaded = (map) => {
@@ -164,13 +183,17 @@ const GoogleMapProvider = ({children}) => {
     };
     directionsService.route(request, function(result, status) {
       if (status === 'OK') {
+        console.log('Got directions');
         directionsRenderer.setDirections(result);
+        if (directionsRenderer.getMap() === null) {
+          directionsRenderer.setMap(mapInstance);
+        }
       }
     });
   };
 
   return (
-    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, removeMarkers, clearMarkers, getDirections}}>
+    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, removeMarkers, clearMarkers, getDirections, clearDirections}}>
       {children}
     </GoogleMapContext.Provider>
   );
