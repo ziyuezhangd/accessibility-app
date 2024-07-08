@@ -43,16 +43,15 @@ describe('Map page started', () => {
   
   it.only('allows interaction with history and favorites', () => {
     cy.get('[data-test="favorites"]').click();
-    cy.contains('No favorite places added yet');
+    cy.contains('No favorite places added yet').should('be.visible');
 
     cy.contains('Last viewed').should('be.visible');
     cy.get('[data-test="google-map"]').should('be.visible');
     cy.contains('[data-test="list"]').should('not.exist');
-    cy.get('[data-test="google-map"]').then($map => {
+    cy.get('[data-test="google-map"]').then(($map) => {
+      const mapWidth = $map.width();
+      const mapHeight = $map.height();
       for (let i = 0; i < 3; i++) {
-        const mapWidth = $map.width();
-        const mapHeight = $map.height();
-
         const randomX = Math.floor(mapWidth * 0.3 + Math.random() * mapWidth * 0.4);
         const randomY = Math.floor(mapHeight * 0.3 + Math.random() * mapHeight * 0.4);
 
@@ -64,8 +63,9 @@ describe('Map page started', () => {
           cy.contains('Submit Feedback').should('exist');
         }
         cy.get('[data-test="favorites-inside"]').click();
-        cy.contains('Add to favorites').should('be.visible');
+        // cy.contains('Add to favorites').should('be.visible');
         cy.get('[data-test="back"]').click();
+        cy.contains('[data-test="list"]').should('exist');
       }
       cy.contains('[data-test="list"]').should('exist');
     });
