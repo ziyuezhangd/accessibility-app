@@ -89,6 +89,7 @@ const GoogleMapProvider = ({children}) => {
             <img 
               src={imgSrc}
               style={{height: imgSize}}
+              alt={imgAlt}
             />
           </AdvancedMarker>
         );
@@ -114,8 +115,8 @@ const GoogleMapProvider = ({children}) => {
         markersToCreate.push(marker);
       }
     }
-    setMarkers([...markers, ...markersToCreate]);
-    console.log(`Created ${markers.length} markers`);
+    setMarkers(markersToCreate);
+    console.log(`Created ${markersToCreate.length} markers`);
   };
 
   /**

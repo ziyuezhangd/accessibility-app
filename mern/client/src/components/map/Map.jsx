@@ -1,5 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Snackbar, IconButton, Button,useTheme, useMediaQuery } from '@mui/material';
+import {Box, Snackbar, IconButton, Button,useTheme, useMediaQuery} from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Polyline } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
@@ -7,7 +7,7 @@ import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { PlaceInfoUtilities } from '../../services/placeInfo';
+import { PlaceInfoUtilities, categoryToParentCategory } from '../../services/placeInfo';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
@@ -33,8 +33,8 @@ const PREDICTION_COLORS = {
 export const Map = () => {
   // const [placeInfos, setPlaceInfos] = useState([]);
   const theme = useTheme();
-  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
-  const {placeInfos, busynessData, noiseData, odorData} = useContext(DataContext);
+  const { placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers } = useContext(GoogleMapContext);
+  const { placeInfos, busynessData, noiseData, odorData } = useContext(DataContext);
   const [selectedPredictionType, setSelectedPredictionType] = useState(null);
   const [polylineData, setPolylineData] = useState([]);
   const [heatmapData, setHeatmapData] = useState([]);
@@ -43,7 +43,8 @@ export const Map = () => {
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
-  
+  const [selectedCategories, setSelectedCategories] = useState([]); // State to manage selected categories
+
   // When a prediction type is selected, change the selected prediction type
   const handleVisualizationSelected = (item) => {
     setSelectedPredictionType(item.id);
@@ -52,9 +53,36 @@ export const Map = () => {
   // Update our polyine and heatmap data anytime:
   // 1. The selected prediction type changes
   // 2. New prediction data has been loaded
+
+  const handleCategorySelected = (categories) => {
+    setSelectedCategories(categories); // Update selected categories
+  };
+
+  useEffect(() => {
+    if (!mapInstance) return;
+
+    if (selectedCategories.length === 0) {
+      clearMarkers();
+      return; // No categories selected, don't display any markers
+    }
+
+    const filteredMarkers = placeInfos
+      .filter(placeInfo => selectedCategories.includes('All') || selectedCategories.includes(categoryToParentCategory(placeInfo.category)))
+      .map(placeInfo => ({
+        lat: placeInfo.latitude,
+        lng: placeInfo.longitude,
+        imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
+        imgSize: '30px',
+        imgAlt: placeInfo.name,
+      }))
+      .filter(marker => marker.imgSrc !== null);
+
+    createMarkers(filteredMarkers, true); // Create markers based on filtered categories and overwrite existing markers
+  }, [selectedCategories, placeInfos, mapInstance]); // Run effect when selectedCategories, placeInfos or mapInstance change
+
   useEffect(() => {
     // Based on our selected visualization type, render visualiztion
-    const setPredictionVisualization = async (type) => {
+    const setPredictionVisualization = async (type) => {      
       const gradeToInt = {
         'A': 0,
         'B': 5,
@@ -118,41 +146,10 @@ export const Map = () => {
     }
   };
 
-  // When place infos are loaded, render accessibility markers
-  useEffect(() => {
-    const showAccessibilityMarkers = (placeInfos) => {
-      const markers = placeInfos.map((placeInfo, i) => {
-        const imgSrc = PlaceInfoUtilities.getMarkerPNG(placeInfo);
-        if (imgSrc === null){
-          return null;
-        }
-        else{
-          return {
-            lat: placeInfo.latitude,
-            lng: placeInfo.longitude,
-            imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
-            imgSize: '30px', 
-            imgAlt: placeInfo.name,
-            key: i,
-          }; 
-        }
-
-      });
-      const filteredMarkers =markers.filter( (marker) => marker !== null); 
-
-      createMarkers(filteredMarkers);
-      console.log(filteredMarkers);
-    };
-
-    if (placeInfos) {
-      showAccessibilityMarkers(placeInfos);
-    }
-  }, [placeInfos]);
-
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
-    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}]);
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}],true);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
     mapInstance.setCenter({lat: selectedLocation.lat, lng: selectedLocation.lng});
   };
@@ -201,7 +198,9 @@ export const Map = () => {
   return (
     <Box sx={{ display: 'flex' }}
       role='main'>
-      <PersistentDrawerLeft selectedLocation={selectedPlace}/>
+      <PersistentDrawerLeft selectedLocation={selectedPlace}
+        onCategorySelected={handleCategorySelected}
+        placeInfos={placeInfos} /> {/* Pass placeInfos and handleCategorySelected */}
       <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
@@ -219,7 +218,7 @@ export const Map = () => {
           <Box sx={containerStyle}>
             <Dropdown onSelect={handleVisualizationSelected} />
             <Control position={google.maps.ControlPosition.TOP_CENTER}>
-              <SearchBar 
+              <SearchBar
                 onSearchEntered={handleSearchEntered}/>
             </Control>
             <Control position={google.maps.ControlPosition.TOP_RIGHT}>
@@ -242,8 +241,8 @@ export const Map = () => {
               opacity={0.6}
             />
           )}
-          {polylineData?.length > 0 && polylineData.map(({location, prediction}, i) => 
-          // TODO: Need to have a different gradient for red-green color blindness
+          {polylineData?.length > 0 && polylineData.map(({location, prediction}, i) =>
+            // TODO: Need to have a different gradient for red-green color blindness
             (<Polyline
               key={i}
               path={[{lat: location.start.lat, lng: location.start.lng}, {lat: location.end.lat, lng: location.end.lng}, ]}

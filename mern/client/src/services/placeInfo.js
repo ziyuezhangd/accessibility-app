@@ -368,3 +368,5 @@ const categoryToParentCategory = (category) => {
   }
 };
 
+export { categoryToParentCategory };
+
