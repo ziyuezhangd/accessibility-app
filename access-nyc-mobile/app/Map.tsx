@@ -44,14 +44,18 @@ export default function Map() {
   };
 
   const handleMapReady = (e) => {
-    // TODO: is this working?
     onMapReady(e);
-    Location.getCurrentPositionAsync().then((p) => setRegion({ latitude: p.coords.latitude, longitude: p.coords.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 }));
+    setRegion({ latitude: MANHATTAN_LAT, longitude: MANHATTAN_LNG, latitudeDelta: 0.0922, longitudeDelta: 0.0421 });
+    // TODO: in the future - currently the emulator has us in california
+    // Location.getCurrentPositionAsync().then((p) => {
+    //   console.log('Current position: ', p.coords.latitude, ',', p.coords.longitude);
+    //   setRegion({ latitude: p.coords.latitude, longitude: p.coords.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 });
+    // });
   };
 
   return (
     <View style={styles.container}>
-        <MapView
+      <MapView
         style={styles.map}
         initialRegion={{
           latitude: MANHATTAN_LAT,
