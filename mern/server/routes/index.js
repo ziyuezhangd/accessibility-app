@@ -2,6 +2,7 @@ import express from 'express';
 import accessibilityHighlightPlace from './accessibilityHighlightPlace.js';
 import busynessRating from './busynessRating.js';
 import feedback from './feedback.js';
+import mobileData from './mobileData.js';
 import noiseRating from './noiseRating.js';
 import odourRating from './odourRating.js';
 import pedestrianRamps from './pedestrianRamps.js';
@@ -22,5 +23,6 @@ router.use('/seating-areas', seatingAreas);
 router.use('/pedestrian-signals', pedestrianSignals);
 router.use('/pedestrian-ramps', pedestrianRamps);
 router.use('/restrooms', publicRestrooms);
+router.use('/mobile', mobileData);
 
 export default router;
