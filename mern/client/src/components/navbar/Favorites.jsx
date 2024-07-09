@@ -2,8 +2,8 @@ import { FavoriteBorder, Delete } from '@mui/icons-material';
 import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Menu, Snackbar } from '@mui/material';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../../../providers/UserProvider';
-import { postUserHistory } from '../../../services/userHistory';
+import { UserContext } from '../../providers/UserProvider';
+import { postUserHistory } from '../../services/userHistory';
 
 export const Favorites = () => {
   const [anchorElFavorites, setAnchorElFavorites] = React.useState(null);
