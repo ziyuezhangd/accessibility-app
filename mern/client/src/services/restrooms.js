@@ -1,6 +1,4 @@
 import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
 import _ from 'lodash';
 import { getCurrentTimeInNewYork, getDayString, isTimeInRange, parseTimeRangeFromString, isDSTNow } from '../utils/dateTime';
 import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
