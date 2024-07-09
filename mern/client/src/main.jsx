@@ -9,6 +9,7 @@ import './index.css';
 import AboutPage from './pages/AboutPage';
 import LandingPage from './pages/LandingPage';
 import MapPage from './pages/MapPage';
+import ResourcesPage from './pages/ResourcesPage';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,16 @@ const router = createBrowserRouter([
       {
         path: '/about',
         element: <AboutPage />,
+      },
+    ],
+  },
+  {
+    path: '/resources',
+    element: <App />,
+    children: [
+      {
+        path: '/resources',
+        element: <ResourcesPage />,
       },
     ],
   },
