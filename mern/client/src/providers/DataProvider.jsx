@@ -100,18 +100,6 @@ const DataProvider = ({children}) => {
     setOdorData(odorRatings);
     return odorRatings;
   };
-  
-  const loadNoiseRatings = async (selectedDate) => {
-    const noiseRatings = await getNoiseRatingsDaily(selectedDate);
-    setNoiseData(noiseRatings);
-    return noiseRatings;
-  };
-  
-  const loadOdourRatings = async (selectedDate) => {
-    const odorRatings = await getOdourRatings(selectedDate);
-    setOdorData(odorRatings);
-    return odorRatings;
-  };
 
   return (
     <DataContext.Provider value={{restrooms, placeInfos, getPredictions, busynessData, noiseData, odorData, seatingAreas, pedestrianRamps, pedestrianSignals}}>
