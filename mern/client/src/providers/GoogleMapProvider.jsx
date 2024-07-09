@@ -4,15 +4,25 @@ import { AdvancedMarker, PinElement } from 'react-google-map-wrapper';
 
 const GoogleMapContext = createContext();
 
+// List of available libraries: https://developers.google.com/maps/documentation/javascript/libraries
 const GoogleMapProvider = ({children}) => {
   /** @type {[google.maps.Map, React.Dispatch<React.SetStateAction<google.maps.Map>>]} */
   const [mapInstance, setMapInstance] = useState();
 
   /** @type {[google.maps.PlacesLibrary, React.Dispatch<React.SetStateAction<google.maps.PlacesLibrary>>]} */
   const [placesService, setPlacesService] = useState();
+
+  /** @type {[google.maps.DirectionsService, React.Dispatch<React.SetStateAction<google.maps.DirectionsService>>]} */
+  const [directionsService, setDirectionsService] = useState();
+
+  /** @type {[google.maps.DirectionsRenderer, React.Dispatch<React.SetStateAction<google.maps.DirectionsRenderer>>]} */
+  const [directionsRenderer, setDirectionsRenderer] = useState();
   
   /** @type {[google.maps.Geocoder, React.Dispatch<React.SetStateAction<google.maps.Geocoder>>]} */
   const [geocoder, setGeocoder] = useState();
+  
+  /** @type {[google.maps.GeometryLibrary, React.Dispatch<React.SetStateAction<google.maps.GeometryLibrary>>]} */
+  const [geometry, setGeometry] = useState();
 
   /** @type {[google.maps.AdvancedMarker[], React.Dispatch<React.SetStateAction<google.maps.AdvancedMarker[]>>]} */
   const [markers, setMarkers] = useState([]);
@@ -21,8 +31,20 @@ const GoogleMapProvider = ({children}) => {
     if (mapInstance) {
       loadPlaces();
       loadGeocoder();
+      loadGeometry();
+      loadDirectionsService();
     }
   }, [mapInstance]);
+
+  useEffect(() => {
+    if (directionsRenderer) {
+      window.addEventListener('keydown', (keyEvent) => {
+        if (keyEvent.code === 'KeyC') {
+          clearDirections();
+        }
+      });
+    }
+  }, [directionsRenderer]);
 
   const loadPlaces = async () => {
     const { PlacesService } = await google.maps.importLibrary('places');
@@ -35,6 +57,31 @@ const GoogleMapProvider = ({children}) => {
     const geocoder = new google.maps.Geocoder();
     setGeocoder(geocoder);
     console.log('Geocoder loaded successfully: ', geocoder);
+  };
+
+  const loadGeometry = async () => {
+    const geometry = await google.maps.importLibrary('geometry');
+    setGeometry(geometry);
+    console.log('Geometry loaded successfully: ', geometry);
+  };
+
+  const loadDirectionsService = async () => {
+    const { DirectionsService, DirectionsRenderer } = await google.maps.importLibrary('routes');
+    const service = new DirectionsService(mapInstance);
+    const renderer = new DirectionsRenderer({map: mapInstance, draggable: true});
+    // renderer.setMap(mapInstance);
+    setDirectionsService(service);
+    setDirectionsRenderer(renderer);
+    console.log('Directions service loaded successfully: ', service);
+  };
+
+  const clearDirections = () => {
+    if (directionsRenderer !== null && directionsRenderer !== undefined) {
+      directionsRenderer.setMap(null);
+      const start = directionsRenderer.getDirections().routes[0].legs[0].start_location;
+      const end = directionsRenderer.getDirections().routes[0].legs[0].end_location;
+      removeMarkers([{lat: start.lat(), lng: start.lng()}, {lat: end.lat(), lng: end.lng()}]);
+    }
   };
 
   const handleMapLoaded = (map) => {
@@ -50,16 +97,19 @@ const GoogleMapProvider = ({children}) => {
    * imgSize: number, 
    * imgAlt: string, 
    * scale: number, 
+   * title: string,
+   * key: num,
    * color: string}>} markerConfigs 
    * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
    */
   const createMarkers = (markerConfigs, shouldOverwriteExisting) => {
+    // TODO: I think double markers are being added?
     if (shouldOverwriteExisting) {
       clearMarkers();
     }
     const markersToCreate = [];
     for (const config of markerConfigs) {
-      const {imgSrc} = config;
+      const {imgSrc, key, title} = config;
       let {lat, lng} = config;
       lat = parseFloat(lat);
       lng = parseFloat(lng);
@@ -70,11 +120,13 @@ const GoogleMapProvider = ({children}) => {
           <AdvancedMarker 
             lat={lat}
             lng={lng}
+            title={title}
+            gmpClickable={true}
+            // key={key}
           >
             <img 
               src={imgSrc}
               style={{height: imgSize}}
-              alt={imgAlt}
             />
           </AdvancedMarker>
         );
@@ -88,6 +140,9 @@ const GoogleMapProvider = ({children}) => {
           <AdvancedMarker 
             lat={lat}
             lng={lng}
+            title={title}
+            gmpClickable={true}
+            // key={key}
           >
             <PinElement 
               scale={scale}
@@ -120,8 +175,25 @@ const GoogleMapProvider = ({children}) => {
     setMarkers([]);
   };
 
+  const getDirections = (start, end) => {
+    var request = {
+      origin: start,
+      destination: end,
+      travelMode: google.maps.TravelMode['WALKING']
+    };
+    directionsService.route(request, function(result, status) {
+      if (status === 'OK') {
+        console.log('Got directions');
+        directionsRenderer.setDirections(result);
+        if (directionsRenderer.getMap() === null) {
+          directionsRenderer.setMap(mapInstance);
+        }
+      }
+    });
+  };
+
   return (
-    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, removeMarkers, clearMarkers}}>
+    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, removeMarkers, clearMarkers, getDirections, clearDirections}}>
       {children}
     </GoogleMapContext.Provider>
   );

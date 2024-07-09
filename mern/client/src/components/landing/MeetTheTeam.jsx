@@ -1,6 +1,6 @@
 import { Avatar, Container, Grid, Typography } from '@mui/material';
 import abishekImage from '../../assets/abishek.png';
-import aprilImage from '../../assets/april.png';
+import aprilImage from '../../assets/april.jpg';
 import danielleImage from '../../assets/danielle.jpg';
 import ellenImage from '../../assets/ellen.png';
 import nithishhImage from '../../assets/nithishh.jpg';
@@ -28,6 +28,7 @@ export default function MeetTheTeam() {
         gap: { xs: 3, sm: 6 },
         height: '85vh',
       }}
+      aria-labelledby='Meet the team'
     >
       <Typography component='h2'
         variant='h4'

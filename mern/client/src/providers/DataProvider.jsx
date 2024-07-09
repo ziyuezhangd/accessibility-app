@@ -1,9 +1,12 @@
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
+import { getPedestrianRamps } from '../services/pedestrianRamps';
+import { getPedestrianSignals } from '../services/pedestrianSignals';
 import { getPlaceInfos } from '../services/placeInfo';
 import { getBusynessRatings, getNoiseRatingsDaily, getOdourRatings } from '../services/ratings';
 import { getPublicRestrooms } from '../services/restrooms';
+import { getSeatingAreas } from '../services/seatingAreas';
 import { getCurrentTimeInNewYork } from '../utils/dateTime';
 
 const DataContext = createContext();
@@ -11,6 +14,9 @@ const DataContext = createContext();
 const DataProvider = ({children}) => {
   const [restrooms, setRestrooms] = useState([]);
   const [placeInfos, setPlaceInfos] = useState([]);
+  const [pedestrianRamps, setPedestrianRamps] = useState([]);
+  const [pedestrianSignals, setPedestrianSignals] = useState([]);
+  const [seatingAreas, setSeatingAreas] = useState([]);
   const [busynessData, setBusynessData] = useState([]);
   const [noiseData, setNoiseData] = useState([]);
   const [odorData, setOdorData] = useState([]);
@@ -19,12 +25,30 @@ const DataProvider = ({children}) => {
   useEffect(() => {
     loadRestrooms();
     loadPlaceInfo();
+    loadPedestrianRamps();
+    loadPedestrianSignals();
+    loadSeatingAreas();
     getPredictions();
   }, []);
 
   const loadRestrooms = async () => {
     const restrooms = await getPublicRestrooms('incl-partial');
     setRestrooms(restrooms);
+  };
+
+  const loadPedestrianSignals = async () => {
+    const signals = await getPedestrianSignals();
+    setPedestrianSignals(signals);
+  };
+
+  const loadPedestrianRamps = async () => {
+    const ramps = await getPedestrianRamps();
+    setPedestrianRamps(ramps);
+  };
+
+  const loadSeatingAreas = async () => {
+    const ramps = await getSeatingAreas();
+    setSeatingAreas(ramps);
   };
   
   const loadPlaceInfo = async () => {
@@ -76,9 +100,21 @@ const DataProvider = ({children}) => {
     setOdorData(odorRatings);
     return odorRatings;
   };
+  
+  const loadNoiseRatings = async (selectedDate) => {
+    const noiseRatings = await getNoiseRatingsDaily(selectedDate);
+    setNoiseData(noiseRatings);
+    return noiseRatings;
+  };
+  
+  const loadOdourRatings = async (selectedDate) => {
+    const odorRatings = await getOdourRatings(selectedDate);
+    setOdorData(odorRatings);
+    return odorRatings;
+  };
 
   return (
-    <DataContext.Provider value={{restrooms, placeInfos}}>
+    <DataContext.Provider value={{restrooms, placeInfos, getPredictions, busynessData, noiseData, odorData, seatingAreas, pedestrianRamps, pedestrianSignals}}>
       {children}
     </DataContext.Provider>
   );

@@ -10,6 +10,7 @@ import './index.css';
 import AboutPage from './pages/AboutPage';
 import LandingPage from './pages/LandingPage';
 import MapPage from './pages/MapPage';
+import ResourcesPage from './pages/ResourcesPage';
 
 const VITE_WEB_CLIENT_ID = import.meta.env.VITE_WEB_CLIENT_ID;
 
@@ -41,6 +42,16 @@ const router = createBrowserRouter([
       {
         path: '/about',
         element: <AboutPage />,
+      },
+    ],
+  },
+  {
+    path: '/resources',
+    element: <App />,
+    children: [
+      {
+        path: '/resources',
+        element: <ResourcesPage />,
       },
     ],
   },

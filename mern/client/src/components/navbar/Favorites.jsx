@@ -111,7 +111,9 @@ export const Favorites = () => {
 
   return (
     <>
-      <IconButton onClick={handleOpenFavorites}
+      <IconButton 
+        aria-label='Favorited locations'
+        onClick={handleOpenFavorites}
         sx={{ p: 0 }}>
         <FavoriteBorder alt='Favorites'
           sx={{ color: 'white' }} />
