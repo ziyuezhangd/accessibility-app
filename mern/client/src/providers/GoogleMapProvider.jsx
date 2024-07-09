@@ -102,7 +102,7 @@ const GoogleMapProvider = ({children}) => {
    * color: string}>} markerConfigs 
    * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
    */
-  const createMarkers = (markerConfigs, shouldOverwriteExisting=true) => {
+  const createMarkers = (markerConfigs, shouldOverwriteExisting) => {
     // TODO: I think double markers are being added?
     if (shouldOverwriteExisting) {
       clearMarkers();

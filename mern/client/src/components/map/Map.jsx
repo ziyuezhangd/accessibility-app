@@ -30,14 +30,6 @@ const PREDICTION_COLORS = {
   5: '#e51f1f',
 };
 
-const gradeToInt = {
-  'A': 0,
-  'B': 5,
-  'C': 10,
-  'D': 15,
-  'F': 20,
-};
-
 export const Map = () => {
   const theme = useTheme();
   const { placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers, getDirections } = useContext(GoogleMapContext);
@@ -89,7 +81,14 @@ export const Map = () => {
   };
 
   useEffect(() => {
-    const setPredictionVisualization = (type) => {
+    const setPredictionVisualization = async(type) => {
+      const gradeToInt = {
+        'A': 0,
+        'B': 5,
+        'C': 10,
+        'D': 15,
+        'F': 20,
+      };
       switch (type) {
       case 'busyness':
         setPolylineData(busynessData);
@@ -292,3 +291,5 @@ export const Map = () => {
 };
 
 export default Map;
+//https://stackoverflow.com/questions/25496625/add-local-image-as-custom-marker-in-google-maps
+//https://developers.google.com/maps/documentation/javascript/custom-markers
