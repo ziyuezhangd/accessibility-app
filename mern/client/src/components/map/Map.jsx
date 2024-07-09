@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from 'react';
 import { GoogleMap, HeatmapLayer, Polyline } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
 import AccessibilityMarkers from './AccessibilityMarkers';
+import DirectionsModal from './DirectionsModal';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
 import { DataContext } from '../../providers/DataProvider';
@@ -34,17 +35,49 @@ const PREDICTION_COLORS = {
 export const Map = () => {
   // const [placeInfos, setPlaceInfos] = useState([]);
   const theme = useTheme();
-  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
+  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers, getDirections} = useContext(GoogleMapContext);
   const {placeInfos, busynessData, noiseData, odorData} = useContext(DataContext);
   const [selectedPredictionType, setSelectedPredictionType] = useState(null);
   const [polylineData, setPolylineData] = useState([]);
   const [heatmapData, setHeatmapData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [isDirectionsModalVisible, setIsDirectionsModalVisible] = useState(false);
+  const [directionsModalPosition, setDirectionsModalPosition] = useState(null);
+  const [directionsFrom, setDirectionsFrom] = useState(null);
+  const [directionsTo, setDirectionsTo] = useState(null);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
   
+  const handleMapRightClicked = (map, e) => {
+    // Show a dropdown menu
+    setIsDirectionsModalVisible(true);
+    setDirectionsModalPosition({lat: e.latLng.lat(), lng: e.latLng.lng()});
+  };
+
+  const handleDirectionsPositionSelected = async (type) => {
+    if (type === 'from') {
+      setDirectionsFrom(directionsModalPosition);
+      if (directionsTo !== null) {
+        getDirections(directionsModalPosition, directionsTo);
+        resetDirectionsValues();
+      }
+    }
+    if (type === 'to') {
+      setDirectionsTo(directionsModalPosition);
+      if (directionsFrom !== null) {
+        getDirections(directionsFrom, directionsModalPosition);
+        resetDirectionsValues();
+      }
+    }
+  };
+
+  const resetDirectionsValues = () => {
+    setDirectionsFrom(null);
+    setDirectionsTo(null);
+  };
+
   // When a prediction type is selected, change the selected prediction type
   const handleVisualizationSelected = (item) => {
     setSelectedPredictionType(item.id);
@@ -87,7 +120,16 @@ export const Map = () => {
     setPredictionVisualization(selectedPredictionType);
   }, [selectedPredictionType, busynessData, noiseData, odorData]);
 
+  // TODO: clean up by only allowing clicking on segments
   const handleMapClicked = async (map, e) => {
+    // If modal is visible but nothing is selected, just close it
+    if (isDirectionsModalVisible) {
+      //Just exit the modal
+      setDirectionsModalPosition(null);
+      setIsDirectionsModalVisible(false);
+      return;
+    }
+
     // Clear any existing markers
     clearMarkers();
     const isPlaceIconClicked = e.placeId !== undefined;
@@ -210,6 +252,7 @@ export const Map = () => {
           initialCenter={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
           onClick={handleMapClicked}
           onLoad={onMapLoaded}
+          onContextmenu={handleMapRightClicked}
           options={{
             libraries: ['visualization', 'places'],
           }}
@@ -255,6 +298,8 @@ export const Map = () => {
             />)
           )}
           {markers.map(marker => marker)}
+          {isDirectionsModalVisible && directionsModalPosition !== null && <DirectionsModal position={directionsModalPosition}
+            onDirectionsPositionSelected={handleDirectionsPositionSelected}/>}
           <AccessibilityMarkers/>
         </GoogleMap>
         <Snackbar
