@@ -62,9 +62,9 @@ const dbHandler = {
     const db = await getDB();
     const collection = db.collection('userHistory');
     if (collection.find({email: userHistory.email})) {
-      await collection.update(userHistory.searchHistory);
+      await collection.updateOne(userHistory.searchHistory);
     }else {
-      await collection.insertOne(userHistory.searchHistory);
+      await collection.insertOne(userHistory);
     }
   },
   
@@ -72,10 +72,10 @@ const dbHandler = {
     const db = await getDB();
     const collection = db.collection('userHistory');
     if (collection.find({email: userHistory.email})) {
-      await collection.insertOne(userHistory.favorites);
+      await collection.updateOne(userHistory.favorites);
     }
     else {
-      await collection.insertOne(userHistory.favorites);
+      await collection.insertOneOne(userHistory);
     }
   },
 

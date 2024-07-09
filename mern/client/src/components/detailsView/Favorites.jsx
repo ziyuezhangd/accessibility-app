@@ -2,7 +2,7 @@ import { FavoriteBorder, Delete } from '@mui/icons-material';
 import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Menu, Snackbar } from '@mui/material';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
-import { UserContext} from '../../providers/UserProvider';
+import { UserContext } from '../../providers/UserProvider';
 import { postUserHistory } from '../../services/userHistory';
 
 export const Favorites = () => {
@@ -10,7 +10,7 @@ export const Favorites = () => {
   const [favorites, setFavorites] = React.useState([]);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
-  const {UserHistory} = useContext(UserContext);
+  const {userHistories} = useContext(UserContext);
 
   // Load favorites from localStorage on component mount
   React.useEffect(() => {
@@ -73,12 +73,6 @@ export const Favorites = () => {
       const isAlreadyAdded = storedFavorites.some(favorite => favorite.placeId === newFavorite.placeId);
       if (isAlreadyAdded) {
         setSnackbarMessage('This place is already in your favorites');
-        if (UserHistory){
-          const name = UserHistory.name;
-          const email = UserHistory.email;
-          const favorites = newFavorite;
-          postUserHistory(name, email, favorites);
-        }
         setSnackbarOpen(true);
         return;
       }
@@ -86,6 +80,12 @@ export const Favorites = () => {
       if (storedFavorites.length < 5) {
         storedFavorites = [newFavorite, ...storedFavorites];
         setFavorites(storedFavorites);
+        if (userHistories){
+          const name = userHistories.name;
+          const email = userHistories.email;
+          const favorites = storedFavorites;
+          postUserHistory(name, email, favorites);
+        }
         setSnackbarMessage('Added to favorites');
       } else {
         setSnackbarMessage('Maximum of 5 favorites allowed');

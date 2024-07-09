@@ -16,7 +16,7 @@ export const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
-  const {UserHistory} = useContext(UserContext);
+  const {userHistories} = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
@@ -70,8 +70,8 @@ export const NavBar = () => {
           })
           .then((res) => {
             setProfile(res.data);
-            UserHistory.name = res.data.name;
-            UserHistory.email = res.data.email;
+            userHistories.name = res.data.name;
+            userHistories.email = res.data.email;
           })
           .catch((err) => console.log(err));
       }
