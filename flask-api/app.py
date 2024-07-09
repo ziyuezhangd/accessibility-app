@@ -27,7 +27,6 @@ def load_model(model_path):
       model = pickle.load(model_file)
     return model
   except Exception as e:
-    logging.error(f'Failed to load model from {model_path}: {e}')
     return None
 
 # Load models
