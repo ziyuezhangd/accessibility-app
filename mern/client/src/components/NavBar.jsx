@@ -16,8 +16,7 @@ export const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
-  const { UserHistory } = useContext(UserContext);
-
+  const {UserHistory} = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {

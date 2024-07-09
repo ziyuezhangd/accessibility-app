@@ -22,6 +22,7 @@ export default function MapPage() {
             </GoogleMapProvider>
           </DataProvider>
         </UserProvider>
+
       </GoogleMapApiLoader>
     </Suspense>
   );
