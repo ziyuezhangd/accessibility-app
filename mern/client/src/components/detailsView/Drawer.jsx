@@ -29,10 +29,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  * 
  * @param {Object} props - The properties passed to the component.
  * @param {MapLocation} props.selectedLocation - The currently selected location.
+ * @param {string} props.prediction - The prediction for the selectedlocation if available
  * 
  * @returns {JSX.Element} The rendered PersistentDrawerLeft component.
  */
-export default function PersistentDrawerLeft({ selectedLocation }) {
+export default function PersistentDrawerLeft({ selectedLocation, predictions }) {
   const { clearMarkers } = useContext(GoogleMapContext);
 
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
@@ -99,6 +100,7 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
         {selectedDrawerContent === 'location' &&
           <DrawerLocationDetails
             location={location}
+            predictions={predictions}
             onBackClicked={handleBackClicked} />
         }
       </Drawer>
