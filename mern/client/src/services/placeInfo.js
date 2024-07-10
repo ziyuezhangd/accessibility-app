@@ -172,14 +172,16 @@ export class PlaceInfoUtilities {
 */
   static getMarkerPNG = (placeInfo) => {
     const { category } = placeInfo;
-    const pngUrl = '../../accessibilityMarkers/';
+    const svgUrl = '../../accessibilityMarkersSVG/';
     const parentCategory = categoryToParentCategory(category);
 
     if (!parentCategory) {
       return null;
     }
     else{
-      const imgSrc = `${pngUrl}${parentCategory}.png`;
+      const imgSrc = `${svgUrl}${parentCategory}.svg`;
+      imgSrc.setAttribute('fill', 'red');
+      //can try element.style.fill = 'value';
       return imgSrc;
     }
   };
