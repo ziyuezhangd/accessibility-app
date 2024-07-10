@@ -32,11 +32,10 @@ const PREDICTION_COLORS = {
 
 export const Map = () => {
   const theme = useTheme();
-  const { placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers, getDirections } = useContext(GoogleMapContext);
-  const { placeInfos, busynessData, noiseData, odorData } = useContext(DataContext);
+
+  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers, getDirections} = useContext(GoogleMapContext);
+  const {placeInfos, polylineData} = useContext(DataContext);
   const [selectedPredictionType, setSelectedPredictionType] = useState(null);
-  const [polylineData, setPolylineData] = useState([]);
-  const [heatmapData, setHeatmapData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [isDirectionsModalVisible, setIsDirectionsModalVisible] = useState(false);
   const [directionsModalPosition, setDirectionsModalPosition] = useState(null);
@@ -46,6 +45,7 @@ export const Map = () => {
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
+  const [selectedPlaceGrades, setSelectedPlaceGrades] = useState(null);
   
   const handleMapRightClicked = (map, e) => {
     // Show a dropdown menu
@@ -80,38 +80,24 @@ export const Map = () => {
     setSelectedPredictionType(item.id);
   };
 
-  useEffect(() => {
-    const setPredictionVisualization = async(type) => {
-      const gradeToInt = {
-        'A': 0,
-        'B': 5,
-        'C': 10,
-        'D': 15,
-        'F': 20,
-      };
-      switch (type) {
-      case 'busyness':
-        setPolylineData(busynessData);
-        setHeatmapData([]);
-        break;
-      case 'noise':
-        setPolylineData(noiseData);
-        setHeatmapData([]);
-        break;
-      case 'odor':
-        setHeatmapData(odorData.map(br => ({
-          lat: parseFloat(br.location.lat), lng: parseFloat(br.location.lng), weight: gradeToInt[br.prediction],
-        })));
-        setPolylineData([]);
-        break;
-      default:
-        setHeatmapData([]);
-        setPolylineData([]);
-      }
-    };
+  // Update our polyine and heatmap data anytime:
+  // 1. The selected prediction type changes
+  // 2. New prediction data has been loaded
 
-    setPredictionVisualization(selectedPredictionType);
-  }, [selectedPredictionType, busynessData, noiseData, odorData]);
+  const handlePolylineClicked = (polygon, event, predictionData) => {
+    // Clear any existing markers
+    clearMarkers();
+    const latLng = event.latLng;
+    const lat = latLng.lat();
+    const lng = latLng.lng();
+    geocoder.geocode({location: {lat, lng}}).then((response) => {
+      if (response.results[0]) {
+        setLocationData(lat, lng, response.results[0].place_id, response.results[0].formatted_address, false, predictionData);
+      } else {
+        window.alert('No results found');
+      }
+    });
+  };
 
   // TODO: clean up by only allowing clicking on segments
   const handleMapClicked = async (map, e) => {
@@ -138,26 +124,19 @@ export const Map = () => {
       placesService.getDetails(request, (place, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
           setSnackbarOpen(true);
-          setLocationData(lat, lng, e.placeId, place.name, true);
+          setLocationData(lat, lng, e.placeId, place.name, true, null);
         } else {
           console.error('Oh no!');
-        }
-      });
-    } else {
-      geocoder.geocode({ location: { lat, lng } }).then((response) => {
-        if (response.results[0]) {
-          setLocationData(lat, lng, response.results[0].place_id, response.results[0].formatted_address, false);
-        } else {
-          window.alert('No results found');
         }
       });
     }
   };
 
-  const setLocationData = (lat, lng, placeId, name, isPlace) => {
+  const setLocationData = (lat, lng, placeId, name, isPlace, predictionData) => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
-    createMarkers([{ lat: selectedLocation.lat, lng: selectedLocation.lng, title: name }], true);
+    setSelectedPlaceGrades(predictionData);
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
     mapInstance.setCenter({ lat: selectedLocation.lat, lng: selectedLocation.lng });
   };
@@ -207,6 +186,7 @@ export const Map = () => {
     <Box sx={{ display: 'flex' }}
       role='main'>
       <PersistentDrawerLeft selectedLocation={selectedPlace}
+        predictions={selectedPlaceGrades}
         placeInfos={placeInfos} />
       <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
@@ -221,6 +201,7 @@ export const Map = () => {
           }}
           mapOptions={{
             mapId: VITE_MAP_ID,
+            // restriction: {}, // TODO
           }}
         >
           <Box sx={containerStyle}>
@@ -233,31 +214,21 @@ export const Map = () => {
               <HelpIcon />
             </Control>
           </Box>
-          {heatmapData?.length > 0 && (
-            <HeatmapLayer
-              data={heatmapData.filter(d => d.weight > 0).map((data) => ({
-                location: new window.google.maps.LatLng(data.lat, data.lng),
-                weight: data.weight,
-              }))}
-              gradient={[
-                'rgba(0, 255, 0, 0)',// green
-                'rgba(0, 255, 0, 1)',
-                'rgba(255, 255, 0, 1)',// yellow
-                'rgba(128, 0, 128, 1)'// purple
-              ]}
-              radius={90}
-              opacity={0.6}
-            />
-          )}
-          {polylineData?.length > 0 && polylineData.map(({ location, prediction }, i) =>
-            (<Polyline
+          {selectedPredictionType && polylineData && polylineData.map((data, i) => 
+          // TODO: Need to have a different gradient for red-green color blindness
+          { 
+            const {location} = data;
+            const prediction = data[selectedPredictionType];
+            return (<Polyline
               key={i}
               path={[{ lat: location.start.lat, lng: location.start.lng }, { lat: location.end.lat, lng: location.end.lng }]}
               strokeColor={PREDICTION_COLORS[prediction]}
-              strokeOpacity={prediction === 0 || prediction === 'A' ? 0.5 : 1.0}
-              strokeWeight={prediction === 0 || prediction === 'A' ? 2 : 5.0}
+              strokeOpacity={prediction === 0 || prediction === 'A' ? 0.05 : 1.0}
+              strokeWeight={8.0}
               geodesic
-            />)
+              clickable={true}
+              onClick={(p, e) => handlePolylineClicked(p, e, data)}
+            />);}
           )}
           {markers.map(marker => marker)}
           {isDirectionsModalVisible && directionsModalPosition !== null && <DirectionsModal position={directionsModalPosition}
