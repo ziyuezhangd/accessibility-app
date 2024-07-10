@@ -68,7 +68,7 @@ const DataProvider = ({children}) => {
     }
 
     // Convert to ISO string
-    selectedDate = dayjs(selectedDate).format('YYYY-MM-DD[T]HH:mm:ss');
+    selectedDate = dayjs(selectedDate).set('minute', 0).set('second', 0).format('YYYY-MM-DD[T]HH:mm:ss');
 
     const isNewDayAndHour = (dayjs(selectedDate).day() !== dayjs(predictionDateTime).day() || dayjs(selectedDate).hour() !== dayjs(predictionDateTime).hour());
     // Re-load with the new selected date

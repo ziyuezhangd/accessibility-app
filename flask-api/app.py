@@ -3,7 +3,6 @@ from flask_cors import CORS
 import pickle
 import pandas as pd
 import json
-import logging
 import numpy as np
 
 app = Flask(__name__)
