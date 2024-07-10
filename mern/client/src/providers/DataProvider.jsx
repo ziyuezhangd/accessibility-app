@@ -73,6 +73,9 @@ const DataProvider = ({children}) => {
     const isNewDayAndHour = (dayjs(selectedDate).day() !== dayjs(predictionDateTime).day() || dayjs(selectedDate).hour() !== dayjs(predictionDateTime).hour());
     // Re-load with the new selected date
     if (isFirstPrediction || isNewDayAndHour) {
+      if (isFirstPrediction) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
       console.log('Reloading from server');
       console.log('selectedDate ', selectedDate);
       await loadBusynessRatings(selectedDate);
