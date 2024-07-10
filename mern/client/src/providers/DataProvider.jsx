@@ -79,7 +79,7 @@ const DataProvider = ({children}) => {
     // Re-load with the new selected date
     if (isFirstPrediction || isNewDayAndHour) {
       if (isFirstPrediction) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
       console.log('Reloading from server');
       console.log('selectedDate ', selectedDate);
