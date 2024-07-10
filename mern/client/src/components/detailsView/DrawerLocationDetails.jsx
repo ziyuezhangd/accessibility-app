@@ -47,7 +47,7 @@ const formStyle = {
   p: 4,
 };
 
-export default function DrawerLocationDetails({ location, onBackClicked }) {
+export default function DrawerLocationDetails({ location, predictions }) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -139,7 +139,8 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
         <PlaceOverview place={location.placeId}
           size='medium'></PlaceOverview>
         <Grades lat={location.lat}
-          lng={location.lng}/>
+          lng={location.lng}
+          predictions={predictions}/>
         <NearestRestrooms 
           lat={location.lat}
           lng={location.lng} />
