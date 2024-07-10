@@ -89,7 +89,7 @@ export default function NearestRestrooms({ lat, lng }) {
                     color='error' />
                 ) : (
                   <Chip label='UNCERTAIN' 
-                    color='primary' />
+                    color='default' />
                 )}
               </ListItemSecondaryAction>
             </ListItemButton>
