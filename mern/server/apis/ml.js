@@ -12,10 +12,10 @@ const dataMODZCTA = await fs.promises.readFile(filePathMODZCTA, 'utf-8');
 const dictionaryMODZCTA = JSON.parse(dataMODZCTA);
 
 let url;
-if (process.env.NODE_ENV === 'development') {
-  url = 'http://127.0.0.1:5000/';
-} else {
+if (process.env.FLASK === 'remote') {
   url = 'http://137.43.49.23/flask-api/';
+} else {
+  url = 'http://127.0.0.1:5000/';
 }
 
 const ml = {
