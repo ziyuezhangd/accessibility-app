@@ -180,8 +180,6 @@ export class PlaceInfoUtilities {
     }
     else{
       const imgSrc = `${svgUrl}${parentCategory}.svg`;
-      imgSrc.setAttribute('fill', 'red');
-      //can try element.style.fill = 'value';
       return imgSrc;
     }
   };

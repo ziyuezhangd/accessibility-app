@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
 import { AdvancedMarker, PinElement } from 'react-google-map-wrapper';
+import { ReactSVG } from 'react-svg';
 
 const GoogleMapContext = createContext();
 
@@ -87,11 +88,17 @@ const GoogleMapProvider = ({children}) => {
             // key={key}
           >
             <img 
-              src={imgSrc}
-              style={{height: imgSize}}
-            />
+              src = {imgSrc}
+              style={{height: imgSize, filter: ` saturate(3000%) hue-rotate(90deg) brightness(95%) contrast(95%)`}}
+              //90 deg green
+              //0 deg orange
+              //
+              alt = 'marker'
+            >
+            
+            </img>
           </AdvancedMarker>
-        );
+        );       
         markersToCreate.push(marker);
       } else {
         // console.log('Imgsrc is null')
