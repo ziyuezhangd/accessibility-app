@@ -1,7 +1,7 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Snackbar, IconButton, Button, useTheme, useMediaQuery } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
-import { GoogleMap, HeatmapLayer, Polyline } from 'react-google-map-wrapper';
+import { GoogleMap, Polyline } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
 import AccessibilityMarkers from './AccessibilityMarkers';
 import DirectionsModal from './DirectionsModal';
@@ -10,6 +10,7 @@ import SearchBar from './SearchBar';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';
+import CategoryFilter from '../detailsView/CategoryFilter'; // Import the CategoryFilter component
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
@@ -46,7 +47,8 @@ export const Map = () => {
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [selectedPlaceGrades, setSelectedPlaceGrades] = useState(null);
-  
+  const [selectedCategories, setSelectedCategories] = useState([]); // Add state for categories
+
   const handleMapRightClicked = (map, e) => {
     // Show a dropdown menu
     setIsDirectionsModalVisible(true);
@@ -79,7 +81,7 @@ export const Map = () => {
   const handleVisualizationSelected = (item) => {
     setSelectedPredictionType(item.id);
   };
-
+  
   // Update our polyine and heatmap data anytime:
   // 1. The selected prediction type changes
   // 2. New prediction data has been loaded
@@ -211,12 +213,18 @@ export const Map = () => {
                 onSearchEntered={handleSearchEntered} />
             </Control>
             <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-              <HelpIcon />
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <CategoryFilter
+                  selectedCategories={selectedCategories}
+                  setSelectedCategories={setSelectedCategories} // Pass the state setters
+                />
+                <HelpIcon />
+              </Box>
             </Control>
           </Box>
           {selectedPredictionType && polylineData && polylineData.map((data, i) => 
           // TODO: Need to have a different gradient for red-green color blindness
-          { 
+          {
             const {location} = data;
             const prediction = data[selectedPredictionType];
             return (<Polyline
