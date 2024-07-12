@@ -1,4 +1,3 @@
-// src/components/CategoryFilter.jsx
 import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
@@ -14,7 +13,7 @@ const CustomAutocomplete = styled(Autocomplete)({
   width: '200px',
   backgroundColor: '#4a90e2',
   borderRadius: '8px',
-  marginTop: '10px', // Adding gap at the top
+  marginTop: '10px',
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderColor: 'white',
@@ -65,7 +64,7 @@ const CustomChip = styled(Chip)({
 });
 
 const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
-  const { mapInstance, createMarkers, clearMarkers } = useContext(GoogleMapContext);
+  const { mapInstance, createMarkers, clearMarkers, removeMarkers } = useContext(GoogleMapContext);
   const { placeInfos } = useContext(DataContext);
   const [categories, setCategories] = useState([]);
   const [hasFocus, setHasFocus] = useState(false);
@@ -78,34 +77,51 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
   useEffect(() => {
     if (!mapInstance) return;
 
-    if (selectedCategories.length === 0 || selectedCategories.includes('All')) {
-      clearMarkers();
-      if (selectedCategories.includes('All')) {
-        const allMarkers = placeInfos.map(placeInfo => ({
+    const handleMarkers = () => {
+      if (selectedCategories.length === 0 || selectedCategories.includes('All')) {
+        // Remove only category markers, not restroom markers
+        const categoryMarkers = placeInfos.map(placeInfo => ({
+          lat: placeInfo.latitude,
+          lng: placeInfo.longitude,
+        }));
+        removeMarkers(categoryMarkers);
+
+        if (selectedCategories.includes('All')) {
+          const allMarkers = placeInfos.map(placeInfo => ({
+            lat: placeInfo.latitude,
+            lng: placeInfo.longitude,
+            imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
+            imgSize: '30px',
+            imgAlt: placeInfo.name,
+          })).filter(marker => marker.imgSrc !== null);
+
+          createMarkers(allMarkers, false); // Create all markers if "All" is selected without clearing existing markers
+        }
+        return; // No categories selected or "All" selected
+      }
+
+      const filteredMarkers = placeInfos
+        .filter(placeInfo => selectedCategories.includes(categoryToParentCategory(placeInfo.category)))
+        .map(placeInfo => ({
           lat: placeInfo.latitude,
           lng: placeInfo.longitude,
           imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
           imgSize: '30px',
           imgAlt: placeInfo.name,
-        })).filter(marker => marker.imgSrc !== null);
+        }))
+        .filter(marker => marker.imgSrc !== null);
 
-        createMarkers(allMarkers, true); // Create all markers if "All" is selected
-      }
-      return; // No categories selected or "All" selected, don't display any markers if none are selected
-    }
-
-    const filteredMarkers = placeInfos
-      .filter(placeInfo => selectedCategories.includes(categoryToParentCategory(placeInfo.category)))
-      .map(placeInfo => ({
+      // Remove existing category markers before adding new ones
+      const categoryMarkersToRemove = placeInfos.map(placeInfo => ({
         lat: placeInfo.latitude,
         lng: placeInfo.longitude,
-        imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
-        imgSize: '30px',
-        imgAlt: placeInfo.name,
-      }))
-      .filter(marker => marker.imgSrc !== null);
+      }));
+      removeMarkers(categoryMarkersToRemove);
 
-    createMarkers(filteredMarkers, true); // Create markers based on filtered categories and overwrite existing markers
+      createMarkers(filteredMarkers, false); // Create markers based on filtered categories without clearing existing markers
+    };
+
+    handleMarkers();
   }, [selectedCategories, placeInfos, mapInstance]);
 
   const handleCategorySelected = (categories) => {
@@ -143,7 +159,7 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
             key={option} // Add key prop here
             variant="outlined"
             label={option}
-            {...getTagProps({ index })}
+            {...getTagProps({ index })} 
           />
         ))
       }
@@ -156,9 +172,9 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
           hasFocus={hasFocus}
           hasValue={hasValue}
           onFocus={handleFocus}
-          onBlur={handleBlur}
+          onBlur={handleBlur} 
         />
-      )}
+      )} 
     />
   );
 };

@@ -91,12 +91,12 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions }) 
         </DrawerHeader>
 
         {selectedDrawerContent === 'history' &&
-          <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
+        <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
         {selectedDrawerContent === 'location' &&
-          <DrawerLocationDetails
-            location={location}
-            predictions={predictions}
-            onBackClicked={handleBackClicked} />
+        <DrawerLocationDetails
+          location={location}
+          predictions={predictions}
+          onBackClicked={handleBackClicked} />
         }
       </Drawer>
     </>

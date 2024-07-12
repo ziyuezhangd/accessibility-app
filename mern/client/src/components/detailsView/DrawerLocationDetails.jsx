@@ -1,18 +1,17 @@
-// DrawerLocationDetails.jsx
 import {PlaceOverview} from '@googlemaps/extended-component-library/react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Favorite from '@mui/icons-material/Favorite';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import { Button, Alert,IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import FeedbackForm from './FeedbackForm';
 import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
-import { postFeedback } from '../../services/feedback';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { MapLocation } from '../../utils/MapUtils';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -47,9 +46,10 @@ const formStyle = {
   p: 4,
 };
 
-export default function DrawerLocationDetails({ location, predictions }) {
+export default function DrawerLocationDetails({ location, predictions, onBackClicked }) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const { removeMarkers } = useContext(GoogleMapContext);
 
   useEffect(() => {
     addLocationToHistory();

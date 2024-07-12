@@ -91,69 +91,53 @@ const GoogleMapProvider = ({children}) => {
   /**
    * 
    * @param {Array<{
-   * lat: string, 
-   * lng: string, 
-   * imgSrc: string, 
-   * imgSize: number, 
-   * imgAlt: string, 
-   * scale: number, 
-   * title: string,
-   * key: num,
-   * color: string}>} markerConfigs 
-   * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
-   */
+  * lat: string, 
+  * lng: string, 
+  * imgSrc: string, 
+  * imgSize: number, 
+  * imgAlt: string, 
+  * scale: number, 
+  * title: string,
+  * key: num,
+  * color: string}>} markerConfigs 
+  * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
+  */
   const createMarkers = (markerConfigs, shouldOverwriteExisting) => {
     // TODO: I think double markers are being added?
     if (shouldOverwriteExisting) {
       clearMarkers();
     }
-    const markersToCreate = [];
-    for (const config of markerConfigs) {
-      const {imgSrc, key, title} = config;
-      let {lat, lng} = config;
-      lat = parseFloat(lat);
-      lng = parseFloat(lng);
-      if (imgSrc) {
-        const {imgAlt, imgSize} = config;
-        // console.log(imgSrc)
-        const marker = (
-          <AdvancedMarker 
-            lat={lat}
-            lng={lng}
-            title={title}
-            gmpClickable={true}
-            // key={key}
-          >
-            <img 
-              src={imgSrc}
-              style={{height: imgSize}}
-            />
-          </AdvancedMarker>
-        );
-        markersToCreate.push(marker);
-      } else {
-        // console.log('Imgsrc is null')
-        let { scale, color} = config;
-        scale = scale || 1;
-        color = color || '#FF0000';
-        const marker = (
-          <AdvancedMarker 
-            lat={lat}
-            lng={lng}
-            title={title}
-            gmpClickable={true}
-            // key={key}
-          >
-            <PinElement 
-              scale={scale}
-              color={color} />
-          </AdvancedMarker>
-        );
-        markersToCreate.push(marker);
-      }
-    }
-    setMarkers([markersToCreate,true]);
-    console.log(`Created ${markers.length} markers`);
+    const markersToCreate = markerConfigs.map(config => {
+      const { imgSrc, title, lat, lng, imgAlt, imgSize, scale, color } = config;
+      return imgSrc ? (
+        <AdvancedMarker 
+          lat={parseFloat(lat)}
+          lng={parseFloat(lng)}
+          title={title}
+          gmpClickable={true}
+          // key={key}
+        >
+          <img 
+            src={imgSrc}
+            style={{height: imgSize}}
+            alt={imgAlt}
+          />
+        </AdvancedMarker>
+      ) : (
+        <AdvancedMarker 
+          lat={parseFloat(lat)}
+          lng={parseFloat(lng)}
+          title={title}
+          gmpClickable={true}>
+          <PinElement
+            scale={scale}
+            color={color} />            
+        </AdvancedMarker>
+      );
+    });
+
+    setMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
+    console.log(`Created ${markersToCreate.length} markers`);
   };
 
   /**
@@ -161,11 +145,11 @@ const GoogleMapProvider = ({children}) => {
    * @param {Array<{lat: number, lng: number}>} latLngs 
    */
   const removeMarkers = (latLngs) => {
-    for (const latLng of latLngs) {
-      const markersToFilter = [...markers];
-      _.remove(markersToFilter, m => m.lat === parseFloat(latLng.lat) && m.lng === parseFloat(latLng.lng));
-      setMarkers(markersToFilter);
-    }
+    setMarkers(prevMarkers => prevMarkers.filter(marker =>
+      !latLngs.some(latLng =>
+        parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
+      )
+    ));
   };
 
   /**
@@ -198,5 +182,5 @@ const GoogleMapProvider = ({children}) => {
     </GoogleMapContext.Provider>
   );
 };
-  
+
 export { GoogleMapContext, GoogleMapProvider };
