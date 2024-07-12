@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
+import { retryFetch } from '../utils/retryFetch';
 
 /**
  *
@@ -8,50 +9,20 @@ import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
  *
  * @returns {Promise<Array<PlaceInfo>>} placeInfos
  */
-export const getPlaceInfos = async (maxRetries = 3, retryDelay = 1000) => {
-  let attempts = 0;
-  while (attempts < maxRetries) {
-    try {
-      const response = await fetch(`/api/place-infos`);
-      if (!response.ok) {
-        const message = `An error has occurred: ${response.statusText}`;
-        throw new Error(message);
-      }
-
-      const placeInfos = await response.json();
-      return placeInfos.map((placeInfo) => {
-        return new PlaceInfo({
-          ...placeInfo,
-          latitude: parseFloat(placeInfo.latitude),
-          longitude: parseFloat(placeInfo.longitude)
-        });
+export const getPlaceInfos = async () => {
+  try {
+    const placeInfos = await retryFetch('/api/place-infos');
+    return placeInfos.map((placeInfo) => {
+      return new PlaceInfo({
+        ...placeInfo,
+        latitude: parseFloat(placeInfo.latitude),
+        longitude: parseFloat(placeInfo.longitude)
       });
-    } catch(error) {
-      attempts += 1;
-      console.error(error.message);
-      if (attempts < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, retryDelay));
-      } else {
-        console.error('Max retries reached. Failed to fetch busyness ratings.');
-        return;
-      }
-    }
-  }
-  const response = await fetch(`/api/place-infos`);
-  if (!response.ok) {
-    const message = `An error has occurred: ${response.statusText}`;
-    console.error(message);
-    return;
-  }
-
-  const placeInfos = await response.json();
-  return placeInfos.map((placeInfo) => {
-    return new PlaceInfo({
-      ...placeInfo,
-      latitude: parseFloat(placeInfo.latitude),
-      longitude: parseFloat(placeInfo.longitude)
     });
-  });
+  } catch(error) {
+    console.error('Failed to fetch placeInfos:', error.message);
+    return null;
+  }
 };
 
 /**

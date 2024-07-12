@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import { getCurrentTimeInNewYork, getDayString, isTimeInRange, parseTimeRangeFromString, isDSTNow } from '../utils/dateTime';
 import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
+import { retryFetch } from '../utils/retryFetch';
 
 /**
  *
@@ -9,35 +10,19 @@ import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
  *  @param ('all' | 'incl-partial' | 'full')  accessibility
  * @return {Promise<PublicRestroom[]>} list of retrooms
  */
-export const getPublicRestrooms = async (accessibility = 'all', maxRetries = 3, retryDelay = 1000) => {
-  let attempts = 0;
-  while (attempts < maxRetries) {
-    try {
-      const response = await fetch('/api/restrooms?' + new URLSearchParams({ accessibility }));
-      if (!response.ok) {
-        const message = `An error has occurred: ${response.statusText}`;
-        throw new Error(message);
-      }
-
-      const restrooms = await response.json();
-
-      return restrooms.map((restroom) => {
-        return new PublicRestroom({
-          ...restroom,
-          latitude: parseFloat(restroom.latitude),
-          longitude: parseFloat(restroom.longitude)
-        });
+export const getPublicRestrooms = async (accessibility = 'all') => {
+  try {
+    const restrooms = await retryFetch('/api/restrooms?' + new URLSearchParams({ accessibility }));
+    return restrooms.map((restroom) => {
+      return new PublicRestroom({
+        ...restroom,
+        latitude: parseFloat(restroom.latitude),
+        longitude: parseFloat(restroom.longitude)
       });
-    } catch(error) {
-      attempts += 1;
-      console.error(error.message);
-      if (attempts < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, retryDelay));
-      } else {
-        console.error('Max retries reached. Failed to fetch busyness ratings.');
-        return;
-      }
-    }
+    });
+  } catch(error) {
+    console.error('Failed to fetch public restrooms:', error.message);
+    return null;
   }
 };
 

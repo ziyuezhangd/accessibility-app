@@ -1,4 +1,4 @@
-export const retryFetch = async (url, maxRetries = 3, retryDelay = 1000) => {
+export const retryFetch = async (url, maxRetries = 3, retryDelay = 500) => {
   let attempts = 0;
   while (attempts < maxRetries) {
     try {
