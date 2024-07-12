@@ -15,8 +15,8 @@ export const retryFetch = async (url, maxRetries = 3, retryDelay = 1000) => {
       if (attempts < maxRetries) {
         await new Promise(resolve => setTimeout(resolve, retryDelay));
       } else {
-        console.error(`Max retries reached. Failed to fetch data from ${url}`);
-        return;
+        const message = `Max retries reached. Failed to fetch data from ${url}`;
+        throw new Error(message);
       }
     }
   }
