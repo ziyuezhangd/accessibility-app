@@ -1,3 +1,4 @@
+// src/components/CategoryFilter.jsx
 import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
@@ -38,24 +39,21 @@ const CustomAutocomplete = styled(Autocomplete)({
   },
 });
 
-const CustomTextField = styled(TextField)({
+const CustomTextField = styled(TextField)(({ hasFocus, hasValue }) => ({
   '& .MuiInputBase-input': {
     color: 'white', // Display the placeholder text in white
   },
   '& .MuiInputLabel-root': {
     color: 'white', // Label color
+    backgroundColor: hasFocus || hasValue ? '#4a90e2' : 'transparent', // Blue background when focused or has value
     transition: 'opacity 0.3s, color 0.3s, background-color 0.3s',
-    opacity: 1, // Ensure the label is visible initially
-  },
-  '& .MuiInputLabel-root.Mui-focused': {
-    color: 'transparent', // Make label text color transparent when focused
-    backgroundColor: 'transparent', // Make label background transparent when focused
-    opacity: 0, // Make label completely invisible when focused
+    opacity: hasFocus || hasValue ? 1 : 1, // Keep the label visible
+    padding: '0 4px', // Padding to avoid label text overlap with background
   },
   '& .MuiInputBase-input.Mui-focused': {
     color: 'black', // Input text color when focused
   },
-});
+}));
 
 const CustomChip = styled(Chip)({
   backgroundColor: '#4a90e2', // Background color for selected options
@@ -70,6 +68,7 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
   const { mapInstance, createMarkers, clearMarkers } = useContext(GoogleMapContext);
   const { placeInfos } = useContext(DataContext);
   const [categories, setCategories] = useState([]);
+  const [hasFocus, setHasFocus] = useState(false);
 
   useEffect(() => {
     const uniqueCategories = _.uniqBy(placeInfos.map(place => categoryToParentCategory(place.category)).filter(category => category && category.trim() !== ''));
@@ -119,6 +118,16 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
     }
   };
 
+  const handleFocus = () => {
+    setHasFocus(true);
+  };
+
+  const handleBlur = () => {
+    setHasFocus(false);
+  };
+
+  const hasValue = selectedCategories.length > 0;
+
   return (
     <CustomAutocomplete
       multiple
@@ -144,6 +153,10 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
           variant="outlined"
           label="Filter by Category"
           placeholder="Categories"
+          hasFocus={hasFocus}
+          hasValue={hasValue}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         />
       )}
     />
