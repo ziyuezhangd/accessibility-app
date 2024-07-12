@@ -1,94 +1,91 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, useTheme, Snackbar, IconButton, Button, useMediaQuery } from '@mui/material';
-import dayjs from 'dayjs';
+import { Box, Snackbar, IconButton, Button,useTheme, useMediaQuery } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
-import { GoogleMap, HeatmapLayer, InfoWindow, Marker, MarkerClusterer } from 'react-google-map-wrapper';
+import { GoogleMap, HeatmapLayer, Polyline } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
-import DateTimePicker from './DateTimePicker';
+import AccessibilityMarkers from './AccessibilityMarkers';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
-import { DataContext, DataProvider } from '../../providers/DataProvider';
+import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfoUtilities } from '../../services/placeInfo';
-import { getPlaceInfos } from '../../services/placeInfo';
-import { getBusynessRatings, getNoiseRatings, getOdourRatings } from '../../services/ratings';
-import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation, busynessGradient, noiseGradient, odorGradient } from '../../utils/MapUtils';import PersistentDrawerLeft from '../detailsView/Drawer';
+import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';
+import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 
-const busynessData = [
-  { lat: 40.7831, lng: -73.9712, weight: 2 },
-  { lat: 40.748817, lng: -73.985428, weight: 1 },
-  { lat: 40.73061, lng: -73.935242, weight: 3 },
-  { lat: 40.712776, lng: -74.005974, weight: 4 },
-  { lat: 40.758896, lng: -73.98513, weight: 2 },
-  { lat: 40.748817, lng: -73.968285, weight: 3 },
-  { lat: 40.729975, lng: -73.980003, weight: 1 },
-  { lat: 40.7624, lng: -73.975661, weight: 4 },
-  { lat: 40.771302, lng: -73.964422, weight: 2 },
-  { lat: 40.748441, lng: -73.985664, weight: 5 },
-];
+const PREDICTION_COLORS = {
+  'A': '#44ce1b',
+  0: '#44ce1b',
+  'B': '#44ce1b',
+  1: '#44ce1b',
+  'C':'#bbdb44',
+  2: '#bbdb44',
+  'D':'#f7e379',
+  3:'#f7e379',
+  'E': '#f2a134',
+  4:'#f2a134',
+  'F':'#e51f1f',
+  5:'#e51f1f',
 
-const noiseData = [
-  { lat: 40.73061, lng: -73.935242, weight: 3 },
-  { lat: 40.789623, lng: -73.959893, weight: 1 },
-  { lat: 40.776676, lng: -73.971321, weight: 4 },
-  { lat: 40.754932, lng: -73.984016, weight: 2 },
-  { lat: 40.748817, lng: -73.992428, weight: 5 },
-  { lat: 40.7366, lng: -73.998321, weight: 2 },
-  { lat: 40.712776, lng: -73.995974, weight: 3 },
-  { lat: 40.780751, lng: -73.977182, weight: 1 },
-  { lat: 40.764356, lng: -73.973028, weight: 4 },
-  { lat: 40.743305, lng: -73.98821, weight: 5 },
-];
-
-const odorData = [
-  { lat: 40.712776, lng: -74.005974, weight: 5 },
-  { lat: 40.706446, lng: -74.00937, weight: 3 },
-  { lat: 40.759011, lng: -73.984472, weight: 1 },
-  { lat: 40.7433, lng: -74.003597, weight: 4 },
-  { lat: 40.742054, lng: -74.003047, weight: 2 },
-  { lat: 40.729517, lng: -73.998512, weight: 3 },
-  { lat: 40.753182, lng: -73.982253, weight: 5 },
-  { lat: 40.758896, lng: -73.96813, weight: 1 },
-  { lat: 40.731233, lng: -73.994242, weight: 4 },
-  { lat: 40.7243, lng: -73.99771, weight: 2 },
-];
+};
 
 export const Map = () => {
   // const [placeInfos, setPlaceInfos] = useState([]);
   const theme = useTheme();
   const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers} = useContext(GoogleMapContext);
-  const {placeInfos} = useContext(DataContext);
-
-  const [heatMapData, setHeatMapData] = useState([]);
-  const [heatMapGradient, setHeatMapGradient] = useState([]);
+  const {placeInfos, busynessData, noiseData, odorData} = useContext(DataContext);
+  const [selectedPredictionType, setSelectedPredictionType] = useState(null);
+  const [polylineData, setPolylineData] = useState([]);
+  const [heatmapData, setHeatmapData] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(dayjs());
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
-  const handleSelect = (item) => {
-    switch (item.id) {
-    case 'busyness':
-      setHeatMapData(busynessData);
-      setHeatMapGradient(busynessGradient);
-      break;
-    case 'noise':
-      setHeatMapData(noiseData);
-      setHeatMapGradient(noiseGradient);
-      break;
-    case 'odor':
-      setHeatMapData(odorData);
-      setHeatMapGradient(odorGradient);
-      break;
-    default:
-      setHeatMapData([]);
-      setHeatMapGradient([]);
-    }
+  
+  // When a prediction type is selected, change the selected prediction type
+  const handleVisualizationSelected = (item) => {
+    setSelectedPredictionType(item.id);
   };
+
+  // Update our polyine and heatmap data anytime:
+  // 1. The selected prediction type changes
+  // 2. New prediction data has been loaded
+  useEffect(() => {
+    // Based on our selected visualization type, render visualiztion
+    const setPredictionVisualization = async (type) => {
+      const gradeToInt = {
+        'A': 0,
+        'B': 5,
+        'C': 10,
+        'D': 15,
+        'F': 20,
+      };
+      switch (type) {
+      case 'busyness':
+        setPolylineData(busynessData);
+        setHeatmapData([]);
+        break;
+      case 'noise':
+        setPolylineData(noiseData);
+        setHeatmapData([]);
+        break;
+      case 'odor':
+        setHeatmapData(odorData.map(br => ({
+          lat: parseFloat(br.location.lat), lng:parseFloat(br.location.lng), weight: gradeToInt[br.prediction] ,
+        })));
+        setPolylineData([]);
+        break;
+      default:
+        setHeatmapData([]);
+        setPolylineData([]);
+      }
+    };
+
+    setPredictionVisualization(selectedPredictionType);
+  }, [selectedPredictionType, busynessData, noiseData, odorData]);
 
   const handleMapClicked = async (map, e) => {
     // Clear any existing markers
@@ -122,9 +119,10 @@ export const Map = () => {
     }
   };
 
+  // When place infos are loaded, render accessibility markers
   useEffect(() => {
     const showAccessibilityMarkers = (placeInfos) => {
-      const markers = placeInfos.map(placeInfo => {
+      const markers = placeInfos.map((placeInfo, i) => {
         const imgSrc = PlaceInfoUtilities.getMarkerPNG(placeInfo);
         if (imgSrc === null){
           return null;
@@ -135,7 +133,8 @@ export const Map = () => {
             lng: placeInfo.longitude,
             imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
             imgSize: '30px', 
-            imgAlt: PlaceInfoUtilities.name,
+            imgAlt: placeInfo.name,
+            key: i,
           }; 
         }
 
@@ -154,10 +153,11 @@ export const Map = () => {
   const setLocationData = (lat, lng, placeId, name, isPlace) => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
-    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng}]);
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}]);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
+    mapInstance.setCenter({lat: selectedLocation.lat, lng: selectedLocation.lng});
   };
-  
+
   const handleAddToFavorites = () => {
     if (selectedPlace) {
       console.log('Added to favorites:', selectedPlace);
@@ -167,7 +167,7 @@ export const Map = () => {
     }
   };
 
-  const handleSearchEntered = (selected) => { 
+  const handleSearchEntered = (selected) => {
     var request = {
       placeId: selected.id,
       fields: ['name']
@@ -189,20 +189,6 @@ export const Map = () => {
     setSnackbarOpen(false);
   };
 
-  const fetchData = async () => {
-    // const busynessRatings = await getBusynessRatings(selectedDate);
-    // console.log('busynessRatings: ', busynessRatings);
-    // const noiseRatings = await getNoiseRatings(selectedDate);
-    // console.log('noiseRatings: ', noiseRatings);
-    // const odourRatings = await getOdourRatings(selectedDate);
-    // console.log('odourRatings: ', odourRatings);
-    // getPlaceInfos().then(setPlaceInfos);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [selectedDate]);
-
   const containerStyle = {
     display: 'flex',
     flexDirection: isMobile ? 'column' : 'row',
@@ -213,20 +199,15 @@ export const Map = () => {
     padding: '10px',
   };
 
-  const dateTimeHelpContainerStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-  };
-
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex' }}
+      role='main'>
       <PersistentDrawerLeft selectedLocation={selectedPlace}/>
       <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
           zoom={DEFAULT_ZOOM}
-          center={selectedPlace === null ? { lat: MANHATTAN_LAT, lng: MANHATTAN_LNG } : { lat: selectedPlace.lat, lng: selectedPlace.lng }}
+          initialCenter={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
           onClick={handleMapClicked}
           onLoad={onMapLoaded}
           options={{
@@ -237,34 +218,44 @@ export const Map = () => {
           }}
         >
           <Box sx={containerStyle}>
-            <Dropdown onSelect={handleSelect} />
+            <Dropdown onSelect={handleVisualizationSelected} />
             <Control position={google.maps.ControlPosition.TOP_CENTER}>
-              <SearchBar
+              <SearchBar 
                 onSearchEntered={handleSearchEntered}/>
             </Control>
             <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-              <Box sx={dateTimeHelpContainerStyle}>
-                <DateTimePicker selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate} />
-                <HelpIcon />
-              </Box>
+              <HelpIcon />
             </Control>
           </Box>
-          <HelpIcon />
-          {heatMapData.length > 0 && (
+          {heatmapData?.length > 0 && (
             <HeatmapLayer
-              data={heatMapData.map((data) => ({
+              data={heatmapData.filter(d => d.weight > 0).map((data) => ({
                 location: new window.google.maps.LatLng(data.lat, data.lng),
                 weight: data.weight,
               }))}
-              gradient={heatMapGradient}
-              radius={20}
+              gradient={[
+                'rgba(0, 255, 0, 0)',// green
+                'rgba(0, 255, 0, 1)',
+                'rgba(255, 255, 0, 1)',// yellow
+                'rgba(128, 0, 128, 1)'// purple
+              ]}
+              radius={90}
               opacity={0.6}
             />
           )}
-          {markers.map(marker => 
-            <InfoWindow>{marker}</InfoWindow>
+          {polylineData?.length > 0 && polylineData.map(({location, prediction}, i) => 
+          // TODO: Need to have a different gradient for red-green color blindness
+            (<Polyline
+              key={i}
+              path={[{lat: location.start.lat, lng: location.start.lng}, {lat: location.end.lat, lng: location.end.lng}, ]}
+              strokeColor={PREDICTION_COLORS[prediction]}
+              strokeOpacity={prediction === 0 || prediction === 'A' ? 0.5 : 1.0}
+              strokeWeight={prediction === 0 || prediction === 'A' ? 2 : 5.0}
+              geodesic
+            />)
           )}
+          {markers.map(marker => marker)}
+          <AccessibilityMarkers/>
         </GoogleMap>
         <Snackbar
           open={snackbarOpen}
@@ -276,7 +267,7 @@ export const Map = () => {
               <Button color="secondary"
                 size="small"
                 onClick={handleAddToFavorites}>
-              Add to Favorites
+                Add to Favorites
               </Button>
               <IconButton size="small"
                 aria-label="close"

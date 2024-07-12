@@ -33,6 +33,7 @@ export default function Hero() {
       </Typography>
       <Button variant='contained'
         size='large'
+        aria-labelledby='Button to go to map'
         onClick={handleGetStartedClicked}>
         Get started
       </Button>

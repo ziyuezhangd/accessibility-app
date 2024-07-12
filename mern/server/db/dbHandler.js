@@ -2,27 +2,19 @@ import getDB from './connection.js';
 
 const dbHandler = {
   /**
-   * @param {string} modelName
-   * @returns {Promise<Array<string>>} 
+   * @param {{
+   * name: string,
+   * email: string,
+   * comment: string,
+   * age: int,
+   * gender: string,
+   * conditions: string,
+   * coordinates: [number, number],
+   * date: Date
+   * }} feedback
    */
-  async getLatestModel(modelName) {
-    const db = await getDB();
-    const collection = db.collection(modelName);
-    const latestModel = await collection.findOne({}, { sort: { date: -1 } });
-
-    return latestModel;
-  },
-
-  /**
-   * @param {object} feedback
-   * @param {string} feedback.name
-   * @param {string} feedback.email
-   * @param {string} feedback.comment
-   * @param {Date} feedback.date
-   * @param {[number, number]} feedback.coordinates 
-   */
-  async insertFeedback(feedback){
-    if (feedback.coordinates){
+  async insertFeedback(feedback) {
+    if (feedback.coordinates) {
       const db = await getDB();
       const collection = db.collection('feedback');
       await collection.insertOne(feedback);
@@ -30,17 +22,59 @@ const dbHandler = {
       throw new Error('Coordinates is required');
     }
   },
-  
+
+  async upsertUser(userData) {
+    const { userId } = userData;
+    const existingUser = await this.getUser(userId);
+    let updatedUser = existingUser;
+    if (existingUser) {
+      // Get the existing historical data
+      const { clinical_records, bloodPressureOverTime, heartRateOverTime, audioLevelOverTime } = existingUser;
+      updatedUser = {
+        clinical_records: [...clinical_records, ...userData.clinical_records],
+        bloodPressureOverTime: [...bloodPressureOverTime, ...userData.bloodPressureOverTime],
+        heartRateOverTime: [...heartRateOverTime, ...userData.heartRateOverTime],
+        audioLevelOverTime: [...audioLevelOverTime, ...userData.audioLevelOverTime],
+      };
+    }
+    updatedUser.lastUpdated = new Date();
+    const db = await getDB();
+    const collection = db.collection('users');
+    await collection.update({ userId }, updatedUser, { upsert: true, w: 1 });
+  },
+
+  async createUser(userData) {
+    const db = await getDB();
+    const collection = db.collection('users');
+    await collection.insertOne(userData);
+  },
+
+  async getUser(userId) {
+    const db = await getDB();
+    const collection = db.collection('users');
+    const res = await collection.find({ userId }).toArray();
+    if (res.length === 0) {
+      return null;
+    }
+    return res[0];
+  },
+
+  async insertLocationData(locationData) {
+    const db = await getDB();
+    const collection = db.collection('locationTracking');
+    await collection.insertOne(locationData);
+  },
+
   /**
    * @returns {Promise<Array>}
    */
-  async getAccessibilityHighlightPlaces(){
+  async getAccessibilityHighlightPlaces() {
     const db = await getDB();
     const collection = db.collection('accessibilityHighlightPlace');
     const results = await collection.find({}).toArray();
 
     return results;
-  }
+  },
 };
 
 export default dbHandler;

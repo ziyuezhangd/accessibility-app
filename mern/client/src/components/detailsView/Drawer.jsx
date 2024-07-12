@@ -1,12 +1,24 @@
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import { useContext, useEffect, useState } from 'react';
+import DateTimePickerComponent from './DateTimePicker';
 import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { MapLocation } from '../../utils/MapUtils';
 
-const drawerWidth = 400;
+const drawerWidth = 350;
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+  justifyContent: 'start',
+}));
 
 /**
  * PersistentDrawerLeft component.
@@ -20,8 +32,9 @@ const drawerWidth = 400;
  * 
  * @returns {JSX.Element} The rendered PersistentDrawerLeft component.
  */
-export default function PersistentDrawerLeft({ selectedLocation}) {
-  const {clearMarkers} = useContext(GoogleMapContext);
+export default function PersistentDrawerLeft({ selectedLocation }) {
+  const { clearMarkers } = useContext(GoogleMapContext);
+
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
@@ -33,6 +46,19 @@ export default function PersistentDrawerLeft({ selectedLocation}) {
       setLocation(selectedLocation);
     }
   }, [selectedLocation]);
+
+  useEffect(() => {
+    const handleFavoriteSelected = (event) => {
+      setSelectedDrawerContent('location');
+      setLocation(event.detail);
+    };
+
+    window.addEventListener('favoriteSelected', handleFavoriteSelected);
+
+    return () => {
+      window.removeEventListener('favoriteSelected', handleFavoriteSelected);
+    };
+  }, []);
 
   const handleLocationSelected = (e) => {
     clearMarkers();
@@ -57,9 +83,24 @@ export default function PersistentDrawerLeft({ selectedLocation}) {
         }}
       >
         <Toolbar />
-        {selectedDrawerContent === 'history' && <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
-        {selectedDrawerContent === 'location' && <DrawerLocationDetails location={location}
-          onBackClicked={handleBackClicked} />}
+
+        <DrawerHeader>
+          {selectedDrawerContent === 'history' && <Typography variant='h6'>Last viewed </Typography>}
+          {selectedDrawerContent === 'location' && <IconButton aria-label='Back to recently viewed'
+            onClick={handleBackClicked}>
+            <ChevronLeftIcon />
+          </IconButton>}
+          <div><DateTimePickerComponent /></div>
+
+        </DrawerHeader>
+
+        {selectedDrawerContent === 'history' &&
+          <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
+        {selectedDrawerContent === 'location' &&
+          <DrawerLocationDetails
+            location={location}
+            onBackClicked={handleBackClicked} />
+        }
       </Drawer>
     </>
   );

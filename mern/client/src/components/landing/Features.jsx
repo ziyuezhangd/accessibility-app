@@ -40,6 +40,7 @@ export default function Features() {
         backgroundColor: cyan[100],
         height: '85vh',
       }}
+      aria-labelledby='List of features'
     >
       <Box
         sx={{
@@ -69,7 +70,7 @@ export default function Features() {
             sx={{ display: 'flex' }}>
             <Paper
               elevation={0}
-              square='false'
+              square={false}
               sx={{
                 display: 'flex',
                 justifyContent: 'flex-start',

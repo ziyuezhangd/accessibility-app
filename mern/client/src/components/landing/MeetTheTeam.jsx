@@ -28,6 +28,7 @@ export default function MeetTheTeam() {
         gap: { xs: 3, sm: 6 },
         height: '85vh',
       }}
+      aria-labelledby='Meet the team'
     >
       <Typography component='h2'
         variant='h4'
@@ -75,6 +76,7 @@ export default function MeetTheTeam() {
         <Grid item
           sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Avatar alt='Abishek B'
+            src={abishekImage}
             sx={{ width: 300, height: 300, filter: 'grayscale(100%)' }} />
           <Typography sx={nameStyles}>Abishek B</Typography>
           <Typography sx={titleStyles}>Frontend Lead</Typography>
