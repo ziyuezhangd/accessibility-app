@@ -1,7 +1,7 @@
 /**
  * 
  * @param {string} datetime - The date-time string in ISO 8601 format without timezone (e.g., '2024-07-01T14:30:00') 
- * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} busynessRatings
+ * @returns {Promise<Array<{location: {lat: number, lng: number}, prediction: string}>>} busynessRatings
  */
 export const getBusynessRatings = async (datetime) => {
   const formatRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
@@ -24,7 +24,7 @@ export const getBusynessRatings = async (datetime) => {
 /**
  * 
  * @param {string} datetime - The date-time string in ISO 8601 format without timezone (e.g., '2024-07-01T14:30:00') 
- * @returns {Array<{location: {lat: number, lng: number}, prediction: number}>} noiseRatings
+ * @returns {Promise<Array<{location: {lat: number, lng: number}, prediction: number}>>} noiseRatings
  */
 export const getNoiseRatingsHourly = async (datetime) => {
   const formatRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
@@ -47,7 +47,7 @@ export const getNoiseRatingsHourly = async (datetime) => {
 /**
  * 
  * @param {string} datetime - The date-time string in ISO 8601 format without timezone (e.g., '2024-07-01T14:30:00') 
- * @returns {Array<{location: {lat: number, lng: number}, prediction: number}>} noiseRatings
+ * @returns {Promise<Array<{location: {lat: number, lng: number}, prediction: number}>>} noiseRatings
  */
 export const getNoiseRatingsDaily = async (datetime) => {
   const formatRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
