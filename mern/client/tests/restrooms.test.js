@@ -61,8 +61,8 @@ describe('Function getPublicRestrooms', () => {
     const restrooms = await getPublicRestrooms('incl-partial');
 
     expect(fetch).toHaveBeenCalledWith('/api/restrooms?' + new URLSearchParams({ accessibility: 'incl-partial' }));
-    expect(restrooms).toBeUndefined();
-    expect(console.error).toHaveBeenCalledTimes(1);
+    expect(restrooms).toBeNull();
+    expect(console.error).toHaveBeenCalledTimes(4);
   });
 });
 
