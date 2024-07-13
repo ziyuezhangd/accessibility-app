@@ -2,10 +2,7 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import { getCurrentTimeInNewYork, getDayString, isTimeInRange, parseTimeRangeFromString, isDSTNow } from '../utils/dateTime';
 import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
-
-// dayjs.extend(utc);
-// dayjs.extend(timezone);
-// dayjs.tz.setDefault('America/New_York');
+import { retryFetch } from '../utils/retryFetch';
 
 /**
  *
@@ -14,22 +11,19 @@ import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
  * @return {Promise<PublicRestroom[]>} list of retrooms
  */
 export const getPublicRestrooms = async (accessibility = 'all') => {
-  const response = await fetch('/api/restrooms?' + new URLSearchParams({ accessibility }));
-  if (!response.ok) {
-    const message = `An error has occurred: ${response.statusText}`;
-    console.error(message);
-    return;
-  }
-
-  const restrooms = await response.json();
-
-  return restrooms.map((restroom) => {
-    return new PublicRestroom({
-      ...restroom,
-      latitude: parseFloat(restroom.latitude),
-      longitude: parseFloat(restroom.longitude)
+  try {
+    const restrooms = await retryFetch('/api/restrooms?' + new URLSearchParams({ accessibility }));
+    return restrooms.map((restroom) => {
+      return new PublicRestroom({
+        ...restroom,
+        latitude: parseFloat(restroom.latitude),
+        longitude: parseFloat(restroom.longitude)
+      });
     });
-  });
+  } catch(error) {
+    console.error('Failed to fetch public restrooms:', error.message);
+    return null;
+  }
 };
 
 /**
@@ -164,7 +158,7 @@ export class PublicRestroom {
       return isOpen;
     } catch (e) {
       console.log(e);
-      return false; // Return false for now
+      return null; // Return null for now
     }
   }
 }
