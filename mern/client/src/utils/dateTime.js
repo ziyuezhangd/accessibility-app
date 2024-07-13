@@ -207,11 +207,11 @@ export const isTimeInRange = (target, date1, date2) => {
 };
 
 /**
- * Check if NY is in DST now: DST begins on the second Sunday of March and ends on the first Sunday of November
+ * Check if NY is in DST at a given time: DST begins on the second Sunday of March and ends on the first Sunday of November
  * @returns {boolean}
  */
-export const isDSTNow = () => {
-  const now = getCurrentTimeInNewYork();
+export const isDST = (dateTime) => {
+  const now = dayjs(dateTime);
 
   const year = now.year();
   let dstStart = dayjs.tz(`${year}-03-01 00:00:00`, 'America/New_York').add(1, 'week').day(0);
