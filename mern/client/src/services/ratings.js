@@ -1,3 +1,5 @@
+import { retryFetch } from '../utils/retryFetch';
+
 /**
  * 
  * @param {string} datetime - The date-time string in ISO 8601 format without timezone (e.g., '2024-07-01T14:30:00') 
@@ -11,14 +13,13 @@ export const getBusynessRatings = async (datetime) => {
     return;
   }
 
-  const response = await fetch('/api/busyness-ratings?' + new URLSearchParams({ datetime }));
-  if (!response.ok) {
-    const message = `An error has occurred: ${response.statusText}`;
-    console.error(message);
-    return;
+  try {
+    const busynessRatings = await retryFetch('/api/busyness-ratings?' + new URLSearchParams({ datetime }));
+    return busynessRatings;
+  } catch(error) {
+    console.error('Failed to fetch busyness ratings:', error.message);
+    return null;
   }
-  const busynessRatings = await response.json();
-  return busynessRatings;
 };
 
 /**
@@ -33,15 +34,14 @@ export const getNoiseRatingsHourly = async (datetime) => {
     console.error(msg);
     return;
   }
-  
-  const response = await fetch('/api/noise-ratings/hourly?' + new URLSearchParams({ datetime }));
-  if (!response.ok) {
-    const message = `An error has occurred: ${response.statusText}`;
-    console.error(message);
-    return;
+
+  try {
+    const noiseRatings = await retryFetch('/api/noise-ratings/hourly?' + new URLSearchParams({ datetime }));
+    return noiseRatings;
+  } catch(error) {
+    console.error('Failed to fetch noise ratings:', error.message);
+    return null;
   }
-  const noiseRatings = await response.json();
-  return noiseRatings;
 };
 
 /**
@@ -56,15 +56,14 @@ export const getNoiseRatingsDaily = async (datetime) => {
     console.error(msg);
     return;
   }
-  
-  const response = await fetch('/api/noise-ratings/daily?' + new URLSearchParams({ datetime }));
-  if (!response.ok) {
-    const message = `An error has occurred: ${response.statusText}`;
-    console.error(message);
-    return;
+
+  try {
+    const noiseRatings = await retryFetch('/api/noise-ratings/daily?' + new URLSearchParams({ datetime }));
+    return noiseRatings;
+  } catch(error) {
+    console.error('Failed to fetch noise ratings:', error.message);
+    return null;
   }
-  const noiseRatings = await response.json();
-  return noiseRatings;
 };
 
 /**
@@ -79,13 +78,12 @@ export const getOdourRatings = async (datetime) => {
     console.error(msg);
     return;
   }
-  
-  const response = await fetch('/api/odour-ratings?' + new URLSearchParams({ datetime }));
-  if (!response.ok) {
-    const message = `An error has occurred: ${response.statusText}`;
-    console.error(message);
-    return;
+
+  try {
+    const odourRatings = await retryFetch('/api/odour-ratings?' + new URLSearchParams({ datetime }));
+    return odourRatings;
+  } catch(error) {
+    console.error('Failed to fetch odour ratings:', error.message);
+    return null;
   }
-  const odourRatings = await response.json();
-  return odourRatings;
 };
