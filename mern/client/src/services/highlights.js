@@ -1,10 +1,11 @@
+import { retryFetch } from '../utils/retryFetch';
+
 export const getAccessibilityHighlightPlaces = async () => {
-  const response = await fetch('/api/accessibility-highlight-place');
-  if (!response.ok) {
-    const message = `An error has occurred: ${response.statusText}`;
-    console.error(message);
-    return;
+  try {
+    const highlights = await retryFetch('/api/accessibility-highlight-place');
+    return highlights;
+  } catch(error) {
+    console.error('Failed to fetch accessibility highlight places:', error.message);
+    return null;
   }
-  const highlights = await response.json();
-  return highlights;
 };
