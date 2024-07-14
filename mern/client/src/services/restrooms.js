@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { getCurrentTimeInNewYork, getDayString, isTimeInRange, parseTimeRangeFromString, isDSTNow } from '../utils/dateTime';
+import { getCurrentTimeInNewYork, getDayString, isTimeInRange, parseTimeRangeFromString, isDST} from '../utils/dateTime';
 import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
 import { retryFetch } from '../utils/retryFetch';
 
@@ -127,10 +127,15 @@ export class PublicRestroom {
    *
    * @return {boolean} true if open, null if unsure
    */
-  isOpenNow() {
+  isOpen(dateTime) {
+    if (dateTime === null || dateTime === undefined) {
+      dateTime = getCurrentTimeInNewYork();
+    } else {
+      dateTime = dayjs(dateTime);
+    }
+    
     try {
       const hoursString = this.hours;
-      const now = getCurrentTimeInNewYork();
       let openingTime, closingTime;
 
       const parsedHours = parseTimeRangeFromString(hoursString);
@@ -143,22 +148,24 @@ export class PublicRestroom {
         closingTime = parsedHours[0].end?.date();
       } else if (parsedHours.length > 1) {
         // Varying hours by day
-        const today = getDayString(now);
+        const today = getDayString(dateTime);
         const todaysHours = parsedHours.find((h) => h.text.includes(today));
         openingTime = todaysHours.start.date();
         closingTime = todaysHours.end.date();
       }
+      openingTime = dayjs.tz(`${openingTime}`, 'America/New_York').date(dateTime.date()).format('YYYY-MM-DD[T]HH:mm:ss');
+      closingTime = dayjs.tz(`${closingTime}`, 'America/New_York').date(dateTime.date()).format('YYYY-MM-DD[T]HH:mm:ss');
 
-      const isDST = isDSTNow();
-      if (isDST) {
+      const DST = isDST(dateTime);
+      if (DST) {
         openingTime = dayjs.tz(`${openingTime}`, 'America/New_York').add(1, 'hour');
         closingTime = dayjs.tz(`${closingTime}`, 'America/New_York').add(1, 'hour');
       }
-      const isOpen = isTimeInRange(now, openingTime, closingTime);
+      const isOpen = isTimeInRange(dateTime, openingTime, closingTime);
       return isOpen;
     } catch (e) {
-      console.log(e);
-      return null; // Return null for now
+      console.error(e.message);
+      return null;
     }
   }
 }

@@ -1,6 +1,12 @@
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import { getPublicRestrooms, PublicRestroom, PublicRestroomUtilities } from '../src/services/restrooms.js';
 import { getCurrentTimeInNewYork } from '../src/utils/dateTime.js';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 describe('Function getPublicRestrooms', () => {
   const dummyRestrooms = [
@@ -171,37 +177,42 @@ Thursday: 08:00 AM-07:00 PM
 Friday: 08:00 AM-07:00 PM
 Saturday: Closed
 Sunday: Closed`.trim();
-      console.log(formattedHours4);
       expect(formattedHours4).toBe(expectedOutput4);
     });
   });
 
-  describe('Method isOpenNow', () => {
+  describe('Method isOpen', () => {
     const now = getCurrentTimeInNewYork();
     const hourNow = now.hour(); // hour in NY time with DST
     const dayNow = now.day();
     const minNow = now.minute();
     it('should return correctly for restrooms with same daily opening hours', () => {
       publicRestroom.hours = '8am-4pm, Open later seasonally';
-      const isOpen1 = publicRestroom.isOpenNow();
+      const isOpen1 = publicRestroom.isOpen();
       if (hourNow >= 8 && hourNow < 16){
         expect(isOpen1).toBe(true);
       } else {
         expect(isOpen1).toBe(false);
       }
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-18 07:55:20', 'America/New_York'))).toBe(false);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-22 13:43:12', 'America/New_York'))).toBe(true);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-28 19:15:20', 'America/New_York'))).toBe(false);
 
       publicRestroom.hours = 'Bathrooms are open from 7 a.m.-7 p.m., with a one-hour closure for cleaning from 12 noon-1 p.m.';
-      const isOpen2 = publicRestroom.isOpenNow();
+      const isOpen2 = publicRestroom.isOpen();
       if (hourNow >= 7 && hourNow < 19){
         expect(isOpen2).toBe(true);
       } else {
         expect(isOpen2).toBe(false);
       }
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-18 06:55:20', 'America/New_York'))).toBe(false);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-22 18:43:12', 'America/New_York'))).toBe(true);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-28 20:15:20', 'America/New_York'))).toBe(false);
     });
 
     it('should return correctly for restrooms with varying daily opening hours', () => {
       publicRestroom.hours = 'Monday\t10 am - 6 pm\nTuesday\t1 pm - 8 pm\nWednesday\t10 am - 6 pm\nThursday\t10 am - 8 pm\nFriday\t10 am - 6 pm\nSaturday\t10 am - 5 pm\nSunday\tCLOSED';
-      const isOpen3 = publicRestroom.isOpenNow();
+      const isOpen3 = publicRestroom.isOpen();
       switch(dayNow){
       case 0:
         expect(isOpen3).toBe(false);
@@ -249,9 +260,13 @@ Sunday: Closed`.trim();
         }
         break;
       }
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-22 11:55:20', 'America/New_York'))).toBe(true);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-22 19:55:20', 'America/New_York'))).toBe(false);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-23 11:55:20', 'America/New_York'))).toBe(false);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-23 19:55:20', 'America/New_York'))).toBe(true);
 
       publicRestroom.hours = 'Monday to Saturday:  8:30 am-10:00 pm; Sundays: 10:00 am-7:00 pm.';
-      const isOpen4 = publicRestroom.isOpenNow();
+      const isOpen4 = publicRestroom.isOpen();
       switch(dayNow){
       case 0:
         if (hourNow >= 10 && hourNow < 19){
@@ -275,6 +290,12 @@ Sunday: Closed`.trim();
         }
         break;
       }
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-22 09:55:20', 'America/New_York'))).toBe(true);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-27 21:55:20', 'America/New_York'))).toBe(true);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-27 22:55:20', 'America/New_York'))).toBe(false);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-28 21:55:20', 'America/New_York'))).toBe(false);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-28 09:55:20', 'America/New_York'))).toBe(false);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-28 11:55:20', 'America/New_York'))).toBe(true);
     });
   });
 });
