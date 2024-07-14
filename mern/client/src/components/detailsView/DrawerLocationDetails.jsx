@@ -12,7 +12,6 @@ import FeedbackForm from './FeedbackForm';
 import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
-import { postFeedback } from '../../services/feedback';
 import { MapLocation } from '../../utils/MapUtils';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
