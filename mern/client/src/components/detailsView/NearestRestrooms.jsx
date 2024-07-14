@@ -8,7 +8,6 @@ import RestroomDetailsPopup from './RestroomDetailsPopup'; // Assuming you creat
 
 export default function NearestRestrooms({ lat, lng }) {
   const { restrooms, selectedDateTime } = useContext(DataContext);
-  const { restrooms } = useContext(DataContext);
   const { createMarkers } = useContext(GoogleMapContext);
 
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
@@ -17,24 +16,23 @@ export default function NearestRestrooms({ lat, lng }) {
 
   useEffect(() => {
     const getNearestRestrooms = async () => {
-      
       const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
       setNearestRestrooms(nearest);
       showRestroomMarkers(nearest);
     };
 
     const showRestroomMarkers = (restrooms) => {
-      console.log("showRestroomMarkers",restrooms);
+      console.log("showRestroomMarkers", restrooms);
       const markers = restrooms.map(restroom => ({
         lat: restroom.latitude,
         lng: restroom.longitude
       }));
       console.log("markers to create", markers);
-      createMarkers(markers,true);
+      createMarkers(markers, true);
     };
 
     getNearestRestrooms();
-  }, [lat, lng, restrooms]);
+  }, [lat, lng, restrooms, createMarkers]);
 
   const handleRestroomClick = (restroom) => {
     setSelectedRestroom(restroom);
@@ -88,7 +86,7 @@ export default function NearestRestrooms({ lat, lng }) {
                   <Chip label='UNCERTAIN' 
                     color='default' />
                 )}
-                {restroom.isOpenNow() ? <Chip label='OPEN' color='success' /> : <Chip label='CLOSED' color='error' />}
+                {restroom.isOpen(new Date()) ? <Chip label='OPEN' color='success' /> : <Chip label='CLOSED' color='error' />}
               </ListItemSecondaryAction>
             </ListItemButton>
           </ListItem>

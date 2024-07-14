@@ -12,13 +12,15 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 
 const RestroomDetailsPopup = ({ restroom, onClose }) => {
+  const isOpenNow = restroom.isOpen(new Date());
+
   return (
     <Dialog open={true} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>{restroom.name}</DialogTitle>
       <DialogContent dividers>
         <Box mb={2}>
           <Typography variant="body1">
-            <strong>Status:</strong> {restroom.status}
+            <strong>Status:</strong> {isOpenNow ? 'OPEN' : 'CLOSED'}
           </Typography>
         </Box>
 
@@ -75,8 +77,8 @@ const RestroomDetailsPopup = ({ restroom, onClose }) => {
 
         <Box mt={2} display="flex" justifyContent="flex-end">
           <Chip
-            label={restroom.isOpenNow() ? 'OPEN' : 'CLOSED'}
-            color={restroom.isOpenNow() ? 'success' : 'error'}
+            label={isOpenNow ? 'OPEN' : 'CLOSED'}
+            color={isOpenNow ? 'success' : 'error'}
           />
         </Box>
       </DialogContent>

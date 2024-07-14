@@ -98,7 +98,7 @@ const AboutUs = () => {
           Who we are
         </Typography>
         <Typography variant="body1" paragraph>
-          We are a team of students at the University of California, Davis (UCD) passionate about improving accessibility in urban areas.
+          We are a team of students at the University College Dublin (UCD) passionate about improving accessibility in urban areas.
         </Typography>
         <Divider sx={{ my: 3 }} />
         <Typography variant="h4" gutterBottom color="secondary">
