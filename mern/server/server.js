@@ -39,7 +39,7 @@ app.get('*', (req, res) => {
 });
 
 // Error handling
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   logger.error(err.stack);
   res.status(500).send('Internal Server Error: Our team is investigating this issue.');
 });

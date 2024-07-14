@@ -25,7 +25,7 @@ def load_model(model_path):
     with open(model_path, 'rb') as model_file:
       model = pickle.load(model_file)
     return model
-  except Exception as e:
+  except Exception:
     return None
 
 # Load models
@@ -43,7 +43,7 @@ def predict_noise_hourly():
   hour = request.args.get('hour', type=int)
 
   if hour is None or hour < 0 or hour > 23:
-    return jsonify({f'error': 'hour parameter {hour} is invalid'}), 400
+    return jsonify({'error': f'hour parameter {hour} is invalid'}), 400
   
   inputs = pd.DataFrame({
     'Hour': np.full(num_segments, hour, dtype=int), 
@@ -66,9 +66,9 @@ def predict_noise_daily():
   day_of_week = request.args.get('dayOfWeek', type=int)
 
   if hour is None or hour < 0 or hour > 23:
-    return jsonify({f'error': 'hour parameter {hour} is invalid'}), 400
+    return jsonify({'error': f'hour parameter {hour} is invalid'}), 400
   if day_of_week is None or day_of_week < 0 or day_of_week > 6:
-    return jsonify({f'error': 'day_of_week parameter {day_of_week} is invalid'}), 400
+    return jsonify({'error': f'day_of_week parameter {day_of_week} is invalid'}), 400
   
   inputs = pd.DataFrame({
     'Hour': np.full(num_segments, hour, dtype=int),
@@ -94,13 +94,13 @@ def predict_busyness():
   day_of_week = request.args.get('dayOfWeek', type=int)
 
   if hour is None or hour < 0 or hour > 23:
-    return jsonify({f'error': 'hour parameter {hour} is invalid'}), 400
+    return jsonify({'error': f'hour parameter {hour} is invalid'}), 400
   if day is None or day < 0 or day > 31:
-    return jsonify({f'error': 'day parameter {day} is invalid'}), 400
+    return jsonify({'error': f'day parameter {day} is invalid'}), 400
   if month is None or month < 1 or month > 12:
-    return jsonify({f'error': 'month parameter {month} is invalid'}), 400
+    return jsonify({'error': f'month parameter {month} is invalid'}), 400
   if day_of_week is None or day_of_week < 0 or day_of_week > 6:
-    return jsonify({f'error': 'day_of_week parameter {day_of_week} is invalid'}), 400
+    return jsonify({'error': f'day_of_week parameter {day_of_week} is invalid'}), 400
   
   inputs = pd.DataFrame({
     'SegmentID': segment_ids,
@@ -126,11 +126,11 @@ def predict_odour():
   hour = request.args.get('hour', type=int)
 
   if hour is None or hour < 0 or hour > 23:
-    return jsonify({f'error': 'hour parameter {hour} is invalid'}), 400
+    return jsonify({'error': f'hour parameter {hour} is invalid'}), 400
   if day is None or day < 0 or day > 31:
-    return jsonify({f'error': 'day parameter {day} is invalid'}), 400
+    return jsonify({'error': f'day parameter {day} is invalid'}), 400
   if month is None or month < 1 or month > 12:
-    return jsonify({f'error': 'month parameter {month} is invalid'}), 400
+    return jsonify({'error': f'month parameter {month} is invalid'}), 400
 
   inputs = pd.DataFrame({
     'MODZCTA': MODZCTAs,
@@ -146,6 +146,6 @@ def predict_odour():
   return jsonify(results)
 
 if __name__ == '__main__':
-  app.run(debug=True, host='0.0.0.0', port=5000)
+  app.run(host='0.0.0.0', port=5000)
 else:
   application=app
