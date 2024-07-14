@@ -129,7 +129,12 @@ export default function DrawerLocationDetails({ location, predictions, onBackCli
   return (
     <>
       <DrawerHeader>
-        <Box></Box>
+        <IconButton aria-label='Back to recently viewed'
+          onClick={() => {
+            onBackClicked(location);
+          }}>
+          <ChevronLeftIcon />
+        </IconButton>
         <IconButton aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
           onClick={handleToggleFavorite}>
           {isFavorite ? <Favorite sx={{ color: 'red' }} /> : <FavoriteBorder />}

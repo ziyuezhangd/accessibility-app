@@ -64,7 +64,7 @@ const CustomChip = styled(Chip)({
 });
 
 const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
-  const { mapInstance, createMarkers, clearMarkers, removeMarkers } = useContext(GoogleMapContext);
+  const { mapInstance, createMarkers, removeMarkers } = useContext(GoogleMapContext);
   const { placeInfos } = useContext(DataContext);
   const [categories, setCategories] = useState([]);
   const [hasFocus, setHasFocus] = useState(false);
@@ -84,7 +84,7 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
           lat: placeInfo.latitude,
           lng: placeInfo.longitude,
         }));
-        removeMarkers(categoryMarkers);
+        removeMarkers(categoryMarkers, true);
 
         if (selectedCategories.includes('All')) {
           const allMarkers = placeInfos.map(placeInfo => ({
@@ -95,7 +95,7 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
             imgAlt: placeInfo.name,
           })).filter(marker => marker.imgSrc !== null);
 
-          createMarkers(allMarkers, false); // Create all markers if "All" is selected without clearing existing markers
+          createMarkers(allMarkers, false, true); // Create all markers if "All" is selected without clearing existing markers
         }
         return; // No categories selected or "All" selected
       }
@@ -116,9 +116,9 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
         lat: placeInfo.latitude,
         lng: placeInfo.longitude,
       }));
-      removeMarkers(categoryMarkersToRemove);
+      removeMarkers(categoryMarkersToRemove, true);
 
-      createMarkers(filteredMarkers, false); // Create markers based on filtered categories without clearing existing markers
+      createMarkers(filteredMarkers, false, true); // Create markers based on filtered categories without clearing existing markers
     };
 
     handleMarkers();
@@ -159,7 +159,7 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
             key={option} // Add key prop here
             variant="outlined"
             label={option}
-            {...getTagProps({ index })} 
+            {...getTagProps({ index })}
           />
         ))
       }

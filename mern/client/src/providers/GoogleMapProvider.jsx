@@ -26,6 +26,7 @@ const GoogleMapProvider = ({children}) => {
 
   /** @type {[google.maps.AdvancedMarker[], React.Dispatch<React.SetStateAction<google.maps.AdvancedMarker[]>>]} */
   const [markers, setMarkers] = useState([]);
+  const [categoryMarkers, setCategoryMarkers] = useState([]);
 
   useEffect(() => {
     if (mapInstance) {
@@ -87,25 +88,29 @@ const GoogleMapProvider = ({children}) => {
   const handleMapLoaded = (map) => {
     setMapInstance(map);
   };
-
+  
   /**
    * 
    * @param {Array<{
-  * lat: string, 
-  * lng: string, 
-  * imgSrc: string, 
-  * imgSize: number, 
-  * imgAlt: string, 
-  * scale: number, 
-  * title: string,
-  * key: num,
-  * color: string}>} markerConfigs 
-  * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
-  */
-  const createMarkers = (markerConfigs, shouldOverwriteExisting) => {
+ * lat: string, 
+ * lng: string, 
+ * imgSrc: string, 
+ * imgSize: number, 
+ * imgAlt: string, 
+ * scale: number, 
+ * title: string,
+ * key: num,
+ * color: string}>} markerConfigs 
+ * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
+ */
+  const createMarkers = (markerConfigs, shouldOverwriteExisting, isCategoryMarker = false) => {
     // TODO: I think double markers are being added?
     if (shouldOverwriteExisting) {
-      clearMarkers();
+      if (isCategoryMarker) {
+        clearCategoryMarkers();
+      } else {
+        clearMarkers();
+      }
     }
     const markersToCreate = markerConfigs.map(config => {
       const { imgSrc, title, lat, lng, imgAlt, imgSize, scale, color } = config;
@@ -120,7 +125,7 @@ const GoogleMapProvider = ({children}) => {
           <img 
             src={imgSrc}
             style={{height: imgSize}}
-            alt={imgAlt}
+            alt={imgAlt} 
           />
         </AdvancedMarker>
       ) : (
@@ -129,14 +134,18 @@ const GoogleMapProvider = ({children}) => {
           lng={parseFloat(lng)}
           title={title}
           gmpClickable={true}>
-          <PinElement
+          <PinElement 
             scale={scale}
-            color={color} />            
+            color={color} /> 
         </AdvancedMarker>
       );
     });
 
-    setMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
+    if (isCategoryMarker) {
+      setCategoryMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
+    } else {
+      setMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
+    }
     console.log(`Created ${markersToCreate.length} markers`);
   };
 
@@ -144,19 +153,31 @@ const GoogleMapProvider = ({children}) => {
    * 
    * @param {Array<{lat: number, lng: number}>} latLngs 
    */
-  const removeMarkers = (latLngs) => {
-    setMarkers(prevMarkers => prevMarkers.filter(marker =>
-      !latLngs.some(latLng =>
-        parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
-      )
-    ));
+  const removeMarkers = (latLngs, isCategoryMarker = false) => {
+    if (isCategoryMarker) {
+      setCategoryMarkers(prevMarkers => prevMarkers.filter(marker =>
+        !latLngs.some(latLng =>
+          parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
+        )
+      ));
+    } else {
+      setMarkers(prevMarkers => prevMarkers.filter(marker =>
+        !latLngs.some(latLng =>
+          parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
+        )
+      ));
+    }
   };
-
+  
   /**
    * 
    */
   const clearMarkers = () => {
     setMarkers([]);
+  };
+
+  const clearCategoryMarkers = () => {
+    setCategoryMarkers([]);
   };
 
   const getDirections = (start, end) => {
@@ -177,7 +198,19 @@ const GoogleMapProvider = ({children}) => {
   };
 
   return (
-    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, removeMarkers, clearMarkers, getDirections, clearDirections}}>
+    <GoogleMapContext.Provider value={{
+      mapInstance,
+      placesService,
+      geocoder,
+      markers: [...markers, ...categoryMarkers],
+      onMapLoaded: handleMapLoaded,
+      createMarkers,
+      removeMarkers,
+      clearMarkers,
+      clearCategoryMarkers,
+      getDirections,
+      clearDirections
+    }}>
       {children}
     </GoogleMapContext.Provider>
   );
