@@ -1,9 +1,10 @@
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
 import * as Location from 'expo-location';
-import AppleHealthKit, { HealthValue, HealthKitPermissions, HealthInputOptions, HealthStatusResult, HealthUnit } from 'react-native-health';
+import AppleHealthKit, { HealthValue, HealthKitPermissions, HealthInputOptions, HealthStatusResult, HealthUnit, ClinicalRecordType, HealthClinicalRecord, HealthClinicalRecordOptions, BloodPressureSampleValue } from 'react-native-health';
 import * as TaskManager from 'expo-task-manager';
 import { EnvironmentalAudioExposureResponse } from '../interfaces/AppleHealthKit';
+import { postHealthData } from '../services/MobileDataApi';
 
 export interface UserDataContextType {
   location: Location.LocationObject | undefined;
@@ -22,6 +23,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
     const { locations } = data;
     const { coords, timestamp } = locations[0];
     const { latitude, longitude, accuracy, altitude, speed } = coords;
+
     AppleHealthKit.isAvailable((err: Object, available: boolean) => {
       if (err) {
         console.log('error initializing Healthkit: ', err);
@@ -58,14 +60,47 @@ const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const getEnvironmentalAudioExposure = () => {
-    const environmentalAudioOptions: HealthInputOptions = {
-      startDate: new Date(2018, 10, 1).toISOString(), // required
-      endDate: new Date().toISOString(), // optional; default now
-      ascending: false, // optional; default false
-      limit: 10, // optional; default no limit
-    };
-    AppleHealthKit.getEnvironmentalAudioExposure(environmentalAudioOptions, (err: string, results: HealthValue[]) => {});
+  const getEnvironmentalAudioExposure = (options: HealthInputOptions): Promise<HealthValue[]> => {
+    return new Promise((resolve, reject) => {
+      AppleHealthKit.getEnvironmentalAudioExposure(options, (err: string, results: HealthValue[]) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(results);
+      });
+    });
+  };
+
+  const getClinicalRecords = (options: HealthClinicalRecordOptions): Promise<HealthClinicalRecord[]> => {
+    return new Promise((resolve, reject) => {
+      AppleHealthKit.getClinicalRecords(options, (err: string, results: HealthClinicalRecord[]) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(results);
+      });
+    });
+  };
+
+  const getHeartRateVariability = (options: HealthInputOptions): Promise<HealthValue[]> => {
+    return new Promise((resolve, reject) => {
+      AppleHealthKit.getHeartRateVariabilitySamples(options, (err: Object, results: Array<HealthValue>) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(results);
+      });
+    });
+  };
+  const getBloodPressure = (options: HealthInputOptions): Promise<BloodPressureSampleValue[]> => {
+    return new Promise((resolve, reject) => {
+      AppleHealthKit.getBloodPressureSamples(options, (err: Object, results: Array<BloodPressureSampleValue>) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(results);
+      });
+    });
   };
 
   const getAuthStatus = () => {
@@ -80,25 +115,6 @@ const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
       console.log(err, results);
     });
   };
-
-  const getHeartRateVariability = () => {
-    let options: HealthInputOptions = {
-      unit: 'second' as HealthUnit, // optional; default 'second'
-      startDate: new Date(2021, 0, 0).toISOString(), // required
-      endDate: new Date().toISOString(), // optional; default now
-      ascending: false, // optional; default false
-      limit: 10, // optional; default no limit
-    }
-    AppleHealthKit.getHeartRateVariabilitySamples(
-      options,
-      (err: Object, results: Array<HealthValue>) => {
-        if (err) {
-          return
-        }
-        console.log(results)
-      },
-    )
-  }
 
   useEffect(() => {
     requestPermissions();
@@ -140,12 +156,38 @@ const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       /* Can now read or write to HealthKit */
-      const options = {
-        startDate: new Date(2020, 1, 1).toISOString(),
-      };
+      let startDate = new Date();
+      startDate.setFullYear(startDate.getFullYear() - 1);
 
-      AppleHealthKit.getHeartRateSamples(options, (callbackError: string, results: HealthValue[]) => {
-        /* Samples are now collected from HealthKit */
+      const clinicalRecordsOptions = {
+        startDate: startDate.toDateString(),
+        type: ClinicalRecordType.ConditionRecord,
+      };
+      const clinicalRecordsPromise = getClinicalRecords(clinicalRecordsOptions);
+
+      const environmentalAudioOptions: HealthInputOptions = {
+        startDate: startDate.toISOString(), // required
+        ascending: false, // optional; default false
+        limit: 100, // optional; default no limit
+      };
+      const getAudioPromise = getEnvironmentalAudioExposure(environmentalAudioOptions);
+
+      let options: HealthInputOptions = {
+        unit: 'second' as HealthUnit, // optional; default 'second'
+        startDate: startDate.toISOString(), // required
+        ascending: false, // optional; default false
+        limit: 100, // optional; default no limit
+      };
+      const getHeartRatePromise = getHeartRateVariability(options);
+      const getBloodPressurePromise = getBloodPressure(options);
+      Promise.all([clinicalRecordsPromise, getAudioPromise, getHeartRatePromise, getBloodPressurePromise]).then(([clinicalRecords, audioLevel, heartRate, bloodPressure]) => {
+        postHealthData({
+          userId: 'aprilpolubiec',
+          clinicalRecords,
+          audioLevel,
+          heartRate,
+          bloodPressure,
+        });
       });
     });
   }, [permissionsLoaded]);
