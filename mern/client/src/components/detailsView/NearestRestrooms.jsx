@@ -90,9 +90,16 @@ export default function NearestRestrooms({ lat, lng }) {
               />
               <ListItemSecondaryAction>
                 {/* TODO: we will actually want to know if its open at the predicted time */}
-                {restroom.isOpenNow() ? <Chip label='OPEN'
-                  color='success' /> : <Chip label='CLOSED'
-                  color='error' />}
+                {restroom.isOpenNow() === true ? (
+                  <Chip label='OPEN' 
+                    color='success' />
+                ) : restroom.isOpenNow() === false ? (
+                  <Chip label='CLOSED' 
+                    color='error' />
+                ) : (
+                  <Chip label='UNCERTAIN' 
+                    color='default' />
+                )}
               </ListItemSecondaryAction>
             </ListItemButton>
           </ListItem>
