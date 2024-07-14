@@ -46,15 +46,20 @@ export default function NearestStations({ lat, lng }) {
   }, [lat, lng, placeInfos]);
 
   return (
-    <Box display='flex' flexDirection='column' alignItems='flex-start'>
-      <Typography variant='h6' sx={{ fontWeight: 400, fontSize: 18 }}>
+    <Box display='flex'
+      flexDirection='column'
+      alignItems='flex-start'>
+      <Typography variant='h6'
+        sx={{ fontWeight: 400, fontSize: 18 }}>
         Wheelchair accessible subway stations
       </Typography>
       {nearestStations.map((station) => (
-        <Box key={station.name} mb={2}>
+        <Box key={station.name}
+          mb={2}>
           <AvatarGroup>
             {station.getSubwayLines().map((line) => (
-              <Avatar key={`${station.name}-${line}`} sx={{ bgcolor: SUBWAY_LINE_COLORS[line], fontSize: line === 'PATH' ? 10 : 20 }}>
+              <Avatar key={`${station.name}-${line}`}
+                sx={{ bgcolor: SUBWAY_LINE_COLORS[line], fontSize: line === 'PATH' ? 10 : 20 }}>
                 {line}
               </Avatar>
             ))}
@@ -63,10 +68,12 @@ export default function NearestStations({ lat, lng }) {
           <Typography>500m</Typography> {/* Replace with actual distance if available */}
         </Box>
       ))}
-    <Box mt={3}>
+      <Box mt={3}>
         <Typography variant='body2'>
           View the full accessible station map on the{' '}
-          <Link href="https://new.mta.info/map/5346" target="_blank" rel="noopener">
+          <Link href="https://new.mta.info/map/5346"
+            target="_blank"
+            rel="noopener">
             MTA website
           </Link>
           .

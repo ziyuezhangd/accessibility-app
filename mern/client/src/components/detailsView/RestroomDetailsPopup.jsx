@@ -1,4 +1,4 @@
-import React from 'react';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   Dialog,
   DialogTitle,
@@ -9,13 +9,16 @@ import {
   IconButton,
   Divider,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import React from 'react';
 
 const RestroomDetailsPopup = ({ restroom, onClose }) => {
   const isOpenNow = restroom.isOpen(new Date());
 
   return (
-    <Dialog open={true} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={true}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth>
       <DialogTitle>{restroom.name}</DialogTitle>
       <DialogContent dividers>
         <Box mb={2}>
@@ -43,8 +46,8 @@ const RestroomDetailsPopup = ({ restroom, onClose }) => {
             {restroom.isFullyAccessible
               ? 'Fully Accessible'
               : restroom.isPartiallyAccessible
-              ? 'Partially Accessible'
-              : 'Not Accessible'}
+                ? 'Partially Accessible'
+                : 'Not Accessible'}
           </Typography>
         </Box>
 
@@ -75,7 +78,9 @@ const RestroomDetailsPopup = ({ restroom, onClose }) => {
 
         <Divider />
 
-        <Box mt={2} display="flex" justifyContent="flex-end">
+        <Box mt={2}
+          display="flex"
+          justifyContent="flex-end">
           <Chip
             label={isOpenNow ? 'OPEN' : 'CLOSED'}
             color={isOpenNow ? 'success' : 'error'}

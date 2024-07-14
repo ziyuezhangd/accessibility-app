@@ -39,7 +39,9 @@ export default function HelpModal({ isOpen, onClose }) {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h4" component="h2">
+        <Typography id="modal-modal-title"
+          variant="h4"
+          component="h2">
           How it works
         </Typography>
         <Grid
@@ -75,7 +77,8 @@ export default function HelpModal({ isOpen, onClose }) {
                 component='h1'>
                 Pick a date and time
               </Typography>
-              <Typography variant="subtitle1" component="h1">
+              <Typography variant="subtitle1"
+                component="h1">
                 See the predicted busyness, noise and odour levels across Manhattan on any day or time.
               </Typography>
             </Paper>
@@ -107,7 +110,8 @@ export default function HelpModal({ isOpen, onClose }) {
                 component='h1'>
                 Click for details
               </Typography>
-              <Typography variant="subtitle1" component="h1">
+              <Typography variant="subtitle1"
+                component="h1">
                 Learn more about the selected street to see its busyness, noise and odour scores as well as nearby accessible points of interest.
               </Typography>
             </Paper>
@@ -139,7 +143,8 @@ export default function HelpModal({ isOpen, onClose }) {
                 component='h1'>
                 Search for businesses
               </Typography>
-              <Typography variant="subtitle1" component="h1">
+              <Typography variant="subtitle1"
+                component="h1">
                 Find restaurants and attractions to gauge the busyness levels in that area. Click on a business to see accessibility details.
               </Typography>
             </Paper>
@@ -172,7 +177,8 @@ export default function HelpModal({ isOpen, onClose }) {
                 component='h1'>
                 Save your favorites.
               </Typography>
-              <Typography variant="subtitle1" component="h1">
+              <Typography variant="subtitle1"
+                component="h1">
                 Keep track of your favorite places so you can quickly check in on predictions.
               </Typography>
             </Paper>
@@ -183,13 +189,15 @@ export default function HelpModal({ isOpen, onClose }) {
             sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}
           >
             <Grid item>
-              <Button variant="contained" onClick={handleButtonClicked}>
+              <Button variant="contained"
+                onClick={handleButtonClicked}>
                 Get started
               </Button>
             </Grid>
             <Grid item>
-              <Button variant="contained" onClick={handleDontShowAgain}>
-                Don't show this again
+              <Button variant="contained"
+                onClick={handleDontShowAgain}>
+                Don&apos;t show this again
               </Button>
             </Grid>
           </Grid>

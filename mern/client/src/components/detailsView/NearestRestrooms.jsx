@@ -1,10 +1,10 @@
-import { useState, useEffect, useContext } from 'react';
 import { Box, Chip, Typography, List, ListItem, ListItemButton, ListItemText, ListItemSecondaryAction } from '@mui/material';
+import { useState, useEffect, useContext } from 'react';
+import RestroomDetailsPopup from './RestroomDetailsPopup'; // Assuming you create this component
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PublicRestroomUtilities } from '../../services/restrooms';
 import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
-import RestroomDetailsPopup from './RestroomDetailsPopup'; // Assuming you create this component
 
 export default function NearestRestrooms({ lat, lng }) {
   const { restrooms, selectedDateTime } = useContext(DataContext);
@@ -22,12 +22,12 @@ export default function NearestRestrooms({ lat, lng }) {
     };
 
     const showRestroomMarkers = (restrooms) => {
-      console.log("showRestroomMarkers", restrooms);
+      console.log('showRestroomMarkers', restrooms);
       const markers = restrooms.map(restroom => ({
         lat: restroom.latitude,
         lng: restroom.longitude
       }));
-      console.log("markers to create", markers);
+      console.log('markers to create', markers);
       createMarkers(markers, true);
     };
 
@@ -45,18 +45,24 @@ export default function NearestRestrooms({ lat, lng }) {
   };
 
   return (
-    <Box display='flex' flexDirection='column' alignItems='flex-start'>
-      <Typography variant='h6' sx={{ fontWeight: 400, fontSize: 18 }}>
+    <Box display='flex'
+      flexDirection='column'
+      alignItems='flex-start'>
+      <Typography variant='h6'
+        sx={{ fontWeight: 400, fontSize: 18 }}>
         Wheelchair accessible restrooms
       </Typography>
-      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }} aria-label='restrooms'>
+      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+        aria-label='restrooms'>
         {nearestRestrooms.map((restroom, i) => (
-          <ListItem key={i} disablePadding>
-            <ListItemButton aria-label={restroom.name} onClick={() => handleRestroomClick(restroom)}>
+          <ListItem key={i}
+            disablePadding>
+            <ListItemButton aria-label={restroom.name}
+              onClick={() => handleRestroomClick(restroom)}>
               <ListItemText
                 aria-label='Restroom information'
                 primary={restroom.name}
-                secondary={
+                secondary={(
                   <>
                     <Typography
                       sx={{ display: 'inline' }}
@@ -66,14 +72,15 @@ export default function NearestRestrooms({ lat, lng }) {
                     >
                       {/* TODO: would be nice if we could make today's day bold */}
                       {restroom.formatHours().split('\n').map(h => (
-                        <p aria-label={`Hours of operation ${h}`} key={h}>{h}</p>
+                        <p aria-label={`Hours of operation ${h}`}
+                          key={h}>{h}</p>
                       ))}
                     </Typography>
                     <p aria-label={`Distance from selected location ${Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} meters`}>
                       {Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m
                     </p>
                   </>
-                }
+                )}
               />
               <ListItemSecondaryAction>
                 {restroom.isOpen(selectedDateTime) === true ? (
@@ -86,7 +93,9 @@ export default function NearestRestrooms({ lat, lng }) {
                   <Chip label='UNCERTAIN' 
                     color='default' />
                 )}
-                {restroom.isOpen(new Date()) ? <Chip label='OPEN' color='success' /> : <Chip label='CLOSED' color='error' />}
+                {restroom.isOpen(new Date()) ? <Chip label='OPEN'
+                  color='success' /> : <Chip label='CLOSED'
+                  color='error' />}
               </ListItemSecondaryAction>
             </ListItemButton>
           </ListItem>

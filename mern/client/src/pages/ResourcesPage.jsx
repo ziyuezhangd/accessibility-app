@@ -1,8 +1,8 @@
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import { List, Typography, ListItemButton, ListItemText, Box, Paper, Container } from '@mui/material';
 import { lightBlue, cyan } from '@mui/material/colors';
 import React from 'react';
-import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
-import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 
 export default function ResourcesPage() {
   return (
@@ -21,13 +21,19 @@ export default function ResourcesPage() {
         padding: '20px',
       }}
     >
-      <Typography variant='h4' gutterBottom sx={{ textAlign: 'center', color: '#3f51b5', fontWeight: 'bold' }}>
+      <Typography variant='h4'
+        gutterBottom
+        sx={{ textAlign: 'center', color: '#3f51b5', fontWeight: 'bold' }}>
         Resources
       </Typography>
-      <Paper elevation={3} sx={{ padding: '20px', marginBottom: '20px', width: '100%', maxWidth: 1200, borderRadius: '12px', background: 'white' }}>
-        <Box display="flex" alignItems="center" mb={2}>
+      <Paper elevation={3}
+        sx={{ padding: '20px', marginBottom: '20px', width: '100%', maxWidth: 1200, borderRadius: '12px', background: 'white' }}>
+        <Box display="flex"
+          alignItems="center"
+          mb={2}>
           <AccessibilityNewIcon sx={{ color: '#3f51b5', mr: 1 }} />
-          <Typography variant='h5' sx={{ color: '#3f51b5', fontWeight: 'bold', borderBottom: '2px solid #3f51b5', pb: 1 }}>
+          <Typography variant='h5'
+            sx={{ color: '#3f51b5', fontWeight: 'bold', borderBottom: '2px solid #3f51b5', pb: 1 }}>
             Know your rights
           </Typography>
         </Box>
@@ -63,10 +69,14 @@ export default function ResourcesPage() {
           </ListItemButton>
         </List>
       </Paper>
-      <Paper elevation={3} sx={{ padding: '20px', width: '100%', maxWidth: 1200, borderRadius: '12px', background: 'white' }}>
-        <Box display="flex" alignItems="center" mb={2}>
+      <Paper elevation={3}
+        sx={{ padding: '20px', width: '100%', maxWidth: 1200, borderRadius: '12px', background: 'white' }}>
+        <Box display="flex"
+          alignItems="center"
+          mb={2}>
           <DirectionsBusIcon sx={{ color: '#3f51b5', mr: 1 }} />
-          <Typography variant='h5' sx={{ color: '#3f51b5', fontWeight: 'bold', borderBottom: '2px solid #3f51b5', pb: 1 }}>
+          <Typography variant='h5'
+            sx={{ color: '#3f51b5', fontWeight: 'bold', borderBottom: '2px solid #3f51b5', pb: 1 }}>
             Public Transportation
           </Typography>
         </Box>
