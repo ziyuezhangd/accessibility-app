@@ -23,6 +23,7 @@ const DataProvider = ({children}) => {
   const [odorData, setOdorData] = useState([]);
   const [polylineData, setPolylineData] = useState(null);
   const [predictionDateTime, setPredictionDateTime] = useState(null);
+  const [selectedDateTime, setSelectedDateTime] = useState(null);
     
   useEffect(() => {
     loadRestrooms();
@@ -70,6 +71,8 @@ const DataProvider = ({children}) => {
       } else {
         selectedDate = predictionDateTime;
       }
+    } else {
+      setSelectedDateTime(selectedDate);
     }
 
     // Convert to ISO string
@@ -128,7 +131,7 @@ const DataProvider = ({children}) => {
   };
   
   return (
-    <DataContext.Provider value={{restrooms, placeInfos, getPredictions, busynessData, noiseData, odorData, seatingAreas, pedestrianRamps, pedestrianSignals, polylineData}}>
+    <DataContext.Provider value={{restrooms, placeInfos, getPredictions, busynessData, noiseData, odorData, seatingAreas, pedestrianRamps, pedestrianSignals, polylineData, selectedDateTime}}>
       {children}
     </DataContext.Provider>
   );
