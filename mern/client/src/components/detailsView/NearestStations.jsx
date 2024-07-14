@@ -23,7 +23,8 @@ export default function NearestStations({ lat, lng }) {
   useEffect(() => {
     // TODO: merge stations like Fulton Street
     const getNearestSubwayStations = async () => {
-      const placeInfosObj = placeInfos.map(pi => new PlaceInfo(pi.category, pi.name, pi.address, pi.latitude, pi.longitude, pi.hasWheelchairAccessibleRestroom));
+      
+      const placeInfosObj = placeInfos.map(pi => new PlaceInfo(pi));
       const stations = placeInfosObj.filter((place) => place.isSubwayStation() && place.name !== '');
       const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
       console.log(nearestStations);
@@ -32,15 +33,17 @@ export default function NearestStations({ lat, lng }) {
     };
 
     const showStationMarkers = (stations) => {
+      console.log('showStationMarkers',stations);
       const markers = stations.map(station => ({
         lat: station.latitude,
-        lng: station.longitude 
+        lng: station.longitude,
+        scale:1.5
       }));
-      createMarkers(markers);
+      createMarkers(markers,false);
     };
 
     getNearestSubwayStations();
-  }, [lat, lng, placeInfos, createMarkers]);
+  }, [lat, lng, placeInfos]);
 
   return (
     <Box display='flex' flexDirection='column' alignItems='flex-start'>

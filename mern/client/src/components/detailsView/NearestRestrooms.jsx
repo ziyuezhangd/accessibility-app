@@ -16,21 +16,24 @@ export default function NearestRestrooms({ lat, lng }) {
 
   useEffect(() => {
     const getNearestRestrooms = async () => {
+      
       const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
       setNearestRestrooms(nearest);
       showRestroomMarkers(nearest);
     };
 
     const showRestroomMarkers = (restrooms) => {
+      console.log("showRestroomMarkers",restrooms);
       const markers = restrooms.map(restroom => ({
         lat: restroom.latitude,
         lng: restroom.longitude
       }));
-      createMarkers(markers);
+      console.log("markers to create", markers);
+      createMarkers(markers,true);
     };
 
     getNearestRestrooms();
-  }, [lat, lng, restrooms, createMarkers]);
+  }, [lat, lng, restrooms]);
 
   const handleRestroomClick = (restroom) => {
     setSelectedRestroom(restroom);
