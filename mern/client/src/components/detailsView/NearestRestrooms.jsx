@@ -7,6 +7,7 @@ import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 import RestroomDetailsPopup from './RestroomDetailsPopup'; // Assuming you create this component
 
 export default function NearestRestrooms({ lat, lng }) {
+  const { restrooms, selectedDateTime } = useContext(DataContext);
   const { restrooms } = useContext(DataContext);
   const { createMarkers } = useContext(GoogleMapContext);
 
@@ -77,6 +78,16 @@ export default function NearestRestrooms({ lat, lng }) {
                 }
               />
               <ListItemSecondaryAction>
+                {restroom.isOpen(selectedDateTime) === true ? (
+                  <Chip label='OPEN' 
+                    color='success' />
+                ) : restroom.isOpen(selectedDateTime) === false ? (
+                  <Chip label='CLOSED' 
+                    color='error' />
+                ) : (
+                  <Chip label='UNCERTAIN' 
+                    color='default' />
+                )}
                 {restroom.isOpenNow() ? <Chip label='OPEN' color='success' /> : <Chip label='CLOSED' color='error' />}
               </ListItemSecondaryAction>
             </ListItemButton>

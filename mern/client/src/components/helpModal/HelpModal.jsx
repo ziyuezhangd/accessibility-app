@@ -68,12 +68,11 @@ export default function HelpModal({ isOpen, onClose }) {
                 height: '400px',
               }}
             >
-              <img
-                src={selectDateImage}
-                alt="Description of the image"
-                style={{ width: 150, height: 150 }}
-              />
-              <Typography variant="h6" component="h1">
+              <img src={selectDateImage}
+                alt='Pick a date and time'
+                style={{ width: 150, height: 150 }} />
+              <Typography variant='h6'
+                component='h1'>
                 Pick a date and time
               </Typography>
               <Typography variant="subtitle1" component="h1">
@@ -101,12 +100,11 @@ export default function HelpModal({ isOpen, onClose }) {
                 height: '400px',
               }}
             >
-              <img
-                src={clickRoadImage}
-                alt="Description of the image"
-                style={{ width: 150, height: 150 }}
-              />
-              <Typography variant="h6" component="h1">
+              <img src={clickRoadImage}
+                alt='Click for details'
+                style={{ width: 150, height: 150 }} />
+              <Typography variant='h6'
+                component='h1'>
                 Click for details
               </Typography>
               <Typography variant="subtitle1" component="h1">
@@ -134,12 +132,11 @@ export default function HelpModal({ isOpen, onClose }) {
                 height: '400px',
               }}
             >
-              <img
-                src={restaurantMarkerImage}
-                alt="Description of the image"
-                style={{ width: 150, height: 150 }}
-              />
-              <Typography variant="h6" component="h1">
+              <img src={restaurantMarkerImage}
+                alt='Search for businesses'
+                style={{ width: 150, height: 150 }} />
+              <Typography variant='h6'
+                component='h1'>
                 Search for businesses
               </Typography>
               <Typography variant="subtitle1" component="h1">
@@ -167,12 +164,12 @@ export default function HelpModal({ isOpen, onClose }) {
                 height: '400px',
               }}
             >
-              <img
-                src={heartImage}
-                alt="Description of the image"
-                style={{ width: 150, height: 150 }}
-              />
-              <Typography variant="h6" component="h1">
+              <img src={heartImage}
+                alt='Save your favorites'
+                style={{ width: 150, height: 150 }} />
+
+              <Typography variant='h6'
+                component='h1'>
                 Save your favorites.
               </Typography>
               <Typography variant="subtitle1" component="h1">

@@ -1,21 +1,20 @@
+import { retryFetch } from '../utils/retryFetch';
+
 /**
  *
  * Queries the backend for pedestrian ramps
  * @return {Promise<PedestrianRamp[]>} list of pedestrian ramps
  */
 export const getPedestrianRamps = async () => {
-  const response = await fetch('/api/pedestrian-ramps');
-  if (!response.ok) {
-    const message = `An error has occurred: ${response.statusText}`;
-    console.error(message);
-    return;
+  try {
+    const ramps = await retryFetch('/api/pedestrian-ramps');
+    return ramps.map((ramp) => {
+      return new PedestrianRamp(ramp);
+    });
+  } catch(error) {
+    console.error('Failed to fetch pedestrian ramps:', error.message);
+    return null;
   }
-
-  const ramps = await response.json();
-
-  return ramps.map((ramp) => {
-    return new PedestrianRamp(ramp);
-  });
 };
 
 export class PedestrianRamp {

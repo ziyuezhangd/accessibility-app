@@ -23,6 +23,7 @@ const DataProvider = ({children}) => {
   const [odorData, setOdorData] = useState([]);
   const [polylineData, setPolylineData] = useState(null);
   const [predictionDateTime, setPredictionDateTime] = useState(null);
+  const [selectedDateTime, setSelectedDateTime] = useState(null);
     
   useEffect(() => {
     loadRestrooms();
@@ -70,19 +71,26 @@ const DataProvider = ({children}) => {
       } else {
         selectedDate = predictionDateTime;
       }
+    } else {
+      setSelectedDateTime(selectedDate);
     }
 
     // Convert to ISO string
-    selectedDate = dayjs(selectedDate).format('YYYY-MM-DD[T]HH:mm:ss');
+    selectedDate = dayjs(selectedDate).set('minute', 0).set('second', 0).format('YYYY-MM-DD[T]HH:mm:ss');
 
     const isNewDayAndHour = (dayjs(selectedDate).day() !== dayjs(predictionDateTime).day() || dayjs(selectedDate).hour() !== dayjs(predictionDateTime).hour());
     // Re-load with the new selected date
     if (isFirstPrediction || isNewDayAndHour) {
+      if (isFirstPrediction) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
       console.log('Reloading from server');
       console.log('selectedDate ', selectedDate);
-      busynessPredictions = await loadBusynessRatings(selectedDate);
-      noisePredictions = await loadNoiseRatings(selectedDate);
-      odorPredictions = await loadOdourRatings(selectedDate);
+      [busynessPredictions, noisePredictions, odorPredictions] = await Promise.all([
+        loadBusynessRatings(selectedDate),
+        loadNoiseRatings(selectedDate),
+        loadOdourRatings(selectedDate)
+      ]);
       // Set polyline data
       const polylineData = [];
       for (const bp of busynessPredictions) {
@@ -123,7 +131,7 @@ const DataProvider = ({children}) => {
   };
   
   return (
-    <DataContext.Provider value={{restrooms, placeInfos, getPredictions, busynessData, noiseData, odorData, seatingAreas, pedestrianRamps, pedestrianSignals, polylineData}}>
+    <DataContext.Provider value={{restrooms, placeInfos, getPredictions, busynessData, noiseData, odorData, seatingAreas, pedestrianRamps, pedestrianSignals, polylineData, selectedDateTime}}>
       {children}
     </DataContext.Provider>
   );

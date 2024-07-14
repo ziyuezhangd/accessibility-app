@@ -1,7 +1,7 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Snackbar, IconButton, Button,useTheme, useMediaQuery } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
-import { GoogleMap, HeatmapLayer, Polyline } from 'react-google-map-wrapper';
+import { GoogleMap, Polyline } from 'react-google-map-wrapper';
 import { Control } from 'react-google-map-wrapper';
 import AccessibilityMarkers from './AccessibilityMarkers';
 import DirectionsModal from './DirectionsModal';
@@ -80,7 +80,11 @@ export const Map = () => {
 
   // When a prediction type is selected, change the selected prediction type
   const handleVisualizationSelected = (item) => {
-    setSelectedPredictionType(item.id);
+    if (item.name === 'none') {
+      setSelectedPredictionType(null);
+    } else {
+      setSelectedPredictionType(item.id);
+    }
   };
 
   // Update our polyine and heatmap data anytime:
