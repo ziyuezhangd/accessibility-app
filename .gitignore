@@ -130,3 +130,9 @@ out/
 # ML file
 ml/input_data
 ml/models
+
+# python cache
+__pycache__
+
+# sonarqube
+.scannerwork

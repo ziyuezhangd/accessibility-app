@@ -67,7 +67,7 @@ export default function HelpModal({ isOpen, onClose }) {
               }}
             >
               <img src={selectDateImage}
-                alt='Description of the image'
+                alt='Pick a date and time'
                 style={{ width: 150, height: 150 }} />
               <Typography variant='h6'
                 component='h1'>
@@ -98,7 +98,7 @@ export default function HelpModal({ isOpen, onClose }) {
               }}
             >
               <img src={clickRoadImage}
-                alt='Description of the image'
+                alt='Click for details'
                 style={{ width: 150, height: 150 }} />
               <Typography variant='h6'
                 component='h1'>
@@ -129,7 +129,7 @@ export default function HelpModal({ isOpen, onClose }) {
               }}
             >
               <img src={restaurantMarkerImage}
-                alt='Description of the image'
+                alt='Search for businesses'
                 style={{ width: 150, height: 150 }} />
               <Typography variant='h6'
                 component='h1'>
@@ -160,7 +160,7 @@ export default function HelpModal({ isOpen, onClose }) {
               }}
             >
               <img src={heartImage}
-                alt='Description of the image'
+                alt='Save your favorites'
                 style={{ width: 150, height: 150 }} />
 
               <Typography variant='h6'

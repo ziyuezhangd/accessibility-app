@@ -1,21 +1,20 @@
+import { retryFetch } from '../utils/retryFetch';
+
 /**
  *
  * Queries the backend for pedestrian signals
  * @return {Promise<PedestrianSignal[]>} list of pedestrian signals
  */
 export const getPedestrianSignals = async () => {
-  const response = await fetch('/api/pedestrian-signals');
-  if (!response.ok) {
-    const message = `An error has occurred: ${response.statusText}`;
-    console.error(message);
-    return;
+  try {
+    const signals = await retryFetch('/api/pedestrian-signals');
+    return signals.map((signal) => {
+      return new PedestrianSignal(signal);
+    });
+  } catch(error) {
+    console.error('Failed to fetch pedestrian signals:', error.message);
+    return null;
   }
-
-  const signals = await response.json();
-
-  return signals.map((signal) => {
-    return new PedestrianSignal(signal);
-  });
 };
 
 export class PedestrianSignal {
