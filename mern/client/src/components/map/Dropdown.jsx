@@ -74,9 +74,10 @@ function Dropdown({ onSelect }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleSelect = (event) => {
-    const selectedItem = list.find(item => item.name === event.target.value);
+    const value = event.target.value;
+    const selectedItem = value !== 'none' ? list.find(item => item.name === value) : { name: 'none' };
     onSelect(selectedItem);
-    setSelectedOption(event.target.value);
+    setSelectedOption(value);
   };
 
   const handleMenuClick = (event) => {
@@ -113,6 +114,9 @@ function Dropdown({ onSelect }) {
                 {item.name}
               </MenuItem>
             ))}
+            <MenuItem value="none">
+              None
+            </MenuItem>
           </CustomSelect>
         </CustomFormControl>
       ) : (

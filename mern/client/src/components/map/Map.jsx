@@ -79,7 +79,11 @@ export const Map = () => {
 
   // When a prediction type is selected, change the selected prediction type
   const handleVisualizationSelected = (item) => {
-    setSelectedPredictionType(item.id);
+    if (item.name === 'none') {
+      setSelectedPredictionType(null);
+    } else {
+      setSelectedPredictionType(item.id);
+    }
   };
   
   // Update our polyine and heatmap data anytime:
