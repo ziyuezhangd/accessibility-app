@@ -86,9 +86,11 @@ const DataProvider = ({children}) => {
       }
       console.log('Reloading from server');
       console.log('selectedDate ', selectedDate);
-      busynessPredictions = await loadBusynessRatings(selectedDate);
-      noisePredictions = await loadNoiseRatings(selectedDate);
-      odorPredictions = await loadOdourRatings(selectedDate);
+      [busynessPredictions, noisePredictions, odorPredictions] = await Promise.all([
+        loadBusynessRatings(selectedDate),
+        loadNoiseRatings(selectedDate),
+        loadOdourRatings(selectedDate)
+      ]);
       // Set polyline data
       const polylineData = [];
       for (const bp of busynessPredictions) {
