@@ -103,10 +103,14 @@ const GoogleMapProvider = ({children}) => {
    * color: string}>} markerConfigs 
    * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
    */
-  const createMarkers = (markerConfigs, shouldOverwriteExisting) => {
+  const createMarkers = (markerConfigs, shouldOverwriteExisting, isCategoryMarker = false) => {
     // TODO: I think double markers are being added?
     if (shouldOverwriteExisting) {
-      clearMarkers();
+      if (isCategoryMarker) {
+        clearCategoryMarkers();
+      } else {
+        clearMarkers();
+      }
     }
     const markersToCreate = [];
     for (const config of markerConfigs) {
@@ -218,7 +222,7 @@ const GoogleMapProvider = ({children}) => {
           </AdvancedMarker>
         );       
         markersToCreate.push(marker);
-      } else {
+      }else {
         // console.log('Imgsrc is null')
         let { scale, color} = config;
         scale = scale || 1;
@@ -241,17 +245,33 @@ const GoogleMapProvider = ({children}) => {
     }
     setMarkers([...markers, ...markersToCreate]);
     console.log(`Created ${markers.length} markers`);
-  };
+    if (isCategoryMarker) {
+      setCategoryMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
+    } else {
+      setMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
+    }
+    console.log(`Created ${markersToCreate.length} markers`);
+    };
+  
+  
 
   /**
    * 
    * @param {Array<{lat: number, lng: number}>} latLngs 
    */
-  const removeMarkers = (latLngs) => {
-    for (const latLng of latLngs) {
-      const markersToFilter = [...markers];
-      _.remove(markersToFilter, m => m.lat === parseFloat(latLng.lat) && m.lng === parseFloat(latLng.lng));
-      setMarkers(markersToFilter);
+  const removeMarkers = (latLngs, isCategoryMarker = false) => {
+    if (isCategoryMarker) {
+      setCategoryMarkers(prevMarkers => prevMarkers.filter(marker =>
+        !latLngs.some(latLng =>
+          parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
+        )
+      ));
+    } else {
+      setMarkers(prevMarkers => prevMarkers.filter(marker =>
+        !latLngs.some(latLng =>
+          parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
+        )
+      ));
     }
   };
 
@@ -262,11 +282,44 @@ const GoogleMapProvider = ({children}) => {
     setMarkers([]);
   };
 
+  const clearCategoryMarkers = () => {
+    setCategoryMarkers([]);
+  };
+
+  const getDirections = (start, end) => {
+    var request = {
+      origin: start,
+      destination: end,
+      travelMode: google.maps.TravelMode['WALKING']
+    };
+    directionsService.route(request, function(result, status) {
+      if (status === 'OK') {
+        console.log('Got directions');
+        directionsRenderer.setDirections(result);
+        if (directionsRenderer.getMap() === null) {
+          directionsRenderer.setMap(mapInstance);
+        }
+      }
+    });
+  };
+  
+
   return (
-    <GoogleMapContext.Provider value={{mapInstance, placesService, geocoder, markers, onMapLoaded: handleMapLoaded, createMarkers, removeMarkers, clearMarkers}}>
+    <GoogleMapContext.Provider value={{
+      mapInstance,
+      placesService,
+      geocoder,
+      markers: [...markers, ...categoryMarkers],
+      onMapLoaded: handleMapLoaded,
+      createMarkers,
+      removeMarkers,
+      clearMarkers,
+      clearCategoryMarkers,
+      getDirections,
+      clearDirections
+    }}>
       {children}
     </GoogleMapContext.Provider>
   );
-};
-  
+
 export { GoogleMapContext, GoogleMapProvider };
