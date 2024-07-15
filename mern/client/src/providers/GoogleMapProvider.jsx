@@ -145,7 +145,7 @@ const GoogleMapProvider = ({children}) => {
           d=200;
         }
         
-        if (parentCategory === 'car' || parentCategory === 'train' || parentCategory === 'airport' || parentCategory === 'bus'|| parentCategory === 'parking'|| parentCategory === 'ferry'||  parentCategory === 'bike'){
+        if (parentCategory === 'car' || parentCategory === 'train' || parentCategory === 'airport' || parentCategory === 'bus'|| parentCategory === 'parking'|| parentCategory === 'ferry'|| parentCategory === 'bike'){
           a= 0;
           b=0;
           //green
