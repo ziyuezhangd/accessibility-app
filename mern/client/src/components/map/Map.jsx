@@ -9,6 +9,7 @@ import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';
 import CategoryFilter from '../detailsView/CategoryFilter'; // Import the CategoryFilter component
 import PersistentDrawerLeft from '../detailsView/Drawer';
