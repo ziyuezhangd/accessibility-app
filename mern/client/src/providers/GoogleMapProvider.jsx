@@ -14,7 +14,13 @@ const GoogleMapProvider = ({children}) => {
   
   /** @type {[google.maps.Geocoder, React.Dispatch<React.SetStateAction<google.maps.Geocoder>>]} */
   const [geocoder, setGeocoder] = useState();
-  
+   
+  /** @type {[google.maps.DirectionsService, React.Dispatch<React.SetStateAction<google.maps.DirectionsService>>]} */
+  const [directionsService, setDirectionsService] = useState();
+
+  /** @type {[google.maps.DirectionsRenderer, React.Dispatch<React.SetStateAction<google.maps.DirectionsRenderer>>]} */
+  const [directionsRenderer, setDirectionsRenderer] = useState();
+    
   /** @type {[google.maps.GeometryLibrary, React.Dispatch<React.SetStateAction<google.maps.GeometryLibrary>>]} */
   const [geometry, setGeometry] = useState();
 
