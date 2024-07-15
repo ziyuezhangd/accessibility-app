@@ -72,13 +72,93 @@ const GoogleMapProvider = ({children}) => {
     }
     const markersToCreate = [];
     for (const config of markerConfigs) {
-      const {imgSrc, key, title} = config;
+      const {imgSrc, key, title, parentCategory} = config;
+      
       let {lat, lng} = config;
       lat = parseFloat(lat);
       lng = parseFloat(lng);
       if (imgSrc) {
+        let a = 0;
+        let b= 0;
+        let c= 0;
+        let d=0;
         const {imgAlt, imgSize} = config;
-        // console.log(imgSrc)
+        
+        if (parentCategory === 'books' || parentCategory === 'education' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=170;
+        }
+        else if (parentCategory === 'retail' || parentCategory ==='market' || parentCategory ==='phone' || parentCategory ==='supermarket' || parentCategory ==='beauty' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=136;
+        }
+        if (parentCategory === 'theatre'|| parentCategory === 'cinema' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=200;
+        }
+        
+        if (parentCategory === 'car' || parentCategory === 'train' || parentCategory === 'airport' || parentCategory === 'bus'|| parentCategory === 'parking'|| parentCategory === 'ferry'||  parentCategory === 'bike'){
+          a= 0;
+          b=0;
+          //green
+          c=3000;
+          d=100;
+        }
+        if ( parentCategory === 'accomodation' || parentCategory === 'policeStation' || parentCategory === 'office' || parentCategory === 'cemetery' || parentCategory === 'atm' || parentCategory === 'post' || parentCategory === 'service' || parentCategory === 'bank' || parentCategory === 'health' || parentCategory === 'veterinary' ){
+          a= 0;
+          b=0;
+          //green
+          c=4247;
+          d=300;
+        }
+
+        if (parentCategory === 'restaurant'|| parentCategory === 'coffee'|| parentCategory === 'pub' ){
+          a= 0;
+          b=0;
+          //purple
+          c=4247;
+          d=45;
+        }
+        if (parentCategory === 'placeOfWorship' ){
+          a= 0;
+          b=0;
+          //blue
+          c=4247;
+          d=10;
+        }
+        if (parentCategory === 'art' || parentCategory === 'museum' || parentCategory === 'attraction' || parentCategory === 'sports'|| parentCategory === 'historical'){
+          a= 0;
+          b=0;
+          //blue
+          c=4247;
+          d=10;
+        }
+        if (parentCategory === 'toilet' ){
+          a= 0;
+          b=0;
+          //green
+          c=4247;
+          d=300;
+        }
+        if (parentCategory === 'drinkingWater' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=300;
+        }
+        if (parentCategory === 'camping' || parentCategory === 'picnicTable' || parentCategory === 'flowers'|| parentCategory === 'water' || parentCategory === 'playground'){
+          a= 0;
+          b=0;
+          c=4247;
+          d=170;
+        }
+               
         const marker = (
           <AdvancedMarker 
             lat={lat}
@@ -89,7 +169,7 @@ const GoogleMapProvider = ({children}) => {
           >
             <img 
               src = {imgSrc}
-              style={{height: imgSize, filter: ` saturate(3000%) hue-rotate(90deg) brightness(95%) contrast(95%)`}}
+              style={{height: imgSize, filter:`invert(${a}%) sepia(${b}%) saturate(${c}%) hue-rotate(${d}deg) brightness(95%) contrast(95%)`}}
               //90 deg green
               //0 deg orange
               //
