@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 const googleMapConfig = import.meta.env.VITE_GOOGLEMAP_KEY;
 
