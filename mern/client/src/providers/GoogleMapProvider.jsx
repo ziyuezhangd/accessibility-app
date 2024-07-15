@@ -100,7 +100,8 @@ const GoogleMapProvider = ({children}) => {
  * scale: number, 
  * title: string,
  * key: num,
- * color: string}>} markerConfigs 
+ * color: string,
+ * onClick: function}>} markerConfigs 
  * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
  */
   const createMarkers = (markerConfigs, shouldOverwriteExisting, isCategoryMarker = false) => {
@@ -113,14 +114,15 @@ const GoogleMapProvider = ({children}) => {
       }
     }
     const markersToCreate = markerConfigs.map(config => {
-      const { imgSrc, title, lat, lng, imgAlt, imgSize, scale, color } = config;
-      return imgSrc ? (
+      const { imgSrc, title, lat, lng, imgAlt, imgSize, scale, color, onClick } = config;
+      const marker = imgSrc ? (
         <AdvancedMarker 
           lat={parseFloat(lat)}
           lng={parseFloat(lng)}
           title={title}
           gmpClickable={true}
           // key={key}
+          onClick={onClick} // Add onClick event handler
         >
           <img 
             src={imgSrc}
@@ -133,12 +135,15 @@ const GoogleMapProvider = ({children}) => {
           lat={parseFloat(lat)}
           lng={parseFloat(lng)}
           title={title}
-          gmpClickable={true}>
+          gmpClickable={true}
+          onClick={onClick} // Add onClick event handler
+        >
           <PinElement 
             scale={scale}
             color={color} /> 
         </AdvancedMarker>
       );
+      return marker;
     });
 
     if (isCategoryMarker) {
