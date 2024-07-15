@@ -12,17 +12,17 @@ const dataMODZCTA = await fs.promises.readFile(filePathMODZCTA, 'utf-8');
 const dictionaryMODZCTA = JSON.parse(dataMODZCTA);
 
 let url;
-if (process.env.NODE_ENV === 'development') {
-  url = 'http://127.0.0.1:5000/';
-} else {
+if (process.env.FLASK === 'remote') {
   url = 'http://137.43.49.23/flask-api/';
+} else {
+  url = 'http://127.0.0.1:5000/';
 }
 
 const ml = {
   /**
    * 
    * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
-   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} noiseRatings
+   * @returns {Promise<Array<{location: {lat: number, lng: number}, prediction: string}>>} noiseRatings
    */
   async getNoisePredictionsHourly(datetime) {
     const date = new Date(datetime);
@@ -49,7 +49,7 @@ const ml = {
   /**
    * 
    * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
-   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} odourRatings
+   * @returns {Promise<Array<{location: {lat: number, lng: number}, prediction: string}>>} odourRatings
    */
   async getNoisePredictionsDaily(datetime) {
     const date = new Date(datetime);
@@ -77,7 +77,7 @@ const ml = {
   /**
    * 
    * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
-   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} busynessRatings
+   * @returns {Promise<Array<{location: {lat: number, lng: number}, prediction: string}>>} busynessRatings
    */
   async getBusynessPredictions(datetime) {
     const date = new Date(datetime);
@@ -107,7 +107,7 @@ const ml = {
   /**
    * 
    * @param {string} datetime - The date-time string in ISO 8601 format (e.g., '2024-07-01T14:30:00') 
-   * @returns {Array<{location: {lat: number, lng: number}, prediction: string}>} odourRatings
+   * @returns {Promise<Array<{location: {lat: number, lng: number}, prediction: string}>>} odourRatings
    */
   async getOdourPredictions(datetime) {
     const date = new Date(datetime);

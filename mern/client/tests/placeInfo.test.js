@@ -155,8 +155,8 @@ describe('Function getPlaceInfos', () => {
     const placeInfos = await getPlaceInfos();
 
     expect(fetch).toHaveBeenCalledWith('/api/place-infos');
-    expect(placeInfos).toBeUndefined();
-    expect(console.error).toHaveBeenCalledTimes(1);
+    expect(placeInfos).toBeNull();
+    expect(console.error).toHaveBeenCalledTimes(4);
   });
 });
 

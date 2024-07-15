@@ -10,15 +10,13 @@
     "install:client": "cd client && npm install",
     "build": "cd client && npm run build",
     "dev:all-con": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:flask-remote": "cross-env FLASK=remote concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:all-server": "concurrently \"npm run dev:server\" \"npm run watch:client\"",
     "dev:server": "cd server && npm run dev",
-    "dev:client": "cd client && npm run dev",
-    "watch:client": "cd client && vite build --watch",
-    "start:all": "concurrently \"npm run start:server\" \"npm run start:client\"",
-    "start:server": "cd server && npm run start",
-    "start:client": "cd client && npm run start"
+    "dev:client": "cd client && npm run dev"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3"
   }
 }

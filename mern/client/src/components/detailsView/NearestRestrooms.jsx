@@ -17,33 +17,42 @@ import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
  * @returns {JSX.Element} The rendered NearestRestrooms component.
  */
 export default function NearestRestrooms({ lat, lng }) {
-  const {restrooms} = useContext(DataContext);
-  const { createMarkers } = useContext(GoogleMapContext);
+  const { restrooms, selectedDateTime } = useContext(DataContext);
+  const { createMarkers, removeMarkers } = useContext(GoogleMapContext);
 
   /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
 
   useEffect(() => {
     const getNearestRestrooms = async () => {
-    // TODO: remove not operational
+      // TODO: remove not operational
       const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
-      console.log(`Nearest ${nearest.length} restrooms: `, nearest);
       setNearestRestrooms(nearest);
       showRestroomMarkers(nearest);
     };
 
     const showRestroomMarkers = (restrooms) => {
-      const markers = restrooms.map(restroom => {
-        return {
-          lat: restroom.latitude,
-          lng: restroom.longitude
-        };
-      });
-      createMarkers(markers);
+      const markers = restrooms.map(restroom => ({
+        lat: restroom.latitude,
+        lng: restroom.longitude,
+        imgSrc: null, // No image source, using pin element
+        color: 'red', // Marker color red
+        scale: 0.8, // Scale the marker for visibility
+        title: restroom.name,
+      }));
+      createMarkers(markers, false); // Add markers without clearing existing markers
     };
 
     getNearestRestrooms();
-  }, [lat, lng, restrooms]);
+
+    return () => {
+      const markersToRemove = nearestRestrooms.map(restroom => ({
+        lat: restroom.latitude,
+        lng: restroom.longitude,
+      }));
+      removeMarkers(markersToRemove);
+    };
+  }, [lat, lng, restrooms, createMarkers, removeMarkers]);
 
   return (
     <Box display='flex'
@@ -76,14 +85,20 @@ export default function NearestRestrooms({ lat, lng }) {
                     </Typography>
                     <p aria-label={`Distance from selected location ${Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} meters`}>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</p>
                   </>
-                )}
-                
+                )} 
+              
               />
               <ListItemSecondaryAction>
-                {/* TODO: we will actually want to know if its open at the predicted time */}
-                {restroom.isOpenNow() ? <Chip label='OPEN'
-                  color='success' /> : <Chip label='CLOSED'
-                  color='error' />}
+                {restroom.isOpen(selectedDateTime) === true ? (
+                  <Chip label='OPEN' 
+                    color='success' />
+                ) : restroom.isOpen(selectedDateTime) === false ? (
+                  <Chip label='CLOSED' 
+                    color='error' />
+                ) : (
+                  <Chip label='UNCERTAIN' 
+                    color='default' />
+                )}
               </ListItemSecondaryAction>
             </ListItemButton>
           </ListItem>

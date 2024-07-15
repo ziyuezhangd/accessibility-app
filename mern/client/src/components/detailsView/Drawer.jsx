@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import DateTimePickerComponent from './DateTimePicker';
 import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
@@ -29,12 +29,12 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  * 
  * @param {Object} props - The properties passed to the component.
  * @param {MapLocation} props.selectedLocation - The currently selected location.
+ * @param {string} props.prediction - The prediction for the selected location if available
  * 
  * @returns {JSX.Element} The rendered PersistentDrawerLeft component.
  */
-export default function PersistentDrawerLeft({ selectedLocation }) {
-  const { clearMarkers } = useContext(GoogleMapContext);
-
+export default function PersistentDrawerLeft({ selectedLocation, predictions }) {
+  const { removeMarkers } = useContext(GoogleMapContext);
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
@@ -61,15 +61,14 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
   }, []);
 
   const handleLocationSelected = (e) => {
-    clearMarkers();
     setSelectedDrawerContent('location');
     setLocation(e);
   };
 
-  const handleBackClicked = (e) => {
-    clearMarkers();
+  const handleBackClicked = (location) => {
     setSelectedDrawerContent('history');
     setLocation(null);
+    removeMarkers([{ lat: location.lat, lng: location.lng }]);
   };
 
   return (
@@ -86,20 +85,16 @@ export default function PersistentDrawerLeft({ selectedLocation }) {
 
         <DrawerHeader>
           {selectedDrawerContent === 'history' && <Typography variant='h6'>Last viewed </Typography>}
-          {selectedDrawerContent === 'location' && <IconButton aria-label='Back to recently viewed'
-            onClick={handleBackClicked}>
-            <ChevronLeftIcon />
-          </IconButton>}
           <div><DateTimePickerComponent /></div>
-
         </DrawerHeader>
 
         {selectedDrawerContent === 'history' &&
-          <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
+        <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
         {selectedDrawerContent === 'location' &&
-          <DrawerLocationDetails
-            location={location}
-            onBackClicked={handleBackClicked} />
+        <DrawerLocationDetails
+          location={location}
+          predictions={predictions}
+          onBackClicked={handleBackClicked} />
         }
       </Drawer>
     </>

@@ -1,5 +1,6 @@
 import path from 'path';
 import bodyParser from 'body-parser';
+import compression from 'compression';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
 app.use(helmet()); // Add security-related HTTP headers
+app.use(compression()); // Compress HTTP responses using gzip
 
 // Configure logger for HTTP request
 const morganStream = {
@@ -37,7 +39,7 @@ app.get('*', (req, res) => {
 });
 
 // Error handling
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   logger.error(err.stack);
   res.status(500).send('Internal Server Error: Our team is investigating this issue.');
 });

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
+import { retryFetch } from '../utils/retryFetch';
 
 /**
  *
@@ -9,21 +10,19 @@ import { calculateDistanceBetweenTwoCoordinates } from '../utils/MapUtils';
  * @returns {Promise<Array<PlaceInfo>>} placeInfos
  */
 export const getPlaceInfos = async () => {
-  const response = await fetch(`/api/place-infos`);
-  if (!response.ok) {
-    const message = `An error has occurred: ${response.statusText}`;
-    console.error(message);
-    return;
-  }
-
-  const placeInfos = await response.json();
-  return placeInfos.map((placeInfo) => {
-    return new PlaceInfo({
-      ...placeInfo,
-      latitude: parseFloat(placeInfo.latitude),
-      longitude: parseFloat(placeInfo.longitude)
+  try {
+    const placeInfos = await retryFetch('/api/place-infos');
+    return placeInfos.map((placeInfo) => {
+      return new PlaceInfo({
+        ...placeInfo,
+        latitude: parseFloat(placeInfo.latitude),
+        longitude: parseFloat(placeInfo.longitude)
+      });
     });
-  });
+  } catch(error) {
+    console.error('Failed to fetch placeInfos:', error.message);
+    return null;
+  }
 };
 
 /**
@@ -367,4 +366,6 @@ const categoryToParentCategory = (category) => {
     return 'coffee';
   }
 };
+
+export { categoryToParentCategory };
 
