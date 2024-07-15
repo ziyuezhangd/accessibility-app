@@ -12,18 +12,30 @@ describe('getNoisePredictions', () => {
 
   it('should return predictions with lat/lng', async () => {
     fetch.mockResponseOnce(JSON.stringify([
-      { segment_id: '0018067', prediction: 1 },
-      { segment_id: '0018123', prediction: 3 },
+      { segment_id: '0018123', prediction: 1 },
+      { segment_id: '0018148', prediction: 3 },
     ]));
 
     const datetime = '2024-07-01T14:30:00';
-    const predictions = await ml.getNoisePredictions(datetime);
+    const predictions = await ml.getNoisePredictionsDaily(datetime);
 
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch).toHaveBeenCalledWith('/flask-api/noise-ratings?hour=14');
+    expect(fetch).toHaveBeenCalledWith('http://127.0.0.1:5000/noise-ratings/daily?hour=14&dayOfWeek=0');
     expect(predictions).toEqual([
-      { location: { lat: 40.70691998879576, lng: -74.01869812608821 }, prediction: 1 },
-      { location: { lat: 40.70651443884558, lng: -74.01777528922824 }, prediction: 3 },
+      { 
+        location: {
+          'start': {'lat': 40.706174448019596, 'lng': -74.01793044362333}, 
+          'end': {'lat': 40.70683944743645, 'lng': -74.01757419963172}
+        }, 
+        prediction: 1 
+      },
+      { 
+        location: {
+          'start': {'lat': 40.708456986731186, 'lng': -74.0173977906187}, 
+          'end': {'lat': 40.70879474369141, 'lng': -74.01814829015251}
+        }, 
+        prediction: 3 
+      },
     ]);
   });
 
@@ -37,7 +49,7 @@ describe('getNoisePredictions', () => {
 
     const datetime = '2024-07-01T14:30:00';
 
-    await expect(ml.getNoisePredictions(datetime)).rejects.toThrow(Error);
+    await expect(ml.getNoisePredictionsDaily(datetime)).rejects.toThrow(Error);
   });
 });
 
@@ -49,18 +61,30 @@ describe('getBusynessPredictions', () => {
 
   it('should return predictions with lat/lng', async () => {
     fetch.mockResponseOnce(JSON.stringify([
-      { segment_id: '0018067', prediction: 'B' },
-      { segment_id: '0018123', prediction: 'F' },
+      { segment_id: '0018123', prediction: 'B' },
+      { segment_id: '0018148', prediction: 'F' },
     ]));
 
     const datetime = '2024-07-01T14:30:00';
     const predictions = await ml.getBusynessPredictions(datetime);
 
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch).toHaveBeenCalledWith('/flask-api/busyness-ratings?month=7&day=1&hour=14&dayOfWeek=0');
+    expect(fetch).toHaveBeenCalledWith('http://127.0.0.1:5000/busyness-ratings?month=7&day=1&hour=14&dayOfWeek=0');
     expect(predictions).toEqual([
-      { location: { lat: 40.70691998879576, lng: -74.01869812608821 }, prediction: 'B' },
-      { location: { lat: 40.70651443884558, lng: -74.01777528922824 }, prediction: 'F' },
+      { 
+        location: {
+          'start': {'lat': 40.706174448019596, 'lng': -74.01793044362333}, 
+          'end': {'lat': 40.70683944743645, 'lng': -74.01757419963172}
+        }, 
+        prediction: 'B' 
+      },
+      { 
+        location: {
+          'start': {'lat': 40.708456986731186, 'lng': -74.0173977906187}, 
+          'end': {'lat': 40.70879474369141, 'lng': -74.01814829015251}
+        }, 
+        prediction: 'F' 
+      },
     ]);
   });
 
@@ -94,7 +118,7 @@ describe('getOdourPredictions', () => {
     const predictions = await ml.getOdourPredictions(datetime);
 
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch).toHaveBeenCalledWith('/flask-api/odour-ratings?month=7&day=1&hour=14');
+    expect(fetch).toHaveBeenCalledWith('http://127.0.0.1:5000/odour-ratings?month=7&day=1&hour=14');
     expect(predictions).toEqual([
       { location: { lat: 40.75068819675726, lng: -73.99713787189704 }, prediction: 'D' },
       { location: { lat: 40.71578031863019, lng: -73.98617431136368 }, prediction: 'A' },
