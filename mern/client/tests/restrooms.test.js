@@ -67,8 +67,8 @@ describe('Function getPublicRestrooms', () => {
     const restrooms = await getPublicRestrooms('incl-partial');
 
     expect(fetch).toHaveBeenCalledWith('/api/restrooms?' + new URLSearchParams({ accessibility: 'incl-partial' }));
-    expect(restrooms).toBeUndefined();
-    expect(console.error).toHaveBeenCalledTimes(1);
+    expect(restrooms).toBeNull();
+    expect(console.error).toHaveBeenCalledTimes(4);
   });
 });
 
@@ -264,6 +264,7 @@ Sunday: Closed`.trim();
       expect(publicRestroom.isOpen(dayjs.tz('2024-07-22 19:55:20', 'America/New_York'))).toBe(false);
       expect(publicRestroom.isOpen(dayjs.tz('2024-07-23 11:55:20', 'America/New_York'))).toBe(false);
       expect(publicRestroom.isOpen(dayjs.tz('2024-07-23 19:55:20', 'America/New_York'))).toBe(true);
+      expect(publicRestroom.isOpen(dayjs.tz('2024-07-28 15:37:53', 'America/New_York'))).toBe(false);
 
       publicRestroom.hours = 'Monday to Saturday:  8:30 am-10:00 pm; Sundays: 10:00 am-7:00 pm.';
       const isOpen4 = publicRestroom.isOpen();
