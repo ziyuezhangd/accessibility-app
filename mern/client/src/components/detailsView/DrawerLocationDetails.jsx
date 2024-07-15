@@ -1,18 +1,17 @@
-// DrawerLocationDetails.jsx
 import {PlaceOverview} from '@googlemaps/extended-component-library/react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Favorite from '@mui/icons-material/Favorite';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import { Button, Alert,IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import FeedbackForm from './FeedbackForm';
 import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
-import { postFeedback } from '../../services/feedback';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { MapLocation } from '../../utils/MapUtils';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -47,7 +46,7 @@ const formStyle = {
   p: 4,
 };
 
-export default function DrawerLocationDetails({ location, onBackClicked }) {
+export default function DrawerLocationDetails({ location, predictions, onBackClicked }) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -129,7 +128,12 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
   return (
     <>
       <DrawerHeader>
-        <Box></Box>
+        <IconButton aria-label='Back to recently viewed'
+          onClick={() => {
+            onBackClicked(location);
+          }}>
+          <ChevronLeftIcon />
+        </IconButton>
         <IconButton aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
           onClick={handleToggleFavorite}>
           {isFavorite ? <Favorite sx={{ color: 'red' }} /> : <FavoriteBorder />}
@@ -139,7 +143,8 @@ export default function DrawerLocationDetails({ location, onBackClicked }) {
         <PlaceOverview place={location.placeId}
           size='medium'></PlaceOverview>
         <Grades lat={location.lat}
-          lng={location.lng}/>
+          lng={location.lng}
+          predictions={predictions}/>
         <NearestRestrooms 
           lat={location.lat}
           lng={location.lng} />
