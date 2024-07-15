@@ -1,4 +1,5 @@
 import { Box, Chip, Typography, List, ListItem, ListItemButton, ListItemText, ListItemSecondaryAction } from '@mui/material';
+import _ from 'lodash';
 import { useState, useEffect, useContext } from 'react';
 import RestroomDetailsPopup from './RestroomDetailsPopup'; // Assuming you create this component
 import { DataContext } from '../../providers/DataProvider';
@@ -6,6 +7,16 @@ import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PublicRestroomUtilities } from '../../services/restrooms';
 import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
+/**
+ * 
+ * This component retrieves and displays a list of nearest restrooms based on given coordinates.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {number} props.lat - The latitude coordinate.
+ * @param {number} props.lng - The longitude coordinate.
+ * 
+ * @returns {JSX.Element} The rendered NearestRestrooms component.
+ */
 export default function NearestRestrooms({ lat, lng }) {
   const { restrooms, selectedDateTime } = useContext(DataContext);
   const { createMarkers } = useContext(GoogleMapContext);
@@ -32,7 +43,7 @@ export default function NearestRestrooms({ lat, lng }) {
     };
 
     getNearestRestrooms();
-  }, [lat, lng, restrooms, createMarkers]);
+  }, [lat, lng, restrooms]);
 
   const handleRestroomClick = (restroom) => {
     setSelectedRestroom(restroom);
@@ -93,9 +104,6 @@ export default function NearestRestrooms({ lat, lng }) {
                   <Chip label='UNCERTAIN' 
                     color='default' />
                 )}
-                {restroom.isOpen(new Date()) ? <Chip label='OPEN'
-                  color='success' /> : <Chip label='CLOSED'
-                  color='error' />}
               </ListItemSecondaryAction>
             </ListItemButton>
           </ListItem>

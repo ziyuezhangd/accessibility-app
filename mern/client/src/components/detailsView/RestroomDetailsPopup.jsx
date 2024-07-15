@@ -63,19 +63,7 @@ const RestroomDetailsPopup = ({ restroom, onClose }) => {
             {restroom.hasChangingStations ? 'Yes' : 'No'}
           </Typography>
         </Box>
-
-        <Box mb={2}>
-          <Typography variant="body1">
-            <strong>Latitude:</strong> {restroom.latitude}
-          </Typography>
-        </Box>
-
-        <Box mb={2}>
-          <Typography variant="body1">
-            <strong>Longitude:</strong> {restroom.longitude}
-          </Typography>
-        </Box>
-
+        
         <Divider />
 
         <Box mt={2}
