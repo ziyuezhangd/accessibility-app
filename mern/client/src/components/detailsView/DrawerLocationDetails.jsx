@@ -49,7 +49,6 @@ const formStyle = {
 export default function DrawerLocationDetails({ location, predictions, onBackClicked }) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const { removeMarkers } = useContext(GoogleMapContext);
 
   useEffect(() => {
     addLocationToHistory();
