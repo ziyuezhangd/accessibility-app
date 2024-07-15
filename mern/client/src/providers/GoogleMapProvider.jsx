@@ -251,10 +251,7 @@ const GoogleMapProvider = ({children}) => {
       setMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
     }
     console.log(`Created ${markersToCreate.length} markers`);
-    };
-  
-  
-
+  };
   /**
    * 
    * @param {Array<{lat: number, lng: number}>} latLngs 
@@ -303,7 +300,6 @@ const GoogleMapProvider = ({children}) => {
     });
   };
   
-
   return (
     <GoogleMapContext.Provider value={{
       mapInstance,
@@ -321,5 +317,6 @@ const GoogleMapProvider = ({children}) => {
       {children}
     </GoogleMapContext.Provider>
   );
+};
 
 export { GoogleMapContext, GoogleMapProvider };
