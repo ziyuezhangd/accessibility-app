@@ -11,29 +11,41 @@ const GoogleMapProvider = ({children}) => {
 
   /** @type {[google.maps.PlacesLibrary, React.Dispatch<React.SetStateAction<google.maps.PlacesLibrary>>]} */
   const [placesService, setPlacesService] = useState();
-  
-  /** @type {[google.maps.Geocoder, React.Dispatch<React.SetStateAction<google.maps.Geocoder>>]} */
-  const [geocoder, setGeocoder] = useState();
-   
+
   /** @type {[google.maps.DirectionsService, React.Dispatch<React.SetStateAction<google.maps.DirectionsService>>]} */
   const [directionsService, setDirectionsService] = useState();
 
   /** @type {[google.maps.DirectionsRenderer, React.Dispatch<React.SetStateAction<google.maps.DirectionsRenderer>>]} */
   const [directionsRenderer, setDirectionsRenderer] = useState();
-    
+  
+  /** @type {[google.maps.Geocoder, React.Dispatch<React.SetStateAction<google.maps.Geocoder>>]} */
+  const [geocoder, setGeocoder] = useState();
+  
   /** @type {[google.maps.GeometryLibrary, React.Dispatch<React.SetStateAction<google.maps.GeometryLibrary>>]} */
   const [geometry, setGeometry] = useState();
 
   /** @type {[google.maps.AdvancedMarker[], React.Dispatch<React.SetStateAction<google.maps.AdvancedMarker[]>>]} */
   const [markers, setMarkers] = useState([]);
+  const [categoryMarkers, setCategoryMarkers] = useState([]);
 
   useEffect(() => {
     if (mapInstance) {
       loadPlaces();
       loadGeocoder();
       loadGeometry();
+      loadDirectionsService();
     }
   }, [mapInstance]);
+
+  useEffect(() => {
+    if (directionsRenderer) {
+      window.addEventListener('keydown', (keyEvent) => {
+        if (keyEvent.code === 'KeyC') {
+          clearDirections();
+        }
+      });
+    }
+  }, [directionsRenderer]);
 
   const loadPlaces = async () => {
     const { PlacesService } = await google.maps.importLibrary('places');
@@ -47,10 +59,30 @@ const GoogleMapProvider = ({children}) => {
     setGeocoder(geocoder);
     console.log('Geocoder loaded successfully: ', geocoder);
   };
+
   const loadGeometry = async () => {
     const geometry = await google.maps.importLibrary('geometry');
     setGeometry(geometry);
     console.log('Geometry loaded successfully: ', geometry);
+  };
+
+  const loadDirectionsService = async () => {
+    const { DirectionsService, DirectionsRenderer } = await google.maps.importLibrary('routes');
+    const service = new DirectionsService(mapInstance);
+    const renderer = new DirectionsRenderer({map: mapInstance, draggable: true});
+    // renderer.setMap(mapInstance);
+    setDirectionsService(service);
+    setDirectionsRenderer(renderer);
+    console.log('Directions service loaded successfully: ', service);
+  };
+
+  const clearDirections = () => {
+    if (directionsRenderer !== null && directionsRenderer !== undefined) {
+      directionsRenderer.setMap(null);
+      const start = directionsRenderer.getDirections().routes[0].legs[0].start_location;
+      const end = directionsRenderer.getDirections().routes[0].legs[0].end_location;
+      removeMarkers([{lat: start.lat(), lng: start.lng()}, {lat: end.lat(), lng: end.lng()}]);
+    }
   };
 
   const handleMapLoaded = (map) => {
