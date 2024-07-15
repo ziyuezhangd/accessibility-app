@@ -21,6 +21,7 @@ describe('Function getPedestrianRamps', () => {
     expect(pedestrianRamps[1]).toBeInstanceOf(PedestrianRamp);
     expect(pedestrianRamps[0].latitude).toBe(40.7467994372694);
     expect(pedestrianRamps[1].longitude).toBe(-73.964196820598);
+    expect(pedestrianRamps[1].width).toBe('49.2');
   });
 
   it('should handle fetch error', async () => {
