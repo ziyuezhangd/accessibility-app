@@ -1,5 +1,5 @@
 // PlaceInfoPopup.jsx
-import { AccessTime, ExpandMore, ExpandLess } from '@mui/icons-material';
+import { AccessTime, ExpandMore, ExpandLess, Accessible } from '@mui/icons-material';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Collapse, IconButton, Zoom } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { useState } from 'react';
@@ -27,7 +27,7 @@ const StyledButton = styled(Button)({
   },
 });
 
-const SectionTitle = styled(Typography)({
+const SectionTitle = styled(Box)({
   color: primaryColor,
   marginBottom: '8px',
   display: 'flex',
@@ -60,6 +60,15 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return (<Zoom ref={ref}
     {...props} />);
 });
+
+// Helper function to format category names
+const formatCategoryName = (category) => {
+  return category
+    .toLowerCase()
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
 
 const PlaceInfoPopup = ({ open, onClose, placeInfo, nearestRestrooms, nearestStations }) => {
   const [openHours, setOpenHours] = useState(false);
@@ -111,12 +120,16 @@ const PlaceInfoPopup = ({ open, onClose, placeInfo, nearestRestrooms, nearestSta
       <StyledDialogTitle>{placeInfo.name}</StyledDialogTitle>
       <StyledDialogContent dividers>
         <InfoBox>
-          <SectionTitle variant="h6">Category</SectionTitle>
-          <DetailText variant="body1">{placeInfo.category}</DetailText>
+          <SectionTitle>
+            <Typography variant="h6">Category</Typography>
+          </SectionTitle>
+          <DetailText variant="body1">{formatCategoryName(placeInfo.category)}</DetailText>
         </InfoBox>
         {placeInfo.hasWheelchairAccessibleRestroom !== undefined && (
           <InfoBox>
-            <SectionTitle variant="h6">Wheelchair Accessible Restroom</SectionTitle>
+            <SectionTitle>
+              <Typography variant="h6">Wheelchair Accessible Restroom</Typography>
+            </SectionTitle>
             <WheelchairText accessible={placeInfo.hasWheelchairAccessibleRestroom}>
               {placeInfo.hasWheelchairAccessibleRestroom ? 'Yes' : 'No'}
             </WheelchairText>
@@ -124,7 +137,10 @@ const PlaceInfoPopup = ({ open, onClose, placeInfo, nearestRestrooms, nearestSta
         )}
         {nearestRestrooms && nearestRestrooms.length > 0 && (
           <InfoBox>
-            <SectionTitle variant="h6">Nearest Restrooms</SectionTitle>
+            <SectionTitle>
+              <Typography variant="h6">Nearest Restrooms</Typography>
+              <Accessible sx={{ marginLeft: '8px' }} />
+            </SectionTitle>
             {nearestRestrooms.map((restroom, index) => (
               <Box key={index}
                 sx={{ marginBottom: '8px' }}>
@@ -158,7 +174,10 @@ const PlaceInfoPopup = ({ open, onClose, placeInfo, nearestRestrooms, nearestSta
         )}
         {nearestStations && nearestStations.length > 0 && (
           <InfoBox>
-            <SectionTitle variant="h6">Nearest Subway Stations</SectionTitle>
+            <SectionTitle>
+              <Typography variant="h6">Nearest Subway Stations</Typography>
+              <Accessible sx={{ marginLeft: '8px' }} />
+            </SectionTitle>
             {nearestStations.map((station, index) => (
               <Box key={index}
                 sx={{ marginBottom: '8px' }}>
@@ -177,17 +196,19 @@ const PlaceInfoPopup = ({ open, onClose, placeInfo, nearestRestrooms, nearestSta
         )}
         {placeInfo.hours && (
           <InfoBox>
-            <SectionTitle variant="h6">
-              <AccessTime /> 
-              {placeInfo.isOpenNow ? 'Open' : 'Closed'}
-              <StatusText operational={placeInfo.isOpenNow}>
+            <SectionTitle>
+              <Typography variant="h6">
+                <AccessTime /> 
                 {placeInfo.isOpenNow ? 'Open' : 'Closed'}
-              </StatusText>
-              <IconButton onClick={toggleOpenHours}
-                size="small"
-                sx={{ marginLeft: '8px' }}>
-                {openHours ? <ExpandLess /> : <ExpandMore />}
-              </IconButton>
+                <StatusText operational={placeInfo.isOpenNow}>
+                  {placeInfo.isOpenNow ? 'Open' : 'Closed'}
+                </StatusText>
+                <IconButton onClick={toggleOpenHours}
+                  size="small"
+                  sx={{ marginLeft: '8px' }}>
+                  {openHours ? <ExpandLess /> : <ExpandMore />}
+                </IconButton>
+              </Typography>
             </SectionTitle>
             <Collapse in={openHours}>
               {renderOpeningHours(placeInfo.hours)}
