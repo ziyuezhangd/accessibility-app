@@ -40,24 +40,137 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
 
 const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
   const [location, setLocation] = useState<Location.LocationObject>();
-  const [errorMsg, setErrorMsg] = useState(null);
   const [permissionsLoaded, setPermissionsLoaded] = useState(false);
+  const [clinicalRecords, setClinicalRecords] = useState<HealthClinicalRecord[]>([]);
+
+  // On mount, request permissions for location tracking and health data
+  useEffect(() => {
+    requestPermissions();
+  }, []);
 
   const requestPermissions = async () => {
     const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
     if (foregroundStatus === 'granted') {
+      // Need to check foreground first
       const { status: backgroundStatus } = await Location.requestBackgroundPermissionsAsync();
       if (backgroundStatus === 'granted') {
-        if (await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME)) {
-          await Location.stopLocationUpdatesAsync(LOCATION_TASK_NAME);
+        const isBackgroundTaskRunning = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK_NAME);
+        if (!isBackgroundTaskRunning) {
+          Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+            accuracy: Location.Accuracy.Balanced,
+            distanceInterval: 50,
+          });
         }
 
-        Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-          accuracy: Location.Accuracy.Balanced,
-          distanceInterval: 50,
-        });
+        // Now get healthkit authorization
+        const permissions: HealthKitPermissions = {
+          permissions: {
+            read: [
+              AppleHealthKit.Constants.Permissions.BloodPressureDiastolic,
+              AppleHealthKit.Constants.Permissions.BloodPressureSystolic,
+              AppleHealthKit.Constants.Permissions.HeartRate,
+              AppleHealthKit.Constants.Permissions.HeartRateVariability,
+              AppleHealthKit.Constants.Permissions.EnvironmentalAudioExposure,
+              AppleHealthKit.Constants.Permissions.ConditionRecord,
+            ],
+            write: [],
+          },
+        };
+        await getAuthStatus(permissions);
       }
     }
+    setPermissionsLoaded(true);
+  };
+
+  // When permissions load, initialize the health kit and send a post
+  useEffect(() => {
+    if (!permissionsLoaded) return;
+    /* Permission options */
+    const permissions = {
+      permissions: {
+        read: [
+          AppleHealthKit.Constants.Permissions.HeartRate,
+          AppleHealthKit.Constants.Permissions.HeartRateVariability,
+          AppleHealthKit.Constants.Permissions.MedicationRecord,
+          AppleHealthKit.Constants.Permissions.EnvironmentalAudioExposure,
+          AppleHealthKit.Constants.Permissions.BloodPressureDiastolic,
+          AppleHealthKit.Constants.Permissions.BloodPressureSystolic,
+        ],
+      },
+    } as HealthKitPermissions;
+
+    AppleHealthKit.initHealthKit(permissions, async (error: string) => {
+      if (error) {
+        console.log('[ERROR] Cannot grant permissions!');
+      }
+
+      sendHealthDataToDB();
+    });
+  }, [permissionsLoaded]);
+
+  const sendHealthDataToDB = async () => {
+    let records = [];
+    if (!clinicalRecords) {
+      // Get the last 10 years of clinical records
+      let clinicalRecordsStartDate = new Date();
+      clinicalRecordsStartDate.setFullYear(clinicalRecordsStartDate.getFullYear() - 10);
+
+      const clinicalRecordsOptions = {
+        startDate: clinicalRecordsStartDate.toDateString(),
+        type: ClinicalRecordType.ConditionRecord,
+      };
+      const queriedClinicalRecords = await getClinicalRecords(clinicalRecordsOptions);
+      setClinicalRecords(queriedClinicalRecords);
+      records = queriedClinicalRecords;
+    } else {
+      records = clinicalRecords;
+    }
+
+    let healthDataStartDate = new Date();
+    healthDataStartDate.setMonth(healthDataStartDate.getMonth() - 1);
+    // Get the last 1 month of environmental audio data
+    const healthDataOptions: HealthInputOptions = {
+      startDate: healthDataStartDate.toISOString(), // required
+      ascending: false, // optional; default false
+      limit: 100, // optional; default no limit
+    };
+    const getAudioPromise = getEnvironmentalAudioExposure(healthDataOptions);
+    const getHeartRatePromise = getHeartRateVariability(healthDataOptions);
+    const getBloodPressurePromise = getBloodPressure(healthDataOptions);
+
+    Promise.all([getAudioPromise, getHeartRatePromise, getBloodPressurePromise]).then(([audioLevel, heartRate, bloodPressure]) => {
+      postHealthData({
+        userId: 'aprilpolubiec',
+        clinicalRecords: records,
+        audioLevel,
+        heartRate,
+        bloodPressure,
+      });
+    });
+  };
+
+  // When permissions load, get the user's current location
+  useEffect(() => {
+    if (permissionsLoaded) {
+      getUserLocation();
+    }
+  }, [permissionsLoaded]);
+
+  const getUserLocation = async () => {
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+  };
+
+  //#region Apple Health Kit functions
+  const getAuthStatus = (permissions: HealthKitPermissions): Promise<HealthStatusResult> => {
+    return new Promise((resolve, reject) => {
+      AppleHealthKit.getAuthStatus(permissions, (err: string, results: HealthStatusResult) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(results);
+      });
+    });
   };
 
   const getEnvironmentalAudioExposure = (options: HealthInputOptions): Promise<HealthValue[]> => {
@@ -92,6 +205,7 @@ const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
       });
     });
   };
+
   const getBloodPressure = (options: HealthInputOptions): Promise<BloodPressureSampleValue[]> => {
     return new Promise((resolve, reject) => {
       AppleHealthKit.getBloodPressureSamples(options, (err: Object, results: Array<BloodPressureSampleValue>) => {
@@ -102,95 +216,7 @@ const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
       });
     });
   };
-
-  const getAuthStatus = () => {
-    const permissions: HealthKitPermissions = {
-      permissions: {
-        read: [AppleHealthKit.Constants.Permissions.StepCount],
-        write: [AppleHealthKit.Constants.Permissions.StepCount],
-      },
-    };
-
-    AppleHealthKit.getAuthStatus(permissions, (err: string, results: HealthStatusResult) => {
-      console.log(err, results);
-    });
-  };
-
-  useEffect(() => {
-    requestPermissions();
-  }, []);
-
-  useEffect(() => {
-    AppleHealthKit.getAuthStatus;
-  }, [permissionsLoaded]);
-
-  useEffect(() => {
-    getUserLocation();
-  }, [permissionsLoaded]);
-
-  const getUserLocation = async () => {
-    let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
-  };
-
-  useEffect(() => {
-    /* Permission options */
-    const permissions = {
-      permissions: {
-        read: [
-          AppleHealthKit.Constants.Permissions.HeartRate,
-          AppleHealthKit.Constants.Permissions.HeartRateVariability,
-          AppleHealthKit.Constants.Permissions.MedicationRecord,
-          AppleHealthKit.Constants.Permissions.EnvironmentalAudioExposure,
-          AppleHealthKit.Constants.Permissions.BloodPressureDiastolic,
-          AppleHealthKit.Constants.Permissions.BloodPressureSystolic,
-        ],
-      },
-    } as HealthKitPermissions;
-
-    AppleHealthKit.initHealthKit(permissions, (error: string) => {
-      /* Called after we receive a response from the system */
-
-      if (error) {
-        console.log('[ERROR] Cannot grant permissions!');
-      }
-
-      /* Can now read or write to HealthKit */
-      let startDate = new Date();
-      startDate.setFullYear(startDate.getFullYear() - 1);
-
-      const clinicalRecordsOptions = {
-        startDate: startDate.toDateString(),
-        type: ClinicalRecordType.ConditionRecord,
-      };
-      const clinicalRecordsPromise = getClinicalRecords(clinicalRecordsOptions);
-
-      const environmentalAudioOptions: HealthInputOptions = {
-        startDate: startDate.toISOString(), // required
-        ascending: false, // optional; default false
-        limit: 100, // optional; default no limit
-      };
-      const getAudioPromise = getEnvironmentalAudioExposure(environmentalAudioOptions);
-
-      let options: HealthInputOptions = {
-        unit: 'second' as HealthUnit, // optional; default 'second'
-        startDate: startDate.toISOString(), // required
-        ascending: false, // optional; default false
-        limit: 100, // optional; default no limit
-      };
-      const getHeartRatePromise = getHeartRateVariability(options);
-      const getBloodPressurePromise = getBloodPressure(options);
-      Promise.all([clinicalRecordsPromise, getAudioPromise, getHeartRatePromise, getBloodPressurePromise]).then(([clinicalRecords, audioLevel, heartRate, bloodPressure]) => {
-        postHealthData({
-          userId: 'aprilpolubiec',
-          clinicalRecords,
-          audioLevel,
-          heartRate,
-          bloodPressure,
-        });
-      });
-    });
-  }, [permissionsLoaded]);
+  //#endregion
 
   return <UserDataContext.Provider value={{ location }}>{children}</UserDataContext.Provider>;
 };

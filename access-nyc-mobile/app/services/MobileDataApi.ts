@@ -4,7 +4,26 @@ import { BloodPressureSampleValue, HealthClinicalRecord, HealthValue } from 'rea
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-export const postHealthData = async (data: HealthDataPostRequest): Promise<AxiosResponse> => {
+export const postHealthData = async (data: HealthDataPostRequest): Promise<Response> => {
+  try {
+    console.log('Posting place info t0', `${apiUrl}/health-data`);
+    const response = await fetch(`${apiUrl}/health-data/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    console.log(response)
+    const resData = await response.json();
+    return resData;
+  } catch (e) {
+    console.log('Ahhh!', e);
+    throw e;
+  }
+};
+
+export const postLocationData = async (data: HealthDataPostRequest): Promise<AxiosResponse> => {
   try {
     console.log('Posting place info');
     const res = await axios.post(`${apiUrl}/health-data`, data);
@@ -21,4 +40,16 @@ export interface HealthDataPostRequest {
   bloodPressure?: BloodPressureSampleValue[];
   heartRate?: HealthValue[];
   audioLevel?: HealthValue[];
+}
+
+export interface LocationDataPostRequest {
+  latitude: number;
+  longitude: number;
+  altitude: number;
+  accuracy: number;
+  audioLevel: number;
+  userId: string;
+  clinicalRecords: HealthClinicalRecord[];
+  heartRate: HealthValue[];
+  bloodPressure: BloodPressureSampleValue[];
 }
