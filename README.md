@@ -15,6 +15,7 @@ Visit the app: http://137.43.49.23/
 3. Frequently merge changes from remote branch `dev` into your own local branch to keep it up-to-date
 4. When the feature is ready, submit a pull request from your own branch to `dev`
 5. After the pull request is approved, merge the pull request to branch `dev`
+
 The maintenance lead will merge latest changes from `dev` into `main` periodically and deploy on the server
 
 
@@ -25,7 +26,7 @@ Run this command in `./mern/client` and `./mern/server`:
 npm install
 ```
 
-### Run the Flask app
+### Run the Flask app to provide predictions
 Run this command in `./flask-api`:
 ```bash
 python app.py
@@ -38,7 +39,8 @@ Run this commands in `./mern`:
 npm run dev:all-con
 ```
 
-You can also run the app without a locally running Flask app.The app will request the deployed Flask app instead.
+You can also run the app without a locally running Flask app. The app will request the deployed Flask app instead.
+
 Run this commands in `./mern`:
 ```bash
 npm run dev:flask-remote
