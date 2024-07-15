@@ -180,7 +180,8 @@ export class PublicRestroomUtilities {
    * @return {PublicRestroom[]} list of restrooms
    */
   static getNearest = (restrooms, lat, lng, qty = 1) => {
-    const placesSorted = _.sortBy(restrooms, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
+    const operationalRestrooms = restrooms.filter((r) => r.status.toLowerCase() === 'operational');
+    const placesSorted = _.sortBy(operationalRestrooms, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
     return placesSorted.slice(0, qty);
   };
 }
