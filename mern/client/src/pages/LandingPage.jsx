@@ -1,4 +1,3 @@
-import React from 'react';
 import Blurb from '../components/landing/Blurb';
 import Faq from '../components/landing/Faq';
 import Features from '../components/landing/Features';

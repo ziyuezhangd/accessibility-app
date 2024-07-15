@@ -17,7 +17,7 @@ import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
  * @returns {JSX.Element} The rendered NearestRestrooms component.
  */
 export default function NearestRestrooms({ lat, lng }) {
-  const {restrooms} = useContext(DataContext);
+  const { restrooms, selectedDateTime } = useContext(DataContext);
   const { createMarkers, removeMarkers } = useContext(GoogleMapContext);
 
   /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
@@ -89,11 +89,10 @@ export default function NearestRestrooms({ lat, lng }) {
               
               />
               <ListItemSecondaryAction>
-                {/* TODO: we will actually want to know if its open at the predicted time */}
-                {restroom.isOpenNow() === true ? (
+                {restroom.isOpen(selectedDateTime) === true ? (
                   <Chip label='OPEN' 
                     color='success' />
-                ) : restroom.isOpenNow() === false ? (
+                ) : restroom.isOpen(selectedDateTime) === false ? (
                   <Chip label='CLOSED' 
                     color='error' />
                 ) : (
