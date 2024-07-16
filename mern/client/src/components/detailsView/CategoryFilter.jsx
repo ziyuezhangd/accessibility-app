@@ -152,7 +152,13 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
 
   const getNearestStations = (lat, lng) => {
     const stations = placeInfos.filter(place => place.isSubwayStation() && place.name !== '');
-    return PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
+    return stations
+      .map(station => ({
+        ...station,
+        distance: calculateDistanceBetweenTwoCoordinates(lat, lng, station.latitude, station.longitude),
+      }))
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 3);
   };
 
   const handleCategorySelected = (categories) => {

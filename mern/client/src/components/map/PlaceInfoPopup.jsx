@@ -182,9 +182,8 @@ const PlaceInfoPopup = ({ open, onClose, placeInfo, nearestRestrooms, nearestSta
               <Box key={index}
                 sx={{ marginBottom: '8px' }}>
                 <DetailText variant="body2">
-                  <strong>{station.getSubwayStationName()}</strong>
-                </DetailText>
-                <DetailText variant="body2">Lines: {station.getSubwayLines().join(', ')}</DetailText>
+                  <strong>{station.name}</strong> ({Math.round(station.distance)} m)
+                </DetailText>                
                 {station.wheelchairAccessible && (
                   <WheelchairText accessible={station.wheelchairAccessible}>
                     Wheelchair Accessible
