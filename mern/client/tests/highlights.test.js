@@ -30,7 +30,7 @@ describe('Function getAccessibilityHighlightPlaces', () => {
     const highlights = await getAccessibilityHighlightPlaces();
 
     expect(fetch).toHaveBeenCalledWith('/api/accessibility-highlight-place');
-    expect(highlights).toBeUndefined();
-    expect(console.error).toHaveBeenCalledTimes(1);
+    expect(highlights).toBeNull();
+    expect(console.error).toHaveBeenCalledTimes(4);
   });
 });

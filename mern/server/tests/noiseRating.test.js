@@ -21,33 +21,33 @@ describe('GET /noiseRating', () => {
       { location: {lat: 40.71, lng: -74.00}, rating: 2 }, 
       { location: {lat: 40.73, lng: -74.65}, rating: 0 }
     ];
-    ml.getNoisePredictions = jest.fn().mockResolvedValueOnce(dummyPredictions);
+    ml.getNoisePredictionsDaily = jest.fn().mockResolvedValueOnce(dummyPredictions);
 
-    const response = await request(app).get(`?datetime=${testDateTime}`);
+    const response = await request(app).get(`/daily?datetime=${testDateTime}`);
     expect(response.status).toBe(200);
     expect(response.body).toEqual(dummyPredictions);
-    expect(ml.getNoisePredictions).toHaveBeenCalledWith(testDateTime);
+    expect(ml.getNoisePredictionsDaily).toHaveBeenCalledWith(testDateTime);
   });
 
   it('should return 500 if database error occurs', async () => {
-    ml.getNoisePredictions = jest.fn().mockImplementation(() => {
+    ml.getNoisePredictionsDaily = jest.fn().mockImplementation(() => {
       throw new Error('API error');
     });
 
-    const response = await request(app).get(`?datetime=${testDateTime}`);
+    const response = await request(app).get(`/daily?datetime=${testDateTime}`);
     expect(response.status).toBe(500);
   });
 
   it('should return 400 if a datetime parameter is not provided', async () => {
-    const response = await request(app).get('/');
+    const response = await request(app).get('/daily');
     expect(response.status).toBe(400);
   });
 
   it('should return 400 if the datetime parameter format is inconsistent', async () => {
-    const response1 = await request(app).get('?datetime=2024-06-18T12:34:56.000');
+    const response1 = await request(app).get('/daily?datetime=2024-06-18T12:34:56.000');
     expect(response1.status).toBe(400);
 
-    const response2 = await request(app).get('?datetime=2024-06-18T12:34:56Z');
+    const response2 = await request(app).get('/daily?datetime=2024-06-18T12:34:56Z');
     expect(response2.status).toBe(400);
   });
 });

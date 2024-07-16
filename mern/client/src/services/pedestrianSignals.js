@@ -18,7 +18,7 @@ export const getPedestrianSignals = async () => {
 };
 
 export class PedestrianSignal {
-  constructor({ latitude, longitude, width }) {
+  constructor({ latitude, longitude }) {
     this.latitude = parseFloat(latitude);
     this.longitude = parseFloat(longitude);
   }
