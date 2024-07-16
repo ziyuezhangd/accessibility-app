@@ -148,14 +148,12 @@ const GoogleMapProvider = ({children}) => {
         if (parentCategory === 'car' || parentCategory === 'train' || parentCategory === 'airport' || parentCategory === 'bus'|| parentCategory === 'parking'|| parentCategory === 'ferry'|| parentCategory === 'bike'){
           a= 0;
           b=0;
-          //green
           c=3000;
           d=100;
         }
         if ( parentCategory === 'accomodation' || parentCategory === 'policeStation' || parentCategory === 'office' || parentCategory === 'cemetery' || parentCategory === 'atm' || parentCategory === 'post' || parentCategory === 'service' || parentCategory === 'bank' || parentCategory === 'health' || parentCategory === 'veterinary' ){
           a= 0;
           b=0;
-          //green
           c=4247;
           d=300;
         }
@@ -163,28 +161,24 @@ const GoogleMapProvider = ({children}) => {
         if (parentCategory === 'restaurant'|| parentCategory === 'coffee'|| parentCategory === 'pub' ){
           a= 0;
           b=0;
-          //purple
           c=4247;
           d=45;
         }
         if (parentCategory === 'placeOfWorship' ){
           a= 0;
           b=0;
-          //blue
           c=4247;
           d=10;
         }
         if (parentCategory === 'art' || parentCategory === 'museum' || parentCategory === 'attraction' || parentCategory === 'sports'|| parentCategory === 'historical'){
           a= 0;
           b=0;
-          //blue
           c=4247;
           d=10;
         }
         if (parentCategory === 'toilet' ){
           a= 0;
           b=0;
-          //green
           c=4247;
           d=300;
         }
