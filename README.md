@@ -3,11 +3,13 @@
 
 Visit the app: http://137.43.49.23/
 
+
 ## Features
 - See accessible places across Manhattan
 - See the predicted busyness, odor and noise levels at any given time
 - Find nearest accessible restrooms and subway stations of any location
 - Provide feedback to help keep the information up-to-date and accurate
+
 
 ## How to Contribute
 1. Create your own branch from branch `dev` and start working on it
@@ -45,6 +47,28 @@ Run this commands in `./mern`:
 ```bash
 npm run dev:flask-remote
 ```
+
+
+## How to run tests
+We have test scripts for unit tests, integration tests and end-to-end tests.
+### Run unit and integration tests for frontend
+Run this commands in `./mern/client`:
+```bash
+npm run test
+```
+
+### Run unit and integration tests for backend
+Run this commands in `./mern/server`:
+```bash
+npm run test
+```
+### Run e2e tests
+First, start the app locally, as e2e tests need to actually visit the app in the browser
+Then, run this commands in `./mern/client`:
+```bash
+npm run cypress
+```
+
 
 ## Tech Stack
 - Frontend: React
