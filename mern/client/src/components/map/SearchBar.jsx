@@ -67,8 +67,16 @@ const SearchBar = ({ onSearchEntered }) => {
           width: '300px',
           backgroundColor: 'white',
           boxShadow: 3,
+          borderRadius: '50px',
           '& .MuiOutlinedInput-root': {
             borderRadius: '50px',
+            '&:hover': {
+              boxShadow: 6,
+            },
+            '&.Mui-focused': {
+              boxShadow: 6,
+              borderColor: '#3f51b5',
+            },
           },
           '& .MuiOutlinedInput-input': {
             padding: '10px 20px',
@@ -77,7 +85,7 @@ const SearchBar = ({ onSearchEntered }) => {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <SearchIcon />
+              <SearchIcon sx={{ color: '#3f51b5' }} />
             </InputAdornment>
           ),
         }}
