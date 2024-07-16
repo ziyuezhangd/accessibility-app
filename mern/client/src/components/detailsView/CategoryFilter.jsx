@@ -7,6 +7,7 @@ import { useState, useEffect, useContext } from 'react';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfoUtilities, categoryToParentCategory } from '../../services/placeInfo';
+import { PublicRestroomUtilities } from '../../services/restrooms';
 import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 import PlaceInfoPopup from '../map/PlaceInfoPopup';
 
@@ -140,25 +141,20 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
   };
 
   const getNearestRestrooms = (lat, lng) => {
-    return restrooms
-      .map(restroom => ({
-        ...restroom,
-        distance: calculateDistanceBetweenTwoCoordinates(lat, lng, restroom.latitude, restroom.longitude),
-        hours: restroom.hours
-      }))
-      .sort((a, b) => a.distance - b.distance)
-      .slice(0, 3);
+    const nearestRestrooms = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
+    return nearestRestrooms.map(restroom => ({
+      ...restroom,
+      distance: calculateDistanceBetweenTwoCoordinates(lat, lng, restroom.latitude, restroom.longitude),
+    }));
   };
 
   const getNearestStations = (lat, lng) => {
     const stations = placeInfos.filter(place => place.isSubwayStation() && place.name !== '');
-    return stations
-      .map(station => ({
-        ...station,
-        distance: calculateDistanceBetweenTwoCoordinates(lat, lng, station.latitude, station.longitude),
-      }))
-      .sort((a, b) => a.distance - b.distance)
-      .slice(0, 3);
+    const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
+    return nearestStations.map(station => ({
+      ...station,
+      distance: calculateDistanceBetweenTwoCoordinates(lat, lng, station.latitude, station.longitude),
+    }));
   };
 
   const handleCategorySelected = (categories) => {

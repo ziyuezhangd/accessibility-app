@@ -183,7 +183,7 @@ const PlaceInfoPopup = ({ open, onClose, placeInfo, nearestRestrooms, nearestSta
                 sx={{ marginBottom: '8px' }}>
                 <DetailText variant="body2">
                   <strong>{station.name}</strong> ({Math.round(station.distance)} m)
-                </DetailText>                
+                </DetailText>
                 {station.wheelchairAccessible && (
                   <WheelchairText accessible={station.wheelchairAccessible}>
                     Wheelchair Accessible
