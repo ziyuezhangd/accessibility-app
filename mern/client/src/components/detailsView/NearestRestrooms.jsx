@@ -56,6 +56,16 @@ export default function NearestRestrooms({ lat, lng }) {
     };
   }, [lat, lng, restrooms, createMarkers, removeMarkers]);
 
+  const handleRestroomClick = (restroom) => {
+    setSelectedRestroom(restroom);
+    setPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setPopupOpen(false);
+    setSelectedRestroom(null); // Clear the selected restroom when popup is closed
+  };
+
   return (
     <Box display='flex'
       flexDirection='column'
