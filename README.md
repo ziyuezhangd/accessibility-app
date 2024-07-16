@@ -20,6 +20,8 @@ Visit the app: http://137.43.49.23/
 
 The maintenance lead will merge latest changes from `dev` into `main` periodically and deploy on the server
 
+Details on version control: [Notion - Development Lifecycle](https://www.notion.so/Development-Lifecycle-765c3a23d0ac4d3bb95618213883b4a8)
+
 
 ## How to run the app locally during development
 ### Install dependencies for frontend and backend
@@ -63,11 +65,14 @@ Run this commands in `./mern/server`:
 npm run test
 ```
 ### Run e2e tests
-First, start the app locally, as e2e tests need to actually visit the app in the browser
+First, start the app locally, as e2e tests need to actually visit the app in the browser.
+
 Then, run this commands in `./mern/client`:
 ```bash
 npm run cypress
 ```
+
+Details on quality assurance: [Notion - How to QA](https://www.notion.so/How-to-QA-28d3230725f84e148a8bb78ce310453f#baec289261334a3a8224e332ce125eb2)
 
 
 ## Tech Stack
