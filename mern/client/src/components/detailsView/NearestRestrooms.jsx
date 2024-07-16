@@ -19,7 +19,7 @@ import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
  */
 export default function NearestRestrooms({ lat, lng }) {
   const { restrooms, selectedDateTime } = useContext(DataContext);
-  const { createMarkers } = useContext(GoogleMapContext);
+  const { createMarkers, removeMarkers } = useContext(GoogleMapContext);
 
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
   const [selectedRestroom, setSelectedRestroom] = useState(null);
@@ -27,33 +27,34 @@ export default function NearestRestrooms({ lat, lng }) {
 
   useEffect(() => {
     const getNearestRestrooms = async () => {
+      // TODO: remove not operational
       const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
       setNearestRestrooms(nearest);
       showRestroomMarkers(nearest);
     };
 
     const showRestroomMarkers = (restrooms) => {
-      console.log('showRestroomMarkers', restrooms);
       const markers = restrooms.map(restroom => ({
         lat: restroom.latitude,
-        lng: restroom.longitude
+        lng: restroom.longitude,
+        imgSrc: null, // No image source, using pin element
+        color: 'red', // Marker color red
+        scale: 0.8, // Scale the marker for visibility
+        title: restroom.name,
       }));
-      console.log('markers to create', markers);
-      createMarkers(markers, true);
+      createMarkers(markers, false); // Add markers without clearing existing markers
     };
 
     getNearestRestrooms();
-  }, [lat, lng, restrooms]);
 
-  const handleRestroomClick = (restroom) => {
-    setSelectedRestroom(restroom);
-    setPopupOpen(true);
-  };
-
-  const handleClosePopup = () => {
-    setPopupOpen(false);
-    setSelectedRestroom(null); // Clear the selected restroom when popup is closed
-  };
+    return () => {
+      const markersToRemove = nearestRestrooms.map(restroom => ({
+        lat: restroom.latitude,
+        lng: restroom.longitude,
+      }));
+      removeMarkers(markersToRemove);
+    };
+  }, [lat, lng, restrooms, createMarkers, removeMarkers]);
 
   return (
     <Box display='flex'
@@ -91,7 +92,8 @@ export default function NearestRestrooms({ lat, lng }) {
                       {Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m
                     </p>
                   </>
-                )}
+                )} 
+              
               />
               <ListItemSecondaryAction>
                 {restroom.isOpen(selectedDateTime) === true ? (
