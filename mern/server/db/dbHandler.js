@@ -26,19 +26,26 @@ const dbHandler = {
   async upsertUser(userData) {
     const { userId } = userData;
     const existingUser = await this.getUser(userId);
-    const updatedUser = existingUser;
+    let updatedUser = existingUser;
     if (existingUser) {
       // Get the existing historical data
       const { clinicalRecords, bloodPressureOverTime, heartRateOverTime, audioLevelOverTime } = existingUser;
-      updatedUser[clinicalRecords] = [...clinicalRecords, ...userData.clinicalRecords];
-      updatedUser[bloodPressureOverTime] = [...bloodPressureOverTime, ...userData.bloodPressureOverTime];
-      updatedUser[heartRateOverTime] = [...heartRateOverTime, ...userData.heartRateOverTime];
-      updatedUser[audioLevelOverTime] = [...audioLevelOverTime, ...userData.audioLevelOverTime];
+      updatedUser['clinicalRecords'] = clinicalRecords ? userData.clinicalRecords.concat(clinicalRecords) : userData.clinicalRecords;
+      updatedUser['bloodPressureOverTime'] = bloodPressureOverTime ? userData.bloodPressure.concat(bloodPressureOverTime) : userData.bloodPressure;
+      updatedUser['heartRateOverTime'] = heartRateOverTime ? userData.heartRate.concat(heartRateOverTime) : userData.heartRate;
+      updatedUser['audioLevelOverTime'] = audioLevelOverTime ? userData.audioLevel.concat(audioLevelOverTime) : userData.audioLevel;
+    } else {
+      updatedUser = {};
+      updatedUser['clinicalRecords'] = userData.clinicalRecords;
+      updatedUser['bloodPressureOverTime'] = userData.bloodPressure;
+      updatedUser['heartRateOverTime'] = userData.heartRate;
+      updatedUser['audioLevelOverTime'] = userData.audioLevel;
     }
-    updatedUser.lastUpdated = new Date();
+    updatedUser['lastUpdated'] = new Date();
     const db = await getDB();
     const collection = db.collection('users');
-    await collection.update({ userId }, updatedUser, { upsert: true, w: 1 });
+    // await collection.find({ userId }).upsert().updateOne({ $set: updatedUser });
+    await collection.updateOne({ userId }, { $set: updatedUser }, { upsert: true });
   },
 
   async createUser(userData) {

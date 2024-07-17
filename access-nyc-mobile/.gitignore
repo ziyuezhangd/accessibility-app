@@ -20,5 +20,3 @@ expo-env.d.ts
 # @end expo-cli
 
 *ml/models/*
-ios/
-android/
