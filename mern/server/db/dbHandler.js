@@ -26,16 +26,14 @@ const dbHandler = {
   async upsertUser(userData) {
     const { userId } = userData;
     const existingUser = await this.getUser(userId);
-    let updatedUser = existingUser;
+    const updatedUser = existingUser;
     if (existingUser) {
       // Get the existing historical data
-      const { clinical_records, bloodPressureOverTime, heartRateOverTime, audioLevelOverTime } = existingUser;
-      updatedUser = {
-        clinical_records: [...clinical_records, ...userData.clinical_records],
-        bloodPressureOverTime: [...bloodPressureOverTime, ...userData.bloodPressureOverTime],
-        heartRateOverTime: [...heartRateOverTime, ...userData.heartRateOverTime],
-        audioLevelOverTime: [...audioLevelOverTime, ...userData.audioLevelOverTime],
-      };
+      const { clinicalRecords, bloodPressureOverTime, heartRateOverTime, audioLevelOverTime } = existingUser;
+      updatedUser[clinicalRecords] = [...clinicalRecords, ...userData.clinicalRecords];
+      updatedUser[bloodPressureOverTime] = [...bloodPressureOverTime, ...userData.bloodPressureOverTime];
+      updatedUser[heartRateOverTime] = [...heartRateOverTime, ...userData.heartRateOverTime];
+      updatedUser[audioLevelOverTime] = [...audioLevelOverTime, ...userData.audioLevelOverTime];
     }
     updatedUser.lastUpdated = new Date();
     const db = await getDB();
