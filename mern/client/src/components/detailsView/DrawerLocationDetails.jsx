@@ -2,7 +2,7 @@ import {PlaceOverview} from '@googlemaps/extended-component-library/react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Favorite from '@mui/icons-material/Favorite';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import { Button, IconButton } from '@mui/material';
+import { Button, IconButton, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import _ from 'lodash';
@@ -14,11 +14,13 @@ import NearestStations from './NearestStations';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { MapLocation } from '../../utils/MapUtils';
 
-const DrawerHeader = styled('div')(({ theme }) => ({
+const DrawerLocationHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
+  padding: theme.spacing(1),
+  backgroundColor: '#1976d2', // Updated color
+  color: 'white',
+  boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
   justifyContent: 'space-between',
 }));
 
@@ -127,18 +129,21 @@ export default function DrawerLocationDetails({ location, predictions, onBackCli
 
   return (
     <>
-      <DrawerHeader>
+      <DrawerLocationHeader>
         <IconButton aria-label='Back to recently viewed'
           onClick={() => {
             onBackClicked(location);
           }}>
-          <ChevronLeftIcon />
+          <ChevronLeftIcon sx={{ color: 'white' }} />
         </IconButton>
+        <Typography variant='h6'>
+          Location Details
+        </Typography>
         <IconButton aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
           onClick={handleToggleFavorite}>
-          {isFavorite ? <Favorite sx={{ color: 'red' }} /> : <FavoriteBorder />}
+          {isFavorite ? <Favorite sx={{ color: 'white' }} /> : <FavoriteBorder sx={{ color: 'white' }} />}
         </IconButton>
-      </DrawerHeader>
+      </DrawerLocationHeader>
       <Box sx={{ overflow: 'auto', px: 5 }}>
         <PlaceOverview place={location.placeId}
           size='medium'></PlaceOverview>

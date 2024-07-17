@@ -85,7 +85,7 @@ export const Map = () => {
       setSelectedPredictionType(item.id);
     }
   };
-  
+
   // Update our polyine and heatmap data anytime:
   // 1. The selected prediction type changes
   // 2. New prediction data has been loaded
@@ -194,7 +194,7 @@ export const Map = () => {
       <PersistentDrawerLeft selectedLocation={selectedPlace}
         predictions={selectedPlaceGrades}
         placeInfos={placeInfos} />
-      <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
+      <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1, position: 'relative' }}>
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
           zoom={DEFAULT_ZOOM}
@@ -207,26 +207,25 @@ export const Map = () => {
           }}
           mapOptions={{
             mapId: VITE_MAP_ID,
-            // restriction: {}, // TODO
+            fullscreenControl: false, // Disable fullscreen control
+            streetViewControl: false, // Disable street view control
+            zoomControl: false, // Disable zoom control
+            mapTypeControl: false, // Disable map/satellite control
           }}
         >
           <Box sx={containerStyle}>
-            <Dropdown onSelect={handleVisualizationSelected} />
-            <Control position={google.maps.ControlPosition.TOP_CENTER}>
-              <SearchBar
-                onSearchEntered={handleSearchEntered} />
-            </Control>
-            <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <CategoryFilter
-                  selectedCategories={selectedCategories}
-                  setSelectedCategories={setSelectedCategories} // Pass the state setters
-                />
-                <HelpIcon />
-              </Box>
-            </Control>
+            <Box sx={{ position: 'absolute', top: '20px', left: '200px' }}>
+              <SearchBar onSearchEntered={handleSearchEntered} />
+            </Box>
+            
+            <Box sx={{position:'absolute', top: '20px', right: '250px', display: '-ms-flexbox', flexDirection: 'column', gap: '300px' }}>
+              <Dropdown onSelect={handleVisualizationSelected} />
+              <CategoryFilter selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories} />
+              <HelpIcon />
+            </Box>
           </Box>
-          {selectedPredictionType && polylineData && polylineData.map((data, i) => 
+          {selectedPredictionType && polylineData && polylineData.map((data, i) =>
           // TODO: Need to have a different gradient for red-green color blindness
           {
             const {location} = data;
@@ -276,3 +275,4 @@ export const Map = () => {
 export default Map;
 //https://stackoverflow.com/questions/25496625/add-local-image-as-custom-marker-in-google-maps
 //https://developers.google.com/maps/documentation/javascript/custom-markers
+
