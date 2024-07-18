@@ -1,8 +1,7 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Snackbar, IconButton, Button, useTheme, useMediaQuery } from '@mui/material';
-import { useState, useEffect, useContext } from 'react';
-import { GoogleMap, Polyline } from 'react-google-map-wrapper';
-import { Control } from 'react-google-map-wrapper';
+import { useState, useContext } from 'react';
+import { GoogleMap, Polyline, Control } from 'react-google-map-wrapper';
 import AccessibilityMarkers from './AccessibilityMarkers';
 import DirectionsModal from './DirectionsModal';
 import Dropdown from './Dropdown';
@@ -85,7 +84,7 @@ export const Map = () => {
       setSelectedPredictionType(item.id);
     }
   };
-
+  
   // Update our polyine and heatmap data anytime:
   // 1. The selected prediction type changes
   // 2. New prediction data has been loaded
@@ -194,7 +193,7 @@ export const Map = () => {
       <PersistentDrawerLeft selectedLocation={selectedPlace}
         predictions={selectedPlaceGrades}
         placeInfos={placeInfos} />
-      <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1, position: 'relative' }}>
+      <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
           zoom={DEFAULT_ZOOM}
@@ -217,13 +216,17 @@ export const Map = () => {
             <Box sx={{ position: 'absolute', top: '20px', left: '200px' }}>
               <SearchBar onSearchEntered={handleSearchEntered} />
             </Box>
-            
-            <Box sx={{position:'absolute', top: '20px', right: '250px', display: '-ms-flexbox', flexDirection: 'column', gap: '300px' }}>
-              <Dropdown onSelect={handleVisualizationSelected} />
-              <CategoryFilter selectedCategories={selectedCategories}
-                setSelectedCategories={setSelectedCategories} />
-              <HelpIcon />
-            </Box>
+            <Control position={google.maps.ControlPosition.TOP_RIGHT}>
+              <Box sx={{ top: '20px', display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ position: 'absolute', left: '-400px', top: '1px' }}>
+                  <Dropdown onSelect={handleVisualizationSelected} />
+                </Box>
+                <CategoryFilter
+                  selectedCategories={selectedCategories}
+                  setSelectedCategories={setSelectedCategories} />
+                <HelpIcon />
+              </Box>
+            </Control>
           </Box>
           {selectedPredictionType && polylineData && polylineData.map((data, i) =>
           // TODO: Need to have a different gradient for red-green color blindness
