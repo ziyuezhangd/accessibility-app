@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
 import { AdvancedMarker, PinElement } from 'react-google-map-wrapper';
-import { ReactSVG } from 'react-svg';
+
 
 const GoogleMapContext = createContext();
 
