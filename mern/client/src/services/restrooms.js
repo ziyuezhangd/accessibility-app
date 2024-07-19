@@ -150,12 +150,18 @@ export class PublicRestroom {
         // Varying hours by day
         const today = getDayString(dateTime);
         const todaysHours = parsedHours.find((h) => h.text.includes(today));
-        openingTime = todaysHours.start.date();
-        closingTime = todaysHours.end.date();
+        if (todaysHours.start === null || todaysHours.end === null) {
+          // Closed for that day
+          return false;
+        } else {
+          openingTime = todaysHours.start.date();
+          closingTime = todaysHours.end.date();
+        }
       }
+      
       openingTime = dayjs.tz(`${openingTime}`, 'America/New_York').date(dateTime.date()).format('YYYY-MM-DD[T]HH:mm:ss');
       closingTime = dayjs.tz(`${closingTime}`, 'America/New_York').date(dateTime.date()).format('YYYY-MM-DD[T]HH:mm:ss');
-
+      
       const DST = isDST(dateTime);
       if (DST) {
         openingTime = dayjs.tz(`${openingTime}`, 'America/New_York').add(1, 'hour');
@@ -180,7 +186,8 @@ export class PublicRestroomUtilities {
    * @return {PublicRestroom[]} list of restrooms
    */
   static getNearest = (restrooms, lat, lng, qty = 1) => {
-    const placesSorted = _.sortBy(restrooms, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
+    const operationalRestrooms = restrooms.filter((r) => r.status.toLowerCase() === 'operational');
+    const placesSorted = _.sortBy(operationalRestrooms, (r) => calculateDistanceBetweenTwoCoordinates(r.latitude, r.longitude, lat, lng));
     return placesSorted.slice(0, qty);
   };
 }

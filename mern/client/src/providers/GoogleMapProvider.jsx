@@ -91,17 +91,18 @@ const GoogleMapProvider = ({children}) => {
   /**
    * 
    * @param {Array<{
-   * lat: string, 
-   * lng: string, 
-   * imgSrc: string, 
-   * imgSize: number, 
-   * imgAlt: string, 
-   * scale: number, 
-   * title: string,
-   * key: num,
-   * color: string}>} markerConfigs 
-   * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
-   */
+ * lat: string, 
+ * lng: string, 
+ * imgSrc: string, 
+ * imgSize: number, 
+ * imgAlt: string, 
+ * scale: number, 
+ * title: string,
+ * key: num,
+ * color: string,
+ * onClick: function}>} markerConfigs 
+ * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
+ */
   const createMarkers = (markerConfigs, shouldOverwriteExisting, isCategoryMarker = false) => {
     // TODO: I think double markers are being added?
     if (shouldOverwriteExisting) {
