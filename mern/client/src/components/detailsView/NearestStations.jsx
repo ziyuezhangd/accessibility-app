@@ -63,7 +63,11 @@ export default function NearestStations({ lat, lng }) {
   }, [lat, lng, placeInfos, createMarkers, removeMarkers]);
 
   return (
-    <Box display='flex' flexDirection='column' alignItems='flex-start'>
+    <Box 
+      display='flex'
+      flexDirection='column'
+      alignItems='flex-start'
+    >
       <Typography 
         variant='h6'
         sx={{ fontWeight: 400, fontSize: 18 }}
@@ -96,7 +100,11 @@ export default function NearestStations({ lat, lng }) {
       <Box mt={3}>
         <Typography variant='body2'>
           View the full accessible station map on the{' '}
-          <Link href="https://new.mta.info/map/5346" target="_blank" rel="noopener">
+          <Link 
+            href="https://new.mta.info/map/5346" 
+            target="_blank" 
+            rel="noopener"
+          >
             MTA website
           </Link>
           .
