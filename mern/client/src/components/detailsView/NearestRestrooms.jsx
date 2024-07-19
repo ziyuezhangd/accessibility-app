@@ -1,5 +1,4 @@
-import { Box, Chip, Typography, List, ListItem, ListItemButton, ListItemText, ListItemSecondaryAction } from '@mui/material';
-import _ from 'lodash';
+import { Box, Typography, List, styled, Card, CardContent, Chip } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
@@ -16,6 +15,68 @@ import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
  * 
  * @returns {JSX.Element} The rendered NearestRestrooms component.
  */
+// Styled components
+const Title = styled(Typography)(({ theme }) => ({
+  fontWeight: 'bold',
+  marginBottom: theme.spacing(2),
+  textAlign: 'center',
+  width: '100%',
+}));
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  width: '98%', // Increased width for better utilization of space
+  marginBottom: theme.spacing(2),
+  borderRadius: '8px',
+  boxShadow: theme.shadows[3],
+  overflow: 'visible', // Ensure badge is fully visible
+  position: 'relative',
+  '&:hover .details': {
+    maxHeight: '500px',
+    opacity: 1,
+  },
+  '& .details': {
+    maxHeight: '0',
+    opacity: 0,
+    overflow: 'hidden',
+    transition: 'max-height 0.5s ease-out, opacity 0.5s ease-out',
+  },
+}));
+
+const RestroomCardContent = styled(CardContent)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  padding: theme.spacing(2),
+  '&:last-child': {
+    paddingBottom: theme.spacing(2),
+  },
+}));
+
+const StatusChip = styled(Chip)(({ theme, status }) => ({
+  marginLeft: theme.spacing(1),
+  backgroundColor: status === 'OPEN' ? theme.palette.success.main : status === 'CLOSED' ? theme.palette.error.main : theme.palette.grey[500],
+  color: theme.palette.common.white,
+  fontSize: '0.75rem',
+  height: '1.5rem',
+  minWidth: '2.5rem',
+  borderRadius: '0.75rem',
+}));
+
+const HoursText = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  marginTop: theme.spacing(1),
+}));
+
+const DistanceText = styled(Typography)(({ theme }) => ({
+  marginTop: theme.spacing(1),
+  display: 'flex',
+  alignItems: 'center',
+}));
+
+const NameText = styled(Typography)(({ theme }) => ({
+  fontWeight: 'bold',
+}));
+
 export default function NearestRestrooms({ lat, lng }) {
   const { restrooms, selectedDateTime } = useContext(DataContext);
   const { createMarkers, removeMarkers } = useContext(GoogleMapContext);
@@ -35,12 +96,12 @@ export default function NearestRestrooms({ lat, lng }) {
       const markers = restrooms.map(restroom => ({
         lat: restroom.latitude,
         lng: restroom.longitude,
-        imgSrc: null, // No image source, using pin element
-        color: 'red', // Marker color red
-        scale: 0.8, // Scale the marker for visibility
+        imgSrc: null,
+        color: 'red',
+        scale: 0.8,
         title: restroom.name,
       }));
-      createMarkers(markers, false); // Add markers without clearing existing markers
+      createMarkers(markers, false);
     };
 
     getNearestRestrooms();
@@ -57,51 +118,28 @@ export default function NearestRestrooms({ lat, lng }) {
   return (
     <Box display='flex'
       flexDirection='column'
-      alignItems='flex-start'>
-      <Typography variant='h6'
-        sx={{ fontWeight: 400, fontSize: 18 }}>
-        Wheelchair accessible restrooms
-      </Typography>
-      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+      alignItems='center'
+      width='100%'>
+      <Title variant="h6">Wheelchair Accessible Restrooms</Title>
+      <List sx={{ width: '100%', bgcolor: 'background.paper' }}
         aria-label='restrooms'>
         {nearestRestrooms.map((restroom, i) => (
-          <ListItem key={i}
-            disablePadding>
-            <ListItemButton aria-label={restroom.name}>
-              <ListItemText
-                aria-label='Restroom information'
-                primary={restroom.name}
-                secondary={(
-                  <>
-                    <Typography
-                      sx={{ display: 'inline' }}
-                      component="span"
-                      variant="body2"
-                      color="text.primary"
-                    >
-                      {/* TODO: would be nice if we could make today's day bold */}
-                      {restroom.formatHours().split('\n').map(h => (<p aria-label={`Hours of operation ${h}`}
-                        key={h}>{h}</p>))}
-                    </Typography>
-                    <p aria-label={`Distance from selected location ${Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} meters`}>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</p>
-                  </>
-                )} 
-              
-              />
-              <ListItemSecondaryAction>
-                {restroom.isOpen(selectedDateTime) === true ? (
-                  <Chip label='OPEN' 
-                    color='success' />
-                ) : restroom.isOpen(selectedDateTime) === false ? (
-                  <Chip label='CLOSED' 
-                    color='error' />
-                ) : (
-                  <Chip label='UNCERTAIN' 
-                    color='default' />
-                )}
-              </ListItemSecondaryAction>
-            </ListItemButton>
-          </ListItem>
+          <StyledCard key={i}>
+            <RestroomCardContent>
+              <NameText variant="subtitle1"
+                gutterBottom>
+                {restroom.name}
+              </NameText>
+              <DistanceText variant="body2">
+                {Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} meters away
+                <StatusChip label={restroom.isOpen(selectedDateTime) ? 'OPEN' : restroom.isOpen(selectedDateTime) === false ? 'CLOSED' : 'UNKNOWN'}
+                  status={restroom.isOpen(selectedDateTime) ? 'OPEN' : restroom.isOpen(selectedDateTime) === false ? 'CLOSED' : 'UNKNOWN'} />
+              </DistanceText>
+              <Box className="details">
+                <HoursText variant="body2">{restroom.formatHours().split('\n').map(h => (<span key={h}>{h}<br /></span>))}</HoursText>
+              </Box>
+            </RestroomCardContent>
+          </StyledCard>
         ))}
       </List>
     </Box>
