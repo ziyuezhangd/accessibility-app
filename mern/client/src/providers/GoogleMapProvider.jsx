@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
 import { AdvancedMarker, PinElement } from 'react-google-map-wrapper';
 
-
 const GoogleMapContext = createContext();
 
 const GoogleMapProvider = ({children}) => {
