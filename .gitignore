@@ -133,3 +133,6 @@ ml/models
 
 # python cache
 __pycache__
+
+# sonarqube
+.scannerwork

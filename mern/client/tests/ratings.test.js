@@ -31,8 +31,8 @@ describe('Function getBusynessRatings', () => {
     const ratings = await getBusynessRatings(testDateTime);
 
     expect(fetch).toHaveBeenCalledWith('/api/busyness-ratings?' + new URLSearchParams({ datetime: testDateTime }));
-    expect(ratings).toBeUndefined();
-    expect(console.error).toHaveBeenCalledTimes(1);
+    expect(ratings).toBeNull();
+    expect(console.error).toHaveBeenCalledTimes(4);
   });
 
   it('should handle inconsistent datetime format', async () => {
@@ -75,8 +75,8 @@ describe('Function getNoiseRatings', () => {
     const ratings = await getNoiseRatingsHourly(testDateTime);
 
     expect(fetch).toHaveBeenCalledWith('/api/noise-ratings/hourly?' + new URLSearchParams({ datetime: testDateTime }));
-    expect(ratings).toBeUndefined();
-    expect(console.error).toHaveBeenCalledTimes(1);
+    expect(ratings).toBeNull();
+    expect(console.error).toHaveBeenCalledTimes(4);
   });
 
   it('should handle inconsistent datetime format', async () => {
@@ -119,8 +119,8 @@ describe('Function getOdourRatings', () => {
     const ratings = await getOdourRatings(testDateTime);
 
     expect(fetch).toHaveBeenCalledWith('/api/odour-ratings?' + new URLSearchParams({ datetime: testDateTime }));
-    expect(ratings).toBeUndefined();
-    expect(console.error).toHaveBeenCalledTimes(1);
+    expect(ratings).toBeNull();
+    expect(console.error).toHaveBeenCalledTimes(4);
   });
 
   it('should handle inconsistent datetime format', async () => {
