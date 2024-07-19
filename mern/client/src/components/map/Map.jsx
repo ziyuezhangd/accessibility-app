@@ -1,6 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Snackbar, IconButton, Button, useTheme, useMediaQuery } from '@mui/material';
-import { useState, useContext } from 'react';
+import { useState, useContext,useEffect } from 'react';
 import { GoogleMap, Polyline, Control } from 'react-google-map-wrapper';
 import AccessibilityMarkers from './AccessibilityMarkers';
 import DirectionsModal from './DirectionsModal';
