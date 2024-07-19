@@ -7,6 +7,9 @@ import { useState, useEffect, useContext } from 'react';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfoUtilities, categoryToParentCategory } from '../../services/placeInfo';
+import { PublicRestroomUtilities } from '../../services/restrooms';
+import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
+import PlaceInfoPopup from '../map/PlaceInfoPopup';
 
 // Custom styled components similar to Dropdown
 const CustomAutocomplete = styled(Autocomplete)({
@@ -65,9 +68,13 @@ const CustomChip = styled(Chip)({
 
 const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
   const { mapInstance, createMarkers, removeMarkers } = useContext(GoogleMapContext);
-  const { placeInfos } = useContext(DataContext);
+  const { placeInfos, restrooms } = useContext(DataContext);
   const [categories, setCategories] = useState([]);
   const [hasFocus, setHasFocus] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [nearestRestrooms, setNearestRestrooms] = useState([]);
+  const [nearestStations, setNearestStations] = useState([]);
 
   useEffect(() => {
     const uniqueCategories = _.uniqBy(placeInfos.map(place => categoryToParentCategory(place.category)).filter(category => category && category.trim() !== ''));
@@ -93,6 +100,7 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
             imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
             imgSize: '30px',
             imgAlt: placeInfo.name,
+            onClick: () => handleMarkerClick(placeInfo),
           })).filter(marker => marker.imgSrc !== null);
 
           createMarkers(allMarkers, false, true); // Create all markers if "All" is selected without clearing existing markers
@@ -108,6 +116,7 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
           imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
           imgSize: '30px',
           imgAlt: placeInfo.name,
+          onClick: () => handleMarkerClick(placeInfo),
         }))
         .filter(marker => marker.imgSrc !== null);
 
@@ -123,6 +132,30 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
 
     handleMarkers();
   }, [selectedCategories, placeInfos, mapInstance]);
+
+  const handleMarkerClick = async (placeInfo) => {
+    setSelectedPlace(placeInfo);
+    setNearestRestrooms(getNearestRestrooms(placeInfo.latitude, placeInfo.longitude));
+    setNearestStations(getNearestStations(placeInfo.latitude, placeInfo.longitude));
+    setPopupOpen(true);
+  };
+
+  const getNearestRestrooms = (lat, lng) => {
+    const nearestRestrooms = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
+    return nearestRestrooms.map(restroom => ({
+      ...restroom,
+      distance: calculateDistanceBetweenTwoCoordinates(lat, lng, restroom.latitude, restroom.longitude),
+    }));
+  };
+
+  const getNearestStations = (lat, lng) => {
+    const stations = placeInfos.filter(place => place.isSubwayStation() && place.name !== '');
+    const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
+    return nearestStations.map(station => ({
+      ...station,
+      distance: calculateDistanceBetweenTwoCoordinates(lat, lng, station.latitude, station.longitude),
+    }));
+  };
 
   const handleCategorySelected = (categories) => {
     if (categories.includes('All') && !selectedCategories.includes('All')) {
@@ -145,37 +178,48 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
   const hasValue = selectedCategories.length > 0;
 
   return (
-    <CustomAutocomplete
-      multiple
-      id="filter-selected-options"
-      options={categories}
-      getOptionLabel={(option) => option}
-      filterSelectedOptions
-      onChange={(event, value) => handleCategorySelected(value)} // Call handleCategorySelected on change
-      value={selectedCategories} // Bind selected categories to Autocomplete value
-      renderTags={(value, getTagProps) =>
-        value.map((option, index) => (
-          <CustomChip
-            key={option} // Add key prop here
+    <>
+      <CustomAutocomplete
+        multiple
+        id="filter-selected-options"
+        options={categories}
+        getOptionLabel={(option) => option}
+        filterSelectedOptions
+        onChange={(event, value) => handleCategorySelected(value)} // Call handleCategorySelected on change
+        value={selectedCategories} // Bind selected categories to Autocomplete value
+        renderTags={(value, getTagProps) =>
+          value.map((option, index) => (
+            <CustomChip
+              key={option} // Add key prop here
+              variant="outlined"
+              label={option}
+              {...getTagProps({ index })}
+            />
+          ))
+        }
+        renderInput={(params) => (
+          <CustomTextField
+            {...params}
             variant="outlined"
-            label={option}
-            {...getTagProps({ index })}
+            label="Filter by Category"
+            placeholder="Categories"
+            hasFocus={hasFocus}
+            hasValue={hasValue}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
           />
-        ))
-      }
-      renderInput={(params) => (
-        <CustomTextField
-          {...params}
-          variant="outlined"
-          label="Filter by Category"
-          placeholder="Categories"
-          hasFocus={hasFocus}
-          hasValue={hasValue}
-          onFocus={handleFocus}
-          onBlur={handleBlur} 
+        )}
+      />
+      {selectedPlace && (
+        <PlaceInfoPopup
+          open={popupOpen}
+          onClose={() => setPopupOpen(false)}
+          placeInfo={selectedPlace}
+          nearestRestrooms={nearestRestrooms}
+          nearestStations={nearestStations}
         />
-      )} 
-    />
+      )}
+    </>
   );
 };
 

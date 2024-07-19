@@ -4,7 +4,6 @@ import { AdvancedMarker, PinElement } from 'react-google-map-wrapper';
 
 const GoogleMapContext = createContext();
 
-// List of available libraries: https://developers.google.com/maps/documentation/javascript/libraries
 const GoogleMapProvider = ({children}) => {
   /** @type {[google.maps.Map, React.Dispatch<React.SetStateAction<google.maps.Map>>]} */
   const [mapInstance, setMapInstance] = useState();
@@ -88,7 +87,7 @@ const GoogleMapProvider = ({children}) => {
   const handleMapLoaded = (map) => {
     setMapInstance(map);
   };
-  
+
   /**
    * 
    * @param {Array<{
@@ -100,7 +99,8 @@ const GoogleMapProvider = ({children}) => {
  * scale: number, 
  * title: string,
  * key: num,
- * color: string}>} markerConfigs 
+ * color: string,
+ * onClick: function}>} markerConfigs 
  * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
  */
   const createMarkers = (markerConfigs, shouldOverwriteExisting, isCategoryMarker = false) => {
@@ -112,35 +112,133 @@ const GoogleMapProvider = ({children}) => {
         clearMarkers();
       }
     }
-    const markersToCreate = markerConfigs.map(config => {
-      const { imgSrc, title, lat, lng, imgAlt, imgSize, scale, color } = config;
-      return imgSrc ? (
-        <AdvancedMarker 
-          lat={parseFloat(lat)}
-          lng={parseFloat(lng)}
-          title={title}
-          gmpClickable={true}
-          // key={key}
-        >
-          <img 
-            src={imgSrc}
-            style={{height: imgSize}}
-            alt={imgAlt} 
-          />
-        </AdvancedMarker>
-      ) : (
-        <AdvancedMarker 
-          lat={parseFloat(lat)}
-          lng={parseFloat(lng)}
-          title={title}
-          gmpClickable={true}>
-          <PinElement 
-            scale={scale}
-            color={color} /> 
-        </AdvancedMarker>
-      );
-    });
+    const markersToCreate = [];
+    for (const config of markerConfigs) {
+      const {imgSrc, key, title, parentCategory} = config;
+      
+      let {lat, lng} = config;
+      lat = parseFloat(lat);
+      lng = parseFloat(lng);
+      if (imgSrc) {
+        let a = 0;
+        let b= 0;
+        let c= 0;
+        let d=0;
+        const {imgAlt, imgSize} = config;
+        
+        if (parentCategory === 'books' || parentCategory === 'education' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=170;
+        }
+        else if (parentCategory === 'retail' || parentCategory ==='market' || parentCategory ==='phone' || parentCategory ==='supermarket' || parentCategory ==='beauty' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=136;
+        }
+        if (parentCategory === 'theatre'|| parentCategory === 'cinema' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=200;
+        }
+        
+        if (parentCategory === 'car' || parentCategory === 'train' || parentCategory === 'airport' || parentCategory === 'bus'|| parentCategory === 'parking'|| parentCategory === 'ferry'|| parentCategory === 'bike'){
+          a= 0;
+          b=0;
+          c=3000;
+          d=100;
+        }
+        if ( parentCategory === 'accomodation' || parentCategory === 'policeStation' || parentCategory === 'office' || parentCategory === 'cemetery' || parentCategory === 'atm' || parentCategory === 'post' || parentCategory === 'service' || parentCategory === 'bank' || parentCategory === 'health' || parentCategory === 'veterinary' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=300;
+        }
 
+        if (parentCategory === 'restaurant'|| parentCategory === 'coffee'|| parentCategory === 'pub' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=45;
+        }
+        if (parentCategory === 'placeOfWorship' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=10;
+        }
+        if (parentCategory === 'art' || parentCategory === 'museum' || parentCategory === 'attraction' || parentCategory === 'sports'|| parentCategory === 'historical'){
+          a= 0;
+          b=0;
+          c=4247;
+          d=10;
+        }
+        if (parentCategory === 'toilet' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=300;
+        }
+        if (parentCategory === 'drinkingWater' ){
+          a= 0;
+          b=0;
+          c=4247;
+          d=300;
+        }
+        if (parentCategory === 'camping' || parentCategory === 'picnicTable' || parentCategory === 'flowers'|| parentCategory === 'water' || parentCategory === 'playground'){
+          a= 0;
+          b=0;
+          c=4247;
+          d=170;
+        }
+               
+        const marker = (
+          <AdvancedMarker 
+            lat={lat}
+            lng={lng}
+            title={title}
+            gmpClickable={true}
+            // key={key}
+          >
+            <img 
+              src = {imgSrc}
+              style={{height: imgSize, filter:`invert(${a}%) sepia(${b}%) saturate(${c}%) hue-rotate(${d}deg) brightness(95%) contrast(95%)`}}
+              //90 deg green
+              //0 deg orange
+              //
+              alt = 'marker'
+            >
+            
+            </img>
+          </AdvancedMarker>
+        );       
+        markersToCreate.push(marker);
+      }else {
+        // console.log('Imgsrc is null')
+        let { scale, color} = config;
+        scale = scale || 1;
+        color = color || '#FF0000';
+        const marker = (
+          <AdvancedMarker 
+            lat={lat}
+            lng={lng}
+            title={title}
+            gmpClickable={true}
+            // key={key}
+          >
+            <PinElement 
+              scale={scale}
+              color={color} />
+          </AdvancedMarker>
+        );
+        markersToCreate.push(marker);
+      }
+    }
+    setMarkers([...markers, ...markersToCreate]);
+    console.log(`Created ${markers.length} markers`);
     if (isCategoryMarker) {
       setCategoryMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
     } else {
@@ -148,7 +246,6 @@ const GoogleMapProvider = ({children}) => {
     }
     console.log(`Created ${markersToCreate.length} markers`);
   };
-
   /**
    * 
    * @param {Array<{lat: number, lng: number}>} latLngs 
@@ -168,7 +265,7 @@ const GoogleMapProvider = ({children}) => {
       ));
     }
   };
-  
+
   /**
    * 
    */
@@ -196,7 +293,7 @@ const GoogleMapProvider = ({children}) => {
       }
     });
   };
-
+  
   return (
     <GoogleMapContext.Provider value={{
       mapInstance,
