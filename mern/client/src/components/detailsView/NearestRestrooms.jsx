@@ -27,10 +27,15 @@ export default function NearestRestrooms({ lat, lng }) {
 
   useEffect(() => {
     const getNearestRestrooms = async () => {
-      // TODO: remove not operational
       const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
-      setNearestRestrooms(nearest);
-      showRestroomMarkers(nearest);
+
+      // Remove duplicate restrooms
+      const uniqueNearestRestrooms = nearest.filter((restroom, index, self) => 
+        index === self.findIndex((r) => r.name === restroom.name && r.latitude === restroom.latitude && r.longitude === restroom.longitude)
+      );
+
+      setNearestRestrooms(uniqueNearestRestrooms);
+      showRestroomMarkers(uniqueNearestRestrooms);
     };
 
     const showRestroomMarkers = (restrooms) => {

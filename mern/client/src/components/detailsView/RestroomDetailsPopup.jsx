@@ -19,7 +19,20 @@ const RestroomDetailsPopup = ({ restroom, onClose }) => {
       onClose={onClose}
       maxWidth="sm"
       fullWidth>
-      <DialogTitle>{restroom.name}</DialogTitle>
+      <DialogTitle>
+        {restroom.name}
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent dividers>
         <Box mb={2}>
           <Typography variant="body1">
@@ -45,9 +58,7 @@ const RestroomDetailsPopup = ({ restroom, onClose }) => {
           <Typography variant="body2">
             {restroom.isFullyAccessible
               ? 'Fully Accessible'
-              : restroom.isPartiallyAccessible
-                ? 'Partially Accessible'
-                : 'Not Accessible'}
+              : 'Partially Accessible'}
           </Typography>
         </Box>
 
@@ -75,17 +86,6 @@ const RestroomDetailsPopup = ({ restroom, onClose }) => {
           />
         </Box>
       </DialogContent>
-      <IconButton
-        aria-label="close"
-        onClick={onClose}
-        sx={{
-          position: 'absolute',
-          right: 8,
-          top: 8,
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
     </Dialog>
   );
 };

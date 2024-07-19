@@ -1,9 +1,9 @@
-import { Avatar, AvatarGroup, Box, Typography,Link,List, ListItem, ListItemButton, ListItemText, ListItemSecondaryAction } from '@mui/material';
+import { Avatar, AvatarGroup, Box, Typography, Link } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PlaceInfo, PlaceInfoUtilities } from '../../services/placeInfo';
-import { SUBWAY_LINE_COLORS } from '../../utils/MapUtils';
+import { SUBWAY_LINE_COLORS, calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
 /**
  * 
@@ -17,7 +17,7 @@ import { SUBWAY_LINE_COLORS } from '../../utils/MapUtils';
  */
 export default function NearestStations({ lat, lng }) {
   const { placeInfos } = useContext(DataContext);
-  const { createMarkers } = useContext(GoogleMapContext);
+  const { createMarkers, removeMarkers } = useContext(GoogleMapContext);
   const [nearestStations, setNearestStations] = useState([]);
 
   useEffect(() => {
@@ -27,9 +27,15 @@ export default function NearestStations({ lat, lng }) {
       const placeInfosObj = placeInfos.map(pi => new PlaceInfo(pi));
       const stations = placeInfosObj.filter((place) => place.isSubwayStation() && place.name !== '');
       const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
-      console.log(nearestStations);
-      setNearestStations(nearestStations);
-      showStationMarkers(nearestStations);
+
+      // Remove duplicate stations
+      const uniqueNearestStations = nearestStations.filter((station, index, self) => 
+        index === self.findIndex((s) => s.name === station.name)
+      );
+
+      console.log(uniqueNearestStations);
+      setNearestStations(uniqueNearestStations);
+      showStationMarkers(uniqueNearestStations);
     };
 
     const showStationMarkers = (stations) => {
@@ -37,13 +43,24 @@ export default function NearestStations({ lat, lng }) {
       const markers = stations.map(station => ({
         lat: station.latitude,
         lng: station.longitude,
-        scale:1.5
+        imgSrc: null, // No image source, using pin element
+        color: 'blue', // Marker color blue for consistency
+        scale: 0.8, // Scale the marker for visibility
+        title: station.getSubwayStationName(),
       }));
-      createMarkers(markers,false);
+      createMarkers(markers, false); // Add markers without clearing existing markers
     };
 
     getNearestSubwayStations();
-  }, [lat, lng, placeInfos]);
+
+    return () => {
+      const markersToRemove = nearestStations.map(station => ({
+        lat: station.latitude,
+        lng: station.longitude,
+      }));
+      removeMarkers(markersToRemove);
+    };
+  }, [lat, lng, placeInfos, createMarkers, removeMarkers]);
 
   return (
     <Box display='flex'
@@ -53,21 +70,24 @@ export default function NearestStations({ lat, lng }) {
         sx={{ fontWeight: 400, fontSize: 18 }}>
         Wheelchair accessible subway stations
       </Typography>
-      {nearestStations.map((station) => (
-        <Box key={station.name}
-          mb={2}>
-          <AvatarGroup>
-            {station.getSubwayLines().map((line) => (
-              <Avatar key={`${station.name}-${line}`}
-                sx={{ bgcolor: SUBWAY_LINE_COLORS[line], fontSize: line === 'PATH' ? 10 : 20 }}>
-                {line}
-              </Avatar>
-            ))}
-          </AvatarGroup>
-          <Typography variant='body1'>{station.name}</Typography>
-          <Typography>500m</Typography> {/* Replace with actual distance if available */}
-        </Box>
-      ))}
+      {nearestStations.map((station, index) => {
+        const distance = calculateDistanceBetweenTwoCoordinates(lat, lng, station.latitude, station.longitude);
+
+        return (
+          <Box key={`${station.name}-${index}`} mb={2}>
+            <AvatarGroup max={100}> {/* Set max to a high value */}
+              {station.getSubwayLines().map((line) => (
+                <Avatar key={`${station.name}-${line}`}
+                  sx={{ bgcolor: SUBWAY_LINE_COLORS[line], fontSize: line === 'PATH' ? 10 : 20 }}>
+                  {line}
+                </Avatar>
+              ))}
+            </AvatarGroup>
+            <Typography variant='body1'>{station.getSubwayStationName()}</Typography>
+            <Typography>{Math.round(distance)} m</Typography> {/* Display actual distance */}
+          </Box>
+        );
+      })}
       <Box mt={3}>
         <Typography variant='body2'>
           View the full accessible station map on the{' '}
