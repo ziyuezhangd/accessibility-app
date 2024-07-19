@@ -170,16 +170,15 @@ export class PlaceInfoUtilities {
    *
 */
   static getMarkerPNG = (placeInfo) => {
+    console.log('getMarkerPNG has been called');
     const { category } = placeInfo;
-    const pngUrl = '../../accessibilityMarkers/';
+    const svgUrl = '../../accessibilityMarkersSVG/';
     const parentCategory = categoryToParentCategory(category);
-
     if (!parentCategory) {
       return null;
-    }
-    else{
-      const imgSrc = `${pngUrl}${parentCategory}.png`;
-      return imgSrc;
+    } else {
+      const imgSrc = `${svgUrl}${parentCategory}.svg`;
+      return { imgSrc, parentCategory };
     }
   };
 }
@@ -191,7 +190,7 @@ const educationCategories = ['college', 'education', 'kindergarten', 'music_scho
 const drinkingWaterCategories = ['drinkingwater'];
 const retailCategories = ['2nd_hand', 'antiques', 'art_shop', 'bicycle_store', 'bread', 'butcher', 'clothes', 'computers', 'confectionary', 'convenience_store', 'copyshop', 'department_store', 'electronics', 'furniture', 'gifts', 'greengrocer', 'hiking', 'instruments', 'jewelry', 'kiosk', 'laundry', 'mobile_phones', 'newsagent', 'pet_store', 'shoes', 'shopping', 'sports_shop', 'stationery', 'tea_shop', 'textiles', 'tobacco', 'tools', 'toys', 'variety_store', 'video_store'];
 const officeCategories = ['communitycentre', 'court', 'embassy', 'employment_agency', 'government_office', 'insurance', 'lawyer', 'other', 'political_party', 'townhall', 'travel_agency'];
-const theatreCategories = ['theater'];
+const theatreCategories = ['theatre'];
 const cinemaCategories = ['cinema'];
 const carCategories = ['car_dealer', 'car_rental', 'car_repair', 'car_sharing', 'driving_school', 'parking', 'parking_carports', 'taxi'];
 const accomodationCategories = ['accommodation', 'bed_breakfast', 'chalet', 'dormitory', 'guest_house', 'hostel', 'hotel', 'motel', 'shelter'];
@@ -200,7 +199,7 @@ const healthCategories = ['abortion', 'allergology', 'alternative_medicine', 'an
 const restaurantCategories = ['canteen', 'deli', 'fastfood', 'food', 'icecream', 'restaurant'];
 const placeOfWorshipCategories = ['place_of_worship'];
 const attractionCategories = ['attraction', 'cablecar', 'casino', 'leisure', 'themepark', 'tourism', 'zoo'];
-const trainCategoories = ['platform', 'public_transport', 'railway_platform', 'train', 'train_station', 'tram_crossing', 'tram_stop'];
+const trainCategories = ['platform', 'public_transport', 'railway_platform', 'train', 'train_station', 'tram_crossing', 'tram_stop'];
 const artCategories = ['art_gallery', 'arts_center', 'culture', 'public_art'];
 const museumCategories = ['museum'];
 const busCategories = ['bus_station', 'bus_stop'];
@@ -275,7 +274,7 @@ const categoryToParentCategory = (category) => {
   if( restaurantCategories.includes(category)) {
     return 'restaurant';
   }
-  if( trainCategoories.includes(category)) {
+  if( trainCategories.includes(category)) {
     return 'train';
   }
   if( artCategories.includes(category)) {
