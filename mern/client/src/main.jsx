@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -10,6 +11,8 @@ import AboutPage from './pages/AboutPage';
 import LandingPage from './pages/LandingPage';
 import MapPage from './pages/MapPage';
 import ResourcesPage from './pages/ResourcesPage';
+
+const VITE_WEB_CLIENT_ID = import.meta.env.VITE_WEB_CLIENT_ID;
 
 const router = createBrowserRouter([
   {
@@ -55,7 +58,9 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+  <GoogleOAuthProvider clientId={ VITE_WEB_CLIENT_ID }>
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
+  </GoogleOAuthProvider>
 );

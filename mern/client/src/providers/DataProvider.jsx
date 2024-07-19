@@ -129,7 +129,7 @@ const DataProvider = ({children}) => {
     setOdorData(odorRatings);
     return odorRatings;
   };
-  
+
   return (
     <DataContext.Provider value={{restrooms, placeInfos, getPredictions, busynessData, noiseData, odorData, seatingAreas, pedestrianRamps, pedestrianSignals, polylineData, selectedDateTime}}>
       {children}
@@ -138,3 +138,4 @@ const DataProvider = ({children}) => {
 };
 
 export { DataContext, DataProvider };
+  

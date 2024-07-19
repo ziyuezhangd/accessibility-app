@@ -75,6 +75,52 @@ const dbHandler = {
 
     return results;
   },
+
+  /**
+   * @param {string} userHistory.email
+   * @param {array} userHistory.favourites
+   * @param {array} userHistory.searchHistory
+   */
+
+  async getUserHistories(){
+    const db = await getDB();
+    const collection = db.collection('userHistory');
+    const results = await collection.find({}).toArray();
+
+    return results;
+  },
+
+  async insertUserHistory(userHistory){
+    const db = await getDB();
+    const collection = db.collection('userHistory');
+    //if the user is in the db, update that entry, else insert new entry
+    if (collection.find({email: userHistory.email})) {
+      const user = db.users.find({email:userHistory.email})
+      await collection.update(user);
+    } else await collection.insertOne(userHistory);
+  },
+
+  async insertSearchHistory(userHistory){
+    const db = await getDB();
+    const collection = db.collection('userHistory');
+    if (collection.find({email: userHistory.email})) {
+      await collection.updateOne(userHistory.searchHistory);
+    }else {
+      await collection.insertOne(userHistory);
+    }
+  },
+  
+  async insertFavorites(userHistory){
+    const db = await getDB();
+    const collection = db.collection('userHistory');
+    if (collection.find({email: userHistory.email})) {
+      await collection.updateOne(userHistory.favorites);
+    }
+    else {
+      await collection.insertOneOne(userHistory);
+    }
+  },
+
 };
 
 export default dbHandler;

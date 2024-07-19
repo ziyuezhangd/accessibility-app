@@ -1,17 +1,21 @@
-import { Box, Button, Container, Toolbar, Snackbar } from '@mui/material';
-import AppBar from '@mui/material/AppBar';
+import { AppBar, Box, Button, Container, Menu, MenuItem, Toolbar, Typography, IconButton, Snackbar } from '@mui/material';
+import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 import {AccessBarNoRouter} from 'aditum';
+import axios from 'axios';
 import * as React from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Favorites from './navBar/Favorites';
 import Logo from './navBar/Logo';
+import { UserContext } from '../providers/UserProvider';
+
 
 const pages = ['Map', 'About us', 'Resources'];
 
 export const NavBar = () => {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
-
+  const {userHistories} = useContext(UserContext);
   const navigate = useNavigate();
 
   const handlePageSelected = (e) => {
@@ -36,7 +40,42 @@ export const NavBar = () => {
     }
     setSnackbarOpen(false);
   };
+  //google login
+  const [ user, setUser ] = useState([]);
+  const [ profile, setProfile ] = useState([]);
 
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => setUser(codeResponse),
+    onError: (error) => console.log('Login Failed:', error)
+
+  });
+
+  const logOut = () => {
+    googleLogout();
+    setProfile(null);
+  };
+
+  useEffect(
+    () => {
+      if (user) {
+        axios
+          .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+            headers: {
+              Authorization: `Bearer ${user.access_token}`,
+              Accept: 'application/json'
+            }
+          })
+          .then((res) => {
+            setProfile(res.data);
+            userHistories.name = res.data.name;
+            userHistories.email = res.data.email;
+          })
+          .catch((err) => console.log(err));
+      }
+    },
+    [ user ]
+  );
+  
   return (
     <AppBar position='fixed'
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -53,6 +92,18 @@ export const NavBar = () => {
               </Button>
             ))}
           </Box>
+          <Box>
+            <div style={{ margin: '20px' }}>
+              {profile ? (
+                <div>
+                  <button onClick={logOut}>Log out</button>
+                </div>
+              ) : (
+                <button onClick={login}>Sign in with Google </button>
+              )}
+            </div>
+          </Box>
+
           <Box sx={{ flexGrow: 0 }}>
             <Favorites />
           </Box>
