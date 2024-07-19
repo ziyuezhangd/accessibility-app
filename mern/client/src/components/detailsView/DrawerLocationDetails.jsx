@@ -6,7 +6,7 @@ import { Button, IconButton, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import _ from 'lodash';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState,useContext } from 'react';
 import FeedbackForm from './FeedbackForm';
 import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
@@ -18,7 +18,7 @@ const DrawerLocationHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(1),
-  backgroundColor: '#1976d2', // Updated color
+  backgroundColor: '#1976d2',
   color: 'white',
   boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
   justifyContent: 'space-between',
@@ -35,18 +35,34 @@ const DrawerLocationHeader = styled('div')(({ theme }) => ({
  * 
  * @returns {JSX.Element} The rendered DrawerLocationDetails component.
  */
-const modalStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
+const CustomButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  width: '100%',
+  backgroundColor: '#1976d2',
+  color: theme.palette.common.white,
+  '&:hover': {
+    backgroundColor: '#115293',
+  },
+}));
 
-const formStyle = {
-  width: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-};
+const Content = styled(Box)(({ theme }) => ({
+  overflowY: 'auto',
+  padding: theme.spacing(5),
+  maxHeight: 'calc(100vh - 250px)',
+  '&::-webkit-scrollbar': {
+    width: '8px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#1976d2',
+    borderRadius: '8px',
+  },
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: 'transparent',
+  },
+  '&::-webkit-scrollbar-button': {
+    display: 'none',
+  },
+}));
 
 export default function DrawerLocationDetails({ location, predictions, onBackClicked }) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -144,7 +160,7 @@ export default function DrawerLocationDetails({ location, predictions, onBackCli
           {isFavorite ? <Favorite sx={{ color: 'white' }} /> : <FavoriteBorder sx={{ color: 'white' }} />}
         </IconButton>
       </DrawerLocationHeader>
-      <Box sx={{ overflow: 'auto', px: 5 }}>
+      <Content>
         <PlaceOverview place={location.placeId}
           size='medium'></PlaceOverview>
         <Grades lat={location.lat}
@@ -157,8 +173,8 @@ export default function DrawerLocationDetails({ location, predictions, onBackCli
           lat={location.lat}
           lng={location.lng} />
 
-        <Button onClick={handleButtonClicked}>Submit Feedback</Button>
-      </Box>
+        <CustomButton onClick={handleButtonClicked}>Submit Feedback</CustomButton>
+      </Content>
       <FeedbackForm location={location}
         isOpen={isFeedbackOpen}
         onClose={handleFeedbackClose} />

@@ -24,21 +24,15 @@ const Title = styled(Typography)(({ theme }) => ({
 }));
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  width: '98%', // Increased width for better utilization of space
+  width: '100%',
   marginBottom: theme.spacing(2),
   borderRadius: '8px',
   boxShadow: theme.shadows[3],
-  overflow: 'visible', // Ensure badge is fully visible
   position: 'relative',
-  '&:hover .details': {
-    maxHeight: '500px',
-    opacity: 1,
-  },
-  '& .details': {
-    maxHeight: '0',
-    opacity: 0,
-    overflow: 'hidden',
-    transition: 'max-height 0.5s ease-out, opacity 0.5s ease-out',
+  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+  '&:hover': {
+    transform: 'scale(1.02)',
+    boxShadow: theme.shadows[6],
   },
 }));
 
@@ -60,11 +54,6 @@ const StatusChip = styled(Chip)(({ theme, status }) => ({
   height: '1.5rem',
   minWidth: '2.5rem',
   borderRadius: '0.75rem',
-}));
-
-const HoursText = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.secondary,
-  marginTop: theme.spacing(1),
 }));
 
 const DistanceText = styled(Typography)(({ theme }) => ({
@@ -135,9 +124,6 @@ export default function NearestRestrooms({ lat, lng }) {
                 <StatusChip label={restroom.isOpen(selectedDateTime) ? 'OPEN' : restroom.isOpen(selectedDateTime) === false ? 'CLOSED' : 'UNKNOWN'}
                   status={restroom.isOpen(selectedDateTime) ? 'OPEN' : restroom.isOpen(selectedDateTime) === false ? 'CLOSED' : 'UNKNOWN'} />
               </DistanceText>
-              <Box className="details">
-                <HoursText variant="body2">{restroom.formatHours().split('\n').map(h => (<span key={h}>{h}<br /></span>))}</HoursText>
-              </Box>
             </RestroomCardContent>
           </StyledCard>
         ))}
