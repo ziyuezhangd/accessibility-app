@@ -9,7 +9,7 @@ import { calculateDistanceBetweenTwoCoordinates, findClosestSegment, isBetween }
 
 const MeterBox = styled(Box)(({ theme }) => ({
   position: 'relative',
-  width: '100%',
+  width: '80%',
   height: '10px',
   backgroundColor: '#e0e0e0',
   borderRadius: '5px',
@@ -17,11 +17,20 @@ const MeterBox = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(1),
 }));
 
-const Fill = styled(Box)(({ theme, width, color }) => ({
+const Fill = styled(Box)(({ width, color }) => ({
   width: `${width}%`,
   height: '100%',
   backgroundColor: color,
-  transition: 'width 2s ease-out',
+  transition: 'width 1s ease-in-out',
+}));
+
+const IconBox = styled(Box)(({ theme, showIcon }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  marginLeft: theme.spacing(1),
+  marginTop: theme.spacing(-1),
+  opacity: showIcon ? 1 : 0,
+  transition: 'opacity 0.5s ease-in',
 }));
 
 const customIcons = {
@@ -93,8 +102,7 @@ export default function Grades({lat, lng, predictions}) {
       setFilledBusyness((busynessGrade / 5) * 100);
       setFilledOdor((odorGrade / 5) * 100);
       setFilledNoise((noiseGrade / 5) * 100);
-      setShowIcons(true);
-    }, 200); // Reduced delay to start the animation faster
+    });
 
     return () => clearTimeout(timeout);
   }, [busynessGrade, odorGrade, noiseGrade]);
@@ -102,8 +110,8 @@ export default function Grades({lat, lng, predictions}) {
   useEffect(() => {
     const iconTimeout = setTimeout(() => {
       setShowIcons(true);
-    }, 2200); // Delay to show the icons after the fill animation is complete
-
+    },1100);
+    
     return () => clearTimeout(iconTimeout);
   }, [filledBusyness, filledOdor, filledNoise]);
 
@@ -131,7 +139,7 @@ export default function Grades({lat, lng, predictions}) {
           <Fill width={fillWidth}
             color={customIcons[grade].color} />
         </MeterBox>
-        {showIcon && customIcons[grade].icon}
+        <IconBox showIcon={showIcon}>{customIcons[grade].icon}</IconBox>
       </Box>
       <Typography variant='body2'>{customIcons[grade].label}</Typography>
     </Box>
