@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import AppleHealthKit, { HealthValue, HealthKitPermissions, HealthInputOptions, HealthStatusResult, HealthUnit, ClinicalRecordType, HealthClinicalRecord, HealthClinicalRecordOptions, BloodPressureSampleValue } from 'react-native-health';
@@ -20,17 +19,17 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
     return;
   }
   if (data) {
-    const { locations } = data;
+    const { locations } = data as any;
     const { coords, timestamp } = locations[0];
     const { latitude, longitude, accuracy, altitude, speed } = coords;
 
-    postLocationData({
-      latitude,
-      longitude,
-      accuracy,
-      altitude,
-      userId: 'aprilpolubiec',
-    });
+    // postLocationData({
+    //   latitude,
+    //   longitude,
+    //   accuracy,
+    //   altitude,
+    //   userId: 'aprilpolubiec',
+    // });
     console.log('User data updated: ', {
       latitude,
       longitude,

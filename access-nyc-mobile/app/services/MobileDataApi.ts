@@ -3,7 +3,7 @@ import { PlaceInfo } from '../interfaces/PlaceInfo';
 import { BloodPressureSampleValue, HealthClinicalRecord, HealthValue } from 'react-native-health';
 
 // TODO: should use prod
-const apiUrl = process.env.EXPO_PUBLIC_LOCAL_API_URL;
+const apiUrl = process.env.EXPO_PUBLIC_LOCAL_MOBILE_API_URL;
 
 export const postHealthData = async (data: HealthDataPostRequest): Promise<Response> => {
   try {

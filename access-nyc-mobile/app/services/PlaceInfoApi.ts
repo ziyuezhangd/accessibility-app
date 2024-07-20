@@ -7,11 +7,11 @@ export const getPlaceInfos = async (): Promise<PlaceInfo[]> => {
   try {
     console.log('Fetching place info');
     const response = await fetch(`${apiUrl}/place-infos`);
-    const placeInfos: PlaceInfo[] = await response.json();
-    if ('error' in placeInfos) {
-      console.error(placeInfos.error);
-      throw placeInfos.error;
+    if ('error' in response) {
+      console.error('Error getting place infos: ', response.error);
+      throw response.error;
     }
+    const placeInfos: PlaceInfo[] = await response.json();
     return placeInfos;
   } catch (e) {
     console.log('Ahhh!', e);
