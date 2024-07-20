@@ -4,7 +4,7 @@ import * as Location from 'expo-location';
 import AppleHealthKit, { HealthValue, HealthKitPermissions, HealthInputOptions, HealthStatusResult, HealthUnit, ClinicalRecordType, HealthClinicalRecord, HealthClinicalRecordOptions, BloodPressureSampleValue } from 'react-native-health';
 import * as TaskManager from 'expo-task-manager';
 import { EnvironmentalAudioExposureResponse } from '../interfaces/AppleHealthKit';
-import { postHealthData } from '../services/MobileDataApi';
+import { postHealthData, postLocationData } from '../services/MobileDataApi';
 
 export interface UserDataContextType {
   location: Location.LocationObject | undefined;
@@ -24,19 +24,80 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
     const { coords, timestamp } = locations[0];
     const { latitude, longitude, accuracy, altitude, speed } = coords;
 
-    AppleHealthKit.isAvailable((err: Object, available: boolean) => {
-      if (err) {
-        console.log('error initializing Healthkit: ', err);
-        return;
-      }
-      if (!available) {
-        console.log('Healthkit data not available for user');
-        return;
-      }
+    postLocationData({
+      latitude,
+      longitude,
+      accuracy,
+      altitude,
+      userId: 'aprilpolubiec',
     });
-    console.log('User data updated: ');
+    console.log('User data updated: ', {
+      latitude,
+      longitude,
+      accuracy,
+      altitude,
+      userId: 'aprilpolubiec',
+    });
   }
 });
+
+//#region Apple Health Kit functions
+const getAuthStatus = (permissions: HealthKitPermissions): Promise<HealthStatusResult> => {
+  return new Promise((resolve, reject) => {
+    AppleHealthKit.getAuthStatus(permissions, (err: string, results: HealthStatusResult) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+const getEnvironmentalAudioExposure = (options: HealthInputOptions): Promise<HealthValue[]> => {
+  return new Promise((resolve, reject) => {
+    AppleHealthKit.getEnvironmentalAudioExposure(options, (err: string, results: HealthValue[]) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+const getClinicalRecords = (options: HealthClinicalRecordOptions): Promise<HealthClinicalRecord[]> => {
+  console.log(options);
+  return new Promise((resolve, reject) => {
+    AppleHealthKit.getClinicalRecords(options, (err: string, results: HealthClinicalRecord[]) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+const getHeartRateVariability = (options: HealthInputOptions): Promise<HealthValue[]> => {
+  return new Promise((resolve, reject) => {
+    AppleHealthKit.getHeartRateVariabilitySamples(options, (err: Object, results: Array<HealthValue>) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+
+const getBloodPressure = (options: HealthInputOptions): Promise<BloodPressureSampleValue[]> => {
+  return new Promise((resolve, reject) => {
+    AppleHealthKit.getBloodPressureSamples(options, (err: Object, results: Array<BloodPressureSampleValue>) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(results);
+    });
+  });
+};
+//#endregion
 
 const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
   const [location, setLocation] = useState<Location.LocationObject>();
@@ -160,63 +221,6 @@ const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
     let location = await Location.getCurrentPositionAsync({});
     setLocation(location);
   };
-
-  //#region Apple Health Kit functions
-  const getAuthStatus = (permissions: HealthKitPermissions): Promise<HealthStatusResult> => {
-    return new Promise((resolve, reject) => {
-      AppleHealthKit.getAuthStatus(permissions, (err: string, results: HealthStatusResult) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(results);
-      });
-    });
-  };
-
-  const getEnvironmentalAudioExposure = (options: HealthInputOptions): Promise<HealthValue[]> => {
-    return new Promise((resolve, reject) => {
-      AppleHealthKit.getEnvironmentalAudioExposure(options, (err: string, results: HealthValue[]) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(results);
-      });
-    });
-  };
-
-  const getClinicalRecords = (options: HealthClinicalRecordOptions): Promise<HealthClinicalRecord[]> => {
-    return new Promise((resolve, reject) => {
-      AppleHealthKit.getClinicalRecords(options, (err: string, results: HealthClinicalRecord[]) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(results);
-      });
-    });
-  };
-
-  const getHeartRateVariability = (options: HealthInputOptions): Promise<HealthValue[]> => {
-    return new Promise((resolve, reject) => {
-      AppleHealthKit.getHeartRateVariabilitySamples(options, (err: Object, results: Array<HealthValue>) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(results);
-      });
-    });
-  };
-
-  const getBloodPressure = (options: HealthInputOptions): Promise<BloodPressureSampleValue[]> => {
-    return new Promise((resolve, reject) => {
-      AppleHealthKit.getBloodPressureSamples(options, (err: Object, results: Array<BloodPressureSampleValue>) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(results);
-      });
-    });
-  };
-  //#endregion
 
   return <UserDataContext.Provider value={{ location }}>{children}</UserDataContext.Provider>;
 };
