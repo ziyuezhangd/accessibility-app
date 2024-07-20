@@ -1,4 +1,4 @@
-import { Avatar, AvatarGroup, Box, Typography, Link } from '@mui/material';
+import { Avatar, AvatarGroup, Box, Typography, Link, styled, Card, CardContent, List } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
@@ -15,6 +15,60 @@ import { SUBWAY_LINE_COLORS, calculateDistanceBetweenTwoCoordinates } from '../.
  * 
  * @returns {JSX.Element} The rendered NearestStations component.
  */
+
+// Styled components
+const Title = styled(Typography)(({ theme }) => ({
+  fontWeight: 'bold',
+  marginBottom: theme.spacing(2),
+  textAlign: 'center',
+  width: '100%',
+}));
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  width: '98%', // Increased width for better utilization of space
+  marginBottom: theme.spacing(2),
+  borderRadius: '8px',
+  boxShadow: theme.shadows[3],
+  position: 'relative',
+  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out', // Added transition for hover effect
+  '&:hover': {
+    transform: 'scale(1.02)',
+    boxShadow: theme.shadows[6],
+  },
+}));
+
+const StationCardContent = styled(CardContent)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  padding: theme.spacing(2),
+  '&:last-child': {
+    paddingBottom: theme.spacing(2),
+  },
+}));
+
+const DistanceText = styled(Typography)(({ theme }) => ({
+  marginTop: theme.spacing(1),
+}));
+
+const NameText = styled(Typography)(({ theme }) => ({
+  fontWeight: 'bold',
+  marginBottom: theme.spacing(1),
+}));
+
+const StyledAvatar = styled(Avatar)(({ theme, lineColor }) => ({
+  backgroundColor: lineColor,
+  color: theme.palette.common.white,
+  fontSize: '1rem',
+  width: theme.spacing(4),
+  height: theme.spacing(4),
+  margin: theme.spacing(0.5),
+  transition: 'transform 0.3s ease-in-out',
+  '&:hover': {
+    transform: 'scale(1.2)',
+  },
+}));
+
 export default function NearestStations({ lat, lng }) {
   const { placeInfos } = useContext(DataContext);
   const { createMarkers, removeMarkers } = useContext(GoogleMapContext);
@@ -23,7 +77,6 @@ export default function NearestStations({ lat, lng }) {
   useEffect(() => {
     // TODO: merge stations like Fulton Street
     const getNearestSubwayStations = async () => {
-      
       const placeInfosObj = placeInfos.map(pi => new PlaceInfo(pi));
       const stations = placeInfosObj.filter((place) => place.isSubwayStation() && place.name !== '');
       const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
@@ -39,16 +92,13 @@ export default function NearestStations({ lat, lng }) {
     };
 
     const showStationMarkers = (stations) => {
-      console.log('showStationMarkers',stations);
+      console.log('showStationMarkers', stations);
       const markers = stations.map(station => ({
         lat: station.latitude,
         lng: station.longitude,
-        imgSrc: null, // No image source, using pin element
-        color: 'blue', // Marker color blue for consistency
-        scale: 0.8, // Scale the marker for visibility
-        title: station.getSubwayStationName(),
+        scale: 1.5
       }));
-      createMarkers(markers, false); // Add markers without clearing existing markers
+      createMarkers(markers, false, false, true); // Indicate these are station markers
     };
 
     getNearestSubwayStations();
@@ -58,53 +108,48 @@ export default function NearestStations({ lat, lng }) {
         lat: station.latitude,
         lng: station.longitude,
       }));
-      removeMarkers(markersToRemove);
+      removeMarkers(markersToRemove, false, true); // Indicate these are station markers
     };
-  }, [lat, lng, placeInfos, createMarkers, removeMarkers]);
+  }, [lat, lng, placeInfos]);
 
   return (
     <Box 
       display='flex'
       flexDirection='column'
-      alignItems='flex-start'
-    >
-      <Typography 
-        variant='h6'
-        sx={{ fontWeight: 400, fontSize: 18 }}
-      >
-        Wheelchair accessible subway stations
-      </Typography>
-      {nearestStations.map((station, index) => {
-        const distance = calculateDistanceBetweenTwoCoordinates(lat, lng, station.latitude, station.longitude);
-
-        return (
-          <Box 
-            key={`${station.name}-${index}`} 
-            mb={2}
-          >
-            <AvatarGroup max={100}> {/* Set max to a high value */}
-              {station.getSubwayLines().map((line) => (
-                <Avatar 
-                  key={`${station.name}-${line}`}
-                  sx={{ bgcolor: SUBWAY_LINE_COLORS[line], fontSize: line === 'PATH' ? 10 : 20 }}
-                >
-                  {line}
-                </Avatar>
-              ))}
-            </AvatarGroup>
-            <Typography variant='body1'>{station.getSubwayStationName()}</Typography>
-            <Typography>{Math.round(distance)} m</Typography> {/* Display actual distance */}
-          </Box>
-        );
-      })}
+      alignItems='center'
+      width='100%'>
+      <Title variant="h6">Wheelchair Accessible Subway Stations</Title>
+      <List sx={{ width: '100%', bgcolor: 'background.paper' }}
+        aria-label='stations'>
+        {nearestStations.map((station, index) => (
+          <StyledCard key={`${station.name}-${index}`}>
+            <StationCardContent>
+              <NameText variant="subtitle1"
+                gutterBottom>
+                {station.getSubwayStationName()}
+              </NameText>
+              <Box display="flex"
+                flexWrap="wrap">
+                {station.getSubwayLines().map((line) => (
+                  <StyledAvatar key={`${station.name}-${line}`}
+                    lineColor={SUBWAY_LINE_COLORS[line]}>
+                    {line}
+                  </StyledAvatar>
+                ))}
+              </Box>
+              <DistanceText variant="body2">
+                {Math.round(calculateDistanceBetweenTwoCoordinates(lat, lng, station.latitude, station.longitude))} meters away
+              </DistanceText>
+            </StationCardContent>
+          </StyledCard>
+        ))}
+      </List>
       <Box mt={3}>
         <Typography variant='body2'>
           View the full accessible station map on the{' '}
-          <Link 
-            href="https://new.mta.info/map/5346" 
-            target="_blank" 
-            rel="noopener"
-          >
+          <Link href="https://new.mta.info/map/5346"
+            target="_blank"
+            rel="noopener">
             MTA website
           </Link>
           .

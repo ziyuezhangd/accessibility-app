@@ -47,7 +47,7 @@ const TitleHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function PersistentDrawerLeft({ selectedLocation, predictions }) {
-  const { removeMarkers } = useContext(GoogleMapContext);
+  const { removeMarkers, clearStationMarkers } = useContext(GoogleMapContext);
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
   
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
@@ -81,6 +81,7 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions }) 
   const handleBackClicked = (location) => {
     setSelectedDrawerContent('history');
     setLocation(null);
+    clearStationMarkers();
     removeMarkers([{ lat: location.lat, lng: location.lng }]);
   };
 
