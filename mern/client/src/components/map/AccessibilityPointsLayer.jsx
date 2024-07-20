@@ -19,7 +19,7 @@ const getButtonStyles = (selected, color) => ({
   },
 });
 
-export default function AccessibilityMarkers() {
+export default function AccessibilityPointsLayer() {
   const {pedestrianRamps, pedestrianSignals, seatingAreas} = useContext(DataContext);
   const [hoveredElement, setHoveredElement] = useState(null);
   const [selectedFeatures, setSelectedFeatures] = useState(['ramps', 'signals', 'seating']);

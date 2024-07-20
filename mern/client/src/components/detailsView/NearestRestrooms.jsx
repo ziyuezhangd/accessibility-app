@@ -98,7 +98,7 @@ export default function NearestRestrooms({ lat, lng }) {
         scale: 0.8,
         title: restroom.name,
       }));
-      createMarkers(markers, false);
+      createMarkers(markers, false, false, true);
     };
 
     getNearestRestrooms();
@@ -108,9 +108,9 @@ export default function NearestRestrooms({ lat, lng }) {
         lat: restroom.latitude,
         lng: restroom.longitude,
       }));
-      removeMarkers(markersToRemove);
+      removeMarkers(markersToRemove, false, false, true);
     };
-  }, [lat, lng, restrooms, createMarkers, removeMarkers]);
+  }, [lat, lng, restrooms]);
 
   const handleRestroomClick = (restroom) => {
     setSelectedRestroom(restroom);
@@ -131,7 +131,8 @@ export default function NearestRestrooms({ lat, lng }) {
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}
         aria-label='restrooms'>
         {nearestRestrooms.map((restroom, i) => (
-          <StyledCard key={i}>
+          <StyledCard key={i}
+            onClick={() => handleRestroomClick(restroom)}>
             <RestroomCardContent>
               <NameText variant="subtitle1"
                 gutterBottom>

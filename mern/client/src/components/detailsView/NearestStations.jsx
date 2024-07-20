@@ -75,7 +75,6 @@ export default function NearestStations({ lat, lng }) {
   const [nearestStations, setNearestStations] = useState([]);
 
   useEffect(() => {
-    // TODO: merge stations like Fulton Street
     const getNearestSubwayStations = async () => {
       const placeInfosObj = placeInfos.map(pi => new PlaceInfo(pi));
       const stations = placeInfosObj.filter((place) => place.isSubwayStation() && place.name !== '');
@@ -83,7 +82,7 @@ export default function NearestStations({ lat, lng }) {
 
       // Remove duplicate stations
       const uniqueNearestStations = nearestStations.filter((station, index, self) => 
-        index === self.findIndex((s) => s.name === station.name)
+        index === self.findIndex((s) => s.name === station.name) && station.getSubwayLines().length > 0
       );
 
       console.log(uniqueNearestStations);

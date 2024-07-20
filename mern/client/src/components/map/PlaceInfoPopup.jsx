@@ -2,7 +2,11 @@
 import { AccessTime, ExpandMore, ExpandLess, Accessible } from '@mui/icons-material';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, Collapse, IconButton, Zoom } from '@mui/material';
 import { styled } from '@mui/system';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { DataContext } from '../../providers/DataProvider';
+import { PlaceInfoUtilities } from '../../services/placeInfo';
+import { PublicRestroomUtilities } from '../../services/restrooms';
+import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
 const primaryColor = '#4a90e2';
 
@@ -70,9 +74,44 @@ const formatCategoryName = (category) => {
     .join(' ');
 };
 
-const PlaceInfoPopup = ({ open, onClose, placeInfo, nearestRestrooms, nearestStations }) => {
+const PlaceInfoPopup = ({ open, onClose, placeInfo }) => {
+  const { placeInfos, restrooms } = useContext(DataContext);
   const [openHours, setOpenHours] = useState(false);
   const [expandedRestroom, setExpandedRestroom] = useState(null);
+  const [nearestRestrooms, setNearestRestrooms] = useState([]);
+  const [nearestStations, setNearestStations] = useState([]);
+
+  useEffect(() => {
+    if (!placeInfos || !restrooms) return;
+    const nearbyStations = getNearestStations(placeInfo.latitude, placeInfo.longitude);
+    setNearestStations(nearbyStations);
+  
+    const nearbyRestrooms = getNearestRestrooms(placeInfo.latitude, placeInfo.longitude);
+    setNearestRestrooms(nearbyRestrooms);
+    return () => {
+      // Pass
+    };
+  }, [placeInfos, restrooms]);
+
+  const getNearestStations = (lat, lng) => {
+    const stations = placeInfos.filter(place => place.isSubwayStation() && place.name !== '');
+    const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
+    const uniqueNearestStations = nearestStations.filter((station, index, self) => 
+      index === self.findIndex((s) => s.name === station.name) && station.getSubwayLines().length > 0
+    );
+    return uniqueNearestStations.map(station => ({
+      ...station,
+      distance: calculateDistanceBetweenTwoCoordinates(lat, lng, station.latitude, station.longitude),
+    }));
+  };
+
+  const getNearestRestrooms = (lat, lng) => {
+    const nearestRestrooms = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
+    return nearestRestrooms.map(restroom => ({
+      ...restroom,
+      distance: calculateDistanceBetweenTwoCoordinates(lat, lng, restroom.latitude, restroom.longitude),
+    }));
+  };
 
   const toggleOpenHours = () => {
     setOpenHours(!openHours);
@@ -106,10 +145,6 @@ const PlaceInfoPopup = ({ open, onClose, placeInfo, nearestRestrooms, nearestSta
     }
     return <DetailText variant="body2">{hours}</DetailText>;
   };
-
-  if (!placeInfo) {
-    return null;
-  }
 
   return (
     <Dialog open={open}

@@ -66,104 +66,29 @@ const CustomChip = styled(Chip)({
   },
 });
 
-const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
-  const { mapInstance, createMarkers, removeMarkers } = useContext(GoogleMapContext);
-  const { placeInfos, restrooms } = useContext(DataContext);
+const CategoryFilter = ({onCategoriesSelected}) => {
+  const { placeInfos } = useContext(DataContext);
   const [categories, setCategories] = useState([]);
   const [hasFocus, setHasFocus] = useState(false);
-  const [selectedPlace, setSelectedPlace] = useState(null);
-  const [popupOpen, setPopupOpen] = useState(false);
-  const [nearestRestrooms, setNearestRestrooms] = useState([]);
-  const [nearestStations, setNearestStations] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   useEffect(() => {
+    if (!placeInfos) return;
     const uniqueCategories = _.uniqBy(placeInfos.map(place => categoryToParentCategory(place.category)).filter(category => category && category.trim() !== ''));
     setCategories(['All', ...uniqueCategories]); // Add 'All' option
   }, [placeInfos]);
 
-  useEffect(() => {
-    if (!mapInstance) return;
-
-    const handleMarkers = () => {
-      if (selectedCategories.length === 0 || selectedCategories.includes('All')) {
-        // Remove only category markers, not restroom markers
-        const categoryMarkers = placeInfos.map(placeInfo => ({
-          lat: placeInfo.latitude,
-          lng: placeInfo.longitude,
-        }));
-        removeMarkers(categoryMarkers, true);
-
-        if (selectedCategories.includes('All')) {
-          const allMarkers = placeInfos.map(placeInfo => ({
-            lat: placeInfo.latitude,
-            lng: placeInfo.longitude,
-            imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
-            imgSize: '30px',
-            imgAlt: placeInfo.name,
-            onClick: () => handleMarkerClick(placeInfo),
-          })).filter(marker => marker.imgSrc !== null);
-
-          createMarkers(allMarkers, false, true); // Create all markers if "All" is selected without clearing existing markers
-        }
-        return; // No categories selected or "All" selected
-      }
-
-      const filteredMarkers = placeInfos
-        .filter(placeInfo => selectedCategories.includes(categoryToParentCategory(placeInfo.category)))
-        .map(placeInfo => ({
-          lat: placeInfo.latitude,
-          lng: placeInfo.longitude,
-          imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
-          imgSize: '30px',
-          imgAlt: placeInfo.name,
-          onClick: () => handleMarkerClick(placeInfo),
-        }))
-        .filter(marker => marker.imgSrc !== null);
-
-      // Remove existing category markers before adding new ones
-      const categoryMarkersToRemove = placeInfos.map(placeInfo => ({
-        lat: placeInfo.latitude,
-        lng: placeInfo.longitude,
-      }));
-      removeMarkers(categoryMarkersToRemove, true);
-
-      createMarkers(filteredMarkers, false, true); // Create markers based on filtered categories without clearing existing markers
-    };
-
-    handleMarkers();
-  }, [selectedCategories, placeInfos, mapInstance]);
-
-  const handleMarkerClick = async (placeInfo) => {
-    setSelectedPlace(placeInfo);
-    setNearestRestrooms(getNearestRestrooms(placeInfo.latitude, placeInfo.longitude));
-    setNearestStations(getNearestStations(placeInfo.latitude, placeInfo.longitude));
-    setPopupOpen(true);
-  };
-
-  const getNearestRestrooms = (lat, lng) => {
-    const nearestRestrooms = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
-    return nearestRestrooms.map(restroom => ({
-      ...restroom,
-      distance: calculateDistanceBetweenTwoCoordinates(lat, lng, restroom.latitude, restroom.longitude),
-    }));
-  };
-
-  const getNearestStations = (lat, lng) => {
-    const stations = placeInfos.filter(place => place.isSubwayStation() && place.name !== '');
-    const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
-    return nearestStations.map(station => ({
-      ...station,
-      distance: calculateDistanceBetweenTwoCoordinates(lat, lng, station.latitude, station.longitude),
-    }));
-  };
-
   const handleCategorySelected = (categories) => {
+    console.log(categories);
     if (categories.includes('All') && !selectedCategories.includes('All')) {
       setSelectedCategories(['All']);
+      onCategoriesSelected(['All']);
     } else if (categories.length === 0 || categories.includes('All')) {
       setSelectedCategories([]);
+      onCategoriesSelected([]);
     } else {
       setSelectedCategories(categories.filter(category => category !== 'All'));
+      onCategoriesSelected(categories.filter(category => category !== 'All'));
     }
   };
 
@@ -210,15 +135,6 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
           />
         )}
       />
-      {selectedPlace && (
-        <PlaceInfoPopup
-          open={popupOpen}
-          onClose={() => setPopupOpen(false)}
-          placeInfo={selectedPlace}
-          nearestRestrooms={nearestRestrooms}
-          nearestStations={nearestStations}
-        />
-      )}
     </>
   );
 };

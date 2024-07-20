@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
 import { AdvancedMarker, PinElement } from 'react-google-map-wrapper';
+import { PlaceInfoUtilities } from '../services/placeInfo';
 
 const GoogleMapContext = createContext();
 
@@ -24,9 +25,10 @@ const GoogleMapProvider = ({children}) => {
   const [geometry, setGeometry] = useState();
 
   /** @type {[google.maps.AdvancedMarker[], React.Dispatch<React.SetStateAction<google.maps.AdvancedMarker[]>>]} */
-  const [markers, setMarkers] = useState([]);
+  const [markers, setMarkers] = useState({restroom: [], placeInfo: [], station: []});
   const [categoryMarkers, setCategoryMarkers] = useState([]);
   const [stationMarkers, setStationMarkers] = useState([]);
+  const [restroomMarkets, setRestroomMarkers] = useState([]);
 
   useEffect(() => {
     if (mapInstance) {
@@ -103,125 +105,40 @@ const GoogleMapProvider = ({children}) => {
  * color: string,
  * onClick: function}>} markerConfigs 
  * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
+ * @param {string} markerType
  */
-  const createMarkers = (markerConfigs, shouldOverwriteExisting, isCategoryMarker = false, isStationMarker = false) => {
-    // TODO: I think double markers are being added?
-    if (shouldOverwriteExisting) {
-      if (isCategoryMarker) {
-        clearCategoryMarkers();
-      } else if (isStationMarker) {
-        clearStationMarkers();
-      } else {
-        clearMarkers();
-      }
-    }
-    const markersToCreate = [];
+  const createMarkers = (markerConfigs, markerType) => {
+    const markersToCreate = {placeInfo: [...markers['placeInfo']], restroom: [...markers['restroom']], station: [...markers['station']]};
     for (const config of markerConfigs) {
-      const {imgSrc, key, title, parentCategory} = config;
+      const {imgSrc, key, title, category} = config;
       
       let {lat, lng} = config;
       lat = parseFloat(lat);
       lng = parseFloat(lng);
-      if (imgSrc) {
-        let a = 0;
-        let b= 0;
-        let c= 0;
-        let d=0;
-        const {imgAlt, imgSize} = config;
-        
-        if (parentCategory === 'books' || parentCategory === 'education' ){
-          a= 0;
-          b=0;
-          c=4247;
-          d=170;
-        }
-        else if (parentCategory === 'retail' || parentCategory ==='market' || parentCategory ==='phone' || parentCategory ==='supermarket' || parentCategory ==='beauty' ){
-          a= 0;
-          b=0;
-          c=4247;
-          d=136;
-        }
-        if (parentCategory === 'theatre'|| parentCategory === 'cinema' ){
-          a= 0;
-          b=0;
-          c=4247;
-          d=200;
-        }
-        
-        if (parentCategory === 'car' || parentCategory === 'train' || parentCategory === 'airport' || parentCategory === 'bus'|| parentCategory === 'parking'|| parentCategory === 'ferry'|| parentCategory === 'bike'){
-          a= 0;
-          b=0;
-          c=3000;
-          d=100;
-        }
-        if ( parentCategory === 'accomodation' || parentCategory === 'policeStation' || parentCategory === 'office' || parentCategory === 'cemetery' || parentCategory === 'atm' || parentCategory === 'post' || parentCategory === 'service' || parentCategory === 'bank' || parentCategory === 'health' || parentCategory === 'veterinary' ){
-          a= 0;
-          b=0;
-          c=4247;
-          d=300;
-        }
-
-        if (parentCategory === 'restaurant'|| parentCategory === 'coffee'|| parentCategory === 'pub' ){
-          a= 0;
-          b=0;
-          c=4247;
-          d=45;
-        }
-        if (parentCategory === 'placeOfWorship' ){
-          a= 0;
-          b=0;
-          c=4247;
-          d=10;
-        }
-        if (parentCategory === 'art' || parentCategory === 'museum' || parentCategory === 'attraction' || parentCategory === 'sports'|| parentCategory === 'historical'){
-          a= 0;
-          b=0;
-          c=4247;
-          d=10;
-        }
-        if (parentCategory === 'toilet' ){
-          a= 0;
-          b=0;
-          c=4247;
-          d=300;
-        }
-        if (parentCategory === 'drinkingWater' ){
-          a= 0;
-          b=0;
-          c=4247;
-          d=300;
-        }
-        if (parentCategory === 'camping' || parentCategory === 'picnicTable' || parentCategory === 'flowers'|| parentCategory === 'water' || parentCategory === 'playground'){
-          a= 0;
-          b=0;
-          c=4247;
-          d=170;
-        }
-               
+      
+      if (imgSrc !== null) {
+        const {imgAlt, imgSize, onClick} = config;
+        const { invert, sepia, saturate, hueRotate } = PlaceInfoUtilities.getMarkerStyle(category);
         const marker = (
           <AdvancedMarker 
             lat={lat}
             lng={lng}
             title={title}
             gmpClickable={true}
-            // key={key}
+            onClick={onClick}
+            key={key}
           >
             <img 
-              src = {imgSrc}
-              style={{height: imgSize, filter:`invert(${a}%) sepia(${b}%) saturate(${c}%) hue-rotate(${d}deg) brightness(95%) contrast(95%)`}}
-              //90 deg green
-              //0 deg orange
-              //
-              alt = 'marker'
-            >
-            
-            </img>
+              src={imgSrc}
+              alt={imgAlt}
+              style={{height: imgSize, filter:`invert(${invert}%) sepia(${sepia}%) saturate(${saturate}%) hue-rotate(${hueRotate}deg) brightness(95%) contrast(95%)`}}
+            />
           </AdvancedMarker>
-        );       
-        markersToCreate.push(marker);
-      }else {
-        // console.log('Imgsrc is null')
-        let { scale, color} = config;
+        );
+        
+        markersToCreate[markerType].push(marker);
+      } else {
+        let { scale, color, onClick } = config;
         scale = scale || 1;
         color = color || '#FF0000';
         const marker = (
@@ -230,67 +147,41 @@ const GoogleMapProvider = ({children}) => {
             lng={lng}
             title={title}
             gmpClickable={true}
-            // key={key}
+            onClick={onClick}
+            key={key}
           >
             <PinElement 
               scale={scale}
               color={color} />
           </AdvancedMarker>
         );
-        markersToCreate.push(marker);
+        markersToCreate[markerType].push(marker);
       }
     }
-    setMarkers([...markers, ...markersToCreate]);
-    console.log(`Created ${markers.length} markers`);
-    if (isCategoryMarker) {
-      setCategoryMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
-    } else if (isStationMarker) {
-      setStationMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
 
-    } else {
-      setMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
-    }
+    setMarkers(markersToCreate);
     console.log(`Created ${markersToCreate.length} markers`);
   };
+
   /**
    * 
    * @param {Array<{lat: number, lng: number}>} latLngs 
    */
-  const removeMarkers = (latLngs, isCategoryMarker = false, isStationMarker = false) => {
-    if (isCategoryMarker) {
-      setCategoryMarkers(prevMarkers => prevMarkers.filter(marker =>
-        !latLngs.some(latLng =>
-          parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
-        )
-      ));
-    } else if (isStationMarker) {
-      setStationMarkers(prevMarkers => prevMarkers.filter(marker =>
-        !latLngs.some(latLng =>
-          parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
-        )
-      ));
-    } else {
-      setMarkers(prevMarkers => prevMarkers.filter(marker =>
-        !latLngs.some(latLng =>
-          parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
-        )
-      ));
-    }
+  const removeMarkers = (latLngs, markerType) => {
+    const filteredMarkers = _.cloneDeep(markers);
+    _.remove(filteredMarkers[markerType], marker => latLngs.some(latLng =>
+      parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
+    ));
+    setMarkers(filteredMarkers);
   };
 
   /**
    * 
    */
-  const clearMarkers = () => {
-    setMarkers([]);
-  };
-
-  const clearCategoryMarkers = () => {
-    setCategoryMarkers([]);
-  };
-
-  const clearStationMarkers = () => {
-    setStationMarkers([]);
+  const clearMarkers = (markerType) => {
+    const filteredMarkers = _.cloneDeep(markers);
+    filteredMarkers[markerType] = [];
+    setMarkers(filteredMarkers);
   };
 
   const getDirections = (start, end) => {
@@ -315,13 +206,11 @@ const GoogleMapProvider = ({children}) => {
       mapInstance,
       placesService,
       geocoder,
-      markers: [...markers, ...categoryMarkers, ...stationMarkers],
+      markers,
       onMapLoaded: handleMapLoaded,
       createMarkers,
       removeMarkers,
       clearMarkers,
-      clearCategoryMarkers,
-      clearStationMarkers,
       getDirections,
       clearDirections
     }}>
