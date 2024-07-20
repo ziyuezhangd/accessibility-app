@@ -1,7 +1,7 @@
 import { View, Text, TouchableHighlight } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import React, { useContext, useState } from 'react';
-import { useTheme, Surface, TouchableRipple, MD3Theme, List } from 'react-native-paper';
+import { useTheme, Surface, TouchableRipple, MD3Theme, List, Icon } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 import { PLACE_CATEGORIES, PlaceInfo, categoryToParentCategory } from '../interfaces/PlaceInfo';
 import { MarkerConfig } from '../interfaces/Map';
@@ -35,11 +35,12 @@ export default function PlacesBottomPanel() {
     setRegion({ latitude: region.latitude, longitude: region.longitude, latitudeDelta: 0.1, longitudeDelta: 0.1 });
   };
 
-  const PlaceCategory = ({ theme, name, category }: { theme: MD3Theme; name: string; category: PLACE_CATEGORIES }) => {
+  const PlaceCategory = ({ theme, name, category, icon }: { theme: MD3Theme; name: string; category: PLACE_CATEGORIES; icon: string }) => {
     return (
       <TouchableHighlight onPress={() => handleCategoryPressed(category)} style={{ ...styles.surface }}>
-        <Surface style={{ ...styles.surface, backgroundColor: theme.colors.primary }}>
-          <Text>{name}</Text>
+        <Surface style={{ ...styles.surface, backgroundColor: theme.colors.primaryContainer }}>
+          <Icon source={icon} size={25} />
+          <Text style={{color: theme.colors.onSurface}}>{name}</Text>
         </Surface>
       </TouchableHighlight>
     );
@@ -48,14 +49,14 @@ export default function PlacesBottomPanel() {
   return (
     <View style={styles.container}>
       <View style={styles.surfaceContainer}>
-        <PlaceCategory theme={theme} name='Restaurants' category={PLACE_CATEGORIES.RESTAURANT} />
-        <PlaceCategory theme={theme} name='Toilets' category={PLACE_CATEGORIES.TOILETS} />
-        <PlaceCategory theme={theme} name='Shopping' category={PLACE_CATEGORIES.RETAIL} />
+        <PlaceCategory theme={theme} name='Restaurants' category={PLACE_CATEGORIES.RESTAURANT} icon='silverware-fork-knife' />
+        <PlaceCategory theme={theme} name='Toilets' category={PLACE_CATEGORIES.TOILETS} icon='toilet' />
+        <PlaceCategory theme={theme} name='Shopping' category={PLACE_CATEGORIES.RETAIL} icon='shopping-outline' />
       </View>
       <View style={styles.surfaceContainer}>
-        <PlaceCategory theme={theme} name='Health' category={PLACE_CATEGORIES.HEALTH} />
-        <PlaceCategory theme={theme} name='Accomodation' category={PLACE_CATEGORIES.ACCOMODATIONS} />
-        <PlaceCategory theme={theme} name='Attractions' category={PLACE_CATEGORIES.ATTRACTIONS} />
+        <PlaceCategory theme={theme} name='Health' category={PLACE_CATEGORIES.HEALTH} icon='hospital-box-outline' />
+        <PlaceCategory theme={theme} name='Accomodation' category={PLACE_CATEGORIES.ACCOMODATIONS} icon='bed' />
+        <PlaceCategory theme={theme} name='Attractions' category={PLACE_CATEGORIES.ATTRACTIONS} icon='camera' />
       </View>
       <ScrollView>
         {filteredPlaces.map((place, i) => (
