@@ -1,5 +1,6 @@
 import { Box, Typography, List, styled, Card, CardContent, Chip } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
+import RestroomDetailsPopup from './RestroomDetailsPopup'; // Assuming you create this component
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PublicRestroomUtilities } from '../../services/restrooms';
@@ -70,15 +71,21 @@ export default function NearestRestrooms({ lat, lng }) {
   const { restrooms, selectedDateTime } = useContext(DataContext);
   const { createMarkers, removeMarkers } = useContext(GoogleMapContext);
 
-  /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
+  const [selectedRestroom, setSelectedRestroom] = useState(null);
+  const [popupOpen, setPopupOpen] = useState(false);
 
   useEffect(() => {
     const getNearestRestrooms = async () => {
-      // TODO: remove not operational
       const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
-      setNearestRestrooms(nearest);
-      showRestroomMarkers(nearest);
+
+      // Remove duplicate restrooms
+      const uniqueNearestRestrooms = nearest.filter((restroom, index, self) => 
+        index === self.findIndex((r) => r.name === restroom.name && r.latitude === restroom.latitude && r.longitude === restroom.longitude)
+      );
+
+      setNearestRestrooms(uniqueNearestRestrooms);
+      showRestroomMarkers(uniqueNearestRestrooms);
     };
 
     const showRestroomMarkers = (restrooms) => {
@@ -104,6 +111,16 @@ export default function NearestRestrooms({ lat, lng }) {
     };
   }, [lat, lng, restrooms, createMarkers, removeMarkers]);
 
+  const handleRestroomClick = (restroom) => {
+    setSelectedRestroom(restroom);
+    setPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setPopupOpen(false);
+    setSelectedRestroom(null); // Clear the selected restroom when popup is closed
+  };
+
   return (
     <Box display='flex'
       flexDirection='column'
@@ -128,6 +145,14 @@ export default function NearestRestrooms({ lat, lng }) {
           </StyledCard>
         ))}
       </List>
+
+      {/* Popup for displaying detailed restroom info */}
+      {selectedRestroom && popupOpen && (
+        <RestroomDetailsPopup
+          restroom={selectedRestroom}
+          onClose={handleClosePopup}
+        />
+      )}
     </Box>
   );
 }
