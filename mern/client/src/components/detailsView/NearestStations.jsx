@@ -113,7 +113,8 @@ export default function NearestStations({ lat, lng }) {
   }, [lat, lng, placeInfos]);
 
   return (
-    <Box display='flex'
+    <Box 
+      display='flex'
       flexDirection='column'
       alignItems='center'
       width='100%'>

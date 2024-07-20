@@ -107,10 +107,12 @@ export default function HelpModal({ isOpen, onClose }) {
   };
 
   return (
-    <Modal open={isOpen}
+    <Modal
+      open={isOpen}
       onClose={onClose}
-      aria-labelledby='modal-modal-title'
-      aria-describedby='modal-modal-description'>
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
       <Box sx={style}>
         <Typography id='modal-modal-title'
           variant='h4'
@@ -118,7 +120,8 @@ export default function HelpModal({ isOpen, onClose }) {
           sx={{ fontWeight: 'bold', mb: 3 }}>
           How It Works
         </Typography>
-        <Grid container
+        <Grid
+          container
           spacing={2}
           sx={{ flexGrow: 1, alignItems: 'center' }}>
           <Grid item
