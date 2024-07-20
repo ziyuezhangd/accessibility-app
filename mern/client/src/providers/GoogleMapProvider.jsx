@@ -27,6 +27,7 @@ const GoogleMapProvider = ({children}) => {
   /** @type {[google.maps.AdvancedMarker[], React.Dispatch<React.SetStateAction<google.maps.AdvancedMarker[]>>]} */
   const [markers, setMarkers] = useState([]);
   const [categoryMarkers, setCategoryMarkers] = useState([]);
+  const [stationMarkers, setStationMarkers] = useState([]);
 
   useEffect(() => {
     if (mapInstance) {
@@ -104,11 +105,13 @@ const GoogleMapProvider = ({children}) => {
  * onClick: function}>} markerConfigs 
  * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
  */
-  const createMarkers = (markerConfigs, shouldOverwriteExisting, isCategoryMarker = false) => {
+  const createMarkers = (markerConfigs, shouldOverwriteExisting, isCategoryMarker = false, isStationMarker = false) => {
     // TODO: I think double markers are being added?
     if (shouldOverwriteExisting) {
       if (isCategoryMarker) {
         clearCategoryMarkers();
+      } else if (isStationMarker) {
+        clearStationMarkers();
       } else {
         clearMarkers();
       }
@@ -148,6 +151,8 @@ const GoogleMapProvider = ({children}) => {
 
     if (isCategoryMarker) {
       setCategoryMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
+    } else if (isStationMarker) {
+      setStationMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
     } else {
       setMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
     }
@@ -158,9 +163,15 @@ const GoogleMapProvider = ({children}) => {
    * 
    * @param {Array<{lat: number, lng: number}>} latLngs 
    */
-  const removeMarkers = (latLngs, isCategoryMarker = false) => {
+  const removeMarkers = (latLngs, isCategoryMarker = false, isStationMarker = false) => {
     if (isCategoryMarker) {
       setCategoryMarkers(prevMarkers => prevMarkers.filter(marker =>
+        !latLngs.some(latLng =>
+          parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
+        )
+      ));
+    } else if (isStationMarker) {
+      setStationMarkers(prevMarkers => prevMarkers.filter(marker =>
         !latLngs.some(latLng =>
           parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
         )
@@ -185,6 +196,10 @@ const GoogleMapProvider = ({children}) => {
     setCategoryMarkers([]);
   };
 
+  const clearStationMarkers = () => {
+    setStationMarkers([]);
+  };
+
   const getDirections = (start, end) => {
     var request = {
       origin: start,
@@ -207,12 +222,13 @@ const GoogleMapProvider = ({children}) => {
       mapInstance,
       placesService,
       geocoder,
-      markers: [...markers, ...categoryMarkers],
+      markers: [...markers, ...categoryMarkers, ...stationMarkers],
       onMapLoaded: handleMapLoaded,
       createMarkers,
       removeMarkers,
       clearMarkers,
       clearCategoryMarkers,
+      clearStationMarkers,
       getDirections,
       clearDirections
     }}>
