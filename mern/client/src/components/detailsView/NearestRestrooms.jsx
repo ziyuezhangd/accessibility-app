@@ -1,6 +1,7 @@
 import { Box, Chip, Typography, List, ListItem, ListItemButton, ListItemText, ListItemSecondaryAction } from '@mui/material';
 import _ from 'lodash';
 import { useState, useEffect, useContext } from 'react';
+import RestroomDetailsPopup from './RestroomDetailsPopup'; // Assuming you create this component
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { PublicRestroomUtilities } from '../../services/restrooms';
@@ -20,15 +21,21 @@ export default function NearestRestrooms({ lat, lng }) {
   const { restrooms, selectedDateTime } = useContext(DataContext);
   const { createMarkers, removeMarkers } = useContext(GoogleMapContext);
 
-  /** @type {[PublicRestroom[], React.Dispatch<React.SetStateAction<PublicRestroom[]>>]} */
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
+  const [selectedRestroom, setSelectedRestroom] = useState(null);
+  const [popupOpen, setPopupOpen] = useState(false);
 
   useEffect(() => {
     const getNearestRestrooms = async () => {
-      // TODO: remove not operational
       const nearest = PublicRestroomUtilities.getNearest(restrooms, lat, lng, 3);
-      setNearestRestrooms(nearest);
-      showRestroomMarkers(nearest);
+
+      // Remove duplicate restrooms
+      const uniqueNearestRestrooms = nearest.filter((restroom, index, self) => 
+        index === self.findIndex((r) => r.name === restroom.name && r.latitude === restroom.latitude && r.longitude === restroom.longitude)
+      );
+
+      setNearestRestrooms(uniqueNearestRestrooms);
+      showRestroomMarkers(uniqueNearestRestrooms);
     };
 
     const showRestroomMarkers = (restrooms) => {
@@ -54,6 +61,16 @@ export default function NearestRestrooms({ lat, lng }) {
     };
   }, [lat, lng, restrooms, createMarkers, removeMarkers]);
 
+  const handleRestroomClick = (restroom) => {
+    setSelectedRestroom(restroom);
+    setPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setPopupOpen(false);
+    setSelectedRestroom(null); // Clear the selected restroom when popup is closed
+  };
+
   return (
     <Box display='flex'
       flexDirection='column'
@@ -67,7 +84,8 @@ export default function NearestRestrooms({ lat, lng }) {
         {nearestRestrooms.map((restroom, i) => (
           <ListItem key={i}
             disablePadding>
-            <ListItemButton aria-label={restroom.name}>
+            <ListItemButton aria-label={restroom.name}
+              onClick={() => handleRestroomClick(restroom)}>
               <ListItemText
                 aria-label='Restroom information'
                 primary={restroom.name}
@@ -80,10 +98,14 @@ export default function NearestRestrooms({ lat, lng }) {
                       color="text.primary"
                     >
                       {/* TODO: would be nice if we could make today's day bold */}
-                      {restroom.formatHours().split('\n').map(h => (<p aria-label={`Hours of operation ${h}`}
-                        key={h}>{h}</p>))}
+                      {restroom.formatHours().split('\n').map(h => (
+                        <p aria-label={`Hours of operation ${h}`}
+                          key={h}>{h}</p>
+                      ))}
                     </Typography>
-                    <p aria-label={`Distance from selected location ${Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} meters`}>{Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m</p>
+                    <p aria-label={`Distance from selected location ${Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} meters`}>
+                      {Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} m
+                    </p>
                   </>
                 )} 
               
@@ -104,6 +126,14 @@ export default function NearestRestrooms({ lat, lng }) {
           </ListItem>
         ))}
       </List>
+
+      {/* Popup for displaying detailed restroom info */}
+      {selectedRestroom && popupOpen && (
+        <RestroomDetailsPopup
+          restroom={selectedRestroom}
+          onClose={handleClosePopup}
+        />
+      )}
     </Box>
   );
 }

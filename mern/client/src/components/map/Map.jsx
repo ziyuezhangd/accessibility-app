@@ -93,7 +93,7 @@ export const Map = () => {
 
   const handlePolylineClicked = (polygon, event, predictionData) => {
     // Clear any existing markers
-    clearMarkers();
+    
     const latLng = event.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
@@ -117,7 +117,7 @@ export const Map = () => {
     }
 
     // Clear any existing markers
-    clearMarkers();
+    
     const isPlaceIconClicked = e.placeId !== undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
