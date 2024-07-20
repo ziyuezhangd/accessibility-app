@@ -1,8 +1,7 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Snackbar, IconButton, Button, useTheme, useMediaQuery } from '@mui/material';
-import { useState, useEffect, useContext } from 'react';
-import { GoogleMap, Polyline } from 'react-google-map-wrapper';
-import { Control } from 'react-google-map-wrapper';
+import { useState, useContext,useEffect } from 'react';
+import { GoogleMap, Polyline, Control } from 'react-google-map-wrapper';
 import AccessibilityMarkers from './AccessibilityMarkers';
 import DirectionsModal from './DirectionsModal';
 import Dropdown from './Dropdown';
@@ -248,26 +247,29 @@ export const Map = () => {
           }}
           mapOptions={{
             mapId: VITE_MAP_ID,
-            // restriction: {}, // TODO
+            fullscreenControl: false, // Disable fullscreen control
+            streetViewControl: false, // Disable street view control
+            zoomControl: false, // Disable zoom control
+            mapTypeControl: false, // Disable map/satellite control
           }}
         >
           <Box sx={containerStyle}>
-            <Dropdown onSelect={handleVisualizationSelected} />
-            <Control position={google.maps.ControlPosition.TOP_CENTER}>
-              <SearchBar
-                onSearchEntered={handleSearchEntered} />
-            </Control>
+            <Box sx={{ position: 'absolute', top: '20px', left: '200px' }}>
+              <SearchBar onSearchEntered={handleSearchEntered} />
+            </Box>
             <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ top: '20px', display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ position: 'absolute', left: '-400px', top: '1px' }}>
+                  <Dropdown onSelect={handleVisualizationSelected} />
+                </Box>
                 <CategoryFilter
                   selectedCategories={selectedCategories}
-                  setSelectedCategories={setSelectedCategories} // Pass the state setters
-                />
+                  setSelectedCategories={setSelectedCategories} />
                 <HelpIcon />
               </Box>
             </Control>
           </Box>
-          {selectedPredictionType && polylineData && polylineData.map((data, i) => 
+          {selectedPredictionType && polylineData && polylineData.map((data, i) =>
           // TODO: Need to have a different gradient for red-green color blindness
           {
             const {location} = data;
@@ -317,3 +319,4 @@ export const Map = () => {
 export default Map;
 //https://stackoverflow.com/questions/25496625/add-local-image-as-custom-marker-in-google-maps
 //https://developers.google.com/maps/documentation/javascript/custom-markers
+

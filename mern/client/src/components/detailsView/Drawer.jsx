@@ -13,11 +13,14 @@ import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 const drawerWidth = 350;
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
-  padding: theme.spacing(0, 1),
+  padding: theme.spacing(2, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
-  justifyContent: 'start',
+  justifyContent: 'center',
+  backgroundColor: 'rgba(25, 118, 210, 0.12)', // Changed color
+  boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
 }));
 
 /**
@@ -33,10 +36,20 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  * 
  * @returns {JSX.Element} The rendered PersistentDrawerLeft component.
  */
+
+const TitleHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: theme.spacing(2),
+  backgroundColor: '#1976d2', // Updated to use #1976d2
+  color: 'white', // White text color
+}));
+
 export default function PersistentDrawerLeft({ selectedLocation, predictions }) {
   const { removeMarkers } = useContext(GoogleMapContext);
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
-
+  
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [location, setLocation] = useState(null);
 
@@ -84,18 +97,22 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions }) 
         <Toolbar />
 
         <DrawerHeader>
-          {selectedDrawerContent === 'history' && <Typography variant='h6'>Last viewed </Typography>}
-          <div><DateTimePickerComponent /></div>
+          <DateTimePickerComponent />
         </DrawerHeader>
-
-        {selectedDrawerContent === 'history' &&
-        <DrawerHistoryList onLocationSelected={handleLocationSelected} />}
-        {selectedDrawerContent === 'location' &&
-        <DrawerLocationDetails
-          location={location}
-          predictions={predictions}
-          onBackClicked={handleBackClicked} />
-        }
+        {selectedDrawerContent === 'history' && (
+          <>
+            <TitleHeader>
+              <Typography variant='h6'>Last Viewed</Typography>
+            </TitleHeader>
+            <DrawerHistoryList onLocationSelected={handleLocationSelected} />
+          </>
+        )}
+        {selectedDrawerContent === 'location' && (
+          <DrawerLocationDetails
+            location={location}
+            predictions={predictions}
+            onBackClicked={handleBackClicked}/>
+        )}
       </Drawer>
     </>
   );
