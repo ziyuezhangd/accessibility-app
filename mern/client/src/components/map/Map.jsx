@@ -1,14 +1,14 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Snackbar, IconButton, Button, useTheme, useMediaQuery } from '@mui/material';
-import { useState, useEffect, useContext } from 'react';
-import { GoogleMap, Polyline } from 'react-google-map-wrapper';
-import { Control } from 'react-google-map-wrapper';
+import { useState, useContext,useEffect } from 'react';
+import { GoogleMap, Polyline, Control } from 'react-google-map-wrapper';
 import AccessibilityMarkers from './AccessibilityMarkers';
 import DirectionsModal from './DirectionsModal';
 import Dropdown from './Dropdown';
 import SearchBar from './SearchBar';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';
 import CategoryFilter from '../detailsView/CategoryFilter'; // Import the CategoryFilter component
 import PersistentDrawerLeft from '../detailsView/Drawer';
@@ -92,7 +92,7 @@ export const Map = () => {
 
   const handlePolylineClicked = (polygon, event, predictionData) => {
     // Clear any existing markers
-    clearMarkers();
+    
     const latLng = event.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
@@ -116,7 +116,7 @@ export const Map = () => {
     }
 
     // Clear any existing markers
-    clearMarkers();
+    
     const isPlaceIconClicked = e.placeId !== undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
@@ -137,6 +137,46 @@ export const Map = () => {
       });
     }
   };
+
+  // When place infos are loaded, render accessibility markers
+  useEffect(() => {
+    const showAccessibilityMarkers = (placeInfos) => {
+      const markers = placeInfos.map((placeInfo, i) => {
+        const markerData = PlaceInfoUtilities.getMarkerPNG(placeInfo);
+        if (!markerData) {
+          return null;
+        }
+        const { imgSrc, parentCategory } = markerData;
+        if (imgSrc === null){
+          console.log('Null imgSRC', parentCategory);
+          return null;
+        }
+        if (parentCategory === null){
+          return null;
+        }
+        else{
+          return {
+            lat: placeInfo.latitude,
+            lng: placeInfo.longitude,
+            imgSrc,
+            imgSize: '30px', 
+            imgAlt: placeInfo.name,
+            key: i,
+            parentCategory,
+          }; 
+        }
+
+      });
+      const filteredMarkers =markers.filter( (marker) => marker !== null); 
+      
+      createMarkers(filteredMarkers);
+      console.log(filteredMarkers);
+    };
+
+    if (placeInfos) {
+      showAccessibilityMarkers(placeInfos);
+    }
+  }, [placeInfos]);
 
   const setLocationData = (lat, lng, placeId, name, isPlace, predictionData) => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
@@ -207,26 +247,29 @@ export const Map = () => {
           }}
           mapOptions={{
             mapId: VITE_MAP_ID,
-            // restriction: {}, // TODO
+            fullscreenControl: false, // Disable fullscreen control
+            streetViewControl: false, // Disable street view control
+            zoomControl: false, // Disable zoom control
+            mapTypeControl: false, // Disable map/satellite control
           }}
         >
           <Box sx={containerStyle}>
-            <Dropdown onSelect={handleVisualizationSelected} />
-            <Control position={google.maps.ControlPosition.TOP_CENTER}>
-              <SearchBar
-                onSearchEntered={handleSearchEntered} />
-            </Control>
+            <Box sx={{ position: 'absolute', top: '20px', left: '200px' }}>
+              <SearchBar onSearchEntered={handleSearchEntered} />
+            </Box>
             <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ top: '20px', display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ position: 'absolute', left: '-400px', top: '1px' }}>
+                  <Dropdown onSelect={handleVisualizationSelected} />
+                </Box>
                 <CategoryFilter
                   selectedCategories={selectedCategories}
-                  setSelectedCategories={setSelectedCategories} // Pass the state setters
-                />
+                  setSelectedCategories={setSelectedCategories} />
                 <HelpIcon />
               </Box>
             </Control>
           </Box>
-          {selectedPredictionType && polylineData && polylineData.map((data, i) => 
+          {selectedPredictionType && polylineData && polylineData.map((data, i) =>
           // TODO: Need to have a different gradient for red-green color blindness
           {
             const {location} = data;
@@ -276,3 +319,4 @@ export const Map = () => {
 export default Map;
 //https://stackoverflow.com/questions/25496625/add-local-image-as-custom-marker-in-google-maps
 //https://developers.google.com/maps/documentation/javascript/custom-markers
+

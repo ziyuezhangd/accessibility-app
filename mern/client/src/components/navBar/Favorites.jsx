@@ -1,4 +1,4 @@
-import { FavoriteBorder, Delete } from '@mui/icons-material';
+import { FavoriteBorder, Favorite, Delete } from '@mui/icons-material';
 import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Menu, Snackbar } from '@mui/material';
 import * as React from 'react';
 
@@ -105,8 +105,13 @@ export const Favorites = () => {
         aria-label='Favorited locations'
         onClick={handleOpenFavorites}
         sx={{ p: 0 }}>
-        <FavoriteBorder alt='Favorites'
-          sx={{ color: 'white' }} />
+        {favorites.length > 0 ? (
+          <Favorite alt='Favorites'
+            sx={{ color: 'white' }} />
+        ) : (
+          <FavoriteBorder alt='Favorites'
+            sx={{ color: 'white' }} />
+        )}
       </IconButton>
       {favorites.length > 0 && (
         <Menu
