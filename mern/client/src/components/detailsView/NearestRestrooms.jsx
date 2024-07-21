@@ -94,7 +94,7 @@ export default function NearestRestrooms({ lat, lng }) {
         imgSize: 60,
         category: 'toilet',
         title: restroom.name,
-        onClick: () => console.log('Clicked restroom')
+        onClick: () => handleRestroomClick(restroom)
       }));
       createMarkers(markers, 'restroom', true);
     };
