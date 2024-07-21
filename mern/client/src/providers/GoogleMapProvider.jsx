@@ -81,9 +81,8 @@ const GoogleMapProvider = ({children}) => {
   const clearDirections = () => {
     if (directionsRenderer !== null && directionsRenderer !== undefined) {
       directionsRenderer.setMap(null);
-      const start = directionsRenderer.getDirections().routes[0].legs[0].start_location;
-      const end = directionsRenderer.getDirections().routes[0].legs[0].end_location;
-      removeMarkers([{lat: start.lat(), lng: start.lng()}, {lat: end.lat(), lng: end.lng()}]);
+      // Hacky way of just removing all markers because the latLngs will not be exact matches
+      setOtherMarkers([otherMarkers[0]]);
     }
   };
 
