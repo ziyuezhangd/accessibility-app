@@ -77,17 +77,11 @@ export default function NearestStations({ lat, lng }) {
   useEffect(() => {
     const getNearestSubwayStations = async () => {
       const placeInfosObj = placeInfos.map(pi => new PlaceInfo(pi));
-      const stations = placeInfosObj.filter((place) => place.isSubwayStation() && place.name !== '');
+      const stations = placeInfosObj.filter((place) => place.isSubwayStation() && place.name !== '' && place.getSubwayLines().length > 0);
       const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
 
-      // Remove duplicate stations
-      const uniqueNearestStations = nearestStations.filter((station, index, self) => 
-        index === self.findIndex((s) => s.name === station.name) && station.getSubwayLines().length > 0
-      );
-
-      console.log(uniqueNearestStations);
-      setNearestStations(uniqueNearestStations);
-      showStationMarkers(uniqueNearestStations);
+      setNearestStations(nearestStations);
+      showStationMarkers(nearestStations);
     };
 
     const showStationMarkers = (stations) => {

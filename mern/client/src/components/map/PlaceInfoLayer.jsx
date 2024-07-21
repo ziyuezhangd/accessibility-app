@@ -20,7 +20,7 @@ export default function PlaceInfoLayer({filter}) {
           console.log('Could not find imgSrc for', placeInfo);
           return null;
         }
-        if (_.includes(filter, placeInfo.category) || _.includes(filter, 'All')) {
+        if (_.includes(filter, categoryToParentCategory(placeInfo.category)) || _.includes(filter, 'All')) {
           return {
             lat: placeInfo.latitude,
             lng: placeInfo.longitude,
