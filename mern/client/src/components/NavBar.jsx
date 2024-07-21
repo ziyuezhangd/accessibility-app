@@ -9,7 +9,6 @@ import Favorites from './navBar/Favorites';
 import Logo from './navBar/Logo';
 import { UserContext } from '../providers/UserProvider';
 
-
 const pages = ['Map', 'About us', 'Resources'];
 
 export const NavBar = () => {
@@ -69,11 +68,13 @@ export const NavBar = () => {
             setProfile(res.data);
             userHistories.name = res.data.name;
             userHistories.email = res.data.email;
+            console.log(userHistories.name, userHistories.email);
+            //response Ellen Doherty - "ellen.doherty2@ucdconnect.ie"
           })
           .catch((err) => console.log(err));
       }
     },
-    [ user ]
+    [ user, userHistories ]
   );
   
   return (

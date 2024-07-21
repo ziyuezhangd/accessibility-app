@@ -1,5 +1,5 @@
 export const getUserHistories = async () => {
-  const response = await fetch('/routes/userHistory');
+  const response = await fetch('/api/userHistory');
   if (!response.ok) {
     const message = `An error has occurred: ${response.statusText}`;
     console.error(message);
@@ -15,22 +15,26 @@ export const getUserHistories = async () => {
  */
 export const postUserHistory = async (userHistory) => {
   // Call the API here
+  //right now this is only returning first and last name
+  console.log(userHistory);
   const response = await fetch('/api/userHistory', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(userHistory),
+    
   });
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.error);
   }
-  return data; // Ensure to return the data
+  return data; 
 };
 
 export class UserHistory {
   /**
+   * @param {string} userHistory.name
    * @param {string} userHistory.email
    * @param {array} userHistory.favorites
    * @param {array} userHistory.searchHistory

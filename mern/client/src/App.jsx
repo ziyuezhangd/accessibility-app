@@ -6,11 +6,14 @@ import '@fontsource/roboto/700.css';
 import '@fontsource/playfair-display';
 import { Outlet } from 'react-router-dom';
 import { NavBar } from './components/NavBar';
+import { UserProvider } from './providers/UserProvider';
 
 const App = () => {
   return (
     <div className='w-full'>
-      <NavBar />
+      <UserProvider>
+        <NavBar />
+      </UserProvider>
       <Outlet />
     </div>
   );

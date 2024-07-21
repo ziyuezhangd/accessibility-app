@@ -79,12 +79,14 @@ export const Favorites = () => {
 
       if (storedFavorites.length < 5) {
         storedFavorites = [newFavorite, ...storedFavorites];
+        console.log('added to favourites');
         setFavorites(storedFavorites);
         if (userHistories){
           const name = userHistories.name;
           const email = userHistories.email;
           const favorites = storedFavorites;
           postUserHistory(name, email, favorites);
+          console.log('postUserHistory called');
         }
         setSnackbarMessage('Added to favorites');
       } else {

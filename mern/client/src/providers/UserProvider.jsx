@@ -13,8 +13,12 @@ const UserProvider = ({children}) => {
   }, []);
 
   const loadUserHistory = async () => {
-    const userHistories = await getUserHistories();
-    setUserHistories(userHistories);
+    try{
+      const userHistories = await getUserHistories();
+      setUserHistories(userHistories);}
+    catch{
+      console.log('no user history found');
+    }
   };
   
   return (
