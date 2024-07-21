@@ -91,7 +91,7 @@ export default function NearestRestrooms({ lat, lng }) {
         lat: restroom.latitude,
         lng: restroom.longitude,
         imgSrc: PlaceInfoUtilities.getMarkerPNG({category: 'toilets'}),
-        imgSize: 50,
+        imgSize: 60,
         category: 'toilet',
         title: restroom.name,
         onClick: () => console.log('Clicked restroom')

@@ -159,7 +159,17 @@ const GoogleMapProvider = ({children}) => {
         markersToCreate.push(marker);
       }
     }
+
+    if (markerType === 'placeInfo') {
+      removeDuplicatePlaceInfoMarkers(markersToCreate);
+    }
     setMarkers(markersToCreate, markerType);
+  };
+
+  const removeDuplicatePlaceInfoMarkers = (markers) => {
+    _.remove(markers, marker => restroomMarkers.some(rm => rm.props.lat === marker.props.lat && rm.props.lng === marker.props.lng));
+    _.remove(markers, marker => otherMarkers.some(rm => rm.props.lat === marker.props.lat && rm.props.lng === marker.props.lng));
+    _.remove(markers, marker => stationMarkers.some(rm => rm.props.lat === marker.props.lat && rm.props.lng === marker.props.lng));
   };
 
   const getMarkers = (markerType) => {

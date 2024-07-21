@@ -97,7 +97,7 @@ export default function NearestStations({ lat, lng }) {
         lng: station.longitude,
         scale: 1.5,
         imgSrc: PlaceInfoUtilities.getMarkerPNG({category: 'subway_station'}),
-        imgSize: 50,
+        imgSize: 60,
         category: 'train',
         title: station.name,
         onClick: () => console.log('Clicked station')

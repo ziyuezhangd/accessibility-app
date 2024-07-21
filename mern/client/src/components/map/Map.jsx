@@ -23,7 +23,7 @@ const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 export const Map = () => {
   const theme = useTheme();
 
-  const {placesService, mapInstance, geocoder, onMapLoaded, createMarkers, getDirections } = useContext(GoogleMapContext);
+  const {placesService, mapInstance, geocoder, onMapLoaded, createMarkers, markers, getDirections } = useContext(GoogleMapContext);
   const {placeInfos, polylineData} = useContext(DataContext);
   const [selectedPredictionType, setSelectedPredictionType] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -175,9 +175,12 @@ export const Map = () => {
   return (
     <Box sx={{ display: 'flex' }}
       role='main'>
-      <PersistentDrawerLeft selectedLocation={selectedPlace}
+      <PersistentDrawerLeft 
+        selectedLocation={selectedPlace}
+        onLocationSelected={setLocationData}
         predictions={selectedPlaceGrades}
-        placeInfos={placeInfos} />
+        placeInfos={placeInfos}
+      />
       <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '95vh', top: '7vh' }}
@@ -221,6 +224,7 @@ export const Map = () => {
             onLineClicked={handlePolylineClicked}/>          
           {isDirectionsModalVisible && directionsModalPosition !== null && <DirectionsModal position={directionsModalPosition}
             onDirectionsPositionSelected={handleDirectionsPositionSelected}/>}
+          {markers['other'].map(marker => marker)}
         </GoogleMap>
         <Snackbar
           open={snackbarOpen}

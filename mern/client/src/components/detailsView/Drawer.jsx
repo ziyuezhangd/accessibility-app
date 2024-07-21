@@ -46,7 +46,7 @@ const TitleHeader = styled('div')(({ theme }) => ({
   color: 'white', // White text color
 }));
 
-export default function PersistentDrawerLeft({ selectedLocation, predictions }) {
+export default function PersistentDrawerLeft({ selectedLocation, predictions, onLocationSelected }) {
   const { removeMarkers } = useContext(GoogleMapContext);
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
   
@@ -76,6 +76,7 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions }) 
   const handleLocationSelected = (e) => {
     setSelectedDrawerContent('location');
     setLocation(e);
+    onLocationSelected(e.lat, e.lng, e.placeId, e.name, e.isPlace);
   };
 
   const handleBackClicked = (location) => {
