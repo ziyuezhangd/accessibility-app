@@ -160,7 +160,7 @@ export default function DrawerLocationDetails({ location, predictions, onBackCli
           {isFavorite ? <Favorite sx={{ color: 'white' }} /> : <FavoriteBorder sx={{ color: 'white' }} />}
         </IconButton>
       </DrawerLocationHeader>
-      <Content sx={{pb: {xs: 50} }}>
+      <Content sx={{pb: { xs: 50, sm: 0 } }}>
         <PlaceOverview place={location.placeId}
           size='medium'></PlaceOverview>
         <Grades lat={location.lat}

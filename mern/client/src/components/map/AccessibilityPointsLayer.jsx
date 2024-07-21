@@ -119,8 +119,8 @@ export default function AccessibilityPointsLayer() {
           )}
         </React.Fragment>
       ))}
-      <Control position={google.maps.ControlPosition.LEFT_BOTTOM}>
-        <Box sx={{ display: {xs: 'block'}, position: 'absolute', bottom: 100 }}>
+      <Control position={google.maps.ControlPosition.RIGHT_BOTTOM}>
+        <Box sx={{ display: { xs: 'block', sm: 'block', md: 'none', lg: 'none'}, position: 'absolute', bottom: 100, right: 5 }}>
           <Card variant='outlined'
             style={{ backgroundColor: '#fefefe', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}>
             <CardContent>
@@ -155,7 +155,7 @@ export default function AccessibilityPointsLayer() {
           </Card>
         </Box>
 
-        <Box sx={{ display: {xs: 'none', sm: 'block'}, minWidth: 275, borderRadius: '8px', padding: '8px' }}>
+        <Box sx={{ display: {xs: 'none', sm: 'none', md: 'block', lg: 'block'}, minWidth: 275, borderRadius: '8px', padding: '8px' }}>
           <Card variant='outlined'
             style={{ backgroundColor: '#fefefe', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}>
             <CardContent>

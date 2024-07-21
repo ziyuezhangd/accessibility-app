@@ -1,15 +1,13 @@
 import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/system';
 import _ from 'lodash';
 import { useState, useEffect, useContext } from 'react';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { PlaceInfoUtilities, categoryToParentCategory } from '../../services/placeInfo';
-import { PublicRestroomUtilities } from '../../services/restrooms';
-import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
-import PlaceInfoPopup from '../map/PlaceInfoPopup';
+import { categoryToParentCategory } from '../../services/placeInfo';
 
 // Custom styled components similar to Dropdown
 const CustomAutocomplete = styled(Autocomplete)({
@@ -135,6 +133,7 @@ const CategoryFilter = ({onCategoriesSelected}) => {
           />
         )}
       />
+     
     </>
   );
 };

@@ -5,8 +5,8 @@ import { useState, useContext } from 'react';
 import { GoogleMap, Control } from 'react-google-map-wrapper';
 import AccessibilityPointsLayer from './AccessibilityPointsLayer';
 import DirectionsModal from './DirectionsModal';
-import Dropdown from './Dropdown';
 import PlaceInfoLayer from './PlaceInfoLayer';
+import PredictionDropdown from './PredictionDropdown';
 import PredictionLayer from './PredictionLayer';
 import RestroomLayers from './RestroomLayers';
 import SearchBar from './SearchBar';
@@ -162,28 +162,17 @@ export const Map = () => {
     setSnackbarOpen(false);
   };
 
-  const containerStyle = {
-    display: 'flex',
-    flexDirection: isMobile ? 'column' : 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: '10px',
-    width: '100%',
-    padding: '10px',
-  };
-
   return (
-    <Box sx={{ display: 'flex' }}
-      role='main'>
+    <Box role='main'>
       <PersistentDrawerLeft 
         selectedLocation={selectedPlace}
         onLocationSelected={setLocationData}
         predictions={selectedPlaceGrades}
         placeInfos={placeInfos}
       />
-      <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1 }}>
         <GoogleMap
-          style={{ height: '95vh', top: '7vh' }}
+          style={{ height: '92vh', top: '8vh' }}
           zoom={DEFAULT_ZOOM}
           initialCenter={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
           onClick={handleMapClicked}
@@ -200,24 +189,16 @@ export const Map = () => {
             mapTypeControl: false, // Disable map/satellite control
           }}
         >
-          <Box sx={containerStyle}>
-            <Box sx={{ position: 'absolute', top: '20px', left: '200px' }}>
-              <SearchBar onSearchEntered={handleSearchEntered} />
-            </Box>
-            <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-              <Box sx={{ top: '20px', display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Box sx={{ position: 'absolute', left: '-400px', top: '1px' }}>
-                  <Dropdown onSelect={handleVisualizationSelected} />
-                </Box>
-                <CategoryFilter onCategoriesSelected={(c) => setFilter(c)} />
-                <HelpIcon />
-              </Box>
-            </Control>
-            <AccessibilityPointsLayer/>
-            <PlaceInfoLayer filter={filter}/>
-            <StationsLayer/>
-            <RestroomLayers/>
-          </Box>
+          <SearchBar onSearchEntered={handleSearchEntered} />
+          <Control position={google.maps.ControlPosition.TOP_RIGHT}>
+            <PredictionDropdown onSelect={handleVisualizationSelected} />
+            <CategoryFilter onCategoriesSelected={(c) => setFilter(c)} />
+            <HelpIcon />
+          </Control>
+          <AccessibilityPointsLayer/>
+          <PlaceInfoLayer filter={filter}/>
+          <StationsLayer/>
+          <RestroomLayers/>
           <PredictionLayer 
             predictionType={selectedPredictionType}
             data={polylineData}

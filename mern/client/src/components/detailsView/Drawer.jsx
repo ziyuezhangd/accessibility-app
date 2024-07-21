@@ -121,7 +121,7 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
       <DrawerHeader>
         <DateTimePickerComponent />
         <IconButton >
-          <ArrowDropDown sx={{fontSize: 50}} />
+          <ArrowDropDown sx={{fontSize: 50, display: { xs: 'block', sm: 'block', md: 'none', lg: 'none'}}} />
         </IconButton>
       </DrawerHeader>
       {selectedDrawerContent === 'history' && (
@@ -161,6 +161,7 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
           ModalProps={{
             keepMounted: true,
           }}
+          sx={{display: { xs: 'block', sm: 'block', md: 'none', lg: 'none'}}}
         >
           <StyledBox
             sx={{
@@ -181,8 +182,8 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
       <Drawer
         variant="permanent"
         sx={{
-          display: { xs: 'none', sm: 'block' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          display: { xs: 'none', sm: 'none', md: 'block' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, height: '100%', pt: 8 },
         }}
         open
       >
