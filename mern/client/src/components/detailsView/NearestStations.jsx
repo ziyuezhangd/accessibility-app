@@ -95,7 +95,12 @@ export default function NearestStations({ lat, lng }) {
       const markers = stations.map(station => ({
         lat: station.latitude,
         lng: station.longitude,
-        scale: 1.5
+        scale: 1.5,
+        imgSrc: PlaceInfoUtilities.getMarkerPNG({category: 'subway_station'}),
+        imgSize: 50,
+        category: 'train',
+        title: station.name,
+        onClick: () => console.log('Clicked station')
       }));
       createMarkers(markers, 'station', true); // Indicate these are station markers
     };

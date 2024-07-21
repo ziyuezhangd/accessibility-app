@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from 'react';
 import RestroomDetailsPopup from './RestroomDetailsPopup'; // Assuming you create this component
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { PublicRestroomUtilities } from '../../services/restrooms';
 import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
@@ -89,10 +90,11 @@ export default function NearestRestrooms({ lat, lng }) {
       const markers = uniqueNearestRestrooms.map(restroom => ({
         lat: restroom.latitude,
         lng: restroom.longitude,
-        imgSrc: null,
-        color: '#ff0000',
-        scale: 0.8,
+        imgSrc: PlaceInfoUtilities.getMarkerPNG({category: 'toilets'}),
+        imgSize: 50,
+        category: 'toilet',
         title: restroom.name,
+        onClick: () => console.log('Clicked restroom')
       }));
       createMarkers(markers, 'restroom', true);
     };
