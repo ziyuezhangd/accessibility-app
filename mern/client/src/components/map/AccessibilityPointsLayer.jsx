@@ -1,3 +1,4 @@
+import { AccessibleForward, Chair, EventSeat, RampLeft, Traffic } from '@mui/icons-material';
 import { Card, Box, Typography, CardContent, Tooltip, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { blue, orange, purple } from '@mui/material/colors';
 import { alpha } from '@mui/material/styles';
@@ -11,7 +12,7 @@ const getButtonStyles = (selected, color) => ({
   boxShadow: selected ? '0 4px 8px rgba(0, 0, 0, 0.2)' : 'none',
   margin: '4px 0',
   padding: '6px 12px',
-  minWidth: '120px',
+  // minWidth: '120px',
   borderRadius: '8px',
   '&:hover': {
     backgroundColor: selected ? alpha(color[700], 0.7) : alpha(color[600], 0.2),
@@ -119,7 +120,42 @@ export default function AccessibilityPointsLayer() {
         </React.Fragment>
       ))}
       <Control position={google.maps.ControlPosition.LEFT_BOTTOM}>
-        <Box sx={{ minWidth: 275, borderRadius: '8px', padding: '8px' }}>
+        <Box sx={{ display: {xs: 'block'}, position: 'absolute', bottom: 100 }}>
+          <Card variant='outlined'
+            style={{ backgroundColor: '#fefefe', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}>
+            <CardContent>
+              <Typography variant='h6'
+                style={{ fontSize: 14 }}>Accessibility Key</Typography>
+              <ToggleButtonGroup
+                orientation="horizontal"
+                value={selectedFeatures}
+                onChange={handleFeatureToggle}
+                aria-label="accessibility features"
+              >
+                <ToggleButton 
+                  value="seating"
+                  style={getButtonStyles(selectedFeatures.includes('seating'), purple)}
+                  aria-label="seating areas">
+                  <EventSeat/>
+                </ToggleButton>
+                <ToggleButton 
+                  value="signals"
+                  style={getButtonStyles(selectedFeatures.includes('signals'), blue)}
+                  aria-label="pedestrian signals">
+                  <Traffic/>
+                </ToggleButton>
+                <ToggleButton 
+                  value="ramps"
+                  style={getButtonStyles(selectedFeatures.includes('ramps'), orange)}
+                  aria-label="pedestrian ramps">
+                  <AccessibleForward/>
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </CardContent>
+          </Card>
+        </Box>
+
+        <Box sx={{ display: {xs: 'none', sm: 'block'}, minWidth: 275, borderRadius: '8px', padding: '8px' }}>
           <Card variant='outlined'
             style={{ backgroundColor: '#fefefe', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}>
             <CardContent>
