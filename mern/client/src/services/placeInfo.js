@@ -171,7 +171,6 @@ export class PlaceInfoUtilities {
    *
    */
   static getMarkerPNG = (placeInfo) => {
-    console.log('getMarkerPNG has been called');
     const { category } = placeInfo;
     const svgUrl = '../../accessibilityMarkersSVG/';
     const parentCategory = categoryToParentCategory(category);

@@ -86,19 +86,15 @@ export default function NearestRestrooms({ lat, lng }) {
       );
 
       setNearestRestrooms(uniqueNearestRestrooms);
-      showRestroomMarkers(uniqueNearestRestrooms);
-    };
-
-    const showRestroomMarkers = (restrooms) => {
-      const markers = restrooms.map(restroom => ({
+      const markers = uniqueNearestRestrooms.map(restroom => ({
         lat: restroom.latitude,
         lng: restroom.longitude,
         imgSrc: null,
-        color: 'red',
+        color: '#ff0000',
         scale: 0.8,
         title: restroom.name,
       }));
-      createMarkers(markers, false, false, true);
+      createMarkers(markers, 'restroom', true);
     };
 
     getNearestRestrooms();
@@ -108,7 +104,7 @@ export default function NearestRestrooms({ lat, lng }) {
         lat: restroom.latitude,
         lng: restroom.longitude,
       }));
-      removeMarkers(markersToRemove, false, false, true);
+      removeMarkers(markersToRemove, 'restroom');
     };
   }, [lat, lng, restrooms]);
 

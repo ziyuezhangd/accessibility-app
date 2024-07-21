@@ -20,7 +20,7 @@ export default function PlaceInfoLayer({filter}) {
           console.log('Could not find imgSrc for', placeInfo);
           return null;
         }
-        if (_.includes(filter, placeInfo.category) || _.includes(filter, 'All') || filter.length === 0) {
+        if (_.includes(filter, placeInfo.category) || _.includes(filter, 'All')) {
           return {
             lat: placeInfo.latitude,
             lng: placeInfo.longitude,
@@ -36,8 +36,7 @@ export default function PlaceInfoLayer({filter}) {
         }
       });
       const filteredMarkers = configs.filter( (marker) => marker !== null); 
-      clearMarkers('placeInfo');
-      createMarkers(filteredMarkers, 'placeInfo');
+      createMarkers(filteredMarkers, 'placeInfo', true);
     };
 
     if (placeInfos) {

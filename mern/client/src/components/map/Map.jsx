@@ -1,17 +1,18 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Snackbar, IconButton, Button, useTheme, useMediaQuery } from '@mui/material';
 import _ from 'lodash';
-import { useState, useContext,useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { GoogleMap, Control } from 'react-google-map-wrapper';
 import AccessibilityPointsLayer from './AccessibilityPointsLayer';
 import DirectionsModal from './DirectionsModal';
 import Dropdown from './Dropdown';
 import PlaceInfoLayer from './PlaceInfoLayer';
 import PredictionLayer from './PredictionLayer';
+import RestroomLayers from './RestroomLayers';
 import SearchBar from './SearchBar';
+import StationsLayer from './StationsLayer';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';
 import CategoryFilter from '../detailsView/CategoryFilter';
 import PersistentDrawerLeft from '../detailsView/Drawer';
@@ -22,7 +23,7 @@ const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 export const Map = () => {
   const theme = useTheme();
 
-  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers, getDirections} = useContext(GoogleMapContext);
+  const {placesService, mapInstance, geocoder, onMapLoaded, createMarkers, getDirections } = useContext(GoogleMapContext);
   const {placeInfos, polylineData} = useContext(DataContext);
   const [selectedPredictionType, setSelectedPredictionType] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -125,7 +126,7 @@ export const Map = () => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
     setSelectedPlaceGrades(predictionData);
-    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}]);
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}], 'other');
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
     mapInstance.setCenter({ lat: selectedLocation.lat, lng: selectedLocation.lng });
   };
@@ -209,6 +210,10 @@ export const Map = () => {
                 <HelpIcon />
               </Box>
             </Control>
+            <AccessibilityPointsLayer/>
+            <PlaceInfoLayer filter={filter}/>
+            <StationsLayer/>
+            <RestroomLayers/>
           </Box>
           <PredictionLayer 
             predictionType={selectedPredictionType}
@@ -216,8 +221,6 @@ export const Map = () => {
             onLineClicked={handlePolylineClicked}/>          
           {isDirectionsModalVisible && directionsModalPosition !== null && <DirectionsModal position={directionsModalPosition}
             onDirectionsPositionSelected={handleDirectionsPositionSelected}/>}
-          <AccessibilityPointsLayer/>
-          <PlaceInfoLayer filter={filter}/>
         </GoogleMap>
         <Snackbar
           open={snackbarOpen}

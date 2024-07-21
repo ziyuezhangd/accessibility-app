@@ -25,10 +25,10 @@ const GoogleMapProvider = ({children}) => {
   const [geometry, setGeometry] = useState();
 
   /** @type {[google.maps.AdvancedMarker[], React.Dispatch<React.SetStateAction<google.maps.AdvancedMarker[]>>]} */
-  const [markers, setMarkers] = useState({restroom: [], placeInfo: [], station: []});
-  const [categoryMarkers, setCategoryMarkers] = useState([]);
+  const [placeInfoMarkers, setPlaceInfoMarkers] = useState([]);
+  const [restroomMarkers, setRestroomMarkers] = useState([]);
   const [stationMarkers, setStationMarkers] = useState([]);
-  const [restroomMarkets, setRestroomMarkers] = useState([]);
+  const [otherMarkers, setOtherMarkers] = useState([]);
 
   useEffect(() => {
     if (mapInstance) {
@@ -107,8 +107,9 @@ const GoogleMapProvider = ({children}) => {
  * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
  * @param {string} markerType
  */
-  const createMarkers = (markerConfigs, markerType) => {
-    const markersToCreate = {placeInfo: [...markers['placeInfo']], restroom: [...markers['restroom']], station: [...markers['station']]};
+  const createMarkers = (markerConfigs, markerType, shouldOverwriteExisting) => {
+    const markersToCreate = shouldOverwriteExisting ? [] : getMarkers(markerType);
+
     for (const config of markerConfigs) {
       const {imgSrc, key, title, category} = config;
       
@@ -116,7 +117,7 @@ const GoogleMapProvider = ({children}) => {
       lat = parseFloat(lat);
       lng = parseFloat(lng);
       
-      if (imgSrc !== null) {
+      if (imgSrc) {
         const {imgAlt, imgSize, onClick} = config;
         const { invert, sepia, saturate, hueRotate } = PlaceInfoUtilities.getMarkerStyle(category);
         const marker = (
@@ -136,7 +137,7 @@ const GoogleMapProvider = ({children}) => {
           </AdvancedMarker>
         );
         
-        markersToCreate[markerType].push(marker);
+        markersToCreate.push(marker);
       } else {
         let { scale, color, onClick } = config;
         scale = scale || 1;
@@ -155,12 +156,40 @@ const GoogleMapProvider = ({children}) => {
               color={color} />
           </AdvancedMarker>
         );
-        markersToCreate[markerType].push(marker);
+        markersToCreate.push(marker);
       }
     }
+    setMarkers(markersToCreate, markerType);
+  };
 
-    setMarkers(markersToCreate);
-    console.log(`Created ${markersToCreate.length} markers`);
+  const getMarkers = (markerType) => {
+    switch (markerType) {
+    case 'restroom':
+      return restroomMarkers;
+    case 'station':
+      return stationMarkers;
+    case 'placeInfo':
+      return placeInfoMarkers;
+    default:
+      return otherMarkers;
+    }
+  };
+
+  const setMarkers = (markers, markerType) => {
+    switch (markerType) {
+    case 'restroom':
+      setRestroomMarkers(markers);
+      break;
+    case 'station':
+      setStationMarkers(markers);
+      break;
+    case 'placeInfo':
+      setPlaceInfoMarkers(markers);
+      break;
+    default:
+      setOtherMarkers(markers);
+      break;
+    }
   };
 
   /**
@@ -168,20 +197,18 @@ const GoogleMapProvider = ({children}) => {
    * @param {Array<{lat: number, lng: number}>} latLngs 
    */
   const removeMarkers = (latLngs, markerType) => {
-    const filteredMarkers = _.cloneDeep(markers);
-    _.remove(filteredMarkers[markerType], marker => latLngs.some(latLng =>
+    const filteredMarkers = getMarkers(markerType);
+    _.remove(filteredMarkers, marker => latLngs.some(latLng =>
       parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
     ));
-    setMarkers(filteredMarkers);
+    setMarkers(filteredMarkers, markerType);
   };
 
   /**
    * 
    */
   const clearMarkers = (markerType) => {
-    const filteredMarkers = _.cloneDeep(markers);
-    filteredMarkers[markerType] = [];
-    setMarkers(filteredMarkers);
+    setMarkers([], markerType);
   };
 
   const getDirections = (start, end) => {
@@ -206,7 +233,7 @@ const GoogleMapProvider = ({children}) => {
       mapInstance,
       placesService,
       geocoder,
-      markers,
+      markers: {'station': stationMarkers, 'restroom': restroomMarkers, 'placeInfo': placeInfoMarkers, 'other': otherMarkers},
       onMapLoaded: handleMapLoaded,
       createMarkers,
       removeMarkers,

@@ -97,7 +97,7 @@ export default function NearestStations({ lat, lng }) {
         lng: station.longitude,
         scale: 1.5
       }));
-      createMarkers(markers, false, false, true); // Indicate these are station markers
+      createMarkers(markers, 'station', true); // Indicate these are station markers
     };
 
     getNearestSubwayStations();
@@ -107,7 +107,7 @@ export default function NearestStations({ lat, lng }) {
         lat: station.latitude,
         lng: station.longitude,
       }));
-      removeMarkers(markersToRemove, false, true); // Indicate these are station markers
+      removeMarkers(markersToRemove, 'station'); // Indicate these are station markers
     };
   }, [lat, lng, placeInfos]);
 

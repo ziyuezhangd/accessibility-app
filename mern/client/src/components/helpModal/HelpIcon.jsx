@@ -23,7 +23,7 @@ export default function HelpIcon() {
           aria-controls='help-button'
           aria-haspopup='true'
           onClick={handleButtonClick}
-          color='secondary'>
+          color='primary'>
           <Help sx={{ fontSize: 40 }} />
         </IconButton>
       </Control>
