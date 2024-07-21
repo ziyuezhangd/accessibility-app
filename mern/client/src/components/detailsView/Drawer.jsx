@@ -1,4 +1,8 @@
+import { Global } from '@emotion/react';
+import { ArrowDropDown } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { Box, SwipeableDrawer } from '@mui/material';
+import { grey } from '@mui/material/colors';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
@@ -9,19 +13,6 @@ import DateTimePickerComponent from './DateTimePicker';
 import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-
-const drawerWidth = 350;
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: theme.spacing(2, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: 'center',
-  backgroundColor: 'rgba(25, 118, 210, 0.12)', // Changed color
-  boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
-}));
 
 /**
  * PersistentDrawerLeft component.
@@ -46,12 +37,41 @@ const TitleHeader = styled('div')(({ theme }) => ({
   color: 'white', // White text color
 }));
 
+const drawerBleeding = 100;
+
+const Root = styled('div')(({ theme }) => ({
+  height: '100%',
+  backgroundColor:
+    theme.palette.mode === 'light' ? grey[100] : theme.palette.background.default,
+}));
+
+const StyledBox = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'light' ? '#fff' : grey[800],
+}));
+
+const Puller = styled('div')(({ theme }) => ({
+  width: 30,
+  height: 6,
+  backgroundColor: theme.palette.mode === 'light' ? grey[300] : grey[900],
+  borderRadius: 3,
+  position: 'absolute',
+  top: 8,
+  left: 'calc(50% - 15px)',
+}));
+
 export default function PersistentDrawerLeft({ selectedLocation, predictions, onLocationSelected }) {
   const { removeMarkers } = useContext(GoogleMapContext);
   const [selectedDrawerContent, setSelectedDrawerContent] = useState('history');
   
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [location, setLocation] = useState(null);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
 
   useEffect(() => {
     if (selectedLocation?.lat && selectedLocation?.lng) {
@@ -84,36 +104,89 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
     setLocation(null);
     removeMarkers([{ lat: location.lat, lng: location.lng }]);
   };
+  const drawerWidth = 350;
+  const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    flexDirection: {xs: 'row', sm: 'column'},
+    alignItems: 'center',
+    padding: theme.spacing(2, 1),
+    // necessary for content to be below app bar
+    justifyContent: 'center',
+    backgroundColor: 'rgba(25, 118, 210, 0.12)', // Changed color
+    boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
+  }));
+  
+  const drawer = (
+    <>
+      <DrawerHeader>
+        <DateTimePickerComponent />
+        <IconButton >
+          <ArrowDropDown sx={{fontSize: 50}} />
+        </IconButton>
+      </DrawerHeader>
+      {selectedDrawerContent === 'history' && (
+        <>
+          <TitleHeader>
+            <Typography variant='h6'>Last Viewed</Typography>
+          </TitleHeader>
+          <DrawerHistoryList onLocationSelected={handleLocationSelected} />
+        </>
+      )}
+      {selectedDrawerContent === 'location' && (
+        <DrawerLocationDetails
+          location={location}
+          predictions={predictions}
+          onBackClicked={handleBackClicked}/>
+      )}
+    </>
+  );
 
   return (
     <>
+      <Root>
+        <Global
+          styles={{
+            '.MuiDrawer-root > .MuiPaper-root': {
+              height: `calc(50% - ${drawerBleeding}px)`,
+              overflow: 'visible',
+            },
+          }}/>
+        <SwipeableDrawer
+          anchor="bottom"
+          open={open}
+          onClose={toggleDrawer(false)}
+          onOpen={toggleDrawer(true)}
+          swipeAreaWidth={drawerBleeding}
+          disableSwipeToOpen={false}
+          ModalProps={{
+            keepMounted: true,
+          }}
+        >
+          <StyledBox
+            sx={{
+              position: 'absolute',
+              top: -drawerBleeding,
+              borderTopLeftRadius: 8,
+              borderTopRightRadius: 8,
+              visibility: 'visible',
+              right: 0,
+              left: 0,
+            }}
+          >
+            <Puller />
+            {drawer}
+          </StyledBox>
+        </SwipeableDrawer>
+      </Root>
       <Drawer
-        variant='permanent'
+        variant="permanent"
         sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+          display: { xs: 'none', sm: 'block' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
         }}
+        open
       >
-        <Toolbar />
-
-        <DrawerHeader>
-          <DateTimePickerComponent />
-        </DrawerHeader>
-        {selectedDrawerContent === 'history' && (
-          <>
-            <TitleHeader>
-              <Typography variant='h6'>Last Viewed</Typography>
-            </TitleHeader>
-            <DrawerHistoryList onLocationSelected={handleLocationSelected} />
-          </>
-        )}
-        {selectedDrawerContent === 'location' && (
-          <DrawerLocationDetails
-            location={location}
-            predictions={predictions}
-            onBackClicked={handleBackClicked}/>
-        )}
+        {drawer}
       </Drawer>
     </>
   );
