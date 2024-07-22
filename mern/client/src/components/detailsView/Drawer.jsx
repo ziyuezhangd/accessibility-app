@@ -9,6 +9,7 @@ import DateTimePickerComponent from './DateTimePicker';
 import DrawerHistoryList from './DrawerHistoryList';
 import DrawerLocationDetails from './DrawerLocationDetails';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import AdBanner from '../AdBanner';
 
 const drawerWidth = 350;
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -44,6 +45,14 @@ const TitleHeader = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: '#1976d2', // Updated to use #1976d2
   color: 'white', // White text color
+}));
+
+const DrawerFooter = styled('div')(({ theme }) => ({
+  marginTop: 'auto',
+  padding: theme.spacing(2),
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 }));
 
 export default function PersistentDrawerLeft({ selectedLocation, predictions }) {
@@ -113,6 +122,11 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions }) 
             location={location}
             predictions={predictions}
             onBackClicked={handleBackClicked}/>
+        )}
+        {selectedDrawerContent === 'history' && (
+          <DrawerFooter>
+            <AdBanner />
+          </DrawerFooter>
         )}
       </Drawer>
     </>
