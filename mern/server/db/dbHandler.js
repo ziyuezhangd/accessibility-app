@@ -1,4 +1,6 @@
 import getDB from './connection.js';
+import accessibilityCloud from '../apis/accessibilityCloud.js';
+import logger from '../logger.js';
 
 const dbHandler = {
   /**
@@ -87,6 +89,23 @@ const dbHandler = {
     const results = await collection.find({}).toArray();
 
     return results;
+  },
+
+  async updatePlaceInfos() {
+    const db = await getDB();
+    const collection = db.collection('placeInfos');
+    const newData = await accessibilityCloud.requestPlaceInfos();
+
+    if (newData.length > 0) {
+      // Clear the collection
+      await collection.deleteMany({});
+      logger.info('Cleared the collection');
+      // Insert new data
+      await collection.insertMany(newData);
+      logger.info(`Inserted new data: ${newData.length} document(s)`);
+    } else {
+      logger.error('Error updating collection PlaceInfos: no new data received');
+    }
   }
 };
 
