@@ -15,7 +15,7 @@ const levels = {
 const level = () => {
   const env = process.env.NODE_ENV || 'development';
   const isDevelopment = env === 'development';
-  return isDevelopment ? 'debug' : 'warn';
+  return isDevelopment ? 'debug' : 'info';
 };
 
 // Define format
@@ -49,12 +49,14 @@ const logFolderPath = path.join(__dirname, 'logs');
 if (!fs.existsSync(logFolderPath)) {
   fs.mkdirSync(logFolderPath, { recursive: true });
 }
+const infoFilePath = path.join(logFolderPath, 'info.log');
 const errorFilePath = path.join(logFolderPath, 'errors.log');
 const exceptionFilePath = path.join(logFolderPath, 'exceptions.log');
 
 // Define destination
 const logTransport = [
   new transports.Console({ format: consoleFormat }),
+  new transports.File({ filename: infoFilePath, level: 'info', format: fileFormat }),
   new transports.File({ filename: errorFilePath, level: 'error', format: fileFormat })
 ];
 
