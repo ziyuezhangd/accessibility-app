@@ -1,7 +1,7 @@
 import { Box, Button, Toolbar, Snackbar } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import {AccessBarNoRouter} from 'aditum';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import HelpIcon from './helpModal/HelpIcon';
 import Favorites from './navBar/Favorites';
 import Logo from './navBar/Logo';
@@ -10,6 +10,7 @@ const pages = ['Map', 'About us', 'Resources'];
 
 export const NavBar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handlePageSelected = (e) => {
     switch (e.target.innerText.toLowerCase()) {
@@ -67,10 +68,11 @@ export const NavBar = () => {
             ))}
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {location.pathname === '/map' && <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Favorites />
           <HelpIcon/>
-        </Box>
+        </Box>}
+        
       </Toolbar>
     </AppBar>
   );
