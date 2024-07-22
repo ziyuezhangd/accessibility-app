@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from 'react';
 import RestroomDetailsPopup from './RestroomDetailsPopup'; // Assuming you create this component
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { PublicRestroomUtilities } from '../../services/restrooms';
 import { calculateDistanceBetweenTwoCoordinates } from '../../utils/MapUtils';
 
@@ -86,19 +87,16 @@ export default function NearestRestrooms({ lat, lng }) {
       );
 
       setNearestRestrooms(uniqueNearestRestrooms);
-      showRestroomMarkers(uniqueNearestRestrooms);
-    };
-
-    const showRestroomMarkers = (restrooms) => {
-      const markers = restrooms.map(restroom => ({
+      const markers = uniqueNearestRestrooms.map(restroom => ({
         lat: restroom.latitude,
         lng: restroom.longitude,
-        imgSrc: null,
-        color: 'red',
-        scale: 0.8,
+        imgSrc: PlaceInfoUtilities.getMarkerPNG({category: 'toilets'}),
+        imgSize: 60,
+        category: 'toilet',
         title: restroom.name,
+        onClick: () => handleRestroomClick(restroom)
       }));
-      createMarkers(markers, false);
+      createMarkers(markers, 'restroom', true);
     };
 
     getNearestRestrooms();
@@ -108,9 +106,9 @@ export default function NearestRestrooms({ lat, lng }) {
         lat: restroom.latitude,
         lng: restroom.longitude,
       }));
-      removeMarkers(markersToRemove);
+      removeMarkers(markersToRemove, 'restroom');
     };
-  }, [lat, lng, restrooms, createMarkers, removeMarkers]);
+  }, [lat, lng, restrooms]);
 
   const handleRestroomClick = (restroom) => {
     setSelectedRestroom(restroom);
@@ -131,7 +129,8 @@ export default function NearestRestrooms({ lat, lng }) {
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}
         aria-label='restrooms'>
         {nearestRestrooms.map((restroom, i) => (
-          <StyledCard key={i}>
+          <StyledCard key={i}
+            onClick={() => handleRestroomClick(restroom)}>
             <RestroomCardContent>
               <NameText variant="subtitle1"
                 gutterBottom>

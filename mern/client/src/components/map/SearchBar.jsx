@@ -1,7 +1,6 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { TextField, InputAdornment } from '@mui/material';
 import { useRef, useContext, useEffect } from 'react';
-import { Control } from 'react-google-map-wrapper';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 
 const SearchBar = ({ onSearchEntered }) => {
@@ -59,12 +58,7 @@ const SearchBar = ({ onSearchEntered }) => {
         size="small"
         aria-label='Search for places'
         sx={{
-          position: 'absolute',
           zIndex: 1000,
-          top: '10px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '300px',
           backgroundColor: 'white',
           boxShadow: 3,
           borderRadius: '50px',

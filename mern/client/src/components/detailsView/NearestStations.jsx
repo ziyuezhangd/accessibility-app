@@ -75,20 +75,13 @@ export default function NearestStations({ lat, lng }) {
   const [nearestStations, setNearestStations] = useState([]);
 
   useEffect(() => {
-    // TODO: merge stations like Fulton Street
     const getNearestSubwayStations = async () => {
       const placeInfosObj = placeInfos.map(pi => new PlaceInfo(pi));
-      const stations = placeInfosObj.filter((place) => place.isSubwayStation() && place.name !== '');
+      const stations = placeInfosObj.filter((place) => place.isSubwayStation() && place.name !== '' && place.getSubwayLines().length > 0);
       const nearestStations = PlaceInfoUtilities.getNearest(stations, lat, lng, 3);
 
-      // Remove duplicate stations
-      const uniqueNearestStations = nearestStations.filter((station, index, self) => 
-        index === self.findIndex((s) => s.name === station.name)
-      );
-
-      console.log(uniqueNearestStations);
-      setNearestStations(uniqueNearestStations);
-      showStationMarkers(uniqueNearestStations);
+      setNearestStations(nearestStations);
+      showStationMarkers(nearestStations);
     };
 
     const showStationMarkers = (stations) => {
@@ -96,9 +89,14 @@ export default function NearestStations({ lat, lng }) {
       const markers = stations.map(station => ({
         lat: station.latitude,
         lng: station.longitude,
-        scale: 1.5
+        scale: 1.5,
+        imgSrc: PlaceInfoUtilities.getMarkerPNG({category: 'subway_station'}),
+        imgSize: 60,
+        category: 'train',
+        title: station.name,
+        onClick: () => console.log('Clicked station')
       }));
-      createMarkers(markers, false, false, true); // Indicate these are station markers
+      createMarkers(markers, 'station', true); // Indicate these are station markers
     };
 
     getNearestSubwayStations();
@@ -108,7 +106,7 @@ export default function NearestStations({ lat, lng }) {
         lat: station.latitude,
         lng: station.longitude,
       }));
-      removeMarkers(markersToRemove, false, true); // Indicate these are station markers
+      removeMarkers(markersToRemove, 'station'); // Indicate these are station markers
     };
   }, [lat, lng, placeInfos]);
 

@@ -1,18 +1,16 @@
 import { Box, Button, Toolbar, Snackbar } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import {AccessBarNoRouter} from 'aditum';
-import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import HelpIcon from './helpModal/HelpIcon';
 import Favorites from './navBar/Favorites';
 import Logo from './navBar/Logo';
 
 const pages = ['Map', 'About us', 'Resources'];
 
 export const NavBar = () => {
-  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const [snackbarMessage, setSnackbarMessage] = React.useState('');
-
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handlePageSelected = (e) => {
     switch (e.target.innerText.toLowerCase()) {
@@ -30,13 +28,6 @@ export const NavBar = () => {
     }
   };
 
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackbarOpen(false);
-  };
-
   return (
     <AppBar position='fixed'
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -45,7 +36,7 @@ export const NavBar = () => {
         sx={{ justifyContent: 'space-between', px: 5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Logo isClickable={true} />
-          <Box sx={{ display: 'flex', ml: 17 }}> {/* Adjust ml value to move the buttons */}
+          <Box sx={{ display: 'flex' }}> {/* Adjust ml value to move the buttons */}
             {pages.map((page) => (
               <Button
                 key={page}
@@ -77,16 +68,12 @@ export const NavBar = () => {
             ))}
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {location.pathname === '/map' && <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Favorites />
-        </Box>
+          <HelpIcon/>
+        </Box>}
+        
       </Toolbar>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      />
     </AppBar>
   );
 };

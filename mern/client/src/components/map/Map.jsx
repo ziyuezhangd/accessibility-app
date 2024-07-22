@@ -1,40 +1,29 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Snackbar, IconButton, Button, useTheme, useMediaQuery } from '@mui/material';
-import { useState, useContext,useEffect } from 'react';
-import { GoogleMap, Polyline, Control } from 'react-google-map-wrapper';
-import AccessibilityMarkers from './AccessibilityMarkers';
+import _ from 'lodash';
+import { useState, useContext } from 'react';
+import { GoogleMap, Control } from 'react-google-map-wrapper';
+import AccessibilityPointsLayer from './AccessibilityPointsLayer';
 import DirectionsModal from './DirectionsModal';
-import Dropdown from './Dropdown';
+import PlaceInfoLayer from './PlaceInfoLayer';
+import PredictionDropdown from './PredictionDropdown';
+import PredictionLayer from './PredictionLayer';
+import RestroomLayers from './RestroomLayers';
 import SearchBar from './SearchBar';
+import StationsLayer from './StationsLayer';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { PlaceInfoUtilities } from '../../services/placeInfo';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';
-import CategoryFilter from '../detailsView/CategoryFilter'; // Import the CategoryFilter component
+import CategoryFilter from '../detailsView/CategoryFilter';
 import PersistentDrawerLeft from '../detailsView/Drawer';
 import HelpIcon from '../helpModal/HelpIcon';
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 
-const PREDICTION_COLORS = {
-  'A': '#44ce1b',
-  0: '#44ce1b',
-  'B': '#44ce1b',
-  1: '#44ce1b',
-  'C': '#bbdb44',
-  2: '#bbdb44',
-  'D': '#f7e379',
-  3: '#f7e379',
-  'E': '#f2a134',
-  4: '#f2a134',
-  'F': '#e51f1f',
-  5: '#e51f1f',
-};
-
 export const Map = () => {
   const theme = useTheme();
 
-  const {placesService, mapInstance, geocoder, onMapLoaded, markers, clearMarkers, createMarkers, getDirections} = useContext(GoogleMapContext);
+  const {placesService, mapInstance, geocoder, onMapLoaded, createMarkers, markers, getDirections } = useContext(GoogleMapContext);
   const {placeInfos, polylineData} = useContext(DataContext);
   const [selectedPredictionType, setSelectedPredictionType] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -47,7 +36,7 @@ export const Map = () => {
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [selectedPlaceGrades, setSelectedPlaceGrades] = useState(null);
-  const [selectedCategories, setSelectedCategories] = useState([]); // Add state for categories
+  const [filter, setFilter] = useState([]);
 
   const handleMapRightClicked = (map, e) => {
     // Show a dropdown menu
@@ -89,10 +78,7 @@ export const Map = () => {
   // Update our polyine and heatmap data anytime:
   // 1. The selected prediction type changes
   // 2. New prediction data has been loaded
-
   const handlePolylineClicked = (polygon, event, predictionData) => {
-    // Clear any existing markers
-    
     const latLng = event.latLng;
     const lat = latLng.lat();
     const lng = latLng.lng();
@@ -105,7 +91,6 @@ export const Map = () => {
     });
   };
 
-  // TODO: clean up by only allowing clicking on segments
   const handleMapClicked = async (map, e) => {
     // If modal is visible but nothing is selected, just close it
     if (isDirectionsModalVisible) {
@@ -116,7 +101,6 @@ export const Map = () => {
     }
 
     // Clear any existing markers
-    
     const isPlaceIconClicked = e.placeId !== undefined;
     const latLng = e.latLng;
     const lat = latLng.lat();
@@ -138,51 +122,11 @@ export const Map = () => {
     }
   };
 
-  // When place infos are loaded, render accessibility markers
-  useEffect(() => {
-    const showAccessibilityMarkers = (placeInfos) => {
-      const markers = placeInfos.map((placeInfo, i) => {
-        const markerData = PlaceInfoUtilities.getMarkerPNG(placeInfo);
-        if (!markerData) {
-          return null;
-        }
-        const { imgSrc, parentCategory } = markerData;
-        if (imgSrc === null){
-          console.log('Null imgSRC', parentCategory);
-          return null;
-        }
-        if (parentCategory === null){
-          return null;
-        }
-        else{
-          return {
-            lat: placeInfo.latitude,
-            lng: placeInfo.longitude,
-            imgSrc,
-            imgSize: '30px', 
-            imgAlt: placeInfo.name,
-            key: i,
-            parentCategory,
-          }; 
-        }
-
-      });
-      const filteredMarkers =markers.filter( (marker) => marker !== null); 
-      
-      createMarkers(filteredMarkers);
-      console.log(filteredMarkers);
-    };
-
-    if (placeInfos) {
-      showAccessibilityMarkers(placeInfos);
-    }
-  }, [placeInfos]);
-
   const setLocationData = (lat, lng, placeId, name, isPlace, predictionData) => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
     setSelectedPlaceGrades(predictionData);
-    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}]);
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}], 'other');
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
     mapInstance.setCenter({ lat: selectedLocation.lat, lng: selectedLocation.lng });
   };
@@ -218,25 +162,17 @@ export const Map = () => {
     setSnackbarOpen(false);
   };
 
-  const containerStyle = {
-    display: 'flex',
-    flexDirection: isMobile ? 'column' : 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: '10px',
-    width: '100%',
-    padding: '10px',
-  };
-
   return (
-    <Box sx={{ display: 'flex' }}
-      role='main'>
-      <PersistentDrawerLeft selectedLocation={selectedPlace}
+    <Box role='main'>
+      <PersistentDrawerLeft 
+        selectedLocation={selectedPlace}
+        onLocationSelected={setLocationData}
         predictions={selectedPlaceGrades}
-        placeInfos={placeInfos} />
-      <Box sx={{ ...theme.mixins.toolbar, flexGrow: 1 }}>
+        placeInfos={placeInfos}
+      />
+      <Box sx={{ flexGrow: 1 }}>
         <GoogleMap
-          style={{ height: '95vh', top: '7vh' }}
+          style={{ height: '92vh', top: '7vh' }}
           zoom={DEFAULT_ZOOM}
           initialCenter={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
           onClick={handleMapClicked}
@@ -253,42 +189,24 @@ export const Map = () => {
             mapTypeControl: false, // Disable map/satellite control
           }}
         >
-          <Box sx={containerStyle}>
-            <Box sx={{ position: 'absolute', top: '20px', left: '200px' }}>
+          <Control position={google.maps.ControlPosition.RIGHT_TOP}>
+            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'end', pt: 2, pr: 2}}>
               <SearchBar onSearchEntered={handleSearchEntered} />
+              <PredictionDropdown onSelect={handleVisualizationSelected} />
+              <CategoryFilter onCategoriesSelected={(c) => setFilter(c)} />
             </Box>
-            <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-              <Box sx={{ top: '20px', display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Box sx={{ position: 'absolute', left: '-400px', top: '1px' }}>
-                  <Dropdown onSelect={handleVisualizationSelected} />
-                </Box>
-                <CategoryFilter
-                  selectedCategories={selectedCategories}
-                  setSelectedCategories={setSelectedCategories} />
-                <HelpIcon />
-              </Box>
-            </Control>
-          </Box>
-          {selectedPredictionType && polylineData && polylineData.map((data, i) =>
-          // TODO: Need to have a different gradient for red-green color blindness
-          {
-            const {location} = data;
-            const prediction = data[selectedPredictionType];
-            return (<Polyline
-              key={i}
-              path={[{ lat: location.start.lat, lng: location.start.lng }, { lat: location.end.lat, lng: location.end.lng }]}
-              strokeColor={PREDICTION_COLORS[prediction]}
-              strokeOpacity={prediction === 0 || prediction === 'A' ? 0.05 : 1.0}
-              strokeWeight={8.0}
-              geodesic
-              clickable={true}
-              onClick={(p, e) => handlePolylineClicked(p, e, data)}
-            />);}
-          )}
-          {markers.map(marker => marker)}
+          </Control>
+          <AccessibilityPointsLayer/>
+          <PlaceInfoLayer filter={filter}/>
+          <StationsLayer/>
+          <RestroomLayers/>
+          <PredictionLayer 
+            predictionType={selectedPredictionType}
+            data={polylineData}
+            onLineClicked={handlePolylineClicked}/>          
           {isDirectionsModalVisible && directionsModalPosition !== null && <DirectionsModal position={directionsModalPosition}
             onDirectionsPositionSelected={handleDirectionsPositionSelected}/>}
-          <AccessibilityMarkers/>
+          {markers['other'].map(marker => marker)}
         </GoogleMap>
         <Snackbar
           open={snackbarOpen}
