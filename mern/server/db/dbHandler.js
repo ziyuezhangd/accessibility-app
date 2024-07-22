@@ -77,18 +77,16 @@ const dbHandler = {
   },
 
   /**
+   * @param {string} userHistory.name
    * @param {string} userHistory.email
    * @param {array} userHistory.favorites
-   * 
    */
 
   async getUserHistories(){
     const db = await getDB();
     const collection = db.collection('userHistory');
-    const user = collection.findOne({email});
-    if (user) {
-      const results = await collection.find({}).toArray();
-    }
+    const results = await collection.find({}).toArray();
+
     return results;
   },
 
@@ -96,9 +94,9 @@ const dbHandler = {
     const db = await getDB();
     const collection = db.collection('userHistory');
     if (collection.find({email: userHistory.email})) {
-      await collection.updateMany(userHistory.searchHistory);
+      await collection.updateOne(userHistory.searchHistory);
     }else {
-      await collection.insertMany(userHistory);
+      await collection.insertOne(userHistory);
     }
   },
   
@@ -112,9 +110,6 @@ const dbHandler = {
         { email: userHistory.email },
         { $set: { favorites: userHistory.favorites } }
       );
-    }
-    else {
-      await collection.insertOne(userHistory);
     }
   },
 

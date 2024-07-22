@@ -52,6 +52,8 @@ export const NavBar = () => {
   const logOut = () => {
     googleLogout();
     setProfile(null);
+    userHistories.name = '';
+    userHistories.email = '';
   };
 
   useEffect(
@@ -66,16 +68,15 @@ export const NavBar = () => {
           })
           .then((res) => {
             setProfile(res.data);
-            userHistories.name = res.data.name;
-            userHistories.email = res.data.email;
-            console.log(userHistories.name, userHistories.email);
-            //response Ellen Doherty - "ellen.doherty2@ucdconnect.ie"
+            if (userHistories) {
+              userHistories.name = res.data.name;
+              userHistories.email = res.data.email;
+              console.log(userHistories.name, userHistories.email);
+            }
           })
           .catch((err) => console.log(err));
       }
-    },
-    [ user, userHistories ]
-  );
+    }, [user, userHistories]);
   
   return (
     <AppBar position='fixed'

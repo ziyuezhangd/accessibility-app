@@ -26,16 +26,15 @@ router.post('/', async (req, res) => {
       name,
       email,
       favorites,
+
     };
 
     if (favorites){
       await dbHandler.insertFavorites(userHistory);
-      res.status(201).send({ message: ' added!!' });
     } else{
       await dbHandler.insertSearchHistory(userHistory);
-      res.status(201).send({ message: ' added!!' });
     }
-    
+    res.status(201).send({ message: ' added!!' });
   } catch (error) {
     res.status(500).send({ message: 'An error occurred in server side', error: error.message });
   }
