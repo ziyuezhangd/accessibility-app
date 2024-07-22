@@ -10,6 +10,7 @@ import pedestrianSignals from './pedestrianSignals.js';
 import placeInfos from './placeInfos.js';
 import publicRestrooms from './publicRestrooms.js';
 import seatingAreas from './seatingAreas.js';
+import userHistory from './userHistory.js';
 
 const router = express.Router();
 
@@ -24,5 +25,6 @@ router.use('/pedestrian-signals', pedestrianSignals);
 router.use('/pedestrian-ramps', pedestrianRamps);
 router.use('/restrooms', publicRestrooms);
 router.use('/mobile', mobileData);
+router.use('/user-history', userHistory);
 
 export default router;

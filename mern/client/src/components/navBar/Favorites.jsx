@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../providers/UserProvider';
 import { postUserHistory } from '../../services/userHistory';
+import { getUserHistories } from '../../services/userHistory';
 
 export const Favorites = () => {
   const [anchorElFavorites, setAnchorElFavorites] = React.useState(null);
@@ -14,20 +15,42 @@ export const Favorites = () => {
 
   // Load favorites from localStorage on component mount
   React.useEffect(() => {
-    const storedFavorites = localStorage.getItem('favorites');
+    let storedFavorites = localStorage.getItem('favorites');
+    if (userHistories){
+      storedFavorites = userHistories.favorites;
+      const email = userHistories.email;
+      getUserHistories(email);
+      console.log('getUserHistory called');
+    }
     if (storedFavorites) {
       setFavorites(JSON.parse(storedFavorites));
     }
-  }, []);
+  }, [userHistories]);
 
   // Update localStorage whenever the favorites state changes
   React.useEffect(() => {
     if (favorites.length > 0) {
       localStorage.setItem('favorites', JSON.stringify(favorites));
+      if (userHistories){
+        const name = userHistories.name;
+        const email = userHistories.email;
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        const userHistory = { name, email, favorites };
+        postUserHistory(userHistory);
+        console.log('postUserHistory called');
+      }
     } else {
       localStorage.removeItem('favorites');
+      if (userHistories){
+        const name = userHistories.name;
+        const email = userHistories.email;
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        const userHistory = { name, email, favorites };
+        postUserHistory(userHistory);
+        console.log('postUserHistory called');
+      }
     }
-  }, [favorites]);
+  }, [favorites, userHistories]);
 
   const handleOpenFavorites = (event) => {
     if (favorites.length > 0) {
@@ -81,14 +104,6 @@ export const Favorites = () => {
         storedFavorites = [newFavorite, ...storedFavorites];
         console.log('added to favourites');
         setFavorites(storedFavorites);
-        if (userHistories){
-          const name = userHistories.name;
-          const email = userHistories.email;
-          const favorites = storedFavorites;
-          const userHistory = { name, email, favorites };
-          postUserHistory(userHistory);
-          console.log('postUserHistory called');
-        }
         setSnackbarMessage('Added to favorites');
       } else {
         setSnackbarMessage('Maximum of 5 favorites allowed');
@@ -101,14 +116,7 @@ export const Favorites = () => {
       setFavorites(prevFavorites => prevFavorites.filter(favorite => favorite.placeId !== removedFavorite.placeId));
       setSnackbarMessage('Removed from favorites');
       setSnackbarOpen(true);
-      if (userHistories){
-        const name = userHistories.name;
-        const email = userHistories.email;
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        const userHistory = { name, email, favorites };
-        postUserHistory(userHistory);
-        console.log('postUserHistory called');
-      }
+      
     };
 
     window.addEventListener('favoriteAdded', handleFavoriteAdded);

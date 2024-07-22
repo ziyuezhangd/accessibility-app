@@ -79,14 +79,16 @@ const dbHandler = {
   /**
    * @param {string} userHistory.email
    * @param {array} userHistory.favorites
-   * @param {array} userHistory.searchHistory
+   * 
    */
 
   async getUserHistories(){
     const db = await getDB();
     const collection = db.collection('userHistory');
-    const results = await collection.find({}).toArray();
-
+    const user = collection.findOne({email});
+    if (user) {
+      const results = await collection.find({}).toArray();
+    }
     return results;
   },
 
@@ -94,9 +96,9 @@ const dbHandler = {
     const db = await getDB();
     const collection = db.collection('userHistory');
     if (collection.find({email: userHistory.email})) {
-      await collection.updateOne(userHistory.searchHistory);
+      await collection.updateMany(userHistory.searchHistory);
     }else {
-      await collection.insertOne(userHistory);
+      await collection.insertMany(userHistory);
     }
   },
   
@@ -105,8 +107,11 @@ const dbHandler = {
     console.log('insertFavorites called');
     const db = await getDB();
     const collection = db.collection('userHistory');
-    if (collection.find({email: userHistory.email})) {
-      await collection.updateOne(userHistory.favorites);
+    if (collection.findOne({email: userHistory.email})) {
+      await collection.updateOne(
+        { email: userHistory.email },
+        { $set: { favorites: userHistory.favorites } }
+      );
     }
     else {
       await collection.insertOne(userHistory);
