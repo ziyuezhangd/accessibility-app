@@ -11,8 +11,8 @@ import FeedbackForm from './FeedbackForm';
 import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
-import { UserContext } from '../../providers/UserProvider';
-import { postUserHistory } from '../../services/userHistory';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { MapLocation } from '../../utils/MapUtils';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -49,7 +49,6 @@ const formStyle = {
 export default function DrawerLocationDetails({ location, predictions, onBackClicked }) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  //const {userHistories} = useContext(UserContext);
 
   useEffect(() => {
     addLocationToHistory();
@@ -98,8 +97,8 @@ export default function DrawerLocationDetails({ location, predictions, onBackCli
     if (userHistories){
       const name = userHistories.name;
       const email = userHistories.email;
-      const searchHistory = history;
-      const userHistory = { name, email, searchHistory };
+      const favorites = storedFavorites;
+      const userHistory = { name, email, favorites };
       postUserHistory(userHistory);
       console.log('postUserHistory called');
     }
