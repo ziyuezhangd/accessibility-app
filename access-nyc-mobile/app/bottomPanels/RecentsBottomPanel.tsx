@@ -6,7 +6,7 @@ export default function RecentsBottomPanel() {
   const theme = useTheme();
   return (
     <View>
-      <Text style={{ fontSize: 40, color: theme.colors.primary }}>RecBottomPanel</Text>
+      <Text style={{ fontSize: 40, color: theme.colors.primary }}>Coming soon!</Text>
     </View>
   );
 }
