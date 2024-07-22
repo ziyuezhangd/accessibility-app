@@ -94,14 +94,6 @@ export default function DrawerLocationDetails({ location, predictions, onBackCli
     history = [location, ...history];
 
     localStorage.setItem('searchHistory', JSON.stringify(history));
-    if (userHistories){
-      const name = userHistories.name;
-      const email = userHistories.email;
-      const favorites = storedFavorites;
-      const userHistory = { name, email, favorites };
-      postUserHistory(userHistory);
-      console.log('postUserHistory called');
-    }
   };
 
   const checkIfFavorite = () => {
