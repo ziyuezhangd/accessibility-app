@@ -115,7 +115,7 @@ describe('POST /health-data', () => {
   it('should return 201 if health data is inserted and no error occurs', async () => {
     dbHandler.upsertUser = jest.fn();
 
-    const response = await request(app).post('/').send(dummyHealthData);
+    const response = await request(app).post('/health-data').send(dummyHealthData);
     expect(response.status).toBe(201);
     expect(dbHandler.upsertUser).toHaveBeenCalledTimes(1);
     expect(dbHandler.upsertUser).toHaveBeenCalledWith(dummyHealthData);
@@ -125,7 +125,7 @@ describe('POST /health-data', () => {
     const { userId, ...invalidHealthData } = dummyHealthData;
     jest.spyOn(dbHandler, 'upsertUser');
 
-    const response = await request(app).post('/').send(invalidHealthData);
+    const response = await request(app).post('/health-data').send(invalidHealthData);
     expect(response.status).toBe(400);
     expect(dbHandler.upsertUser).toHaveBeenCalledTimes(0);
   });
@@ -135,7 +135,7 @@ describe('POST /health-data', () => {
       throw new Error('Database error');
     });
 
-    const response = await request(app).post('/').send(dummyHealthData);
+    const response = await request(app).post('/health-data').send(dummyHealthData);
     expect(response.status).toBe(500);
   });
 });
@@ -148,7 +148,7 @@ describe('POST /location-data', () => {
   it('should return 201 if location data is inserted and no error occurs', async () => {
     dbHandler.insertLocationData = jest.fn();
 
-    const response = await request(app).post('/').send(dummyLocationData);
+    const response = await request(app).post('/location-data').send(dummyLocationData);
     expect(response.status).toBe(201);
     expect(dbHandler.insertLocationData).toHaveBeenCalledTimes(1);
     expect(dbHandler.insertLocationData).toHaveBeenCalledWith(dummyLocationData);
@@ -158,7 +158,7 @@ describe('POST /location-data', () => {
     const { latitude, longitude, ...invalidLocationData } = dummyLocationData;
     jest.spyOn(dbHandler, 'insertLocationData');
 
-    const response = await request(app).post('/').send(invalidLocationData);
+    const response = await request(app).post('/location-data').send(invalidLocationData);
     expect(response.status).toBe(400);
     expect(dbHandler.insertLocationData).toHaveBeenCalledTimes(0);
   });
@@ -168,7 +168,7 @@ describe('POST /location-data', () => {
       throw new Error('Database error');
     });
 
-    const response = await request(app).post('/').send(dummyLocationData);
+    const response = await request(app).post('/location-data').send(dummyLocationData);
     expect(response.status).toBe(500);
   });
 });

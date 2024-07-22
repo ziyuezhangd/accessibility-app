@@ -1,24 +1,26 @@
-// DrawerLocationDetails.jsx
 import {PlaceOverview} from '@googlemaps/extended-component-library/react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Favorite from '@mui/icons-material/Favorite';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import { Button, Alert,IconButton } from '@mui/material';
+import { Button, IconButton, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useContext } from 'react';
 import FeedbackForm from './FeedbackForm';
 import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
+import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { MapLocation } from '../../utils/MapUtils';
 
-const DrawerHeader = styled('div')(({ theme }) => ({
+const DrawerLocationHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
+  padding: theme.spacing(1),
+  backgroundColor: '#1976d2',
+  color: 'white',
+  boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
   justifyContent: 'space-between',
 }));
 
@@ -33,20 +35,36 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  * 
  * @returns {JSX.Element} The rendered DrawerLocationDetails component.
  */
-const modalStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
+const CustomButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  width: '100%',
+  backgroundColor: '#1976d2',
+  color: theme.palette.common.white,
+  '&:hover': {
+    backgroundColor: '#115293',
+  },
+}));
 
-const formStyle = {
-  width: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-};
+const Content = styled(Box)(({ theme }) => ({
+  overflowY: 'auto',
+  padding: theme.spacing(5),
+  maxHeight: 'calc(100vh - 250px)',
+  '&::-webkit-scrollbar': {
+    width: '8px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#1976d2',
+    borderRadius: '8px',
+  },
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: 'transparent',
+  },
+  '&::-webkit-scrollbar-button': {
+    display: 'none',
+  },
+}));
 
-export default function DrawerLocationDetails({ location, predictions }) {
+export default function DrawerLocationDetails({ location, predictions, onBackClicked }) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -127,15 +145,23 @@ export default function DrawerLocationDetails({ location, predictions }) {
 
   return (
     <>
-      <DrawerHeader>
-        <Box></Box>
+      <DrawerLocationHeader>
+        <IconButton aria-label='Back to recently viewed'
+          onClick={() => {
+            onBackClicked(location);
+          }}>
+          <ChevronLeftIcon sx={{ color: 'white' }} />
+        </IconButton>
+        <Typography variant='h6'>
+          Location Details
+        </Typography>
         <IconButton data-test='favorites-inside'
           aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
           onClick={handleToggleFavorite}>
-          {isFavorite ? <Favorite sx={{ color: 'red' }} /> : <FavoriteBorder />}
+          {isFavorite ? <Favorite sx={{ color: 'white' }} /> : <FavoriteBorder sx={{ color: 'white' }} />}
         </IconButton>
-      </DrawerHeader>
-      <Box sx={{ overflow: 'auto', px: 5 }}>
+      </DrawerLocationHeader>
+      <Content sx={{pb: { xs: 50, sm: 0 } }}>
         <PlaceOverview place={location.placeId}
           size='medium'></PlaceOverview>
         <Grades lat={location.lat}
@@ -148,8 +174,8 @@ export default function DrawerLocationDetails({ location, predictions }) {
           lat={location.lat}
           lng={location.lng} />
 
-        <Button onClick={handleButtonClicked}>Submit Feedback</Button>
-      </Box>
+        <CustomButton onClick={handleButtonClicked}>Submit Feedback</CustomButton>
+      </Content>
       <FeedbackForm location={location}
         isOpen={isFeedbackOpen}
         onClose={handleFeedbackClose} />

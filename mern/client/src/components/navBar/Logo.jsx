@@ -11,6 +11,7 @@ export default function Logo({isClickable}) {
         variant='h6'
         noWrap
         sx={{
+          display: {xs: 'none', sm: 'block'},
           mr: 0,
           fontFamily: 'monospace',
           fontWeight: 700,
@@ -26,6 +27,7 @@ export default function Logo({isClickable}) {
         variant='h6'
         noWrap
         sx={{
+          display: {xs: 'none', sm: 'block'},
           mr: 2,
           fontFamily: 'monospace',
           fontWeight: 300,

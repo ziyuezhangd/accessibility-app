@@ -6,6 +6,8 @@ import dotenv from 'dotenv';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import cron from 'node-cron';
+import dbHandler from './db/dbHandler.js';
 import logger from './logger.js';
 import routes from './routes/index.js';
 
@@ -42,6 +44,16 @@ app.get('*', (req, res) => {
 app.use((err, req, res, next) => {
   logger.error(err.stack);
   res.status(500).send('Internal Server Error: Our team is investigating this issue.');
+});
+
+// Set up scheduled task
+cron.schedule('0 0 * * *', async () => {
+  logger.info('Running scheduled task: updating placeInfos in the database');
+  await dbHandler.updatePlaceInfos();
+  logger.info('Scheduled task completed');
+}, {
+  scheduled: true,
+  timezone: 'America/New_York'
 });
 
 // start the Express server

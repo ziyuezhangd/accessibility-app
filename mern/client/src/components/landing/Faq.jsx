@@ -9,7 +9,7 @@ export default function Faq() {
       sx={{
         pt: { xs: 4, sm: 12 },
         pb: { xs: 8, sm: 16 },
-        height: '85vh',
+        minHeight: '85vh',
         backgroundColor: lightBlue[100],
         display: 'flex',
         alignItems: 'center',
@@ -32,7 +32,8 @@ export default function Faq() {
           <Typography variant='h1'
             color='text.primary'
             fontFamily={'Playfair Display'}
-            mb={5}>
+            mb={5}
+            sx={{fontSize: {xs: 50, md: 72}}}>
             Common Questions
           </Typography>
           <Typography variant='h5'

@@ -18,12 +18,13 @@ export default function Blurb() {
     >
       <Typography variant='h1'
         fontFamily={'Playfair Display'}
-        sx={{ mb: 4 }}>
+        sx={{ mb: 4, fontSize: {xs: 50, md: 72} }}>
         Welcome to Access NYC
       </Typography>
       <Typography variant='h5'
         component={'h2'}
-        maxWidth={{ sm: 900 }}>
+        maxWidth={{ sm: 900 }}
+        sx={{fontSize: {xs: 18, md: 36}}}>
         Access NYC is your go-to resource for discovering wheelchair-friendly locations, accessible restaurants, and inclusive venues in New York City. Whether you&apos;re a local resident or a visitor, we make it easy for everyone to enjoy the
         vibrant city life without limitations.
       </Typography>

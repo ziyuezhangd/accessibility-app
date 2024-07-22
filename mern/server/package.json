@@ -25,6 +25,7 @@
     "helmet": "^7.1.0",
     "mongodb": "^6.6.2",
     "morgan": "^1.10.0",
+    "node-cron": "^3.0.3",
     "winston": "^3.13.0"
   },
   "devDependencies": {
