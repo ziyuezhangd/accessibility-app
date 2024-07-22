@@ -110,8 +110,8 @@ export default function HelpModal({ isOpen, onClose }) {
     <Modal
       open={isOpen}
       onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      aria-labelledby='modal-modal-title'
+      aria-describedby='modal-modal-description'
     >
       <Box data-test='help-modal'
         sx={style}>
@@ -145,7 +145,7 @@ export default function HelpModal({ isOpen, onClose }) {
             xs={10}
             container
             spacing={2}
-            justifyContent="center">
+            justifyContent='center'>
             {currentInstructions.map((instruction, index) => (
               <Grid item
                 xs={4}
