@@ -71,9 +71,9 @@ const DataProvider = ({children}) => {
       } else {
         selectedDate = predictionDateTime;
       }
-    } else {
-      setSelectedDateTime(selectedDate);
     }
+
+    setSelectedDateTime(selectedDate);
 
     // Convert to ISO string
     selectedDate = dayjs(selectedDate).set('minute', 0).set('second', 0).format('YYYY-MM-DD[T]HH:mm:ss');

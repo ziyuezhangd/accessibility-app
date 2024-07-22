@@ -6,7 +6,7 @@ export default function FavoritesBottomPanel() {
   const theme = useTheme();
   return (
     <View>
-      <Text>FavoritesBottomPanel</Text>
+      <Text>Coming soon!</Text>
     </View>
   );
 }

@@ -6,6 +6,7 @@ import danielleImage from '../assets/danielle.jpg';
 import ellenImage from '../assets/ellen.png';
 import nithishhImage from '../assets/nithishh.jpg';
 import thomasImage from '../assets/thomas.jpg';
+import AdBanner from '../components/AdBanner';
 
 const teamMembers = [
   {
@@ -196,6 +197,7 @@ const AboutUs = () => {
           </Grid>
         ))}
       </Grid>
+      <AdBanner />
     </Container>
   );
 };
