@@ -52,8 +52,6 @@ export const NavBar = () => {
   const logOut = () => {
     googleLogout();
     setProfile(null);
-    userHistories.name = '';
-    userHistories.email = '';
   };
 
   useEffect(
@@ -69,9 +67,8 @@ export const NavBar = () => {
           .then((res) => {
             setProfile(res.data);
             if (userHistories) {
-              userHistories.name = res.data.name;
               userHistories.email = res.data.email;
-              console.log(userHistories.name, userHistories.email);
+              console.log(userHistories.email);
             }
           })
           .catch((err) => console.log(err));
