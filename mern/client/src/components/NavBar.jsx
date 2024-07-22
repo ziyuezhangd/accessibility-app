@@ -79,7 +79,7 @@ export const NavBar = () => {
           })
           .catch((err) => console.log(err));
       }
-    }, [user, userHistories];
+    }, [user, userHistories]);
   
   return (
     <AppBar position='fixed'
