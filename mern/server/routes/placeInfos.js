@@ -1,12 +1,13 @@
 import express from 'express';
 import accessibilityCloud from '../apis/accessibilityCloud.js';
+import dbHandler from '../db/dbHandler.js';
 import logger from '../logger.js';
 
 const placeInfosRouter = express.Router();
 
 placeInfosRouter.get('/', async (req, res) => {
   try {
-    const placeInfos = await accessibilityCloud.getPlaceInfos();
+    const placeInfos = await dbHandler.getPlaceInfos();
     res.status(200).json(placeInfos);
   } catch (error) {
     logger.error(error.stack);
