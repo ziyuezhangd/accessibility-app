@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import Favorites from './navBar/Favorites';
 import Logo from './navBar/Logo';
 import { UserContext } from '../providers/UserProvider';
+import { postUserHistory } from '../services/userHistory';
 
 const pages = ['Map', 'About us', 'Resources'];
 
@@ -71,7 +72,7 @@ export const NavBar = () => {
             const name = userDetails.name;
             const email = userDetails.email;
             console.log(email);
-            if (userHistories) {
+            if (email) {
               userHistories.name = name;
               userHistories.email = email;
               console.log(userHistories.email);
