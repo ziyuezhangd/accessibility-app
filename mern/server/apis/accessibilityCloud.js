@@ -1,5 +1,5 @@
 import axios from 'axios';
-import logger from '../logger';
+import logger from '../logger.js';
 
 const ACCESSIBILITY_CLOUD_API_KEY = process.env.ACCESSIBILITY_CLOUD_API_KEY;
 const ACCESSIBILITY_CLOUD_URL = 'https://accessibility-cloud-v2.freetls.fastly.net/';
