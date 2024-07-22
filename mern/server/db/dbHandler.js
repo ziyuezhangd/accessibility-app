@@ -29,18 +29,23 @@ const dbHandler = {
     let updatedUser = existingUser;
     if (existingUser) {
       // Get the existing historical data
-      const { clinical_records, bloodPressureOverTime, heartRateOverTime, audioLevelOverTime } = existingUser;
-      updatedUser = {
-        clinical_records: [...clinical_records, ...userData.clinical_records],
-        bloodPressureOverTime: [...bloodPressureOverTime, ...userData.bloodPressureOverTime],
-        heartRateOverTime: [...heartRateOverTime, ...userData.heartRateOverTime],
-        audioLevelOverTime: [...audioLevelOverTime, ...userData.audioLevelOverTime],
-      };
+      const { clinicalRecords, bloodPressureOverTime, heartRateOverTime, audioLevelOverTime } = existingUser;
+      updatedUser['clinicalRecords'] = clinicalRecords ? userData.clinicalRecords.concat(clinicalRecords) : userData.clinicalRecords;
+      updatedUser['bloodPressureOverTime'] = bloodPressureOverTime ? userData.bloodPressure.concat(bloodPressureOverTime) : userData.bloodPressure;
+      updatedUser['heartRateOverTime'] = heartRateOverTime ? userData.heartRate.concat(heartRateOverTime) : userData.heartRate;
+      updatedUser['audioLevelOverTime'] = audioLevelOverTime ? userData.audioLevel.concat(audioLevelOverTime) : userData.audioLevel;
+    } else {
+      updatedUser = {};
+      updatedUser['clinicalRecords'] = userData.clinicalRecords;
+      updatedUser['bloodPressureOverTime'] = userData.bloodPressure;
+      updatedUser['heartRateOverTime'] = userData.heartRate;
+      updatedUser['audioLevelOverTime'] = userData.audioLevel;
     }
-    updatedUser.lastUpdated = new Date();
+    updatedUser['lastUpdated'] = new Date();
     const db = await getDB();
     const collection = db.collection('users');
-    await collection.update({ userId }, updatedUser, { upsert: true, w: 1 });
+    // await collection.find({ userId }).upsert().updateOne({ $set: updatedUser });
+    await collection.updateOne({ userId }, { $set: updatedUser }, { upsert: true });
   },
 
   async createUser(userData) {

@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import { createContext, useState, useEffect } from 'react';
 import { AdvancedMarker, PinElement } from 'react-google-map-wrapper';
+import { PlaceInfoUtilities } from '../services/placeInfo';
 
 const GoogleMapContext = createContext();
 
-// List of available libraries: https://developers.google.com/maps/documentation/javascript/libraries
 const GoogleMapProvider = ({children}) => {
   /** @type {[google.maps.Map, React.Dispatch<React.SetStateAction<google.maps.Map>>]} */
   const [mapInstance, setMapInstance] = useState();
@@ -25,8 +25,10 @@ const GoogleMapProvider = ({children}) => {
   const [geometry, setGeometry] = useState();
 
   /** @type {[google.maps.AdvancedMarker[], React.Dispatch<React.SetStateAction<google.maps.AdvancedMarker[]>>]} */
-  const [markers, setMarkers] = useState([]);
-  const [categoryMarkers, setCategoryMarkers] = useState([]);
+  const [placeInfoMarkers, setPlaceInfoMarkers] = useState([]);
+  const [restroomMarkers, setRestroomMarkers] = useState([]);
+  const [stationMarkers, setStationMarkers] = useState([]);
+  const [otherMarkers, setOtherMarkers] = useState([]);
 
   useEffect(() => {
     if (mapInstance) {
@@ -79,16 +81,15 @@ const GoogleMapProvider = ({children}) => {
   const clearDirections = () => {
     if (directionsRenderer !== null && directionsRenderer !== undefined) {
       directionsRenderer.setMap(null);
-      const start = directionsRenderer.getDirections().routes[0].legs[0].start_location;
-      const end = directionsRenderer.getDirections().routes[0].legs[0].end_location;
-      removeMarkers([{lat: start.lat(), lng: start.lng()}, {lat: end.lat(), lng: end.lng()}]);
+      // Hacky way of just removing all markers because the latLngs will not be exact matches
+      setOtherMarkers([otherMarkers[0]]);
     }
   };
 
   const handleMapLoaded = (map) => {
     setMapInstance(map);
   };
-  
+
   /**
    * 
    * @param {Array<{
@@ -100,84 +101,123 @@ const GoogleMapProvider = ({children}) => {
  * scale: number, 
  * title: string,
  * key: num,
- * color: string}>} markerConfigs 
+ * color: string,
+ * onClick: function}>} markerConfigs 
  * @param {boolean} shouldOverwriteExisting - set to true if you want these markers to overwrite all markers currently on the screen; if false, it will add to the existing markers
+ * @param {string} markerType
  */
-  const createMarkers = (markerConfigs, shouldOverwriteExisting, isCategoryMarker = false) => {
-    // TODO: I think double markers are being added?
-    if (shouldOverwriteExisting) {
-      if (isCategoryMarker) {
-        clearCategoryMarkers();
+  const createMarkers = (markerConfigs, markerType, shouldOverwriteExisting) => {
+    const markersToCreate = shouldOverwriteExisting ? [] : getMarkers(markerType);
+
+    for (const config of markerConfigs) {
+      const {imgSrc, key, title, category} = config;
+      
+      let {lat, lng} = config;
+      lat = parseFloat(lat);
+      lng = parseFloat(lng);
+      
+      if (imgSrc) {
+        const {imgAlt, imgSize, onClick} = config;
+        const { invert, sepia, saturate, hueRotate } = PlaceInfoUtilities.getMarkerStyle(category);
+        const marker = (
+          <AdvancedMarker 
+            lat={lat}
+            lng={lng}
+            title={title}
+            gmpClickable={true}
+            onClick={onClick}
+            key={key}
+          >
+            <img 
+              src={imgSrc}
+              alt={imgAlt}
+              style={{height: imgSize, filter:`invert(${invert}%) sepia(${sepia}%) saturate(${saturate}%) hue-rotate(${hueRotate}deg) brightness(95%) contrast(95%)`}}
+            />
+          </AdvancedMarker>
+        );
+        
+        markersToCreate.push(marker);
       } else {
-        clearMarkers();
+        let { scale, color, onClick } = config;
+        scale = scale || 1;
+        color = color || '#FF0000';
+        const marker = (
+          <AdvancedMarker 
+            lat={lat}
+            lng={lng}
+            title={title}
+            gmpClickable={true}
+            onClick={onClick}
+            key={key}
+          >
+            <PinElement 
+              scale={scale}
+              color={color} />
+          </AdvancedMarker>
+        );
+        markersToCreate.push(marker);
       }
     }
-    const markersToCreate = markerConfigs.map(config => {
-      const { imgSrc, title, lat, lng, imgAlt, imgSize, scale, color } = config;
-      return imgSrc ? (
-        <AdvancedMarker 
-          lat={parseFloat(lat)}
-          lng={parseFloat(lng)}
-          title={title}
-          gmpClickable={true}
-          // key={key}
-        >
-          <img 
-            src={imgSrc}
-            style={{height: imgSize}}
-            alt={imgAlt} 
-          />
-        </AdvancedMarker>
-      ) : (
-        <AdvancedMarker 
-          lat={parseFloat(lat)}
-          lng={parseFloat(lng)}
-          title={title}
-          gmpClickable={true}>
-          <PinElement 
-            scale={scale}
-            color={color} /> 
-        </AdvancedMarker>
-      );
-    });
 
-    if (isCategoryMarker) {
-      setCategoryMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
-    } else {
-      setMarkers(prevMarkers => shouldOverwriteExisting ? markersToCreate : [...prevMarkers, ...markersToCreate]);
+    if (markerType === 'placeInfo') {
+      removeDuplicatePlaceInfoMarkers(markersToCreate);
     }
-    console.log(`Created ${markersToCreate.length} markers`);
+    setMarkers(markersToCreate, markerType);
+  };
+
+  const removeDuplicatePlaceInfoMarkers = (markers) => {
+    _.remove(markers, marker => restroomMarkers.some(rm => rm.props.lat === marker.props.lat && rm.props.lng === marker.props.lng));
+    _.remove(markers, marker => otherMarkers.some(rm => rm.props.lat === marker.props.lat && rm.props.lng === marker.props.lng));
+    _.remove(markers, marker => stationMarkers.some(rm => rm.props.lat === marker.props.lat && rm.props.lng === marker.props.lng));
+  };
+
+  const getMarkers = (markerType) => {
+    switch (markerType) {
+    case 'restroom':
+      return restroomMarkers;
+    case 'station':
+      return stationMarkers;
+    case 'placeInfo':
+      return placeInfoMarkers;
+    default:
+      return otherMarkers;
+    }
+  };
+
+  const setMarkers = (markers, markerType) => {
+    switch (markerType) {
+    case 'restroom':
+      setRestroomMarkers(markers);
+      break;
+    case 'station':
+      setStationMarkers(markers);
+      break;
+    case 'placeInfo':
+      setPlaceInfoMarkers(markers);
+      break;
+    default:
+      setOtherMarkers(markers);
+      break;
+    }
   };
 
   /**
    * 
    * @param {Array<{lat: number, lng: number}>} latLngs 
    */
-  const removeMarkers = (latLngs, isCategoryMarker = false) => {
-    if (isCategoryMarker) {
-      setCategoryMarkers(prevMarkers => prevMarkers.filter(marker =>
-        !latLngs.some(latLng =>
-          parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
-        )
-      ));
-    } else {
-      setMarkers(prevMarkers => prevMarkers.filter(marker =>
-        !latLngs.some(latLng =>
-          parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
-        )
-      ));
-    }
+  const removeMarkers = (latLngs, markerType) => {
+    const filteredMarkers = getMarkers(markerType);
+    _.remove(filteredMarkers, marker => latLngs.some(latLng =>
+      parseFloat(marker.props.lat) === parseFloat(latLng.lat) && parseFloat(marker.props.lng) === parseFloat(latLng.lng)
+    ));
+    setMarkers(filteredMarkers, markerType);
   };
-  
+
   /**
    * 
    */
-  const clearMarkers = () => {
-    setMarkers([]);
-  };
-
-  const clearCategoryMarkers = () => {
-    setCategoryMarkers([]);
+  const clearMarkers = (markerType) => {
+    setMarkers([], markerType);
   };
 
   const getDirections = (start, end) => {
@@ -196,18 +236,17 @@ const GoogleMapProvider = ({children}) => {
       }
     });
   };
-
+  
   return (
     <GoogleMapContext.Provider value={{
       mapInstance,
       placesService,
       geocoder,
-      markers: [...markers, ...categoryMarkers],
+      markers: {'station': stationMarkers, 'restroom': restroomMarkers, 'placeInfo': placeInfoMarkers, 'other': otherMarkers},
       onMapLoaded: handleMapLoaded,
       createMarkers,
       removeMarkers,
       clearMarkers,
-      clearCategoryMarkers,
       getDirections,
       clearDirections
     }}>

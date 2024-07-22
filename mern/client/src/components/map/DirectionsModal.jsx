@@ -10,13 +10,13 @@ export default function DirectionsModal({position, onDirectionsPositionSelected}
   const showDirectionsMarker = (type) => {
     if (type === 'from') {
       // Create a green marker
-      createMarkers([{lat: position.lat, lng: position.lng, color: green[400] }]);
+      createMarkers([{lat: position.lat, lng: position.lng, color: green[400] }], 'other');
       onDirectionsPositionSelected('from');
     }
 
     if (type === 'to') {
       // Create a red marker
-      createMarkers([{lat: position.lat, lng: position.lng, color: red[400] }]);
+      createMarkers([{lat: position.lat, lng: position.lng, color: red[400] }], 'other');
       onDirectionsPositionSelected('to');
     }
   };

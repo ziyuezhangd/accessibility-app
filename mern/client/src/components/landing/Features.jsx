@@ -38,7 +38,7 @@ export default function Features() {
         alignItems: 'center',
         gap: { xs: 3, sm: 6 },
         backgroundColor: cyan[100],
-        height: '85vh',
+        minHeight: '85vh',
       }}
       aria-labelledby='List of features'
     >

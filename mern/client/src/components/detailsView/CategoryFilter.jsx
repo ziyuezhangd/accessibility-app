@@ -1,12 +1,13 @@
 import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { styled } from '@mui/system';
 import _ from 'lodash';
 import { useState, useEffect, useContext } from 'react';
 import { DataContext } from '../../providers/DataProvider';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
-import { PlaceInfoUtilities, categoryToParentCategory } from '../../services/placeInfo';
+import { categoryToParentCategory } from '../../services/placeInfo';
 
 // Custom styled components similar to Dropdown
 const CustomAutocomplete = styled(Autocomplete)({
@@ -14,6 +15,8 @@ const CustomAutocomplete = styled(Autocomplete)({
   backgroundColor: '#4a90e2',
   borderRadius: '8px',
   marginTop: '10px',
+  maxHeight: '500px',
+  overflowY: 'scroll',
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderColor: 'white',
@@ -63,74 +66,29 @@ const CustomChip = styled(Chip)({
   },
 });
 
-const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
-  const { mapInstance, createMarkers, removeMarkers } = useContext(GoogleMapContext);
+const CategoryFilter = ({onCategoriesSelected}) => {
   const { placeInfos } = useContext(DataContext);
   const [categories, setCategories] = useState([]);
   const [hasFocus, setHasFocus] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   useEffect(() => {
+    if (!placeInfos) return;
     const uniqueCategories = _.uniqBy(placeInfos.map(place => categoryToParentCategory(place.category)).filter(category => category && category.trim() !== ''));
     setCategories(['All', ...uniqueCategories]); // Add 'All' option
   }, [placeInfos]);
 
-  useEffect(() => {
-    if (!mapInstance) return;
-
-    const handleMarkers = () => {
-      if (selectedCategories.length === 0 || selectedCategories.includes('All')) {
-        // Remove only category markers, not restroom markers
-        const categoryMarkers = placeInfos.map(placeInfo => ({
-          lat: placeInfo.latitude,
-          lng: placeInfo.longitude,
-        }));
-        removeMarkers(categoryMarkers, true);
-
-        if (selectedCategories.includes('All')) {
-          const allMarkers = placeInfos.map(placeInfo => ({
-            lat: placeInfo.latitude,
-            lng: placeInfo.longitude,
-            imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
-            imgSize: '30px',
-            imgAlt: placeInfo.name,
-          })).filter(marker => marker.imgSrc !== null);
-
-          createMarkers(allMarkers, false, true); // Create all markers if "All" is selected without clearing existing markers
-        }
-        return; // No categories selected or "All" selected
-      }
-
-      const filteredMarkers = placeInfos
-        .filter(placeInfo => selectedCategories.includes(categoryToParentCategory(placeInfo.category)))
-        .map(placeInfo => ({
-          lat: placeInfo.latitude,
-          lng: placeInfo.longitude,
-          imgSrc: PlaceInfoUtilities.getMarkerPNG(placeInfo),
-          imgSize: '30px',
-          imgAlt: placeInfo.name,
-        }))
-        .filter(marker => marker.imgSrc !== null);
-
-      // Remove existing category markers before adding new ones
-      const categoryMarkersToRemove = placeInfos.map(placeInfo => ({
-        lat: placeInfo.latitude,
-        lng: placeInfo.longitude,
-      }));
-      removeMarkers(categoryMarkersToRemove, true);
-
-      createMarkers(filteredMarkers, false, true); // Create markers based on filtered categories without clearing existing markers
-    };
-
-    handleMarkers();
-  }, [selectedCategories, placeInfos, mapInstance]);
-
   const handleCategorySelected = (categories) => {
+    console.log(categories);
     if (categories.includes('All') && !selectedCategories.includes('All')) {
       setSelectedCategories(['All']);
+      onCategoriesSelected(['All']);
     } else if (categories.length === 0 || categories.includes('All')) {
       setSelectedCategories([]);
+      onCategoriesSelected([]);
     } else {
       setSelectedCategories(categories.filter(category => category !== 'All'));
+      onCategoriesSelected(categories.filter(category => category !== 'All'));
     }
   };
 
@@ -145,37 +103,40 @@ const CategoryFilter = ({ selectedCategories, setSelectedCategories }) => {
   const hasValue = selectedCategories.length > 0;
 
   return (
-    <CustomAutocomplete
-      multiple
-      id="filter-selected-options"
-      options={categories}
-      getOptionLabel={(option) => option}
-      filterSelectedOptions
-      onChange={(event, value) => handleCategorySelected(value)} // Call handleCategorySelected on change
-      value={selectedCategories} // Bind selected categories to Autocomplete value
-      renderTags={(value, getTagProps) =>
-        value.map((option, index) => (
-          <CustomChip
-            key={option} // Add key prop here
+    <>
+      <CustomAutocomplete
+        multiple
+        id="filter-selected-options"
+        options={categories}
+        getOptionLabel={(option) => option}
+        filterSelectedOptions
+        onChange={(event, value) => handleCategorySelected(value)} // Call handleCategorySelected on change
+        value={selectedCategories} // Bind selected categories to Autocomplete value
+        renderTags={(value, getTagProps) =>
+          value.map((option, index) => (
+            <CustomChip
+              key={option} // Add key prop here
+              variant="outlined"
+              label={option}
+              {...getTagProps({ index })}
+            />
+          ))
+        }
+        renderInput={(params) => (
+          <CustomTextField
+            {...params}
             variant="outlined"
-            label={option}
-            {...getTagProps({ index })}
+            label="Filter by Category"
+            placeholder="Categories"
+            hasFocus={hasFocus}
+            hasValue={hasValue}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
           />
-        ))
-      }
-      renderInput={(params) => (
-        <CustomTextField
-          {...params}
-          variant="outlined"
-          label="Filter by Category"
-          placeholder="Categories"
-          hasFocus={hasFocus}
-          hasValue={hasValue}
-          onFocus={handleFocus}
-          onBlur={handleBlur} 
-        />
-      )} 
-    />
+        )}
+      />
+     
+    </>
   );
 };
 
