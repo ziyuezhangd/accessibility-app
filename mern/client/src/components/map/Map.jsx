@@ -25,7 +25,7 @@ export const Map = () => {
 
   const {placesService, mapInstance, geocoder, onMapLoaded, createMarkers, markers, getDirections } = useContext(GoogleMapContext);
   const {placeInfos, polylineData} = useContext(DataContext);
-  const [selectedPredictionType, setSelectedPredictionType] = useState(null);
+  const [selectedPredictionType, setSelectedPredictionType] = useState('busyness');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [isDirectionsModalVisible, setIsDirectionsModalVisible] = useState(false);
   const [directionsModalPosition, setDirectionsModalPosition] = useState(null);

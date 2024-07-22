@@ -19,7 +19,7 @@ const PREDICTION_COLORS = {
 export default function PredictionLayer({predictionType, data, onLineClicked}) {
   return (
     <>
-      {data && data.map((d, i) =>
+      {data && predictionType && data.map((d, i) =>
       {
         const {location} = d;
         const prediction = d[predictionType];
@@ -31,7 +31,7 @@ export default function PredictionLayer({predictionType, data, onLineClicked}) {
           strokeWeight={8.0}
           geodesic
           clickable={true}
-          onClick={(p, e) => onLineClicked(p, e, data)}
+          onClick={(p, e) => onLineClicked(p, e, d)}
         />);}
       )}</>
   );

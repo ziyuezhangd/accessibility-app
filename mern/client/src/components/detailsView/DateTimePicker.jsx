@@ -3,6 +3,7 @@ import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
 import { useContext } from 'react';
 import { DataContext } from '../../providers/DataProvider';
 import { getCurrentTimeInNewYork } from '../../utils/dateTime';
@@ -36,7 +37,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 }));
 
 const DateTimePickerComponent = () => {
-  const { getPredictions } = useContext(DataContext);
+  const { getPredictions, selectedDateTime } = useContext(DataContext);
 
   const handleDateChange = (newValue) => {
     getPredictions(newValue);
@@ -47,7 +48,7 @@ const DateTimePickerComponent = () => {
       <DateTimePicker
         label="Select Date & Time"
         timezone="America/New_York"
-        value={INITIAL_TIME}
+        value={dayjs(selectedDateTime)}
         onChange={handleDateChange}
         renderInput={(params) => <StyledTextField {...params} />}
       />
