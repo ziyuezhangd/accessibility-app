@@ -70,7 +70,7 @@ const NameText = styled(Typography)(({ theme }) => ({
 }));
 
 export default function NearestRestrooms({ lat, lng }) {
-  const { restrooms, selectedDateTime } = useContext(DataContext);
+  const { restrooms, predictionDateTime } = useContext(DataContext);
   const { createMarkers, removeMarkers } = useContext(GoogleMapContext);
 
   const [nearestRestrooms, setNearestRestrooms] = useState([]);
@@ -138,8 +138,8 @@ export default function NearestRestrooms({ lat, lng }) {
               </NameText>
               <DistanceText variant="body2">
                 {Math.round(calculateDistanceBetweenTwoCoordinates(restroom.latitude, restroom.longitude, lat, lng))} meters away
-                <StatusChip label={restroom.isOpen(selectedDateTime) ? 'OPEN' : restroom.isOpen(selectedDateTime) === false ? 'CLOSED' : 'UNKNOWN'}
-                  status={restroom.isOpen(selectedDateTime) ? 'OPEN' : restroom.isOpen(selectedDateTime) === false ? 'CLOSED' : 'UNKNOWN'} />
+                <StatusChip label={restroom.isOpen(predictionDateTime) ? 'OPEN' : restroom.isOpen(predictionDateTime) === false ? 'CLOSED' : 'UNKNOWN'}
+                  status={restroom.isOpen(predictionDateTime) ? 'OPEN' : restroom.isOpen(predictionDateTime) === false ? 'CLOSED' : 'UNKNOWN'} />
               </DistanceText>
             </RestroomCardContent>
           </StyledCard>
