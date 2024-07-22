@@ -1,3 +1,5 @@
+import { retryFetch } from '../utils/retryFetch';
+
 export const getUserHistories = async () => {
   const response = await fetch('/api/userHistory');
   if (!response.ok) {
@@ -15,16 +17,19 @@ export const getUserHistories = async () => {
  */
 export const postUserHistory = async (userHistory) => {
   // Call the API here
-  //right now this is only returning first and last name
-  console.log(userHistory);
+  console.log(userHistory, 'here is the userhistory');
+  const userHistoryString = JSON.stringify(userHistory);
+  console.log(userHistoryString);
   const response = await fetch('/api/userHistory', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(userHistory),
-    
+    body: userHistoryString,
   });
+  if (!response) {
+    throw new Error('No response received ');
+  }
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.error);

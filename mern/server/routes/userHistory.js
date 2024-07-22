@@ -4,6 +4,7 @@ import dbHandler from '../db/dbHandler.js';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
+  
   try {
     const results = await dbHandler.getUserHistory();
     res.status(200).json(results);
@@ -14,8 +15,9 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { name, email, favorites, searchHistory } = req.body;
-    
+  const { name, email, favorites, searchHistory} = req.body;
+  // eslint-disable-next-line no-console
+  console.log('Received user history:', req.body);
   if (!email) {
     return res.status(400).send({ message: 'Email address is required' });
   }
@@ -24,21 +26,17 @@ router.post('/', async (req, res) => {
       name,
       email,
       favorites,
-      searchHistory
+      searchHistory,
     };
 
-    if (userHistory.favorites && userHistory.searchHistory){
-      await dbHandler.insertUserHistory(userHistory);
-    }else if (userHistory.searchHistory){
-      await dbHandler.insertSearchHistory(userHistory.searchHistory);
+    if (favorites){
+      await dbHandler.insertFavorites(userHistory);
+    } else{
+      await dbHandler.insertSearchHistory(userHistory);
     }
-    if (userHistory.favorites){
-      await dbHandler.insertfavorites(userHistory.favorites);
-    }
-    
-    res.status(201).send({ message: 'Thank you for your feedback!' });
+    res.status(201).send({ message: ' added!!' });
   } catch (error) {
-    res.status(500).send({ message: 'An error occurred', error: error.message });
+    res.status(500).send({ message: 'An error occurred in server side', error: error.message });
   }
 });
 

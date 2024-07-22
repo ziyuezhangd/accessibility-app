@@ -78,7 +78,7 @@ const dbHandler = {
 
   /**
    * @param {string} userHistory.email
-   * @param {array} userHistory.favourites
+   * @param {array} userHistory.favorites
    * @param {array} userHistory.searchHistory
    */
 
@@ -88,16 +88,6 @@ const dbHandler = {
     const results = await collection.find({}).toArray();
 
     return results;
-  },
-
-  async insertUserHistory(userHistory){
-    const db = await getDB();
-    const collection = db.collection('userHistory');
-    //if the user is in the db, update that entry, else insert new entry
-    if (collection.find({email: userHistory.email})) {
-      const user = db.users.find({email:userHistory.email})
-      await collection.update(user);
-    } else await collection.insertOne(userHistory);
   },
 
   async insertSearchHistory(userHistory){
@@ -111,13 +101,15 @@ const dbHandler = {
   },
   
   async insertFavorites(userHistory){
+    // eslint-disable-next-line no-console
+    console.log('insertFavorites called');
     const db = await getDB();
     const collection = db.collection('userHistory');
     if (collection.find({email: userHistory.email})) {
       await collection.updateOne(userHistory.favorites);
     }
     else {
-      await collection.insertOneOne(userHistory);
+      await collection.insertOne(userHistory);
     }
   },
 

@@ -85,7 +85,8 @@ export const Favorites = () => {
           const name = userHistories.name;
           const email = userHistories.email;
           const favorites = storedFavorites;
-          postUserHistory(name, email, favorites);
+          const userHistory = { name, email, favorites };
+          postUserHistory(userHistory);
           console.log('postUserHistory called');
         }
         setSnackbarMessage('Added to favorites');
@@ -100,6 +101,14 @@ export const Favorites = () => {
       setFavorites(prevFavorites => prevFavorites.filter(favorite => favorite.placeId !== removedFavorite.placeId));
       setSnackbarMessage('Removed from favorites');
       setSnackbarOpen(true);
+      if (userHistories){
+        const name = userHistories.name;
+        const email = userHistories.email;
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        const userHistory = { name, email, favorites };
+        postUserHistory(userHistory);
+        console.log('postUserHistory called');
+      }
     };
 
     window.addEventListener('favoriteAdded', handleFavoriteAdded);
