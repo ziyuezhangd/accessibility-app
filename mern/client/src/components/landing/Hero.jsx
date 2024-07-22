@@ -9,7 +9,7 @@ export default function Hero() {
 
   return (
     <Container
-      id='features'
+      id='intro'
       maxWidth={false}
       sx={{
         pt: { xs: 4, sm: 12 },
@@ -23,12 +23,13 @@ export default function Hero() {
       }}
     >
       <Typography variant='h1'
-        fontFamily={'Playfair Display'}>
+        fontFamily={'Playfair Display'}
+        sx={{fontSize: {xs: 50, md: 72}}}>
         Discover Accessible Areas in NYC
       </Typography>
       <Typography variant='h4'
         component={'h2'}
-        sx={{ mb: 4 }}>
+        sx={{ mb: 4, fontSize: {xs: 24, md: 36} }}>
         Find the best spots that cater to your needs
       </Typography>
       <Button variant='contained'
