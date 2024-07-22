@@ -80,6 +80,14 @@ const dbHandler = {
 
     return results;
   },
+
+  async getPlaceInfos() {
+    const db = await getDB();
+    const collection = db.collection('placeInfos');
+    const results = await collection.find({}).toArray();
+
+    return results;
+  }
 };
 
 export default dbHandler;
