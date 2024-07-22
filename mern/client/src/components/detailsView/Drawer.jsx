@@ -13,19 +13,6 @@ import DrawerLocationDetails from './DrawerLocationDetails';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import AdBanner from '../AdBanner';
 
-const drawerWidth = 350;
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: theme.spacing(2, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: 'center',
-  backgroundColor: 'rgba(25, 118, 210, 0.12)', // Changed color
-  boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
-}));
-
 /**
  * PersistentDrawerLeft component.
  * 
@@ -47,43 +34,6 @@ const TitleHeader = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: '#1976d2', // Updated to use #1976d2
   color: 'white', // White text color
-}));
-
-const DrawerFooter = styled('div')(({ theme }) => ({
-  marginTop: 'auto',
-  padding: theme.spacing(2),
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-}));
-
-const DrawerFooter = styled('div')(({ theme }) => ({
-  marginTop: 'auto',
-  padding: theme.spacing(2),
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-}));
-const drawerBleeding = 100;
-
-const Root = styled('div')(({ theme }) => ({
-  height: '100%',
-  backgroundColor:
-    theme.palette.mode === 'light' ? grey[100] : theme.palette.background.default,
-}));
-
-const StyledBox = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'light' ? '#fff' : grey[800],
-}));
-
-const Puller = styled('div')(({ theme }) => ({
-  width: 30,
-  height: 6,
-  backgroundColor: theme.palette.mode === 'light' ? grey[300] : grey[900],
-  borderRadius: 3,
-  position: 'absolute',
-  top: 8,
-  left: 'calc(50% - 15px)',
 }));
 
 const drawerBleeding = 100;
@@ -164,6 +114,14 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
     backgroundColor: 'rgba(25, 118, 210, 0.12)', // Changed color
     boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
   }));
+
+  const DrawerFooter = styled('div')(({ theme }) => ({
+    marginTop: 'auto',
+    padding: theme.spacing(2),
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }));
   
   const drawer = (
     <>
@@ -180,6 +138,9 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
             <Typography variant='h6'>Last Viewed</Typography>
           </TitleHeader>
           <DrawerHistoryList onLocationSelected={handleLocationSelected} />
+          <DrawerFooter>
+            <AdBanner />
+          </DrawerFooter>
         </>
       )}
       {selectedDrawerContent === 'location' && (
