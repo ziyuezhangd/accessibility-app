@@ -66,14 +66,20 @@ export const NavBar = () => {
           })
           .then((res) => {
             setProfile(res.data);
+            const userDetails = res.data;
+            console.log(userDetails);
+            const name = userDetails.name;
+            const email = userDetails.email;
+            console.log(email);
             if (userHistories) {
-              userHistories.email = res.data.email;
+              userHistories.name = name;
+              userHistories.email = email;
               console.log(userHistories.email);
             }
           })
           .catch((err) => console.log(err));
       }
-    }, [user, userHistories]);
+    }, [user, userHistories];
   
   return (
     <AppBar position='fixed'

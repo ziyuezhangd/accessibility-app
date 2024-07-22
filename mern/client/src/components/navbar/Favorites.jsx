@@ -118,7 +118,7 @@ export const Favorites = () => {
       window.removeEventListener('favoriteAdded', handleFavoriteAdded);
       window.removeEventListener('favoriteRemoved', handleFavoriteRemoved);
     };
-  }, [favorites]);
+  }, [favorites, userHistories]);
 
   return (
     <>
