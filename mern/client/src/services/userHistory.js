@@ -42,12 +42,10 @@ export class UserHistory {
    * @param {string} userHistory.name
    * @param {string} userHistory.email
    * @param {array} userHistory.favorites
-   * @param {array} userHistory.searchHistory
    */
-  constructor(name, email, favorites, searchHistory) {
+  constructor(name, email, favorites) {
     this.name = name;
     this.email = email;
     this.favorites = favorites;
-    this.searchHistory = searchHistory;
   }
 }

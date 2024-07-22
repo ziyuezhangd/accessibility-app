@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { name, email, favorites, searchHistory} = req.body;
+  const { name, email, favorites} = req.body;
   // eslint-disable-next-line no-console
   console.log('Received user history:', req.body);
   if (!email) {
@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
       name,
       email,
       favorites,
-      searchHistory,
+
     };
 
     if (favorites){
