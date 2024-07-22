@@ -1,8 +1,8 @@
 import { Box, Button, Toolbar, Snackbar } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import {AccessBarNoRouter} from 'aditum';
-import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import HelpIcon from './helpModal/HelpIcon';
 import Favorites from './navBar/Favorites';
 import Logo from './navBar/Logo';
 
@@ -69,6 +69,7 @@ export const NavBar = () => {
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Favorites />
+          <HelpIcon/>
         </Box>
       </Toolbar>
     </AppBar>

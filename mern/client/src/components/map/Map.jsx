@@ -172,7 +172,7 @@ export const Map = () => {
       />
       <Box sx={{ flexGrow: 1 }}>
         <GoogleMap
-          style={{ height: '92vh', top: '8vh' }}
+          style={{ height: '92vh', top: '7vh' }}
           zoom={DEFAULT_ZOOM}
           initialCenter={{ lat: MANHATTAN_LAT, lng: MANHATTAN_LNG }}
           onClick={handleMapClicked}
@@ -189,11 +189,12 @@ export const Map = () => {
             mapTypeControl: false, // Disable map/satellite control
           }}
         >
-          <SearchBar onSearchEntered={handleSearchEntered} />
-          <Control position={google.maps.ControlPosition.TOP_RIGHT}>
-            <PredictionDropdown onSelect={handleVisualizationSelected} />
-            <CategoryFilter onCategoriesSelected={(c) => setFilter(c)} />
-            <HelpIcon />
+          <Control position={google.maps.ControlPosition.RIGHT_TOP}>
+            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'end', pt: 2, pr: 2}}>
+              <SearchBar onSearchEntered={handleSearchEntered} />
+              <PredictionDropdown onSelect={handleVisualizationSelected} />
+              <CategoryFilter onCategoriesSelected={(c) => setFilter(c)} />
+            </Box>
           </Control>
           <AccessibilityPointsLayer/>
           <PlaceInfoLayer filter={filter}/>

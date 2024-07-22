@@ -9,6 +9,7 @@ const CustomFormControl = styled(FormControl)({
   width: '200px',
   backgroundColor: '#4a90e2',
   borderRadius: '8px',
+  marginTop: 10,
   zIndex: 1000,
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
@@ -44,28 +45,13 @@ const PlaceholderOption = styled(MenuItem)({
 });
 
 function PredictionDropdown({ onSelect }) {
-  const isTabletOrSmaller = useMediaQuery('(max-width: 960px)');
-
   const [selectedOption, setSelectedOption] = useState('');
-  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleSelect = (event) => {
     const value = event.target.value;
     const selectedItem = value !== 'none' ? list.find(item => item.name === value) : { name: 'none' };
     onSelect(selectedItem);
     setSelectedOption(value);
-  };
-
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = (item) => {
-    if (item) {
-      onSelect(item);
-      setSelectedOption(item.name);
-    }
-    setAnchorEl(null);
   };
 
   return (

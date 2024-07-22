@@ -15,6 +15,8 @@ const CustomAutocomplete = styled(Autocomplete)({
   backgroundColor: '#4a90e2',
   borderRadius: '8px',
   marginTop: '10px',
+  maxHeight: '500px',
+  overflowY: 'scroll',
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderColor: 'white',

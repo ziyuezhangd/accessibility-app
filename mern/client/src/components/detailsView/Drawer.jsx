@@ -1,12 +1,10 @@
 import { Global } from '@emotion/react';
-import { ArrowDropDown } from '@mui/icons-material';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { Box, SwipeableDrawer } from '@mui/material';
+import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
+import { SwipeableDrawer } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useEffect, useState, useContext } from 'react';
 import DateTimePickerComponent from './DateTimePicker';
@@ -66,7 +64,6 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [location, setLocation] = useState(null);
 
-  const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
 
   const toggleDrawer = (newOpen) => () => {
@@ -100,6 +97,7 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
   };
 
   const handleBackClicked = (location) => {
+    // TODO: markers are not all getting removed!
     setSelectedDrawerContent('history');
     setLocation(null);
     removeMarkers([{ lat: location.lat, lng: location.lng }]);
@@ -109,7 +107,7 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
     display: 'flex',
     flexDirection: {xs: 'row', sm: 'column'},
     alignItems: 'center',
-    padding: theme.spacing(2, 1),
+    padding: theme.spacing(3, 1),
     // necessary for content to be below app bar
     justifyContent: 'center',
     backgroundColor: 'rgba(25, 118, 210, 0.12)', // Changed color
@@ -120,8 +118,9 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
     <>
       <DrawerHeader>
         <DateTimePickerComponent />
-        <IconButton >
-          <ArrowDropDown sx={{fontSize: 50, display: { xs: 'block', sm: 'block', md: 'none', lg: 'none'}}} />
+        <IconButton onClick={toggleDrawer(!open)}
+          sx={{zIndex: 100, position: 'absolute', right: 0}}>
+          {open ? <ArrowDropUp sx={{fontSize: 50, display: { xs: 'block', sm: 'block', md: 'none', lg: 'none'}}} /> : <ArrowDropDown sx={{fontSize: 50, display: { xs: 'block', sm: 'block', md: 'none', lg: 'none'}}} />}
         </IconButton>
       </DrawerHeader>
       {selectedDrawerContent === 'history' && (
@@ -147,7 +146,7 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
         <Global
           styles={{
             '.MuiDrawer-root > .MuiPaper-root': {
-              height: `calc(50% - ${drawerBleeding}px)`,
+              height: `calc(92% - ${drawerBleeding}px)`,
               overflow: 'visible',
             },
           }}/>
@@ -158,6 +157,7 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
           onOpen={toggleDrawer(true)}
           swipeAreaWidth={drawerBleeding}
           disableSwipeToOpen={false}
+          allowSwipeInChildren={true}
           ModalProps={{
             keepMounted: true,
           }}
