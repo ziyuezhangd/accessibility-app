@@ -23,7 +23,7 @@ const AdBanner = () => {
     <Box
       sx={{
         width: '100%',
-        display: 'flex',
+        display: {xs: 'none', sm: 'none', md: 'flex'},
         justifyContent: 'center',
         alignItems: 'center',
         my: 4,
