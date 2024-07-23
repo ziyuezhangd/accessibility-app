@@ -156,7 +156,8 @@ export default function AccessibilityPointsLayer() {
         </Box>
 
         <Box sx={{ display: {xs: 'none', sm: 'none', md: 'block', lg: 'block'}, minWidth: 275, borderRadius: '8px', padding: '8px' }}>
-          <Card variant='outlined'
+          <Card data-test='accessibility-key'
+            variant='outlined'
             style={{ backgroundColor: '#fefefe', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}>
             <CardContent>
               <Typography variant='h6'

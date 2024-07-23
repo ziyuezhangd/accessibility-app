@@ -123,7 +123,7 @@ const CategoryFilter = ({onCategoriesSelected}) => {
           ))
         }
         renderInput={(params) => (
-          <CustomTextField
+          <CustomTextField data-test='category-field'
             {...params}
             variant="outlined"
             label="Filter by Category"

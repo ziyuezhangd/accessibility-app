@@ -244,12 +244,15 @@ export default function HelpModal({ isOpen, onClose }) {
               sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: currentIndex === idx ? 'black' : 'grey', margin: '0 5px' }} />
           ))}
         </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-          <Button variant='contained'
+        <Box data-test='help-buttons'
+          sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+          <Button
+            variant='contained'
             onClick={handleButtonClicked}>
             Get Started
           </Button>
-          <Button variant='contained'
+          <Button
+            variant='contained'
             onClick={handleDontShowAgain}>
             Dont Show This Again
           </Button>
