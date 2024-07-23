@@ -39,16 +39,6 @@ const GoogleMapProvider = ({children}) => {
     }
   }, [mapInstance]);
 
-  useEffect(() => {
-    if (directionsRenderer) {
-      window.addEventListener('keydown', (keyEvent) => {
-        if (keyEvent.code === 'KeyC') {
-          clearDirections();
-        }
-      });
-    }
-  }, [directionsRenderer]);
-
   const loadPlaces = async () => {
     const { PlacesService } = await google.maps.importLibrary('places');
     const service = new PlacesService(mapInstance);
@@ -82,7 +72,12 @@ const GoogleMapProvider = ({children}) => {
     if (directionsRenderer !== null && directionsRenderer !== undefined) {
       directionsRenderer.setMap(null);
       // Hacky way of just removing all markers because the latLngs will not be exact matches
-      setOtherMarkers([otherMarkers[0]]);
+      // If we have a selected location, clear everything except the selected location
+      if (otherMarkers.length > 2) {
+        setOtherMarkers([]);
+      } else {
+        setOtherMarkers([otherMarkers[0]]);
+      }
     }
   };
 
