@@ -8,7 +8,7 @@ describe('Landing page', () => {
 
   it('renders correctly', () => {
     cy.get('[data-test="app-bar"]').should('be.visible');
-    cy.get('[data-test="hero"]').should('be.visible');
+    cy.get('[data-test="intro"]').should('be.visible');
     cy.get('[data-test="features"]').should('be.visible');
     cy.get('[data-test="blurb"]').should('be.visible');
     cy.get('[data-test="faq"]').should('be.visible');
@@ -16,7 +16,7 @@ describe('Landing page', () => {
   });
 
   it('navigates to /map when "Get started" button is clicked', () => {
-    cy.get('[data-test="hero"]')
+    cy.get('[data-test="intro"]')
       .find('Button')
       .contains('Get started')
       .click();
