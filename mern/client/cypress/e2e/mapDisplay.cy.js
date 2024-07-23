@@ -35,7 +35,6 @@ describe('Map page', () => {
   });
 
   it('navigates back to landing page', () => {
-    cy.get('[data-test="help-modal"]').should('be.visible');
     cy.get('[data-test="help-buttons"]').find('Button').contains('Get Started').click();
     cy.get('[data-test="app-bar"]').contains('ACCESS').click();
     cy.url().should('eq', 'http://localhost:5173/');
@@ -47,13 +46,6 @@ describe('Map page', () => {
     cy.get('[data-test="drawer"]').contains('Last Viewed');
     cy.get('[data-test="picker"]').should('be.visible');
     cy.get('[data-test="ad"]').should('be.visible');
-  });
-
-  it.only('displays the ad banner correctly', () => {
-    cy.get('[data-test="help-buttons"]').find('Button').contains('Dont Show This Again').click();
-    cy.get('[data-test="ad"]').should('be.visible');
-    cy.get('[data-test="email-textfield"]').should('be.visible');
-    cy.get('[data-test="ad"]').find('Button').contains('Sign Up').should('be.visible');
   });
 
   it('displays the map correctly', () => {

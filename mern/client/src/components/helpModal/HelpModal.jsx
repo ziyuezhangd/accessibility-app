@@ -127,7 +127,8 @@ export default function HelpModal({ isOpen, onClose }) {
           sx={{ flexGrow: 1, alignItems: 'center' }}>
           <Grid item
             xs={1}>
-            <IconButton onClick={handlePrevious}
+            <IconButton data-test='help-previous'
+              onClick={handlePrevious}
               disabled={currentIndex === 0}
               sx={{
                 bgcolor: 'primary.main',
@@ -150,7 +151,7 @@ export default function HelpModal({ isOpen, onClose }) {
               <Grid item
                 xs={4}
                 key={index}>
-                <Box
+                <Box data-test='instruction-card'
                   onClick={() => handleCardClick(startIndex + index)}
                   sx={{
                     perspective: 1000,
@@ -174,7 +175,7 @@ export default function HelpModal({ isOpen, onClose }) {
                       position: 'relative',
                     }}
                   >
-                    <Box
+                    <Box data-test='front-paper'
                       sx={{
                         position: 'absolute',
                         width: '100%',
@@ -195,7 +196,7 @@ export default function HelpModal({ isOpen, onClose }) {
                         {instruction.title}
                       </Typography>
                     </Box>
-                    <Box
+                    <Box data-test='back-paper'
                       sx={{
                         position: 'absolute',
                         width: '100%',
@@ -223,7 +224,8 @@ export default function HelpModal({ isOpen, onClose }) {
           </Grid>
           <Grid item
             xs={1}>
-            <IconButton onClick={handleNext}
+            <IconButton data-test='help-next'
+              onClick={handleNext}
               disabled={currentIndex === Math.ceil(instructions.length / instructionsPerPage) - 1}
               sx={{
                 bgcolor: 'primary.main',

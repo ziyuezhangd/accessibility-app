@@ -171,7 +171,7 @@ export default function AccessibilityPointsLayer() {
               >
                 <Tooltip title='Represents a bench or leaning bar'
                   placement='right'>
-                  <ToggleButton
+                  <ToggleButton data-test='seating-button'
                     value="seating"
                     style={getButtonStyles(selectedFeatures.includes('seating'), purple)}
                     aria-label="seating areas"
@@ -183,7 +183,7 @@ export default function AccessibilityPointsLayer() {
                   placement='right'
                   title="NYC DOT's Accessible Pedestrian Signals (APS) are devices affixed to pedestrian signal poles to assist blind or low vision pedestrians in crossing the street. APS are wired to a pedestrian signal and send audible and vibrotactile indications when pedestrians push a button installed at a crosswalk."
                 >
-                  <ToggleButton
+                  <ToggleButton data-test='signal-button'
                     value="signals"
                     style={getButtonStyles(selectedFeatures.includes('signals'), blue)}
                     aria-label="pedestrian signals"
@@ -193,7 +193,7 @@ export default function AccessibilityPointsLayer() {
                 </Tooltip>
                 <Tooltip placement='right'
                   title="Represents a sidewalk ramp - hover over to see the width in inches.">
-                  <ToggleButton
+                  <ToggleButton data-test='ramp-button'
                     value="ramps"
                     style={getButtonStyles(selectedFeatures.includes('ramps'), orange)}
                     aria-label="pedestrian ramps"

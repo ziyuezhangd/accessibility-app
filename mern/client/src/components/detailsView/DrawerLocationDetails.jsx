@@ -150,7 +150,8 @@ export default function DrawerLocationDetails({ location, predictions, onBackCli
           onClick={() => {
             onBackClicked(location);
           }}>
-          <ChevronLeftIcon sx={{ color: 'white' }} />
+          <ChevronLeftIcon data-test='back-to-history'
+            sx={{ color: 'white' }} />
         </IconButton>
         <Typography variant='h6'>
           Location Details
