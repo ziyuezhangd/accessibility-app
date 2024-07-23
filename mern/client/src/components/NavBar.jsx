@@ -31,7 +31,6 @@ export const NavBar = () => {
   return (
     <AppBar data-test='app-bar'
       position='fixed'
-      id='app-bar'
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <AccessBarNoRouter/>
       <Toolbar disableGutters

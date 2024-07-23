@@ -248,13 +248,11 @@ export default function HelpModal({ isOpen, onClose }) {
         </Box>
         <Box data-test='help-buttons'
           sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-          <Button
-            variant='contained'
+          <Button variant='contained'
             onClick={handleButtonClicked}>
             Get Started
           </Button>
-          <Button
-            variant='contained'
+          <Button variant='contained'
             onClick={handleDontShowAgain}>
             Dont Show This Again
           </Button>
