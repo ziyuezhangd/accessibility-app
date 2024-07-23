@@ -5,7 +5,7 @@ import { AdvancedMarker } from 'react-google-map-wrapper';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 
 export default function DirectionsModal({position, onDirectionsPositionSelected}) {
-  const {createMarkers} = useContext(GoogleMapContext);
+  const {createMarkers, clearDirections} = useContext(GoogleMapContext);
 
   const showDirectionsMarker = (type) => {
     if (type === 'from') {
@@ -34,6 +34,9 @@ export default function DirectionsModal({position, onDirectionsPositionSelected}
           onClick={() => showDirectionsMarker('from')}>From here</Button>
         <Button key="to"
           onClick={() => showDirectionsMarker('to')} >To here</Button>
+        <Button key="clear"
+          color='secondary' 
+          onClick={clearDirections}>Clear</Button>
       </ButtonGroup>
 
     </AdvancedMarker>
