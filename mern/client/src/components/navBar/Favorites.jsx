@@ -142,7 +142,7 @@ export const Favorites = () => {
                   <IconButton edge="end"
                     aria-label="delete"
                     onClick={() => handleRemoveFavorite(favorite.placeId)}>
-                    <Delete />
+                    <Delete data-test='favorites-delete'/>
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>

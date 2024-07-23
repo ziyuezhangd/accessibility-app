@@ -126,5 +126,19 @@ describe('Map page started', () => {
     cy.get('[data-test="favorites"]').click();
     cy.get('[data-test="favorite-item"]').should('be.visible');
     cy.get('[data-test="favorite-item"]:visible').should('have.length', 1);
+
+    cy.get('[data-test="history-item"]').eq(0).click({ force: true });
+    cy.get('[data-test="drawer"]').contains('Location Details').should('exist');
+    cy.get('[data-test="favorites-inside"]').eq(0).click({ force: true });
+    cy.contains('Removed from favorites').should('exist');
+    cy.get('[data-test="favorites"]').click();
+    cy.get('[data-test="favorite-item"]').should('not.exist');
+
+    cy.get('[data-test="favorites-inside"]:visible').click();
+    cy.get('[data-test="favorites"]').click({ force: true });
+    cy.get('[data-test="favorite-item"]:visible').should('have.length', 1);
+    cy.get('[data-test="favorites-delete"]').click();
+    cy.get('[data-test="favorites"]').click();
+    cy.get('[data-test="favorite-item"]').should('not.exist');
   });
 });
