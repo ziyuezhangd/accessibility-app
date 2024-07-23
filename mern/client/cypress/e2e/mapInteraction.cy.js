@@ -85,7 +85,7 @@ describe('Map page started', () => {
     // Check further manually as it cannot capture the circles on the map
   });
   
-  it.only('allows interaction with history and favorites', () => {
+  it('allows interaction with history and favorites', () => {
     cy.get('[data-test="favorites"]').click();
     cy.contains('No favorite places added yet').should('be.visible');
     cy.get('[data-test="favorite-item"]').should('not.exist');
