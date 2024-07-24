@@ -156,7 +156,8 @@ export default function AccessibilityPointsLayer() {
         </Box>
 
         <Box sx={{ display: {xs: 'none', sm: 'none', md: 'block', lg: 'block'}, minWidth: 275, borderRadius: '8px', padding: '8px' }}>
-          <Card variant='outlined'
+          <Card data-test='accessibility-key'
+            variant='outlined'
             style={{ backgroundColor: '#fefefe', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}>
             <CardContent>
               <Typography variant='h6'
@@ -170,7 +171,7 @@ export default function AccessibilityPointsLayer() {
               >
                 <Tooltip title='Represents a bench or leaning bar'
                   placement='right'>
-                  <ToggleButton
+                  <ToggleButton data-test='seating-button'
                     value="seating"
                     style={getButtonStyles(selectedFeatures.includes('seating'), purple)}
                     aria-label="seating areas"
@@ -182,7 +183,7 @@ export default function AccessibilityPointsLayer() {
                   placement='right'
                   title="NYC DOT's Accessible Pedestrian Signals (APS) are devices affixed to pedestrian signal poles to assist blind or low vision pedestrians in crossing the street. APS are wired to a pedestrian signal and send audible and vibrotactile indications when pedestrians push a button installed at a crosswalk."
                 >
-                  <ToggleButton
+                  <ToggleButton data-test='signal-button'
                     value="signals"
                     style={getButtonStyles(selectedFeatures.includes('signals'), blue)}
                     aria-label="pedestrian signals"
@@ -192,7 +193,7 @@ export default function AccessibilityPointsLayer() {
                 </Tooltip>
                 <Tooltip placement='right'
                   title="Represents a sidewalk ramp - hover over to see the width in inches.">
-                  <ToggleButton
+                  <ToggleButton data-test='ramp-button'
                     value="ramps"
                     style={getButtonStyles(selectedFeatures.includes('ramps'), orange)}
                     aria-label="pedestrian ramps"

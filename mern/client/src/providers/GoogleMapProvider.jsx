@@ -115,7 +115,7 @@ const GoogleMapProvider = ({children}) => {
         const {imgAlt, imgSize, onClick} = config;
         const { invert, sepia, saturate, hueRotate } = PlaceInfoUtilities.getMarkerStyle(category);
         const marker = (
-          <AdvancedMarker 
+          <AdvancedMarker
             lat={lat}
             lng={lng}
             title={title}
@@ -123,7 +123,7 @@ const GoogleMapProvider = ({children}) => {
             onClick={onClick}
             key={key}
           >
-            <img 
+            <img data-test='markers'
               src={imgSrc}
               alt={imgAlt}
               style={{height: imgSize, filter:`invert(${invert}%) sepia(${sepia}%) saturate(${saturate}%) hue-rotate(${hueRotate}deg) brightness(95%) contrast(95%)`}}
@@ -137,7 +137,7 @@ const GoogleMapProvider = ({children}) => {
         scale = scale || 1;
         color = color || '#FF0000';
         const marker = (
-          <AdvancedMarker 
+          <AdvancedMarker
             lat={lat}
             lng={lng}
             title={title}
@@ -145,7 +145,7 @@ const GoogleMapProvider = ({children}) => {
             onClick={onClick}
             key={key}
           >
-            <PinElement 
+            <PinElement data-test='markers'
               scale={scale}
               color={color} />
           </AdvancedMarker>

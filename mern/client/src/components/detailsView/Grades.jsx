@@ -144,7 +144,8 @@ export default function Grades({lat, lng, predictions}) {
   );
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+    <Box data-test='grades'
+      sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
       {renderGrade('Busyness', busynessGrade, filledBusyness, showIcons)}
       {renderGrade('Noise', noiseGrade, filledNoise, showIcons)}
       {renderGrade('Odor', odorGrade, filledOdor, showIcons)}

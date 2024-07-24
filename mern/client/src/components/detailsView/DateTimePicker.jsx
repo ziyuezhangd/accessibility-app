@@ -44,15 +44,17 @@ const DateTimePickerComponent = () => {
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DateTimePicker
-        label="Select Date & Time"
-        timezone="America/New_York"
-        value={dayjs(selectedDateTime)}
-        onChange={handleDateChange}
-        renderInput={(params) => <StyledTextField {...params} />}
-      />
-    </LocalizationProvider>
+    <div data-test='picker'>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DateTimePicker
+          label="Select Date & Time"
+          timezone="America/New_York"
+          value={dayjs(selectedDateTime)}
+          onChange={handleDateChange}
+          renderInput={(params) => <StyledTextField {...params} />}
+        />
+      </LocalizationProvider>
+    </div>
   );
 };
 

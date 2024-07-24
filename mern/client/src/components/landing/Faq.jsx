@@ -3,7 +3,7 @@ import { lightBlue } from '@mui/material/colors';
 
 export default function Faq() {
   return (
-    <Container
+    <Container data-test='faq'
       id='faq'
       maxWidth={false}
       sx={{

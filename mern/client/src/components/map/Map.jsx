@@ -166,7 +166,8 @@ export const Map = () => {
         predictions={selectedPlaceGrades}
         placeInfos={placeInfos}
       />
-      <Box sx={{ flexGrow: 1 }}>
+      <Box data-test='google-map'
+        sx={{ flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '92vh', top: '7vh' }}
           zoom={DEFAULT_ZOOM}

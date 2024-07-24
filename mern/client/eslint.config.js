@@ -23,6 +23,7 @@ export default [
         ...globals.es2021,
         google: "readonly",
         "import.meta": "readonly",
+        Cypress: "readonly",
       },
       parserOptions: {
         ecmaFeatures: { jsx: true },

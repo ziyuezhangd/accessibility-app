@@ -57,7 +57,7 @@ function PredictionDropdown({ onSelect }) {
   return (
     <>
       <CustomFormControl variant="outlined">
-        <CustomSelect
+        <CustomSelect data-test='heatmap-dropdown'
           id="dropdown"
           value={selectedOption}
           onChange={handleSelect}
