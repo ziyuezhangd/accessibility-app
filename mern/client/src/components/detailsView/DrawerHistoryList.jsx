@@ -79,9 +79,11 @@ export default function DrawerHistoryList({ onLocationSelected }) {
       <List aria-labelledby='Recently viewed locations'
         aria-label='Recently viewed locations'>
         {history.map((location) => (
-          <ListItem key={location.name}
+          <ListItem 
+            key={location.name}
             disablePadding>
-            <StyledListItemButton onClick={() => onLocationSelected(location)}>
+            <StyledListItemButton data-test='history-item'
+              onClick={() => onLocationSelected(location)}>
               <HoverLine className="hover-line" />
               <ListItemText primary={location.name}
                 sx={{ zIndex: 1, position: 'relative' }} />

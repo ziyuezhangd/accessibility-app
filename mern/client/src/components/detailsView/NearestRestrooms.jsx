@@ -121,7 +121,8 @@ export default function NearestRestrooms({ lat, lng }) {
   };
 
   return (
-    <Box display='flex'
+    <Box data-test='nearest-restrooms'
+      display='flex'
       flexDirection='column'
       alignItems='center'
       width='100%'>

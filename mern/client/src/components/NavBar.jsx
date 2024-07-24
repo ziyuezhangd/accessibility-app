@@ -29,7 +29,8 @@ export const NavBar = () => {
   };
 
   return (
-    <AppBar position='fixed'
+    <AppBar data-test='app-bar'
+      position='fixed'
       sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <AccessBarNoRouter/>
       <Toolbar disableGutters

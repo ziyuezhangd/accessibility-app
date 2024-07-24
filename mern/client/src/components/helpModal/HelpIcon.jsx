@@ -17,7 +17,8 @@ export default function HelpIcon() {
 
   return (
     <>
-      <IconButton aria-label='help'
+      <IconButton data-test='help-icon'
+        aria-label='help'
         aria-controls='help-button'
         aria-haspopup='true'
         onClick={handleButtonClick}
