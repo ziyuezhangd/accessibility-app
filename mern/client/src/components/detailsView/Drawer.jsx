@@ -124,7 +124,7 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
   }));
   
   const drawer = (
-    <>
+    <div data-test='drawer'>
       <DrawerHeader>
         <DateTimePickerComponent />
         <IconButton onClick={toggleDrawer(!open)}
@@ -149,7 +149,7 @@ export default function PersistentDrawerLeft({ selectedLocation, predictions, on
           predictions={predictions}
           onBackClicked={handleBackClicked}/>
       )}
-    </>
+    </div>
   );
 
   return (

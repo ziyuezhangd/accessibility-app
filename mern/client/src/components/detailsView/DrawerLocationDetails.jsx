@@ -150,12 +150,14 @@ export default function DrawerLocationDetails({ location, predictions, onBackCli
           onClick={() => {
             onBackClicked(location);
           }}>
-          <ChevronLeftIcon sx={{ color: 'white' }} />
+          <ChevronLeftIcon data-test='back-to-history'
+            sx={{ color: 'white' }} />
         </IconButton>
         <Typography variant='h6'>
           Location Details
         </Typography>
-        <IconButton aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+        <IconButton data-test='favorites-inside'
+          aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
           onClick={handleToggleFavorite}>
           {isFavorite ? <Favorite sx={{ color: 'white' }} /> : <FavoriteBorder sx={{ color: 'white' }} />}
         </IconButton>

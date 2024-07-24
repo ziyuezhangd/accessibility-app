@@ -101,7 +101,7 @@ export const Favorites = () => {
 
   return (
     <>
-      <IconButton 
+      <IconButton data-test='favorites'
         aria-label='Favorited locations'
         onClick={handleOpenFavorites}
         sx={{ p: 0 }}>
@@ -132,7 +132,8 @@ export const Favorites = () => {
         >
           <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
             {favorites.map((favorite, index) => (
-              <ListItem key={index}
+              <ListItem data-test='favorite-item'
+                key={index}
                 alignItems='flex-start'
                 onClick={() => handleFavoriteClick(favorite)}
                 sx={{ cursor: 'pointer' }}>
@@ -141,7 +142,7 @@ export const Favorites = () => {
                   <IconButton edge="end"
                     aria-label="delete"
                     onClick={() => handleRemoveFavorite(favorite.placeId)}>
-                    <Delete />
+                    <Delete data-test='favorites-delete'/>
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
