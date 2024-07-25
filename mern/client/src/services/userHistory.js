@@ -16,8 +16,9 @@ export const getUserHistories = async () => {
 export const postUserHistory = async (userHistory) => {
   // Call the API here
   console.log(userHistory, 'here is the userhistory');
+  //now returning  Id: 108434384124793200000 favorites: [Object] (1)
   const userHistoryString = JSON.stringify(userHistory);
-  console.log(userHistoryString);
+  console.log('here is the stringified version', userHistoryString);
   const response = await fetch('/api/user-history', {
     method: 'POST',
     headers: {
@@ -29,6 +30,7 @@ export const postUserHistory = async (userHistory) => {
     throw new Error('No response received ');
   }
   const data = await response.json();
+  console.log('here is the response', data);
   if (!response.ok) {
     throw new Error(data.error);
   }
@@ -37,13 +39,13 @@ export const postUserHistory = async (userHistory) => {
 
 export class UserHistory {
   /**
-   * @param {string} userHistory.name
-   * @param {string} userHistory.email
+   * @param {int} userHistory.userId
    * @param {array} userHistory.favorites
+   * @param {array} userHistory.searchHistory
    */
-  constructor(name, email, favorites) {
-    this.name = name;
-    this.email = email;
+  constructor(userId, favorites, searchHistory) {
+    this.userId = userId;
     this.favorites = favorites;
+    this.searchHistory = searchHistory;
   }
 }

@@ -4,7 +4,9 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext} from 'react';
+import { UserContext } from '../../providers/UserProvider';
+import { getUserHistories} from '../../services/userHistory';
 
 /**
  * DrawerHistoryList function component.
@@ -18,6 +20,7 @@ import { useEffect, useState } from 'react';
  */
 export default function DrawerHistoryList({ onLocationSelected }) {
   const [history, setHistory] = useState([]);
+  const {userHistories} = useContext(UserContext);
 
   useEffect(() => {
     getHistory();
@@ -25,6 +28,11 @@ export default function DrawerHistoryList({ onLocationSelected }) {
 
   const getHistory = () => {
     const history = localStorage.getItem('searchHistory');
+    if (userHistories){
+      const userHistory = getUserHistories(userHistories.userId);
+      const history = userHistory.searchHistory;
+      return history;
+    }
     if (history) {
       const parsedHistory = JSON.parse(history);
       const recentHistory = parsedHistory.slice(0, 10); // Get the 10 most recent items

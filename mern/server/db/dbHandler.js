@@ -82,37 +82,72 @@ const dbHandler = {
    * @param {array} userHistory.favorites
    */
 
-  async getUserHistories(){
+  async getUserHistories(userId){
     const db = await getDB();
     const collection = db.collection('userHistory');
-    const results = await collection.find({}).toArray();
-
-    return results;
+    try {
+      const results = await collection.find({ userId }).toArray();
+      return results;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching user histories:', error);
+      throw error;
+    }
   },
 
   async insertSearchHistory(userHistory){
+    // eslint-disable-next-line no-console
+    console.log('insertSearchHistory called');
+  
     const db = await getDB();
-    const collection = db.collection('userHistory');
-    if (collection.find({email: userHistory.email})) {
-      await collection.updateOne(userHistory.searchHistory);
-    }else {
-      await collection.insertOne(userHistory);
+    const userId = userHistory.userId;
+    const collection = db.collection('users');
+
+    try {
+      const user = await collection.findOne({ userId });
+
+      if (user) {
+        await collection.updateOne(
+          { userId },
+          { $set: { searchHistory: userHistory.searchHistory } }
+        );
+      } else {
+        await collection.insertOne(userHistory);
+      }
+      // eslint-disable-next-line no-console
+      console.log('Inserted Search History');
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error inserting searchHistory:', error);
     }
   },
   
   async insertFavorites(userHistory){
     // eslint-disable-next-line no-console
     console.log('insertFavorites called');
+  
     const db = await getDB();
-    const collection = db.collection('userHistory');
-    if (collection.findOne({email: userHistory.email})) {
-      await collection.updateOne(
-        { email: userHistory.email },
-        { $set: { favorites: userHistory.favorites } }
-      );
+    const userId = userHistory.userId;
+    const collection = db.collection('users');
+
+    try {
+      const user = await collection.findOne({ userId });
+
+      if (user) {
+        await collection.updateOne(
+          { userId },
+          { $set: { favorites: userHistory.favorites } }
+        );
+      } else {
+        await collection.insertOne(userHistory);
+      }
+      // eslint-disable-next-line no-console
+      console.log('Favorites inserted ');
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error inserting favorites:', error);
     }
   },
-
 };
-
+    
 export default dbHandler;

@@ -12,6 +12,8 @@ import Grades from './Grades';
 import NearestRestrooms from './NearestRestrooms';
 import NearestStations from './NearestStations';
 import { GoogleMapContext } from '../../providers/GoogleMapProvider';
+import { UserContext } from '../../providers/UserProvider';
+import { postUserHistory } from '../../services/userHistory';
 import { MapLocation } from '../../utils/MapUtils';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -49,6 +51,7 @@ const formStyle = {
 export default function DrawerLocationDetails({ location, predictions, onBackClicked }) {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const {userHistories} = useContext(UserContext);
 
   useEffect(() => {
     addLocationToHistory();
@@ -79,6 +82,7 @@ export default function DrawerLocationDetails({ location, predictions, onBackCli
 
   const addLocationToHistory = () => {
     let history = localStorage.getItem('searchHistory');
+    
     if (!history) {
       localStorage.setItem('searchHistory', JSON.stringify([]));
     }
@@ -92,8 +96,15 @@ export default function DrawerLocationDetails({ location, predictions, onBackCli
       _.remove(history, (h) => h.name === location.name);
     }
     history = [location, ...history];
-
     localStorage.setItem('searchHistory', JSON.stringify(history));
+    //if userHistories 
+    // history is userHistories.searchHistory
+    if (userHistories){
+      const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+      const userHistory = { userId: userHistories.userId, searchHistory };
+      postUserHistory(userHistory);
+      console.log('postUserHistory called');
+    }
   };
 
   const checkIfFavorite = () => {

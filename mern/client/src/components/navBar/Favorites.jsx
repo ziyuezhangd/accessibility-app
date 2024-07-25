@@ -81,11 +81,10 @@ export const Favorites = () => {
         storedFavorites = [newFavorite, ...storedFavorites];
         console.log('added to favourites');
         setFavorites(storedFavorites);
+        console.log(storedFavorites);
         if (userHistories){
-          const name = userHistories.name;
-          const email = userHistories.email;
-          const favorites = storedFavorites;
-          const userHistory = { name, email, favorites };
+          const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+          const userHistory = { userId: userHistories.userId, favorites };
           postUserHistory(userHistory);
           console.log('postUserHistory called');
         }
@@ -102,10 +101,8 @@ export const Favorites = () => {
       setSnackbarMessage('Removed from favorites');
       setSnackbarOpen(true);
       if (userHistories){
-        const name = userHistories.name;
-        const email = userHistories.email;
         const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        const userHistory = { name, email, favorites };
+        const userHistory = { userId: userHistories.userId, favorites };
         postUserHistory(userHistory);
         console.log('postUserHistory called');
       }

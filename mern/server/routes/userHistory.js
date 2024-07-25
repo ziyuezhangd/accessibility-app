@@ -4,9 +4,9 @@ import dbHandler from '../db/dbHandler.js';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  
+  const userId = req.query.userId;
   try {
-    const results = await dbHandler.getUserHistory();
+    const results = await dbHandler.getUserHistories(userId);
     res.status(200).json(results);
 
   } catch (error) {
@@ -15,26 +15,27 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { name, email, favorites} = req.body;
+  const { userId, favorites} = req.body;
   // eslint-disable-next-line no-console
   console.log('Received user history:', req.body);
-  if (!email) {
-    return res.status(400).send({ message: 'Email address is required' });
+  if (!userId) {
+    return res.status(400).send({ message: 'userId is required' });
   }
   try {
     const userHistory = {
-      name,
-      email,
+      userId,
       favorites,
-
     };
 
     if (favorites){
       await dbHandler.insertFavorites(userHistory);
+      res.status(201).send({ message: ' Favorites updated!' });
+      
     } else{
       await dbHandler.insertSearchHistory(userHistory);
+      res.status(201).send({ message: ' Search History updated!' });
     }
-    res.status(201).send({ message: ' added!!' });
+    
   } catch (error) {
     res.status(500).send({ message: 'An error occurred in server side', error: error.message });
   }

@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import Favorites from './navBar/Favorites';
 import Logo from './navBar/Logo';
 import { UserContext } from '../providers/UserProvider';
-import { postUserHistory } from '../services/userHistory';
 
 const pages = ['Map', 'About us', 'Resources'];
 
@@ -53,6 +52,7 @@ export const NavBar = () => {
   const logOut = () => {
     googleLogout();
     setProfile(null);
+    userHistories.Id = '';
   };
 
   useEffect(
@@ -68,14 +68,12 @@ export const NavBar = () => {
           .then((res) => {
             setProfile(res.data);
             const userDetails = res.data;
-            console.log(userDetails);
-            const name = userDetails.name;
-            const email = userDetails.email;
-            console.log(email);
-            if (email) {
-              userHistories.name = name;
-              userHistories.email = email;
-              console.log(userHistories.email);
+            console.log(res.data);
+           
+            const userId = Number(userDetails.id);
+            if (userId) {
+              userHistories.userId = userId;
+              console.log(userId);
             }
           })
           .catch((err) => console.log(err));
