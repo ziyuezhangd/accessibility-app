@@ -79,7 +79,7 @@ const numberGradeToValue = {
 };
 
 export default function Grades({lat, lng, predictions}) {
-  const { busynessData, odorData, noiseData} = useContext(DataContext);
+  const { busynessData, odorData, noiseData } = useContext(DataContext);
   const [busynessGrade, setBusynessGrade] = useState(1);
   const [odorGrade, setOdorGrade] = useState(1);
   const [noiseGrade, setNoiseGrade] = useState(1);
@@ -93,9 +93,10 @@ export default function Grades({lat, lng, predictions}) {
       setBusynessGrade(letterGradeToValue[predictions['busyness']]);
       setNoiseGrade(numberGradeToValue[predictions['noise']]);
       setOdorGrade(letterGradeToValue[predictions['odor']]);
+    } else {
+      getGrades();
     }
-    getGrades();
-  }, [lat, lng, predictions]);
+  }, [predictions, busynessData]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -116,19 +117,16 @@ export default function Grades({lat, lng, predictions}) {
   }, [filledBusyness, filledOdor, filledNoise]);
 
   const getGrades = async () => {
+    const closestBusynessGrade = findClosestSegment({lat, lng}, busynessData);
+    setBusynessGrade(letterGradeToValue[closestBusynessGrade.prediction]);
 
-    if (!predictions) {
-      const closestBusynessGrade = findClosestSegment({lat, lng}, busynessData);
-      setBusynessGrade(letterGradeToValue[closestBusynessGrade.prediction]);
+    const closestOdorGrade = _.minBy(odorData, bd => calculateDistanceBetweenTwoCoordinates(bd.location.lat, bd.location.lng, lat, lng));
+    setOdorGrade(letterGradeToValue[closestOdorGrade.prediction]);
+    console.log('Odor: ', closestOdorGrade.prediction, letterGradeToValue[closestOdorGrade.prediction]);
 
-      const closestOdorGrade = _.minBy(odorData, bd => calculateDistanceBetweenTwoCoordinates(bd.location.lat, bd.location.lng, lat, lng));
-      setOdorGrade(letterGradeToValue[closestOdorGrade.prediction]);
-      console.log('Odor: ', closestOdorGrade.prediction, letterGradeToValue[closestOdorGrade.prediction]);
-
-      const closestNoiseGrade = findClosestSegment({ lat, lng }, noiseData);
-      setNoiseGrade(numberGradeToValue[closestNoiseGrade.prediction]);
-      console.log('Noise: ', closestNoiseGrade.prediction, numberGradeToValue[closestNoiseGrade.prediction]);
-    }
+    const closestNoiseGrade = findClosestSegment({ lat, lng }, noiseData);
+    setNoiseGrade(numberGradeToValue[closestNoiseGrade.prediction]);
+    console.log('Noise: ', closestNoiseGrade.prediction, numberGradeToValue[closestNoiseGrade.prediction]);
   };
 
   const renderGrade = (label, grade, fillWidth, showIcon) => (
