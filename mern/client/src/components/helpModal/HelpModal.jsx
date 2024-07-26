@@ -110,10 +110,11 @@ export default function HelpModal({ isOpen, onClose }) {
     <Modal
       open={isOpen}
       onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      aria-labelledby='modal-modal-title'
+      aria-describedby='modal-modal-description'
     >
-      <Box sx={style}>
+      <Box data-test='help-modal'
+        sx={style}>
         <Typography id='modal-modal-title'
           variant='h4'
           component='h2'
@@ -126,7 +127,8 @@ export default function HelpModal({ isOpen, onClose }) {
           sx={{ flexGrow: 1, alignItems: 'center' }}>
           <Grid item
             xs={1}>
-            <IconButton onClick={handlePrevious}
+            <IconButton data-test='help-previous'
+              onClick={handlePrevious}
               disabled={currentIndex === 0}
               sx={{
                 bgcolor: 'primary.main',
@@ -144,12 +146,12 @@ export default function HelpModal({ isOpen, onClose }) {
             xs={10}
             container
             spacing={2}
-            justifyContent="center">
+            justifyContent='center'>
             {currentInstructions.map((instruction, index) => (
               <Grid item
                 xs={4}
                 key={index}>
-                <Box
+                <Box data-test='instruction-card'
                   onClick={() => handleCardClick(startIndex + index)}
                   sx={{
                     perspective: 1000,
@@ -173,7 +175,7 @@ export default function HelpModal({ isOpen, onClose }) {
                       position: 'relative',
                     }}
                   >
-                    <Box
+                    <Box data-test='front-paper'
                       sx={{
                         position: 'absolute',
                         width: '100%',
@@ -194,7 +196,7 @@ export default function HelpModal({ isOpen, onClose }) {
                         {instruction.title}
                       </Typography>
                     </Box>
-                    <Box
+                    <Box data-test='back-paper'
                       sx={{
                         position: 'absolute',
                         width: '100%',
@@ -222,7 +224,8 @@ export default function HelpModal({ isOpen, onClose }) {
           </Grid>
           <Grid item
             xs={1}>
-            <IconButton onClick={handleNext}
+            <IconButton data-test='help-next'
+              onClick={handleNext}
               disabled={currentIndex === Math.ceil(instructions.length / instructionsPerPage) - 1}
               sx={{
                 bgcolor: 'primary.main',
@@ -243,7 +246,8 @@ export default function HelpModal({ isOpen, onClose }) {
               sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: currentIndex === idx ? 'black' : 'grey', margin: '0 5px' }} />
           ))}
         </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+        <Box data-test='help-buttons'
+          sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
           <Button variant='contained'
             onClick={handleButtonClicked}>
             Get Started

@@ -23,13 +23,13 @@ const AdBanner = () => {
     <Box
       sx={{
         width: '100%',
-        display: 'flex',
+        display: {xs: 'none', sm: 'none', md: 'flex'},
         justifyContent: 'center',
         alignItems: 'center',
         my: 4,
       }}
     >
-      <Box
+      <Box data-test='ad'
         sx={{
           width: '100%',
           maxWidth: 600,
@@ -55,7 +55,7 @@ const AdBanner = () => {
             <Box component="form"
               onSubmit={handleSubmit}
               sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-              <TextField
+              <TextField data-test='email-textfield'
                 label="Enter your email"
                 variant="outlined"
                 value={email}

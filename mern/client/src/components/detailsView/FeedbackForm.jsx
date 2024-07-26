@@ -117,7 +117,8 @@ export default function FeedbackForm({ location, isOpen, onClose }) {
           in={isOpen}
           mountOnEnter
           unmountOnExit>
-          <Box sx={formStyle}>
+          <Box data-test='feedback-form'
+            sx={formStyle}>
             <Typography variant="h6"
               component="h2"
               align="center">Submit Feedback</Typography>

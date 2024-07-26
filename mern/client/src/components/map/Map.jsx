@@ -1,5 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, Snackbar, IconButton, Button, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Snackbar, IconButton, Button } from '@mui/material';
 import _ from 'lodash';
 import { useState, useContext } from 'react';
 import { GoogleMap, Control } from 'react-google-map-wrapper';
@@ -16,13 +16,10 @@ import { GoogleMapContext } from '../../providers/GoogleMapProvider';
 import { DEFAULT_ZOOM, MANHATTAN_LAT, MANHATTAN_LNG, MapLocation } from '../../utils/MapUtils';
 import CategoryFilter from '../detailsView/CategoryFilter';
 import PersistentDrawerLeft from '../detailsView/Drawer';
-import HelpIcon from '../helpModal/HelpIcon';
 
 const VITE_MAP_ID = import.meta.env.VITE_MAP_ID;
 
 export const Map = () => {
-  const theme = useTheme();
-
   const {placesService, mapInstance, geocoder, onMapLoaded, createMarkers, markers, getDirections } = useContext(GoogleMapContext);
   const {placeInfos, polylineData} = useContext(DataContext);
   const [selectedPredictionType, setSelectedPredictionType] = useState('busyness');
@@ -31,7 +28,6 @@ export const Map = () => {
   const [directionsModalPosition, setDirectionsModalPosition] = useState(null);
   const [directionsFrom, setDirectionsFrom] = useState(null);
   const [directionsTo, setDirectionsTo] = useState(null);
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   /** @type {[MapLocation, React.Dispatch<React.SetStateAction<MapLocation>>]} */
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -126,7 +122,7 @@ export const Map = () => {
     const selectedLocation = new MapLocation(lat, lng, placeId, name, isPlace);
     setSelectedPlace(selectedLocation);
     setSelectedPlaceGrades(predictionData);
-    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}], 'other');
+    createMarkers([{lat: selectedLocation.lat, lng: selectedLocation.lng, title: name}], 'other', true);
     mapInstance.setZoom(DEFAULT_ZOOM + 5);
     mapInstance.setCenter({ lat: selectedLocation.lat, lng: selectedLocation.lng });
   };
@@ -170,7 +166,8 @@ export const Map = () => {
         predictions={selectedPlaceGrades}
         placeInfos={placeInfos}
       />
-      <Box sx={{ flexGrow: 1 }}>
+      <Box data-test='google-map'
+        sx={{ flexGrow: 1 }}>
         <GoogleMap
           style={{ height: '92vh', top: '7vh' }}
           zoom={DEFAULT_ZOOM}
